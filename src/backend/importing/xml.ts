@@ -1,4 +1,4 @@
-import * as BufferedReader from "./buffered_reader.js"
+import * as StreamedReader from "./streamed_reader.js"
 // @ts-expect-error
 import xml2js from "xml2js"
 
@@ -7,14 +7,18 @@ export const xml2jsAttributeKey = "attr"
 export const xml2jsTextKey = "text"
 
 
-export async function* iterateEntriesBuffered<T extends object>(
+/// Using a streamed file buffer, parses the XML file according
+/// to the given `main` and `entry` tags, converts each entry
+/// to a JSON object, and yields these objects interpreted as the
+/// given `T` type (without type-checking).
+export async function* iterateEntriesStreamed<T extends object>(
     filename: string,
     mainTagId: string,
     entryTagId: string)
     : AsyncGenerator<T>
 {
-    const reader = await BufferedReader.create(filename)
-    reader.skipTo(`<${mainTagId}>`)
+    const reader = await StreamedReader.create(filename)
+    await reader.skipTo(`<${mainTagId}>`)
 
     const entryTagStart = `<${entryTagId}>`
     const entryTagEnd = `</${entryTagId}>`
@@ -22,9 +26,9 @@ export async function* iterateEntriesBuffered<T extends object>(
 
     const readEntry = async () =>
     {
-        reader.skipTo(entryTagStart)
+        await reader.skipTo(entryTagStart)
         
-        const entryStr = reader.readTo(entryTagEnd)
+        const entryStr = await reader.readTo(entryTagEnd)
         if (entryStr === null)
             return null
         

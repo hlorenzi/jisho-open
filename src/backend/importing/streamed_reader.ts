@@ -1,17 +1,18 @@
 import * as fs from "fs"
+import * as util from "util"
 
 
-export interface BufferedReader
+export interface StreamedReader
 {
     getProgressFraction: () => number
-    skipTo: (str: string) => void
-    readTo: (str: string) => string | null
+    skipTo: (str: string) => Promise<void>
+    readTo: (str: string) => Promise<string | null>
 }
 
 
 export async function create(
     filename: string)
-    : Promise<BufferedReader>
+    : Promise<StreamedReader>
 {
     const file = fs.openSync(filename, "r")
 
@@ -27,11 +28,13 @@ export async function create(
     let blockSize = 0
     let blockIndex = 0
 
-    const readNext = () =>
+    const fsRead = util.promisify(fs.read)
+
+    const readNext = async () =>
     {
         if (blockIndex >= blockSize)
         {
-            blockSize = fs.readSync(file, buffer, 0, bufferSize, null)
+            blockSize = (await fsRead(file, buffer, 0, bufferSize, null)).bytesRead
             blockIndex = 0
         }
 
@@ -45,18 +48,18 @@ export async function create(
         return c
     }
 
-    const reader: BufferedReader = {
+    const reader: StreamedReader = {
         getProgressFraction: () =>
         {
             return overallIndex / fileSize
         },
 
-        skipTo: (str) =>
+        skipTo: async (str) =>
         {
             let at = 0
             while (true)
             {
-                const readC = readNext()
+                const readC = await readNext()
                 if (!readC)
                     break
 
@@ -73,13 +76,13 @@ export async function create(
             }
         },
 
-        readTo: (str) =>
+        readTo: async (str) =>
         {
             let res: number[] = []
             let at = 0
             while (true)
             {
-                const readC = readNext()
+                const readC = await readNext()
                 if (!readC)
                     return null
 

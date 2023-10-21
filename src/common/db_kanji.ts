@@ -1,12 +1,3 @@
-export type Tag =
-    CommonnessTag
-    
-    
-export type CommonnessTag =
-    | "veryCommon"
-    | "common"
-
-
 export interface Entry
 {
     _id: string
@@ -27,6 +18,15 @@ export interface Entry
 
     structuralCategory?: StructuralCategory
 }
+
+
+export type Tag =
+    CommonnessTag
+    
+    
+export type CommonnessTag =
+    | "veryCommon"
+    | "common"
 
 
 export interface Reading

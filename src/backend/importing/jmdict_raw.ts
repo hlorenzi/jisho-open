@@ -1,4 +1,13 @@
-import * as Xml from "../backend/dataentry/xml.js"
+import * as Xml from "./xml.js"
+
+
+export interface Entry
+{
+    ent_seq: [string]
+    k_ele?: EntryKEle[]
+    r_ele: EntryREle[]
+    sense: EntrySense[]
+}
 
 
 export type KanjiElementPriTag =
@@ -11,6 +20,9 @@ export type KanjiElementPriTag =
 
 export type KanjiElementInfoTag =
     | "rK"
+    | "iK"
+    | "sK"
+    | "ateji"
 
 
 export type ReadingElementPriTag =
@@ -20,6 +32,10 @@ export type ReadingElementPriTag =
     | `nf${string}`
     | "spec1"
     | "spec2"
+
+
+export type ReadingElementInfoTag =
+    | ""
 
 
 export type PartOfSpeechTag =
@@ -53,13 +69,6 @@ export type GlossTypeTag =
     | "lit"
 
 
-export interface Entry
-{
-    ent_seq: [string]
-    r_ele: EntryREle[]
-}
-
-
 export interface EntryKEle
 {
     keb: [string]
@@ -72,7 +81,9 @@ export interface EntryREle
 {
     reb: [string]
     re_pri?: ReadingElementPriTag[]
+    re_inf?: ReadingElementInfoTag[]
     re_nokanji?: unknown[]
+    re_restr?: string[]
 }
 
 

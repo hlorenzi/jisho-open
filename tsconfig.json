@@ -4,7 +4,7 @@
         "moduleResolution": "nodenext",
         "target": "es2017",
         "strictNullChecks": true,
-        "noImplicitAny": true
+        "noImplicitAny": true,
     },
     "ts-node": {
         "esm": true,

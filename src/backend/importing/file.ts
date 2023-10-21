@@ -10,10 +10,10 @@ export const downloadFolder = "./.download/"
 export async function download(
     url: string,
     toFilename: string,
-    useExistingFile: boolean)
+    useCachedFile: boolean)
     : Promise<void>
 {
-    if (useExistingFile &&
+    if (useCachedFile &&
         fs.existsSync(toFilename))
         return
 
@@ -49,10 +49,10 @@ export async function download(
 export async function extractGzip(
     gzipFilename: string,
     extractedFilename: string,
-    useExistingFile: boolean)
+    useCachedFile: boolean)
     : Promise<void>
 {
-    if (useExistingFile &&
+    if (useCachedFile &&
         fs.existsSync(extractedFilename))
         return
 

@@ -1,6 +1,7 @@
+import * as Db from "../db/index.js"
 import * as File from "./file.js"
 import * as Xml from "./xml.js"
-import * as KanjidicRaw from "../../common/kanjidic_raw.js"
+import * as KanjidicRaw from "./kanjidic_raw.js"
 import * as DbKanji from "../../common/db_kanji.js"
 import * as KanjiStructCat from "../data/kanji_structural_category.js"
 
@@ -10,19 +11,21 @@ export const gzipFilename = File.downloadFolder + "kanjidic2.gz"
 export const xmlFilename = File.downloadFolder + "kanjidic2.xml"
 
 
-export async function downloadAndParse()
+export async function downloadAndImport(
+    db: Db.Db,
+    useCachedFiles: boolean)
 {
     await File.download(
         url,
         gzipFilename,
-        true)
+        useCachedFiles)
     
     await File.extractGzip(
         gzipFilename,
         xmlFilename,
-        true)
+        useCachedFiles)
 
-    const entryIterator = Xml.iterateEntriesBuffered<KanjidicRaw.Entry>(
+    const entryIterator = Xml.iterateEntriesStreamed<KanjidicRaw.Entry>(
         xmlFilename,
         "kanjidic2",
         "character")
@@ -34,7 +37,7 @@ export async function downloadAndParse()
         console.log()
         console.log()
 
-        const dbEntry = importEntry(entry)
+        const dbEntry = normalizeEntry(entry)
         console.dir(dbEntry, { depth: null })
         console.log()
         console.log()
@@ -43,7 +46,7 @@ export async function downloadAndParse()
 }
 
 
-function importEntry(
+function normalizeEntry(
     raw: KanjidicRaw.Entry)
     : DbKanji.Entry
 {

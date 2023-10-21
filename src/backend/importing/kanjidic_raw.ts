@@ -1,4 +1,12 @@
-import * as Xml from "../backend/dataentry/xml.js"
+import * as Xml from "./xml.js"
+
+
+export interface Entry
+{
+    literal: [string]
+    misc: [EntryMisc]
+    reading_meaning?: [EntryReadingMeaning]
+}
 
 
 export type ReadingTypeTag =
@@ -14,14 +22,6 @@ export type MeaningLanguageTag =
     | "es"
     | "fr"
     | "pt"
-
-
-export interface Entry
-{
-    literal: [string]
-    misc: [EntryMisc]
-    reading_meaning?: [EntryReadingMeaning]
-}
 
 
 export interface EntryMisc
