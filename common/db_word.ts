@@ -1,4 +1,4 @@
-import * as JmdictRaw from "../backend/importing/jmdict_raw.js"
+import * as JmdictRaw from "../backend/src/importing/jmdict_raw.ts"
 
 
 export interface Entry

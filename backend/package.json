@@ -1,21 +1,20 @@
 {
-  "name": "jisho-open",
+  "name": "jisho-open-backend",
   "version": "0.1.0",
   "description": "",
   "author": "hlorenzi",
-  "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
   "license": "",
   "dependencies": {
     "gunzip-file": "^0.1.1",
-    "mongodb": "^5.7.0",
+    "mongodb": "^6.2.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.1.6",
-    "xml2js": "^0.6.2"
+    "typescript": "^5.2.2",
+    "xml2js": "^0.6.2",
+    "common": "file://../common/"
   }
 }

@@ -1,8 +1,8 @@
-import * as Db from "../db/index.js"
-import * as File from "./file.js"
-import * as Xml from "./xml.js"
-import * as JmdictRaw from "./jmdict_raw.js"
-import * as DbWord from "../../common/db_word.js"
+import * as Db from "../db/index.ts"
+import * as File from "./file.ts"
+import * as Xml from "./xml.ts"
+import * as JmdictRaw from "./jmdict_raw.ts"
+import * as DbWord from "common/db_word.ts"
 
 
 export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"

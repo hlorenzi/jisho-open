@@ -1,5 +1,5 @@
-import * as MongoDb from "./index.js"
-import * as DbWord from "../../../common/db_word.js"
+import * as MongoDb from "./index.ts"
+import * as DbWord from "common/db_word.ts"
 
 
 export async function importWords(

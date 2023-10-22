@@ -1,2 +1,3 @@
-/node_modules/
-/.download/
+node_modules/
+/backend/.download/
+/frontend/.build/

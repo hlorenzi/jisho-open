@@ -1,9 +1,9 @@
-import * as Db from "../db/index.js"
-import * as File from "./file.js"
-import * as Xml from "./xml.js"
-import * as KanjidicRaw from "./kanjidic_raw.js"
-import * as DbKanji from "../../common/db_kanji.js"
-import * as KanjiStructCat from "../data/kanji_structural_category.js"
+import * as Db from "../db/index.ts"
+import * as File from "./file.ts"
+import * as Xml from "./xml.ts"
+import * as KanjidicRaw from "./kanjidic_raw.ts"
+import * as DbKanji from "common/db_kanji.ts"
+import * as KanjiStructCat from "../data/kanji_structural_category.ts"
 
 
 export const url = "http://www.edrdg.org/kanjidic/kanjidic2.xml.gz"

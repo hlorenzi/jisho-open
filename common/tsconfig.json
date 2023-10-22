@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "target": "es2017",
+        "allowImportingTsExtensions": true,
+        "noEmit": true,
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+    }
+}

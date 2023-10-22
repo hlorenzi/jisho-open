@@ -1,6 +1,6 @@
-import * as Db from "../db/index.js"
-import * as Kanjidic from "./kanjidic.js"
-import * as Jmdict from "./jmdict.js"
+import * as Db from "../db/index.ts"
+import * as Kanjidic from "./kanjidic.ts"
+import * as Jmdict from "./jmdict.ts"
 
 
 export async function buildDatabase(

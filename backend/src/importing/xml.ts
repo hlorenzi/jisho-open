@@ -1,4 +1,4 @@
-import * as StreamedReader from "./streamed_reader.js"
+import * as StreamedReader from "./streamed_reader.ts"
 // @ts-expect-error
 import xml2js from "xml2js"
 

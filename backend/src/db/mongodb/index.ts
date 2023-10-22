@@ -1,7 +1,7 @@
 import * as MongoDb from "mongodb"
-import * as Db from "../index.js"
-import * as DbWord from "../../../common/db_word.js"
-import * as MongoDbImporting from "./importing.js"
+import * as Db from "../index.ts"
+import * as DbWord from "common/db_word.ts"
+import * as MongoDbImporting from "./importing.ts"
 
 
 export const dbUrl = "mongodb://localhost:27017"

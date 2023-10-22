@@ -1,4 +1,4 @@
-import * as DbKanji from "../../common/db_kanji.js"
+import * as DbKanji from "common/db_kanji.js"
 
 
 export function get(kanji: string): DbKanji.StructuralCategory | null

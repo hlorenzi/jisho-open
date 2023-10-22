@@ -1,4 +1,4 @@
-import * as Xml from "./xml.js"
+import * as Xml from "./xml.ts"
 
 
 export interface Entry

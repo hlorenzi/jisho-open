@@ -1,4 +1,4 @@
-import * as DbWord from "../../common/db_word.js"
+import * as DbWord from "common/db_word.ts"
 
 
 export interface Db
