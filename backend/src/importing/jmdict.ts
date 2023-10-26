@@ -2,8 +2,8 @@ import * as Db from "../db/index.ts"
 import * as File from "./file.ts"
 import * as Xml from "./xml.ts"
 import * as JmdictRaw from "./jmdict_raw.ts"
-import * as DbWord from "common/db_word.ts"
-
+import * as Api from "common/api/index.ts"
+import * as Gatherer from "./gatherer.ts"
 
 export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"
 export const gzipFilename = File.downloadFolder + "JMdict_e.gz"
@@ -28,42 +28,43 @@ export async function downloadAndImport(
         xmlFilename,
         "JMdict",
         "entry")
+
+    const gatherer = new Gatherer.Gatherer(
+        25,
+        (items: Api.Word.Entry[]) => db.importWords(items))
     
     for await (const raw of entryIterator)
     {
-        if ((raw as any).k_ele)
-            console.dir(raw, { depth: null })
+        //if ((raw as any).k_ele)
+        //    console.dir(raw, { depth: null })
 
         try
         {
             const entry = normalizeEntry(raw)
             
-            if ((raw as any).k_ele)
-                console.dir(entry, { depth: null })
+            //if ((raw as any).k_ele)
+            //    console.dir(entry, { depth: null })
 
-            await db.importWords([entry])
+            await gatherer.push(entry)
         }
         catch (e: any)
         {
             throw `error normalizing word entry ${ raw.ent_seq[0] }: ${ e }`
         }
-
-        console.log()
-        console.log()
-        console.log()
     }
+
+    await gatherer.finish()
 }
 
 
 function normalizeEntry(
     raw: JmdictRaw.Entry)
-    : DbWord.Entry
+    : Api.Word.Entry
 {
-    const entry: DbWord.Entry = {
-        _id: `w${ raw.ent_seq[0] }`,
+    const entry: Api.Word.Entry = {
+        id: `w${ raw.ent_seq[0] }`,
         headings: [],
         defs: [],
-        pos: [],
     }
 
     // Import headings
@@ -72,22 +73,19 @@ function normalizeEntry(
     // Import senses/definitions
     entry.defs = normalizeDefinitions(raw)
 
-    // Gather part-of-speech tags at word-level
-    entry.pos = [...new Set(entry.defs.map(d => d.pos).flat())]
-
     return entry
 }
 
 
 function normalizeHeadings(
     raw: JmdictRaw.Entry)
-    : DbWord.Heading[]
+    : Api.Word.Heading[]
 {
     const usuallyOnlyKana =
         raw.sense[0].misc !== undefined &&
         raw.sense[0].misc.some(miscTag => miscTag == "uk")
 
-    const headings: DbWord.Heading[] = []
+    const headings: Api.Word.Heading[] = []
 
     const seenReadings = new Set<string>()
 
@@ -113,14 +111,14 @@ function normalizeHeadings(
 
             const reb = r_ele.reb[0]
             
-            const k_eleTags: DbWord.HeadingTag[] = []
+            const k_eleTags: Api.Word.HeadingTag[] = []
             if (k_ele.ke_pri !== undefined)
                 k_eleTags.push(...k_ele.ke_pri)
                 
             if (k_ele.ke_inf !== undefined)
                 k_eleTags.push(...k_ele.ke_inf)
 
-            const r_eleTags: DbWord.HeadingTag[] = []
+            const r_eleTags: Api.Word.HeadingTag[] = []
             if (r_ele.re_pri !== undefined)
                 r_eleTags.push(...r_ele.re_pri)
                 
@@ -149,7 +147,7 @@ function normalizeHeadings(
         if (seenReadings.has(reb) && !usuallyOnlyKana)
             continue
         
-        const tags: DbWord.HeadingTag[] = []
+        const tags: Api.Word.HeadingTag[] = []
         if (usuallyOnlyKana)
             tags.push("uk")
 
@@ -172,9 +170,9 @@ function normalizeHeadings(
 
 function normalizeDefinitions(
     raw: JmdictRaw.Entry)
-    : DbWord.Definition[]
+    : Api.Word.Definition[]
 {
-    const defs: DbWord.Definition[] = []
+    const defs: Api.Word.Definition[] = []
 
     for (const rawSense of raw.sense)
     {

@@ -1,5 +1,5 @@
-import * as Api from "common/api.ts"
-export * from "common/api.ts"
+import * as Api from "common/api/index.ts"
+export * from "common/api/index.ts"
 
 
 function post(

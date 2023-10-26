@@ -1,9 +1,12 @@
 import * as Express from "express"
-import * as DbWord from "common/db_word.ts"
-import * as Api from "common/api.ts"
+import * as Db from "../db/index.ts"
+import * as Api from "common/api/index.ts"
+import * as Kana from "common/kana.ts"
 
 
-export function init(app: Express.Application)
+export function init(
+    app: Express.Application,
+    db: Db.Db)
 {
     app.post("/api/v1/search", async (req, res) => {
 
@@ -15,7 +18,7 @@ export function init(app: Express.Application)
             return
         }
         
-        const entries = await search(body)
+        const entries = await search(db, body)
 
         res.send(entries)
     })
@@ -23,8 +26,15 @@ export function init(app: Express.Application)
 
 
 async function search(
+    db: Db.Db,
     req: Api.SearchRequest)
     : Promise<Api.SearchResponse>
 {
-    return { entries: [] }
+    const queryWithoutTags = req.query
+    const queryAllHiragana = Kana.toHiragana(req.query)
+    console.log(req.query, queryAllHiragana)
+
+    const entries = await db.searchByHeading([queryWithoutTags, queryAllHiragana])
+    
+    return { entries }
 }

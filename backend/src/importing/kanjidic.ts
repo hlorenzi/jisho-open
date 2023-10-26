@@ -2,7 +2,7 @@ import * as Db from "../db/index.ts"
 import * as File from "./file.ts"
 import * as Xml from "./xml.ts"
 import * as KanjidicRaw from "./kanjidic_raw.ts"
-import * as DbKanji from "common/db_kanji.ts"
+import * as Api from "common/api/index.ts"
 import * as KanjiStructCat from "../data/kanji_structural_category.ts"
 
 
@@ -48,10 +48,10 @@ export async function downloadAndImport(
 
 function normalizeEntry(
     raw: KanjidicRaw.Entry)
-    : DbKanji.Entry
+    : Api.Kanji.Entry
 {
-    const entry: DbKanji.Entry = {
-        _id: raw.literal[0],
+    const entry: Api.Kanji.Entry = {
+        id: raw.literal[0],
         tags: [],
 
         strokeCount: parseInt(raw.misc[0].stroke_count[0]),
@@ -147,7 +147,7 @@ function normalizeEntry(
 
 
     // Import structural category
-    const structCat = KanjiStructCat.get(entry._id)
+    const structCat = KanjiStructCat.get(entry.id)
     if (structCat !== null)
         entry.structuralCategory = structCat
 

@@ -1,12 +1,11 @@
-import * as JmdictRaw from "../backend/src/importing/jmdict_raw.ts"
+import * as JmdictRaw from "../../backend/src/importing/jmdict_raw.ts"
 
 
 export interface Entry
 {
-    _id: string
+    id: string
     headings: Heading[]
     defs: Definition[]
-    pos: PartOfSpeechTag[]
 }
 
 

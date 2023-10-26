@@ -5,7 +5,7 @@
   "author": "hlorenzi",
   "type": "module",
   "scripts": {
-    "start": "ts-node index.ts",
+    "db-build": "ts-node index.ts",
     "serve": "ts-node src/server/index.ts",
     "serve-dev": "nodemon src/server/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"

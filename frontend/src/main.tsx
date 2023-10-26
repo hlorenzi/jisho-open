@@ -23,23 +23,62 @@ function App()
 
 export function PageHelloWorld()
 {
-    const search = async () => {
-        const res = await Api.search({
-            query: "test",
-        })
-        console.log(res)
-    }
+    const [searchbox, setSearchbox] = Solid.createSignal("はし")
 
-    return <h1>
-        Hello, world!
-        <br/>
+    const [searched, setSearched] = Solid.createSignal("")
+
+    const [searchResults, setSearchResults] = Solid.createResource(
+        searched,
+        async (searched) => {
+            const res = await Api.search({
+                query: searchbox(),
+            })
+            console.log("search", searched, res)
+            return res.entries
+        })
+
+    const onSearch = async () => {
+        setSearched(searchbox())
+    }
+    
+    return <>
+        <h2>Lorenzi's Jisho</h2>
         <Framework.Link href="/test">
             Test Page
         </Framework.Link>
         <br/>
         <br/>
-        <button onClick={ search }>
+        <input
+            type="text"
+            value={ searchbox() }
+            onInput={ ev => setSearchbox(ev.target.value) }
+            onKeyDown={ ev => { if (ev.key === "Enter") onSearch() }}/>
+        <button onClick={ onSearch }>
             Search
         </button>
-    </h1>
+        <br/>
+        <br/>
+        <Solid.For each={ searchResults.latest }>{ (result) =>
+            <article>
+                <strong>
+                    <Solid.For each={ result.headings }>{ (heading) =>
+                        <>
+                        <ruby>
+                            { heading.base }
+                            <rt>{ heading.reading }</rt>
+                        </ruby>
+                        { " - " }
+                        </>
+                    }
+                    </Solid.For>
+                </strong>
+                <Solid.For each={ result.defs }>{ (def) =>
+                    <div> - { def.gloss.join("; ") }</div>
+                }
+                </Solid.For>
+                <br/>
+            </article>
+        }
+        </Solid.For>
+    </>
 }

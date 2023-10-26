@@ -1,6 +1,6 @@
 export interface Entry
 {
-    _id: string
+    id: string
     tags: Tag[]
 
     jouyou?: number
