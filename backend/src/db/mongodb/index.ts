@@ -29,7 +29,7 @@ export interface DbWordEntry extends Omit<Api.Word.Entry, "id">
 
 export async function connect(): Promise<Db.Db>
 {
-    const client = await MongoDb.MongoClient.connect(dbUrl)
+    const client = await MongoDb.MongoClient.connect(dbUrl, { ignoreUndefined: true })
     const db = client.db(dbDatabase)
     const state: State = {
         db,
@@ -41,4 +41,22 @@ export async function connect(): Promise<Db.Db>
 
         searchByHeading: (queries) => MongoDbSearch.searchByHeading(state, queries),
     }
+}
+
+
+export function translateDbWordToApiWord(
+    dbWord: DbWordEntry)
+    : Api.Word.Entry
+{
+    // Add and remove fields via destructuring assignment
+    const {
+        _id,
+        lookUp,
+        ...apiWord
+    } = {
+        ...dbWord,
+        id: dbWord._id,
+    }
+
+    return apiWord
 }

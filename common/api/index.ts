@@ -5,13 +5,17 @@ export * as Kanji from "./kanji.ts"
 export * as Word from "./word.ts"
 
 
-export interface SearchRequest
+export namespace Search
 {
-    query: string
-}
+    export const url = "/api/v1/search"
 
-
-export interface SearchResponse
-{
-    entries: Word.Entry[]
+    export interface Request
+    {
+        query: string
+    }
+    
+    export interface Response
+    {
+        entries: Word.Entry[]
+    }
 }

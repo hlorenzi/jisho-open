@@ -12,6 +12,7 @@ const DivPage = Styled.styled("div")`
     width: 100%;
 `
 
+
 export function Router(props: {
     routes: Framework.Route[],
 })
@@ -84,7 +85,7 @@ export function Router(props: {
         
         <DivPage inert={ pending() ? true : undefined }>
             <Solid.Suspense fallback={ null }>
-                { page()?.() }
+                { page()?.({ routeMatch: routeMatch()! }) }
             </Solid.Suspense>
         </DivPage>
     </>

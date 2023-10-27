@@ -24,8 +24,8 @@ function post(
 
 
 export async function search(
-    req: Api.SearchRequest)
-    : Promise<Api.SearchResponse>
+    req: Api.Search.Request)
+    : Promise<Api.Search.Response>
 {
-    return post("api/v1/search", req)
+    return post(Api.Search.url, req)
 }

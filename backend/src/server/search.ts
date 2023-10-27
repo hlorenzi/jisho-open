@@ -8,9 +8,9 @@ export function init(
     app: Express.Application,
     db: Db.Db)
 {
-    app.post("/api/v1/search", async (req, res) => {
+    app.post(Api.Search.url, async (req, res) => {
 
-        const body = req.body as Api.SearchRequest
+        const body = req.body as Api.Search.Request
 
         if (typeof body.query !== "string")
         {
@@ -27,8 +27,8 @@ export function init(
 
 async function search(
     db: Db.Db,
-    req: Api.SearchRequest)
-    : Promise<Api.SearchResponse>
+    req: Api.Search.Request)
+    : Promise<Api.Search.Response>
 {
     const queryWithoutTags = req.query
     const queryAllHiragana = Kana.toHiragana(req.query)

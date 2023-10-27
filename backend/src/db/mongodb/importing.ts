@@ -7,38 +7,50 @@ export async function importWords(
     words: Api.Word.Entry[])
     : Promise<void>
 {
-    const dbEntries = words.map(w => ({
-        _id: w.id,
-        headings: w.headings,
-        defs: w.defs,
-        lookUp: {
-            headings: [...new Set(
-                w.headings
-                .flatMap(h => [h.base, h.reading])
-                .filter(h => h !== undefined) as string[]
-            )],
-            pos: [...new Set(
-                w.defs
-                .flatMap(d => d.pos)
-            )],
-        }
-    } satisfies MongoDb.DbWordEntry))
+    const dbEntries = words.map(translateApiWordToDbWord)
 
-    if (words.length === 0)
+    if (dbEntries.length === 0)
         return
 
     await state.collWords.deleteMany(
         { _id: { $in: dbEntries.map(e => e._id) }})
 
-    const res = await state.collWords.insertMany(
-        dbEntries,
-        {
-            ignoreUndefined: true,
-        })
+    const res = await state.collWords.insertMany(dbEntries)
 
-    if (res.insertedCount !== words.length)
+    if (res.insertedCount !== dbEntries.length)
         throw `MongoDb.importWords failed`
 
     //if (dbLuSenseEntryBuffer.length != 0)
     //    await db.collection("words_luSense").insertMany(dbLuSenseEntryBuffer)
+}
+
+
+function translateApiWordToDbWord(
+    apiWord: Api.Word.Entry)
+    : MongoDb.DbWordEntry
+{
+    // Prepare look-up tables for DB indexing
+    const lookUp: MongoDb.DbWordEntry["lookUp"] = {
+        headings: [...new Set(
+            apiWord.headings
+            .flatMap(h => [h.base, h.reading])
+            .filter(h => h !== undefined) as string[]
+        )],
+        pos: [...new Set(
+            apiWord.defs
+            .flatMap(d => d.pos)
+        )],
+    }
+
+    // Add and remove fields via destructuring assignment
+    const {
+        id,
+        ...dbWord
+    } = {
+        ...apiWord,
+        _id: apiWord.id,
+        lookUp,
+    }
+
+    return dbWord
 }

@@ -4,7 +4,14 @@ import * as Solid from "solid-js"
 export interface Route
 {
     pattern: string | string[]
-    load: () => Promise<() => Solid.JSX.Element>
+    noReload?: boolean
+    load: () => Promise<(props: RouteProps) => Solid.JSX.Element>
+}
+
+
+export interface RouteProps
+{
+    routeMatch: RouteMatch
 }
 
 
@@ -84,7 +91,7 @@ export function matchPattern(
     const patternFolders = pattern.split("/")
     const pathFolders = path.split("/")
 
-    if (patternFolders.length != pathFolders.length)
+    if (patternFolders.length !== pathFolders.length)
         return null
 
     const matches: KeyValueObject = {}
@@ -95,7 +102,7 @@ export function matchPattern(
             const argName = patternFolders[i].slice(1)
             matches[argName] = decodeURIComponent(pathFolders[i])
         }
-        else if (patternFolders[i] != pathFolders[i])
+        else if (patternFolders[i] !== pathFolders[i])
             return null
     }
 

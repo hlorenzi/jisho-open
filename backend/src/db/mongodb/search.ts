@@ -17,8 +17,5 @@ export async function searchByHeading(
         .find({ [`${fieldLookUp}.${fieldHeadings}`]: { $in: queries } })
         .toArray()
 
-    return results.map(r => ({
-        ...r,
-        id: r._id,
-    }))
+    return results.map(MongoDb.translateDbWordToApiWord)
 }
