@@ -1,5 +1,6 @@
 import * as MongoDb from "./index.ts"
 import * as Api from "common/api/index.ts"
+import * as Jmdict from "../../importing/jmdict.ts"
 
 
 export async function importWords(
@@ -31,11 +32,7 @@ function translateApiWordToDbWord(
 {
     // Prepare look-up tables for DB indexing
     const lookUp: MongoDb.DbWordEntry["lookUp"] = {
-        headings: [...new Set(
-            apiWord.headings
-            .flatMap(h => [h.base, h.reading])
-            .filter(h => h !== undefined) as string[]
-        )],
+        headings: Jmdict.gatherLookUpHeadings(apiWord),
         pos: [...new Set(
             apiWord.defs
             .flatMap(d => d.pos)

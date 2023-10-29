@@ -23,7 +23,7 @@ export class Gatherer<T, FnReturn>
         {
             const flushItems = this.items
             this.items = []
-            return this.flushFn(this.items)
+            return this.flushFn(flushItems)
         }
     }
 
@@ -32,6 +32,6 @@ export class Gatherer<T, FnReturn>
     {
         const flushItems = this.items
         this.items = []
-        return this.flushFn(this.items)
+        return this.flushFn(flushItems)
     }
 }

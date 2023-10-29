@@ -12,30 +12,33 @@ export interface Entry
 
 export type KanjiElementPriTag =
     | "ichi1"
-    | "news1"
-    | "news2"
-    | `nf${string}`
-    | "spec1"
-
-
-export type KanjiElementInfoTag =
-    | "rK"
-    | "iK"
-    | "sK"
-    | "ateji"
-
-
-export type ReadingElementPriTag =
-    | "ichi1"
+    | "ichi2"
     | "news1"
     | "news2"
     | `nf${string}`
     | "spec1"
     | "spec2"
+    | "gai1"
+    | "gai2"
+
+
+export type KanjiElementInfoTag =
+    | "ateji"
+    | "iK"
+    | "ik"
+    | "oK"
+    | "rK"
+    | "sK"
+
+
+export type ReadingElementPriTag = KanjiElementPriTag
 
 
 export type ReadingElementInfoTag =
-    | ""
+    | "gikun"
+    | "ik"
+    | "ok"
+    | "sk"
 
 
 export type PartOfSpeechTag =

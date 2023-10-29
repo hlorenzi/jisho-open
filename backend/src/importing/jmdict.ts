@@ -2,8 +2,10 @@ import * as Db from "../db/index.ts"
 import * as File from "./file.ts"
 import * as Xml from "./xml.ts"
 import * as JmdictRaw from "./jmdict_raw.ts"
-import * as Api from "common/api/index.ts"
 import * as Gatherer from "./gatherer.ts"
+import * as Api from "common/api/index.ts"
+import * as Kana from "common/kana.ts"
+import * as JlptWords from "../data/jlpt_words.ts"
 
 export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"
 export const gzipFilename = File.downloadFolder + "JMdict_e.gz"
@@ -41,7 +43,7 @@ export async function downloadAndImport(
         try
         {
             const entry = normalizeEntry(raw)
-            
+
             //if ((raw as any).k_ele)
             //    console.dir(entry, { depth: null })
 
@@ -54,6 +56,8 @@ export async function downloadAndImport(
     }
 
     await gatherer.finish()
+
+    JlptWords.clearCache()
 }
 
 
@@ -65,13 +69,19 @@ function normalizeEntry(
         id: `w${ raw.ent_seq[0] }`,
         headings: [],
         defs: [],
+        score: 0,
     }
 
-    // Import headings
+    // Import headings.
     entry.headings = normalizeHeadings(raw)
 
-    // Import senses/definitions
+    // Import senses/definitions.
     entry.defs = normalizeDefinitions(raw)
+
+    // Calculate the whole entry commonness score.
+    entry.score = entry.headings.reduce(
+        (score, heading) => Math.max(score, heading.score ?? 0),
+        -Infinity)
 
     return entry
 }
@@ -94,77 +104,200 @@ function normalizeHeadings(
     // respecting the restrictive or search-only tags.
     for (const k_ele of raw.k_ele ?? [])
     {
-        const keb = k_ele.keb[0]
-
         for (const r_ele of raw.r_ele)
         {
+            const keb = k_ele.keb[0]
+            const reb = r_ele.reb[0]
+                
             if (r_ele.re_nokanji !== undefined)
                 continue
-
+        
             if (r_ele.re_restr !== undefined &&
                 !r_ele.re_restr.find(restr => restr == keb))
                 continue
-
-            if (k_ele.ke_inf !== undefined &&
-                k_ele.ke_inf.some(t => t === "sK"))
-                continue
-
-            const reb = r_ele.reb[0]
             
-            const k_eleTags: Api.Word.HeadingTag[] = []
-            if (k_ele.ke_pri !== undefined)
-                k_eleTags.push(...k_ele.ke_pri)
-                
-            if (k_ele.ke_inf !== undefined)
-                k_eleTags.push(...k_ele.ke_inf)
-
-            const r_eleTags: Api.Word.HeadingTag[] = []
-            if (r_ele.re_pri !== undefined)
-                r_eleTags.push(...r_ele.re_pri)
-                
-            if (r_ele.re_inf !== undefined)
-                r_eleTags.push(...r_ele.re_inf)
-
-            // TODO: Perhaps only keep the tags
-            // contained in the union of `k_eleTags` and `r_eleTags`
-
             seenReadings.add(reb)
-            headings.push({
-                base: keb,
-                reading: reb,
-                tags: [...new Set([...k_eleTags, ...r_eleTags])],
-            })
+            headings.push(normalizeHeading(r_ele, k_ele))
         }
     }
 
     // Extract remaining reading elements that
     // have no associated kanji element, or if the word
     // is usually written in plain kana.
+    const kanaOnlyHeadings: Api.Word.Heading[] = []
+
     for (const r_ele of raw.r_ele)
     {
         const reb = r_ele.reb[0]
 
         if (seenReadings.has(reb) && !usuallyOnlyKana)
             continue
-        
-        const tags: Api.Word.HeadingTag[] = []
+
+        const heading = normalizeHeading(r_ele, undefined)
+
         if (usuallyOnlyKana)
-            tags.push("uk")
-
-        if (r_ele.re_pri !== undefined)
-            tags.push(...r_ele.re_pri)
-            
-        if (r_ele.re_inf !== undefined)
-            tags.push(...r_ele.re_inf)
-
-        headings.push({
-            base: reb,
-            reading: undefined,
-            tags: [...new Set(tags)],
-        })
+            kanaOnlyHeadings.push(heading)
+        else
+            headings.push(heading)
     }
 
-    return headings
+    return [...kanaOnlyHeadings, ...headings]
+}
+
+
+function normalizeHeading(
+    r_ele: JmdictRaw.EntryREle,
+    k_ele?: JmdictRaw.EntryKEle)
+    : Api.Word.Heading
+{
+    const keb = k_ele?.keb[0]
+    const reb = r_ele.reb[0]
+
+    const heading: Api.Word.Heading = {
+        base: keb ?? reb,
+    }
+
+    if (keb !== undefined)
+        heading.reading = reb
+
+    if (k_ele?.ke_inf?.some(tag => tag === "ateji"))
+        heading.ateji = true
+
+    if (k_ele?.ke_inf?.some(tag => tag === "iK"))
+        heading.irregularKanji = true
+
+    if (k_ele?.ke_inf?.some(tag => tag === "ik"))
+        heading.irregularKana = true
+
+    if (k_ele?.ke_inf?.some(tag => tag === "rK"))
+        heading.rareKanji = true
+
+    if (k_ele?.ke_inf?.some(tag => tag === "oK"))
+        heading.outdatedKanji = true
+
+    if (k_ele?.ke_inf?.some(tag => tag === "sK"))
+        heading.searchOnlyKanji = true
+
+
+    if (r_ele.re_inf?.some(tag => tag === "gikun"))
+        heading.gikunOrJukujikun = true
+
+    if (r_ele.re_inf?.some(tag => tag === "ik"))
+        heading.irregularKana = true
+
+    if (r_ele.re_inf?.some(tag => tag === "ok"))
+        heading.outdatedKana = true
+
+    if (r_ele.re_inf?.some(tag => tag === "sk"))
+        heading.searchOnlyKana = true
+
+
+    const rankFields: { tagPrefix: string, field: Api.Word.HeadingRankField }[] = [
+        { tagPrefix: "ichi", field: "rankIchi" },
+        { tagPrefix: "news", field: "rankNews" },
+        { tagPrefix: "nf", field: "rankNf" },
+        { tagPrefix: "spec", field: "rankSpec" },
+        { tagPrefix: "gai", field: "rankGai" },
+    ]
+
+    const kRanks: Pick<Api.Word.Heading, Api.Word.HeadingRankField> = {}
+    
+    for (const rankTag of k_ele?.ke_pri ?? [])
+    {
+        for (const rankField of rankFields)
+        {
+            if (rankTag.startsWith(rankField.tagPrefix))
+            {
+                const rank = parseInt(rankTag.substring(rankField.tagPrefix.length))
+                kRanks[rankField.field] = rank
+            }
+        }
+    }
+
+    const rRanks: Pick<Api.Word.Heading, Api.Word.HeadingRankField> = {}
+    
+    for (const rankTag of r_ele?.re_pri ?? [])
+    {
+        for (const rankField of rankFields)
+        {
+            if (rankTag.startsWith(rankField.tagPrefix))
+            {
+                const rank = parseInt(rankTag.substring(rankField.tagPrefix.length))
+                rRanks[rankField.field] = rank
+            }
+        }
+    }
+
+    for (const rankField of rankFields)
+    {
+        const kRank = kRanks[rankField.field]
+        const rRank = rRanks[rankField.field]
+        
+        if (kRank !== undefined &&
+            rRank !== undefined)
+        {
+            heading[rankField.field] = Math.max(kRank, rRank)
+        }
+        else if (kRank === undefined &&
+            k_ele === undefined &&
+            rRank !== undefined)
+        {
+            heading[rankField.field] = rRank
+        }
+    }
+
+    const jlpt = JlptWords.get(heading.base, heading.reading)
+    if (jlpt !== undefined)
+        heading.jlpt = jlpt
+
+    const score = scoreHeading(heading)
+    if (score !== 0)
+        heading.score = score
+
+    return heading
+}
+
+
+function scoreHeading(
+    heading: Api.Word.Heading)
+    : number
+{
+    let score = 0
+
+    if (heading.jlpt !== undefined)
+        score += Math.max(0, 6000 + ((heading.jlpt - 1) * 1000))
+
+    if (heading.rankIchi !== undefined)
+        score += Math.max(0, 500 - ((heading.rankIchi - 1) * 250))
+
+    if (heading.rankNews !== undefined)
+        score += Math.max(0, 500 - ((heading.rankNews - 1) * 250))
+
+    if (heading.rankNf !== undefined)
+        score += Math.max(0, 100 - ((heading.rankNf - 1) * 10))
+
+    if (heading.rankSpec !== undefined)
+        score += Math.max(0, 500 - ((heading.rankSpec - 1) * 250))
+
+    if (heading.rankGai !== undefined)
+        score += Math.max(0, 10 - ((heading.rankGai - 1) * 5))
+
+    if (heading.irregularKanji)
+        score -= 20000
+
+    if (heading.irregularKana)
+        score -= 20000
+
+    if (heading.irregularOkurigana)
+        score -= 20000
+
+    if (heading.outdatedKanji)
+        score -= 30000
+
+    if (heading.outdatedKana)
+        score -= 30000
+
+    return score
 }
 
 
@@ -188,4 +321,28 @@ function normalizeDefinitions(
     }
 
     return defs
+}
+
+
+export function gatherLookUpHeadings(
+    apiWord: Api.Word.Entry)
+    : string[]
+{
+    const lookUpHeadings = new Set<string>()
+    
+    for (const heading of apiWord.headings)
+    {
+        const base = Kana.normalizeWidthForms(heading.base)
+        lookUpHeadings.add(base)
+        lookUpHeadings.add(Kana.toHiragana(base))
+
+        if (heading.reading)
+        {
+            const reading = Kana.normalizeWidthForms(heading.reading)
+            lookUpHeadings.add(reading)
+            lookUpHeadings.add(Kana.toHiragana(reading))
+        }
+    }
+    
+    return [...lookUpHeadings]
 }

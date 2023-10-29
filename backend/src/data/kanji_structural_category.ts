@@ -1,7 +1,7 @@
-import * as DbKanji from "common/db_kanji.js"
+import * as Api from "common/api/index.ts"
 
 
-export function get(kanji: string): DbKanji.StructuralCategory | null
+export function get(kanji: string): Api.Kanji.StructuralCategory | null
 {
     const kanjiData = data[kanji]
     if (!kanjiData)
@@ -11,7 +11,7 @@ export function get(kanji: string): DbKanji.StructuralCategory | null
 }
 
 
-const data: Record<string, DbKanji.StructuralCategory> = {
+const data: Record<string, Api.Kanji.StructuralCategory> = {
     "一": {
         "type": "shiji"
     },

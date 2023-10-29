@@ -29,7 +29,7 @@ export interface DbWordEntry extends Omit<Api.Word.Entry, "id">
 
 export async function connect(): Promise<Db.Db>
 {
-    const client = await MongoDb.MongoClient.connect(dbUrl, { ignoreUndefined: true })
+    const client = await MongoDb.MongoClient.connect(dbUrl)
     const db = client.db(dbDatabase)
     const state: State = {
         db,
