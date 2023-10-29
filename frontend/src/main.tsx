@@ -15,17 +15,14 @@ function App()
 {
     return <Framework.Router
         routes={[
-            { pattern: "/",
-                load: async () => PageSearch },
-
-            { pattern: Pages.Search.urlPattern,
+            { patterns: ["/", Pages.Search.urlPattern],
                 noReload: true,
                 load: async () => PageSearch },
 
-            { pattern: "/test",
+            { patterns: ["/test"],
                 load: async () => Framework.PageTest },
 
-            { pattern: "*",
+            { patterns: ["*"],
                 load: async () => () => <h2>Page not found</h2> },
         ]}
     />

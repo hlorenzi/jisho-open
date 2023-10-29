@@ -3,7 +3,7 @@ import * as Styled from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
-const debugFetchDelayMs = 0
+const debugFetchDelayMs = 1000
 
 
 const DivPage = Styled.styled("div")`
@@ -22,71 +22,123 @@ export function Router(props: {
     const [routeMatch, setRouteMatch] =
         Solid.createSignal<Framework.RouteMatch | null>(null)
 
+    const [routeProps, setRouteProps] =
+        Solid.createSignal<Framework.RouteMatch | null>(null)
+
 
     Solid.onMount(() => {
         console.log("Router.onMount")
 
-        async function onNavigation()
+        async function onNavigation(ev: Framework.HistoryEvent)
         {
-            console.log("Router.onNavigation", window.location.pathname)
+            console.log("%cRouter.onNavigation", "color: white; background-color: blue;", window.location.pathname)
 
             const match = Framework.getMatchForPath(
                 props.routes,
                 window.location.pathname,
                 window.location.search)
 
-            await transitionStart(() => {
-                setRouteMatch(match)
-            })
 
-            console.log("Router.onNavigation end")
+            const matchPrev = routeMatch()
+
+            // FIXME: Why is reference-equality for
+            // `match.route === matchPrev.route` not working?
+            const isSameRoute = match?.route.patterns[0] === matchPrev?.route.patterns[0]
+
+            if (isSameRoute && ev.data?.noReload)
+            {
+                console.log("Router.onNavigation without transition")
+                setRouteProps(match)
+            }
+            else
+            {
+                console.log("Router.onNavigation transition start")
+                
+                await transitionStart(() => {
+                    setRouteProps(match)
+                    setRouteMatch(match)
+                })
+
+                console.log("Router.onNavigation transition ended")
+            }
         }
 
         window.addEventListener("popstate", onNavigation)
-        window.addEventListener("lorenzi_pushstate", onNavigation)
-        window.addEventListener("lorenzi_reloadstate", onNavigation)
+        window.addEventListener(Framework.historyPushStateEvent, onNavigation)
+        window.addEventListener(Framework.historyReloadStateEvent, onNavigation)
         
         Solid.onCleanup(() => {
             window.removeEventListener("popstate", onNavigation)
-            window.removeEventListener("lorenzi_pushstate", onNavigation)
-            window.removeEventListener("lorenzi_reloadstate", onNavigation)
+            window.removeEventListener(Framework.historyPushStateEvent, onNavigation)
+            window.removeEventListener(Framework.historyReloadStateEvent, onNavigation)
         })
         
-        onNavigation()
+        onNavigation(new Event(Framework.historyPushStateEvent) as Framework.HistoryEvent)
     })
-
-
-    const [page] = Solid.createResource(
-        routeMatch,
-        async (routeMatch: Framework.RouteMatch) => {
-            console.log("Router.fetchPage", routeMatch.route)
-
-            const pageLoad = 
-                routeMatch?.route.load ??
-                (async () => () => null)
-
-            await Framework.waitMs(debugFetchDelayMs)
-
-            return await pageLoad()
-        })
-
-    
-    Solid.createEffect(() => {
-        page()
-        console.log("Router.pending", pending())
-        console.log("Router.pageState", page.state)
-    })
-
 
     return <>
         <Solid.Show when={ pending() }>
             <Framework.RouterTransition/>
         </Solid.Show>
+
+        <Solid.Suspense>
+            <div inert={ pending() ? true : undefined }>
+                <RouterInner
+                    routeProps={ routeProps }
+                    routeMatch={ routeMatch }
+                />
+            </div>
+        </Solid.Suspense>
+    </>
+}
+
+
+export function RouterInner(props: {
+    routeProps: Solid.Accessor<Framework.RouteMatch | null>,
+    routeMatch: Solid.Accessor<Framework.RouteMatch | null>,
+})
+{
+    const [pageFn] = Solid.createResource(
+        props.routeMatch,
+        async (pageLoad) => {
+            console.log("%cRouter.fetchPage start", "color:orange;", pageLoad)
+
+            const load = 
+                props.routeMatch()?.route.load ??
+                (async () => () => null)
+
+            await Framework.waitMs(debugFetchDelayMs)
+
+            const pageFn = await load()
+            console.log("%cRouter.fetchPage ended", "color:orange;", pageFn)
+
+            // Return it wrapped in a closure to ensure
+            // reference-inequality.
+            return () => pageFn
+        })
+
+
+    const [page, setPage] = Solid.createSignal<Solid.JSX.Element>(null)
+
+    Solid.createComputed((prev) => {
+        const current = pageFn()
+
+        if (prev === current)
+            return
         
-        <DivPage inert={ pending() ? true : undefined }>
-            <Solid.Suspense fallback={ null }>
-                { page()?.({ routeMatch: routeMatch()! }) }
-            </Solid.Suspense>
-        </DivPage>
+        const PageFn = current?.()
+
+        if (PageFn !== undefined)
+        {
+            console.log(`%c${ PageFn.name }`, "color: white; background-color: red;", "rendered", props.routeMatch())
+            setPage(<PageFn routeMatch={ props.routeProps }/>)
+        }
+
+        return current
+    })
+
+    
+    return <>
+        { page() }
     </>
 }

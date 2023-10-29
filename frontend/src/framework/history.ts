@@ -14,12 +14,27 @@
 }*/
 
 
-function dispatchEventOrSetLocation(name: string, href: string, options: any = {})
+export interface HistoryEvent extends Event
+{
+    data?: HistoryData
+}
+
+
+export interface HistoryData
+{
+    noReload?: boolean
+}
+
+
+function dispatchEventOrSetLocation(
+    name: string,
+    href: string, 
+    data: HistoryData = {})
 {
     try
     {
-        const ev: any = new Event(name)
-        ev.lorenziOptions = options
+        const ev = new Event(name) as HistoryEvent
+        ev.data = data
         window.dispatchEvent(ev)
     }
     catch
@@ -30,11 +45,15 @@ function dispatchEventOrSetLocation(name: string, href: string, options: any = {
 }
 
 
+export const historyPushStateEvent = "lorenzi_pushstate"
+export const historyReloadStateEvent = "lorenzi_reloadstate"
+
+
 export function historyPush(href: string)
 {
     //historyUpdateScroll()
     window.history.pushState(null, "", href)
-    dispatchEventOrSetLocation("lorenzi_pushstate", href)
+    dispatchEventOrSetLocation(historyPushStateEvent, href)
 }
 
 
@@ -42,7 +61,7 @@ export function historyPushNoReload(href: string)
 {
     //historyUpdateScroll()
     window.history.pushState(null, "", href)
-    dispatchEventOrSetLocation("lorenzi_pushstate", href, { noReload: true })
+    dispatchEventOrSetLocation(historyPushStateEvent, href, { noReload: true })
 }
 
 
@@ -50,12 +69,12 @@ export function historyReplace(href: string)
 {
     //historyUpdateScroll()
     window.history.replaceState(null, "", href)
-    dispatchEventOrSetLocation("lorenzi_pushstate", href)
+    dispatchEventOrSetLocation(historyPushStateEvent, href)
 }
 
 
 export function historyReload()
 {
     //historyUpdateScroll()
-    dispatchEventOrSetLocation("lorenzi_reloadstate", window.location.pathname)
+    dispatchEventOrSetLocation(historyReloadStateEvent, window.location.pathname)
 }

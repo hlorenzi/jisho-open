@@ -3,15 +3,18 @@ import * as Solid from "solid-js"
 
 export interface Route
 {
-    pattern: string | string[]
+    patterns: string[]
     noReload?: boolean
-    load: () => Promise<(props: RouteProps) => Solid.JSX.Element>
+    load: () => Promise<PageFactory>
 }
+
+
+export type PageFactory = (props: RouteProps) => Solid.JSX.Element
 
 
 export interface RouteProps
 {
-    routeMatch: RouteMatch
+    routeMatch: Solid.Accessor<RouteMatch | null>
 }
 
 
@@ -34,8 +37,7 @@ export function getMatchForPath(
 {
     for (const route of routes)
     {
-        const patterns = Array.isArray(route.pattern) ? route.pattern : [route.pattern]
-        for (const pattern of patterns)
+        for (const pattern of route.patterns)
         {
             const matches = matchPattern(pattern, path)
             if (matches)

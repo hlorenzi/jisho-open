@@ -7,24 +7,31 @@ import { Searchbox } from "../components/Searchbox.tsx"
 
 export function PageSearch(props: Framework.RouteProps)
 {
-    const searchQuery = props.routeMatch.matches[Pages.Search.matchQuery] ?? ""
+    const searchQuery = Solid.createMemo(
+        () => props.routeMatch()?.matches[Pages.Search.matchQuery] ?? "")
 
     const [searchResults] = Solid.createResource(
         searchQuery,
         async (searched) => {
             const res = await Api.search({
-                query: searchQuery,
+                query: searchQuery(),
             })
-            console.log("search", searched, res)
+            console.log("PageSearch Api.search", searched, res)
             return res.entries
         })
     
     return <>
         <h2>Lorenzi's Jisho</h2>
 
+        <Framework.Link href="/test">Test Page</Framework.Link><br/><br/>
+
         <Searchbox
-            initialText={ searchQuery }
+            initialText={ searchQuery() }
         />
+
+        <Solid.Show when={ searchResults.loading }>
+            <Framework.LoadingBar/>
+        </Solid.Show>
     
         <Solid.For each={ searchResults.latest }>{ (result) =>
             <article>

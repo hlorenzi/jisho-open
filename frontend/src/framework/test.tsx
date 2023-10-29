@@ -4,7 +4,6 @@ import * as Framework from "./index.ts"
 
 export function PageTest()
 {
-    console.log(`PageTest`)
     const [count, setCount] = Solid.createSignal(0)
     const [text, setText] = Solid.createSignal("world")
 
