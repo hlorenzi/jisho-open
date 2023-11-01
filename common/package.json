@@ -9,5 +9,7 @@
   },
   "license": "",
   "dependencies": {
+    "@types/assert": "^1.5.8",
+    "assert": "^2.1.0"
   }
 }

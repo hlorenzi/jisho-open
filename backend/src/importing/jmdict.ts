@@ -5,7 +5,9 @@ import * as JmdictRaw from "./jmdict_raw.ts"
 import * as Gatherer from "./gatherer.ts"
 import * as Api from "common/api/index.ts"
 import * as Kana from "common/kana.ts"
+import * as Furigana from "common/furigana.ts"
 import * as JlptWords from "../data/jlpt_words.ts"
+import * as FuriganaHelpers from "../data/furigana_helpers.ts"
 
 export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"
 export const gzipFilename = File.downloadFolder + "JMdict_e.gz"
@@ -35,29 +37,30 @@ export async function downloadAndImport(
         25,
         (items: Api.Word.Entry[]) => db.importWords(items))
     
-    for await (const raw of entryIterator)
+    for await (const rawEntry of entryIterator)
     {
         //if ((raw as any).k_ele)
         //    console.dir(raw, { depth: null })
 
         try
         {
-            const entry = normalizeEntry(raw)
+            const apiEntry = normalizeEntry(rawEntry)
 
             //if ((raw as any).k_ele)
             //    console.dir(entry, { depth: null })
 
-            await gatherer.push(entry)
+            await gatherer.push(apiEntry)
         }
         catch (e: any)
         {
-            throw `error normalizing word entry ${ raw.ent_seq[0] }: ${ e }`
+            throw `error normalizing word entry ${ rawEntry.ent_seq[0] }: ${ e }`
         }
     }
 
     await gatherer.finish()
 
     JlptWords.clearCache()
+    FuriganaHelpers.clearCache()
 }
 
 
@@ -155,10 +158,39 @@ function normalizeHeading(
 
     const heading: Api.Word.Heading = {
         base: keb ?? reb,
+        furigana: "",
     }
 
     if (keb !== undefined)
         heading.reading = reb
+
+    
+    // Check for a whole-word manually-crafted furigana segmentation.
+    const perfectPatch = FuriganaHelpers.getPatch(
+        heading.base,
+        heading.reading ?? "")
+
+    if (perfectPatch !== undefined)
+        heading.furigana = Furigana.encode(perfectPatch)
+    else
+    {
+        // Attempt automatic furigana segmentation.
+        const furiganaMatches = Furigana.match(
+            heading.base,
+            heading.reading ?? "")
+
+        const furiganaRevised = Furigana.revise(
+            furiganaMatches,
+            FuriganaHelpers.getReadings)
+
+        const furiganaPatched =
+            Furigana.patch(
+                furiganaRevised,
+                FuriganaHelpers.getPatch)
+
+        heading.furigana = Furigana.encode(furiganaPatched)
+    }
+
 
     if (k_ele?.ke_inf?.some(tag => tag === "ateji"))
         heading.ateji = true
@@ -192,7 +224,12 @@ function normalizeHeading(
         heading.searchOnlyKana = true
 
 
-    const rankFields: { tagPrefix: string, field: Api.Word.HeadingRankField }[] = [
+    type RankField = {
+        tagPrefix: string
+        field: Api.Word.HeadingRankField
+    }
+
+    const rankFields: RankField[] = [
         { tagPrefix: "ichi", field: "rankIchi" },
         { tagPrefix: "news", field: "rankNews" },
         { tagPrefix: "nf", field: "rankNf" },

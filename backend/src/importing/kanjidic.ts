@@ -29,19 +29,19 @@ export async function downloadAndImport(
         xmlFilename,
         "kanjidic2",
         "character")
-    
-    for await (const entry of entryIterator)
-    {
-        console.dir(entry, { depth: null })
-        console.log()
-        console.log()
-        console.log()
 
-        const dbEntry = normalizeEntry(entry)
-        console.dir(dbEntry, { depth: null })
-        console.log()
-        console.log()
-        console.log()
+    for await (const rawEntry of entryIterator)
+    {
+        try
+        {
+            const apiEntry = normalizeEntry(rawEntry)
+            //console.dir(rawEntry, { depth: null })
+            //console.dir(apiEntry, { depth: null })
+        }
+        catch (e: any)
+        {
+            throw `error normalizing kanji entry ${ rawEntry.literal[0] }: ${ e }`
+        }
     }
 }
 

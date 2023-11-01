@@ -22,12 +22,19 @@ export function get(
             if (line.startsWith("#"))
                 continue
 
-            const entry = line.split(";")
+            const entry = line.trim().split(";")
             const level = parseInt(entry[0])
             const base = entry[1]
             const reading = entry[2]
 
-            cache.set(makeCacheKey(base, reading), level)
+            const key = makeCacheKey(base, reading)
+            
+            const prevLevel = cache.get(key)
+            if (prevLevel !== undefined &&
+                prevLevel > level)
+                continue
+
+            cache.set(key, level)
         }
     }
 

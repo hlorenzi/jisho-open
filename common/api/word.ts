@@ -1,4 +1,5 @@
 import * as JmdictRaw from "../../backend/src/importing/jmdict_raw.ts"
+import * as Furigana from "../furigana.ts"
 
 
 export interface Entry
@@ -21,6 +22,9 @@ export interface Heading
     /// The kana-only reading for the base word, but
     /// `undefined` if the base word is already kana-only.
     reading?: string
+
+    /// The furigana segmentation encoded as a single string
+    furigana: string
 
     ateji?: boolean
     gikunOrJukujikun?: boolean
