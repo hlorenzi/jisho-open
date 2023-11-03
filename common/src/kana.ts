@@ -346,7 +346,7 @@ export function isPureKatakana(str: string)
 }
 
 
-export function vowelOf(kana: string)
+export function vowelOf(kana: string): Vowel | null
 {
     const row = baseKanaMap.get(kana)
     if (!row || !row[3]?.vowel)
@@ -653,13 +653,16 @@ function mapWithRomanizationMode(
 }
 
 
+type Vowel = "a" | "i" | "u" | "e" | "o"
+
+
 type KanaMappingTriplet = [string, string, string]
 
 
 type KanaTableEntry = [
     ...KanaMappingTriplet,
     {
-        vowel?: string,
+        vowel?: Vowel,
         consonant?: string,
         base?: string,
         dakuten?: string,

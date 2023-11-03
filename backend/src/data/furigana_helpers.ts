@@ -97,9 +97,9 @@ export function clearCache()
             console.error("furigana_patches unused: " + term)
     }
 
-    cacheReadings?.clear()
+    cacheReadings = null
     cacheReadingsUsed.clear()
-    cachePatches?.clear()
+    cachePatches = null
     cachePatchesUsed.clear()
 }
 

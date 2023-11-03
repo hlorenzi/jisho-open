@@ -53,7 +53,7 @@ export function clearCache()
             console.error("jlpt_words unused: " + e)
     }
 
-    cache?.clear()
+    cache = null
     cacheUsed.clear()
 }
 

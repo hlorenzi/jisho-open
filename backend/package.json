@@ -5,9 +5,10 @@
   "author": "hlorenzi",
   "type": "module",
   "scripts": {
-    "db-build": "ts-node index.ts",
+    "db-build": "ts-node db_build.ts",
     "serve": "ts-node src/server/index.ts",
     "serve-dev": "nodemon src/server/index.ts",
+    "test-inflections": "ts-node test_inflections.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "",
@@ -19,6 +20,7 @@
     "gunzip-file": "^0.1.1",
     "mongodb": "^6.2.0",
     "nodemon": "^3.0.1",
+    "raw-loader": "^4.0.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
     "xml2js": "^0.6.2"
