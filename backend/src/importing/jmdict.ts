@@ -7,6 +7,7 @@ import * as Api from "common/api/index.ts"
 import * as Kana from "common/kana.ts"
 import * as Furigana from "common/furigana.ts"
 import * as Mazegaki from "common/mazegaki.ts"
+import * as JmdictTags from "common/jmdict_tags.ts"
 import * as JlptWords from "../data/jlpt_words.ts"
 import * as FuriganaHelpers from "../data/furigana_helpers.ts"
 
@@ -117,7 +118,7 @@ function normalizeHeadings(
                 continue
         
             if (r_ele.re_restr &&
-                !r_ele.re_restr.some(restr => restr == keb))
+                !r_ele.re_restr.some(restr => restr === keb))
                 continue
 
             if (r_ele.re_inf &&
@@ -130,10 +131,11 @@ function normalizeHeadings(
     }
 
     // Extract remaining reading elements that
-    // have no associated kanji element, or if the word
-    // is usually written in plain kana.
+    // have no associated kanji element.
+    // If the word is usually written in plain kana,
+    // extract the first reading element unconditionally.
     const kanaOnlyHeadings: Api.Word.Heading[] = []
-    let hadFirstOnlyKana = false
+    let gotFirstOnlyKana = false
 
     for (const r_ele of raw.r_ele)
     {
@@ -144,8 +146,14 @@ function normalizeHeadings(
             if (!usuallyOnlyKana)
                 continue
 
-            if (hadFirstOnlyKana)
+            if (gotFirstOnlyKana)
                 continue
+
+            if (raw.r_ele.some(r => r.reb[0] === Kana.toKatakana(reb)))
+            {
+                gotFirstOnlyKana = true
+                continue
+            }
         }
 
         if (r_ele.re_inf &&
@@ -165,7 +173,7 @@ function normalizeHeadings(
         if (usuallyOnlyKana)
         {
             kanaOnlyHeadings.push(heading)
-            hadFirstOnlyKana = true
+            gotFirstOnlyKana = true
         }
         else
             headings.push(heading)
@@ -425,4 +433,22 @@ export function gatherLookUpHeadings(
     }
     
     return [...lookUpHeadings.values()]
+}
+
+
+export function gatherLookUpTags(
+    apiWord: Api.Word.Entry)
+    : Api.Word.FilterTag[]
+{
+    const partsOfSpeech = apiWord.defs
+        .flatMap(d => d.pos)
+
+    const commonness = apiWord.headings
+        .map(h => JmdictTags.getCommonness(h))
+        .filter(t => t !== null) as Api.Word.CommonnessTag[]
+
+    return JmdictTags.expandFilterTags([...new Set(
+        ...partsOfSpeech,
+        ...commonness,
+    )])
 }

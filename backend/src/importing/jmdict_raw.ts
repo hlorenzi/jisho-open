@@ -1,4 +1,5 @@
 import * as Xml from "./xml.ts"
+import * as Api from "common/api/index.ts"
 
 
 export interface Entry
@@ -41,24 +42,7 @@ export type ReadingElementInfoTag =
     | "sk"
 
 
-export type PartOfSpeechTag =
-    | "adj-na"
-    | "adj-no"
-    | "adv"
-    | "adv-to"
-    | "conj"
-    | "exp"
-    | "prt"
-    | "n"
-    | "suf"
-    | "v1" 
-    | "v5b"
-    | "v5g"
-    | "v5m"
-    | "v5r"
-    | "vi"
-    | "vs"
-    | "vt"
+export type PartOfSpeechTag = Api.Word.PartOfSpeechTag
 
 
 export type MiscTag =

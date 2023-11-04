@@ -46,14 +46,13 @@ function translateApiWordToDbWord(
 
     const headings = Jmdict.gatherLookUpHeadings(apiWord)
 
+    const tags = Jmdict.gatherLookUpTags(apiWord)
+
     // Prepare look-up tables for DB indexing
     const lookUp: MongoDb.DbWordEntry["lookUp"] = {
         len,
         headings,
-        pos: [...new Set(
-            apiWord.defs
-            .flatMap(d => d.pos)
-        )],
+        tags,
     }
 
     // Add and remove fields via destructuring assignment

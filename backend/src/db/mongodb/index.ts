@@ -29,7 +29,7 @@ export type DbWordEntry = Omit<Api.Word.Entry, "id" | "headings"> & {
         /// Length in characters of the longest heading
         len: number
         headings: Api.Word.LookUpHeading[]
-        pos: Api.Word.PartOfSpeechTag[]
+        tags: Api.Word.FilterTag[]
     }
 }
 
@@ -55,6 +55,11 @@ export const fieldLookUpHeadingsScore =
     `${fieldLookUp}` +
     `.${"headings" satisfies keyof DbWordEntry["lookUp"]}` +
     `.${"score" satisfies keyof Api.Word.LookUpHeading}`
+
+
+export const fieldLookUpTags =
+    `${fieldLookUp}` +
+    `.${"tags" satisfies keyof DbWordEntry["lookUp"]}`
 
 
 export async function connect(): Promise<Db.Db>
@@ -86,14 +91,14 @@ export async function connect(): Promise<Db.Db>
         importWords: (words) =>
             MongoDbImporting.importWords(state, words),
 
-        searchByHeading: (queries) =>
-            MongoDbSearch.searchByHeading(state, queries),
-        searchByHeadingPrefix: (queries) =>
-            MongoDbSearch.searchByHeadingPrefix(state, queries),
-        searchByInflections: (inflections) =>
-            MongoDbSearch.searchByInflections(state, inflections),
-        searchByDefinition: (query) =>
-            MongoDbSearch.searchByDefinition(state, query),
+        searchByHeading: (queries, tags, invTags) =>
+            MongoDbSearch.searchByHeading(state, queries, tags, invTags),
+        searchByHeadingPrefix: (queries, tags, invTags) =>
+            MongoDbSearch.searchByHeadingPrefix(state, queries, tags, invTags),
+        searchByInflections: (inflections, tags, invTags) =>
+            MongoDbSearch.searchByInflections(state, inflections, tags, invTags),
+        searchByDefinition: (query, tags, invTags) =>
+            MongoDbSearch.searchByDefinition(state, query, tags, invTags),
     }
 }
 

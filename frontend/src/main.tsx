@@ -13,19 +13,22 @@ SolidWeb.render(
 
 function App()
 {
-    return <Framework.Router
-        routes={[
-            { patterns: ["/", Pages.Search.urlPattern],
-                noReload: true,
-                load: async () => PageSearch },
+    return <>
+        <Framework.Theme/>
+        <Framework.Router
+            routes={[
+                { patterns: ["/", Pages.Search.urlPattern],
+                    noReload: true,
+                    load: async () => PageSearch },
 
-            { patterns: ["/test"],
-                load: async () => Framework.PageTest },
+                { patterns: ["/test"],
+                    load: async () => Framework.PageTest },
 
-            { patterns: ["*"],
-                load: async () => () => <h2>Page not found</h2> },
-        ]}
-    />
+                { patterns: ["*"],
+                    load: async () => () => <h2>Page not found</h2> },
+            ]}
+        />
+    </>
 }
 
 

@@ -7,14 +7,29 @@ export interface Db
     importWords:
         (words: Api.Word.Entry[]) => Promise<void>
 
-    searchByHeading:
-        (queries: string[]) => Promise<Api.Word.Entry[]>
-    searchByHeadingPrefix:
-        (queries: string[]) => Promise<Api.Word.Entry[]>
-    searchByInflections:
-        (inflections: Infletcion.Breakdown) => Promise<Api.Word.Entry[]>
-    searchByDefinition:
-        (query: string) => Promise<Api.Word.Entry[]>
+    searchByHeading: (
+        queries: string[],
+        tags: Set<string>,
+        inverseTags: Set<string>)
+        => Promise<Api.Word.Entry[]>
+    
+    searchByHeadingPrefix: (
+        queries: string[],
+        tags: Set<string>,
+        inverseTags: Set<string>)
+        => Promise<Api.Word.Entry[]>
+
+    searchByInflections: (
+        inflections: Infletcion.Breakdown,
+        tags: Set<string>,
+        inverseTags: Set<string>)
+        => Promise<Api.Word.Entry[]>
+
+    searchByDefinition: (
+        query: string,
+        tags: Set<string>,
+        inverseTags: Set<string>)
+        => Promise<Api.Word.Entry[]>
 }
 
 
