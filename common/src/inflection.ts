@@ -15,6 +15,7 @@ export type Table = {
 export type Group = {
     display: string
     hidden: boolean
+    refs: string[]
 }
 
 
@@ -74,6 +75,7 @@ export function compile(raw: string): Table
                 const group: Group = {
                     display: value,
                     hidden: false,
+                    refs: [],
                 }
                 groups.set(currentGroupId, group)
                 continue
@@ -91,6 +93,9 @@ export function compile(raw: string): Table
                     break
                 case "display":
                     group.display = value
+                    break
+                case "ref":
+                    group.refs.push(value)
                     break
                 default:
                     throw `invalid directive: ${directive}`

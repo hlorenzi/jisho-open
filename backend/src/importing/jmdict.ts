@@ -6,6 +6,7 @@ import * as Gatherer from "./gatherer.ts"
 import * as Api from "common/api/index.ts"
 import * as Kana from "common/kana.ts"
 import * as Furigana from "common/furigana.ts"
+import * as Mazegaki from "common/mazegaki.ts"
 import * as JlptWords from "../data/jlpt_words.ts"
 import * as FuriganaHelpers from "../data/furigana_helpers.ts"
 
@@ -115,8 +116,12 @@ function normalizeHeadings(
             if (r_ele.re_nokanji !== undefined)
                 continue
         
-            if (r_ele.re_restr !== undefined &&
-                !r_ele.re_restr.find(restr => restr == keb))
+            if (r_ele.re_restr &&
+                !r_ele.re_restr.some(restr => restr == keb))
+                continue
+
+            if (r_ele.re_inf &&
+                r_ele.re_inf.some(tag => tag === "sk"))
                 continue
             
             seenReadings.add(reb)
@@ -128,20 +133,44 @@ function normalizeHeadings(
     // have no associated kanji element, or if the word
     // is usually written in plain kana.
     const kanaOnlyHeadings: Api.Word.Heading[] = []
+    let hadFirstOnlyKana = false
 
     for (const r_ele of raw.r_ele)
     {
         const reb = r_ele.reb[0]
 
-        if (seenReadings.has(reb) && !usuallyOnlyKana)
-            continue
+        if (seenReadings.has(reb))
+        {
+            if (!usuallyOnlyKana)
+                continue
 
+            if (hadFirstOnlyKana)
+                continue
+        }
+
+        if (r_ele.re_inf &&
+            r_ele.re_inf.some(tag => tag === "sk"))
+        {
+            seenReadings.add(reb)
+            headings.push({
+                base: reb,
+                furigana: reb + Furigana.READING_SEPARATOR,
+                searchOnlyKana: true,
+            })
+            continue
+        }
+        
         const heading = normalizeHeading(r_ele, undefined)
 
         if (usuallyOnlyKana)
+        {
             kanaOnlyHeadings.push(heading)
+            hadFirstOnlyKana = true
+        }
         else
             headings.push(heading)
+        
+        seenReadings.add(reb)
     }
 
     return [...kanaOnlyHeadings, ...headings]
@@ -363,23 +392,37 @@ function normalizeDefinitions(
 
 export function gatherLookUpHeadings(
     apiWord: Api.Word.Entry)
-    : string[]
+    : Api.Word.LookUpHeading[]
 {
-    const lookUpHeadings = new Set<string>()
+    const lookUpHeadings = new Map<string, Api.Word.LookUpHeading>()
+
+    const add = (text: string, score: number) => {
+        const prev = lookUpHeadings.get(text)
+        if (prev &&
+            prev.score > score)
+            return
+        
+        lookUpHeadings.set(text, { text, score })
+    }
     
     for (const heading of apiWord.headings)
     {
-        const base = Kana.normalizeWidthForms(heading.base)
-        lookUpHeadings.add(base)
-        lookUpHeadings.add(Kana.toHiragana(base))
+        const score = heading.score ?? 0
+        const base = Kana.normalizeWidthForms(heading.base).toLowerCase()
+        add(base, score)
+        add(Kana.toHiragana(base), score)
 
         if (heading.reading)
         {
-            const reading = Kana.normalizeWidthForms(heading.reading)
-            lookUpHeadings.add(reading)
-            lookUpHeadings.add(Kana.toHiragana(reading))
+            const reading = Kana.normalizeWidthForms(heading.reading).toLowerCase()
+            add(reading, score)
+            add(Kana.toHiragana(reading), score)
+
+            const furi = Furigana.decode(heading.furigana)
+            for (const mazegaki of Mazegaki.generateMazegaki(furi))
+                add(mazegaki, score)
         }
     }
     
-    return [...lookUpHeadings]
+    return [...lookUpHeadings.values()]
 }

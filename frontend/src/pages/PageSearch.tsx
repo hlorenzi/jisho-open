@@ -3,6 +3,7 @@ import * as Framework from "../framework/index.ts"
 import * as Api from "../api.ts"
 import * as Pages from "../pages.ts"
 import { Searchbox } from "../components/Searchbox.tsx"
+import { EntryWord } from "../components/EntryWord.tsx"
 
 
 export function PageSearch(props: Framework.RouteProps)
@@ -34,25 +35,14 @@ export function PageSearch(props: Framework.RouteProps)
         </Solid.Show>
     
         <Solid.For each={ searchResults.latest }>{ (result) =>
-            <article>
-                <strong>
-                    <Solid.For each={ result.headings }>{ (heading) =>
-                        <>
-                        <ruby>
-                            { heading.base }
-                            <rt>{ heading.reading }</rt>
-                        </ruby>
-                        { " - " }
-                        </>
-                    }
-                    </Solid.For>
-                </strong>
-                <Solid.For each={ result.defs }>{ (def) =>
-                    <div> - { def.gloss.join("; ") }</div>
-                }
-                </Solid.For>
-                <br/>
-            </article>
+            <Solid.Switch>
+                <Solid.Match when={ result.type === "word" }>
+                    <EntryWord entry={ result as Api.Word.Entry }/>
+                </Solid.Match>
+                <Solid.Match when={ result.type === "section" }>
+                    <hr/>
+                </Solid.Match>
+            </Solid.Switch>
         }
         </Solid.For>
     </>

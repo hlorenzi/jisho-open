@@ -1,5 +1,5 @@
-import * as JmdictRaw from "../../backend/src/importing/jmdict_raw.ts"
-import * as Furigana from "../furigana.ts"
+import * as JmdictRaw from "../../../backend/src/importing/jmdict_raw.ts"
+import * as Inflection from "../inflection.ts"
 
 
 export interface Entry
@@ -7,6 +7,7 @@ export interface Entry
     id: string
     headings: Heading[]
     defs: Definition[]
+    inflections?: Inflection.Breakdown
 
     /// Commonness score for this entry as a whole,
     /// for sorting search results. Higher is more common.
@@ -67,6 +68,12 @@ export type HeadingTag =
     | JmdictRaw.ReadingElementPriTag
     | JmdictRaw.ReadingElementInfoTag
     | "uk"
+
+
+export type LookUpHeading = {
+    text: string
+    score: number
+}
 
 
 export interface Definition

@@ -124,4 +124,9 @@ vte; *で -> v1; *でいる
 @ display: aux. いる (contracted)
 vte; *て -> v1contr; *てる
 vte; *で -> v1contr; *でる
+
+@ id: classical-attributive
+@ display: classical attributive
+@ ref: https://japanese.stackexchange.com/a/5004
+v5n; *ぬ -> unc; *ぬる
 `

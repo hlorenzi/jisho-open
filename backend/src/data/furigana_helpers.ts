@@ -69,7 +69,7 @@ export function getPatch(
             const furi = Furigana.decodeFromParts(furiBase, furiReading)
 
             const termBase = Furigana.extractBase(furi)
-            const termReading = Furigana.extractReading(furi)
+            const termReading = Furigana.extractReadingPure(furi)
 
             const key = makeCacheKey(termBase, termReading)
             cachePatches.set(key, furi)

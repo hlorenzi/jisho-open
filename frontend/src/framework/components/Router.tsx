@@ -3,7 +3,7 @@ import * as Styled from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
-const debugFetchDelayMs = 1000
+const debugFetchDelayMs = 0
 
 
 const DivPage = Styled.styled("div")`

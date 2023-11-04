@@ -20,6 +20,7 @@ export function Searchbox(props: {
     return <div>
         <input
             type="text"
+            autofocus
             value={ searchbox() }
             onInput={ ev => setSearchbox(ev.target.value) }
             onKeyDown={ ev => { if (ev.key === "Enter") onSearch() }}/>

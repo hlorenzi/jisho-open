@@ -2,6 +2,7 @@ import * as Express from "express"
 import * as Db from "../db/index.ts"
 import * as Api from "common/api/index.ts"
 import * as Kana from "common/kana.ts"
+import * as Inflection from "common/inflection.ts"
 
 
 export function init(
@@ -30,11 +31,33 @@ async function search(
     req: Api.Search.Request)
     : Promise<Api.Search.Response>
 {
-    const queryWithoutTags = req.query
-    const queryAllHiragana = Kana.toHiragana(req.query)
-    console.log(req.query, queryAllHiragana)
+    const query = req.query.toLowerCase()
+    const queryAllJapanese = Kana.toKana(query)
+    const queryAllHiragana = Kana.toHiragana(query)
 
-    const entries = await db.searchByHeading([queryWithoutTags, queryAllHiragana])
-    
-    return { entries }
+    console.log(query, queryAllJapanese, queryAllHiragana)
+
+    const byHeading = db.searchByHeading([query, queryAllJapanese, queryAllHiragana])
+    const byHeadingPrefix = db.searchByHeadingPrefix([query, queryAllJapanese])
+
+    const inflections = Inflection.breakdown(queryAllJapanese)
+    const byInflections = db.searchByInflections(inflections)
+
+    const byDefinition = db.searchByDefinition(query)
+
+    const translateToSearchEntry = (word: Api.Word.Entry): Api.Search.Entry =>
+        ({ ...word, type: "word" })
+
+    const searchEntries: Api.Search.Entry[] = [
+        { type: "section", section: "verbatim" },
+        ...(await byHeading).map(translateToSearchEntry),
+        { type: "section", section: "inflected" },
+        ...(await byInflections).map(translateToSearchEntry),
+        { type: "section", section: "prefix" },
+        ...(await byHeadingPrefix).map(translateToSearchEntry),
+        { type: "section", section: "definition" },
+        ...(await byDefinition).map(translateToSearchEntry),
+    ]
+
+    return { entries: searchEntries }
 }
