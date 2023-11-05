@@ -49,6 +49,9 @@ export async function searchByHeadingPrefix(
         })
     }
 
+    if (dbFindQueries.length === 0)
+        return []
+
     const tagFilter = makeTagFilter(tags, inverseTags)
         
     const results = await state.collWords
@@ -120,6 +123,9 @@ export async function searchByDefinition(
         .map(w => w.trim().toLowerCase())
         .filter(w => w.length !== 0)
 
+    if (queryWords.length === 0)
+        return []
+
     const tagFilter = makeTagFilter(tags, inverseTags)
 
     const wordEntries = await state.collDefinitions.aggregate<MongoDb.DbWordEntry>([
@@ -152,6 +158,27 @@ export async function searchByDefinition(
 
     return wordEntriesDedup
         .filter(r => r.lookUp.tags.every(t => !inverseTags.has(t)))
+        .map(MongoDb.translateDbWordToApiWord)
+}
+
+
+export async function searchByTags(
+    state: MongoDb.State,
+    tags: Set<string>,
+    inverseTags: Set<string>)
+    : Promise<Api.Word.Entry[]>
+{
+    if (tags.size === 0)
+        return []
+
+    const tagFilter = makeTagFilter(tags, inverseTags)
+
+    // Sorted automatically by the index for `lookUp.headings.score`
+    const results = await state.collWords
+        .find(tagFilter)
+        .toArray()
+
+    return results
         .map(MongoDb.translateDbWordToApiWord)
 }
 

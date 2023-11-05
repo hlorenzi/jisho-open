@@ -1,7 +1,9 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
+import * as Pages from "../pages.ts"
 import * as Api from "common/api/index.ts"
+import * as Kana from "common/kana.ts"
 import * as Inflection from "common/inflection.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import { FuriganaRender } from "./FuriganaRender.tsx"
@@ -13,10 +15,16 @@ export function EntryWord(props: {
     entry: Api.Word.Entry
 })
 {
+    const ignoreUsageInPlainKanaMiscTag =
+        !Kana.hasKanji(props.entry.headings[0].base)
+
     return <Entry>
         <Headings headings={ props.entry.headings }/>
         <InflectionBreakdown breakdown={ props.entry.inflections }/>
-        <Definitions defs={ props.entry.defs }/>
+        <Senses
+            ignoreUkMiscTag={ ignoreUsageInPlainKanaMiscTag }
+            senses={ props.entry.senses }
+        />
     </Entry>
 }
 
@@ -245,7 +253,7 @@ function InflectionBreakdown(props: {
     return <Solid.Show when={ props.breakdown }>
         <section>
             <Solid.For each={ props.breakdown }>{ (path) =>
-                <p> ・ <InflectionPath path={ path }/></p>
+                <p> • <InflectionPath path={ path }/></p>
             }
             </Solid.For>
         </section>
@@ -253,33 +261,106 @@ function InflectionBreakdown(props: {
 }
 
 
-function Definitions(props: {
-    defs: Api.Word.Definition[],
+function Senses(props: {
+    ignoreUkMiscTag: boolean,
+    senses: Api.Word.Sense[],
 })
 {
     let currentPos: string[] = []
 
-    const defs: Solid.JSX.Element[] = []
+    const list: Solid.JSX.Element[] = []
 
-    for (const def of props.defs)
+    for (const sense of props.senses)
     {
         // Check whether the part-of-speech tags have changed between definitions
-        if (!def.pos.every(pos => currentPos.some(curr => curr === pos)) ||
-            !currentPos.every(pos => def.pos.some(curr => curr === pos)))
+        if (!sense.pos.every(pos => currentPos.some(curr => curr === pos)) ||
+            !currentPos.every(pos => sense.pos.some(curr => curr === pos)))
         {
-            const partsOfSpeech = def.pos
-                .map(pos => JmdictTags.getPosName(pos))
+            const partsOfSpeech = sense.pos
+                .map(pos => JmdictTags.nameForPartOfSpeechTag(pos))
                 .join(", ")
 
-            defs.push(<PartOfSpeech>{ partsOfSpeech }</PartOfSpeech>)
-            currentPos = def.pos
+            list.push(<PartOfSpeech>{ partsOfSpeech }</PartOfSpeech>)
+            currentPos = sense.pos
         }
 
-        defs.push(<li>{ def.gloss.join("; ") }</li>)
+        const line: Solid.JSX.Element[] = []
+        line.push(<span>{ sense.gloss.join("; ") }</span>)
+
+        if (sense.field)
+        {
+            const text = sense.field
+                .map(tag => JmdictTags.nameForFieldDomainTag(tag))
+                .join(", ")
+
+            line.push(<SenseInfo> — { text }</SenseInfo>)
+        }
+
+        const miscTags = sense.misc?.filter(
+            tag => !props.ignoreUkMiscTag || tag !== "uk")
+
+        if (miscTags && miscTags.length !== 0)
+        {
+            const text = miscTags
+                .map(tag => JmdictTags.nameForMiscTag(tag))
+                .join(", ")
+
+            line.push(<SenseInfo> — { text }</SenseInfo>)
+        }
+
+        if (sense.info)
+        {
+            const text = sense.info.join(" — ")
+            line.push(<SenseInfo> — { text }</SenseInfo>)
+        }
+
+        if (sense.lang)
+        {
+            const langs: string[] = []
+
+            for (const lang of sense.lang ?? [])
+            {
+                if (lang.language)
+                    langs.push(
+                        `${ lang.wasei ? `wasei, ` : `` }` +
+                        `${ lang.partial ? `partially ` : `` }` +
+                        `from ${ JmdictTags.nameForLanguageTag(lang.language) }` +
+                        `${ lang.source ? ` "${ lang.source }"` : `` }`)
+                else if (lang.source)
+                    langs.push(
+                        `${ lang.wasei ? `wasei, ` : `` }` +
+                        `${ lang.partial ? `partially ` : `` }` +
+                        `from "${ lang.source }"`)
+                else
+                    langs.push(`wasei`)
+            }
+
+            line.push(<SenseInfo> — { langs.join(", ") }</SenseInfo>)
+        }
+
+        for (const xref of sense.xref ?? [])
+        {
+            const text =
+                xref.type === "antonym" ? "antonym: " :
+                "see "
+
+            const link =
+                <Framework.Link
+                    href={ Pages.Search.url(xref.base) }
+                >
+                    { xref.base }
+                    { xref.senseIndex ?
+                        ` (sense ${xref.senseIndex})` : `` }
+                </Framework.Link>
+            
+            line.push(<SenseInfo> 🡆 { text }{ link }</SenseInfo>)
+        }
+
+        list.push(<li>{ line }</li>)
     }
 
     return <section>
-        <DefinitionList>{ defs }</DefinitionList>
+        <SenseList>{ list }</SenseList>
     </section>
 }
 
@@ -290,7 +371,7 @@ const PartOfSpeech = styled.p`
 `
 
 
-const DefinitionList = styled.ol`
+const SenseList = styled.ol`
     counter-reset: item;
     padding-inline-start: 1.75em;
 
@@ -304,4 +385,10 @@ const DefinitionList = styled.ol`
     & li {
         counter-increment: item;
     }
+`
+
+
+const SenseInfo = styled.span`
+    color: var(--theme-text2ndColor);
+    font-size: 0.8em;
 `

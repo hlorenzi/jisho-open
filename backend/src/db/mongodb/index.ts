@@ -99,6 +99,8 @@ export async function connect(): Promise<Db.Db>
             MongoDbSearch.searchByInflections(state, inflections, tags, invTags),
         searchByDefinition: (query, tags, invTags) =>
             MongoDbSearch.searchByDefinition(state, query, tags, invTags),
+        searchByTags: (tags, invTags) =>
+            MongoDbSearch.searchByTags(state, tags, invTags),
     }
 }
 

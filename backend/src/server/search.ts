@@ -38,6 +38,13 @@ async function search(
 
     console.dir(query, { depth: null })
 
+    const byTags =
+        query.forcedType !== "tags" ?
+            [] :
+            db.searchByTags(
+                query.tags,
+                query.inverseTags)
+
     const byHeading =
         query.forcedType !== "none" && query.forcedType !== "verbatim" ?
             [] :
@@ -75,6 +82,7 @@ async function search(
 
     const searchEntries: Api.Search.Entry[] = [
         { type: "section", section: "verbatim" },
+        ...(await byTags).map(translateToSearchEntry),
         ...(await byHeading).map(translateToSearchEntry),
         { type: "section", section: "inflected" },
         ...(await byInflections).map(translateToSearchEntry),
@@ -90,6 +98,7 @@ async function search(
 
 type QueryForcedType =
     | "none"
+    | "tags"
     | "verbatim"
     | "inflected"
     | "prefix"
@@ -160,6 +169,9 @@ function normalizeQuery(queryRaw: string): Query
     let forcedType: QueryForcedType = "none"
     if (queryInQuotes.length !== 0)
         forcedType = "definition"
+    if (queryWithoutTags.length === 0 &&
+        tags.length > 0)
+        forcedType = "tags"
 
     return {
         forcedType,

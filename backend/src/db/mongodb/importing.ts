@@ -123,7 +123,7 @@ function gatherDefinitionEntries(
         return [outsideParen, insideParen]
     }
 
-    for (let i = 0; i < apiWord.defs.length; i++)
+    for (let i = 0; i < apiWord.senses.length; i++)
     {
         type Gloss = {
             str: string
@@ -131,7 +131,7 @@ function gatherDefinitionEntries(
             index: number
         }
 
-        const glosses = apiWord.defs[i].gloss
+        const glosses = apiWord.senses[i].gloss
         const newGlosses: Gloss[] = []
         for (let g = 0; g < glosses.length; g++)
         {

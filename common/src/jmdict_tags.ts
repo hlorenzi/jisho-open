@@ -29,15 +29,15 @@ export function getCommonness(
 
 /// Returns a user-friendly name for a part-of-speech tag.
 /// From: https://www.edrdg.org/jmwsgi/edhelp.py?svc=jmdict&sid=#kw_pos
-export function getPosName(
-    pos: Api.Word.PartOfSpeechTag)
+export function nameForPartOfSpeechTag(
+    tag: Api.Word.PartOfSpeechTag)
     : string
 {
-    type PosDict = {
+    type Dict = {
         [pos in Api.Word.PartOfSpeechTag]: string
     }
 
-    const posNames: Partial<PosDict> = {
+    const dict: Partial<Dict> = {
         "adj-i": "i-adjective",
         "adj-f": "prenominal modifier",
         "adj-ix": "irregular i-adjective",
@@ -148,21 +148,66 @@ export function getPosName(
         "organization": "organization name",
     }
 
-
-    return posNames[pos] ?? `[${ pos }]`
+    return dict[tag] ?? `[${ tag }]`
 }
 
 
-export function getMiscName(misc: string): string
+/// From https://www.edrdg.org/jmwsgi/edhelp.py?svc=jmdict&sid=#kw_misc
+export function nameForMiscTag(
+    tag: Api.Word.MiscTag)
+    : string
 {
-    type MiscDict = {
-        [misc: string]: string
+    type Dict = {
+        [misc in Api.Word.MiscTag]: string
     }
 
-    const miscNames: MiscDict = {
+    const dict: Partial<Dict> = {
         "abbr": "abbreviation",
-        "anat": "anatomical term",
         "arch": "archaic",
+        "chn": "children's language",
+        "col": "colloquialism",
+        "dated": "dated term",
+        "derog": "derogatory",
+        "fam": "familiar language",
+        "fem": "female language",
+        "hist": "historical term",
+        "hon": "honorific (sonkeigo)",
+        "hum": "humble (kenjōgo)",
+        "id": "idiomatic",
+        "joc": "humorous term",
+        "m-sl": "manga slang",
+        "male": "male language",
+        "net-sl": "Internet slang",
+        "on-mim": "onomatopoeic",
+        "obs": "obsolete",
+        "proverb": "proverb",
+        "poet": "poetical term",
+        "pol": "polite (teineigo)",
+        "quote": "quotation",
+        "rare": "rare term",
+        "sens": "sensitive",
+        "sl": "slang",
+        "uk": "usually in plain kana",
+        "vulg": "vulgar",
+        "work": "name of a piece of work",
+        "yoji": "yojijukugo",
+    }
+
+    return dict[tag] ?? `[${ tag }]`
+}
+
+
+/// From https://www.edrdg.org/jmwsgi/edhelp.py?svc=jmdict&sid=#kw_fld
+export function nameForFieldDomainTag(
+    tag: Api.Word.FieldDomainTag)
+    : string
+{
+    type Dict = {
+        [misc in Api.Word.FieldDomainTag]: string
+    }
+
+    const dict: Partial<Dict> = {
+        "anat": "anatomical term",
         "archit": "Architecture",
         "astron": "Astronomy",
         "baseb": "baseball term",
@@ -170,74 +215,47 @@ export function getMiscName(misc: string): string
         "bot": "Botany",
         "Buddh": "Buddhism",
         "chem": "Chemistry",
-        "chn": "children's language",
         "Christn": "Christianism",
-        "col": "colloquialism",
         "comp": "Computing",
-        "dated": "dated term",
-        "derog": "derogatory",
         "elec": "Electronics",
         "engr": "Engineering",
-        "fam": "familiar language",
-        "fem": "female language",
         "food": "food term",
         "geol": "Geology",
         "geom": "Geometry",
-        "hist": "historical term",
-        "hon": "honorific (sonkeigo)",
-        "hum": "humble (kenjōgo)",
-        "id": "idiomatic",
-        "joc": "humorous term",
         "law": "Law",
         "ling": "Linguistics",
-        "lit": "formal",
-        "litf": "formal",
         "MA": "martial arts term",
-        "m-sl": "manga slang",
         "mahj": "mahjong term",
-        "male": "male language",
-        "male-s": "male language",
         "math": "Mathematics",
         "med": "Medicine",
         "mil": "Military",
         "music": "Music",
-        "net-sl": "Internet slang",
-        "on-mim": "onomatopoeic",
-        "obs": "obsolete",
-        "obsc": "obscure",
-        "proverb": "proverb",
-        "poet": "poetical term",
-        "pol": "polite (teineigo)",
         "physics": "Physics",
-        "quote": "quotation",
-        "rare": "rare term",
-        "sens": "sensitive",
         "Shinto": "Shinto term",
         "shogi": "shogi term",
-        "sl": "slang",
         "sports": "sports term",
         "sumo": "sumo term",
-        "uk": "usually in plain kana",
-        "vulg": "vulgar",
-        "yoji": "yojijukugo",
         "zool": "Zoology",
     }
 
-    return miscNames[misc] ?? `[${ misc }]`
+    return dict[tag] ?? `[${ tag }]`
 }
 
 
-export function getLanguageName(lang: string): string
+/// From https://www.edrdg.org/jmwsgi/edhelp.py?svc=jmdict&sid=#kw_lang
+export function nameForLanguageTag(
+    lang: Api.Word.LanguageTag)
+    : string
 {
-    type LangDict = {
-        [lang: string]: string
+    type Dict = {
+        [lang in Api.Word.LanguageTag]: string
     }
 
-    const langNames: LangDict = {
+    const dict: Dict = {
         "eng": "English",
         "afr": "Afrikaans",
         "ain": "Ainu",
-        "alg": "Algonquian",
+        "alg": "Algonquian language",
         "amh": "Amharic",
         "ara": "Arabic",
         "arn": "Mapuche",
@@ -271,6 +289,7 @@ export function getLanguageName(lang: string): string
         "kor": "Korean",
         "kur": "Kurdish",
         "lat": "Latin",
+        "lit": "Lithuanian",
         "mal": "Malayalam",
         "mao": "Maori",
         "mas": "Masai",
@@ -294,15 +313,17 @@ export function getLanguageName(lang: string): string
         "swe": "Swedish",
         "tah": "Tahitian",
         "tam": "Tamil",
+        "tgl": "Tagalog",
         "tha": "Thai",
         "tib": "Tibetan",
         "tur": "Turkish",
+        "ukr": "Ukrainian",
         "urd": "Urdu",
         "vie": "Vietnamese",
         "yid": "Yiddish",
     }
 
-    return langNames[lang] ?? `[${ lang }]`
+    return dict[lang] ?? `[${ lang }]`
 }
 
 
@@ -310,18 +331,18 @@ export function expandFilterTags(
     tags: Api.Word.FilterTag[])
     : Api.Word.FilterTag[]
 {
-    type LangDict = {
-        [tag: string]: string[]
+    type Dict = {
+        [tag in Api.Word.FilterTag]: Api.Word.FilterTag[]
     }
 
-    const expandedTags: LangDict = {
+    const expandedTags: Partial<Dict> = {
         "veryCommon": ["common"],
 
-        "jlpt1": ["n1", "jlpt"],
-        "jlpt2": ["n2", "jlpt"],
-        "jlpt3": ["n3", "jlpt"],
-        "jlpt4": ["n4", "jlpt"],
-        "jlpt5": ["n5", "jlpt"],
+        //"jlpt1": ["n1", "jlpt"],
+        //"jlpt2": ["n2", "jlpt"],
+        //"jlpt3": ["n3", "jlpt"],
+        //"jlpt4": ["n4", "jlpt"],
+        //"jlpt5": ["n5", "jlpt"],
 
         "v1": ["v"],
         "v1-s": ["v", "v1"],
@@ -404,16 +425,14 @@ export function expandFilterTags(
         "adj-nari": ["adj"],
         
         "adv-to": ["adv"],
-
-        "lang-wasei": ["wasei"],
     }
 
-    const expanded = new Set<string>()
+    const expanded = new Set<Api.Word.FilterTag>()
     for (const tag of tags)
     {
-        expanded.add(tag.toLowerCase())
+        expanded.add(tag)
         for (const expandedTag of expandedTags[tag] ?? [])
-            expanded.add(expandedTag.toLowerCase())
+            expanded.add(expandedTag)
     }
 
     return [...expanded]

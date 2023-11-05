@@ -7,7 +7,7 @@ export interface Entry
     ent_seq: [string]
     k_ele?: EntryKEle[]
     r_ele: EntryREle[]
-    sense: EntrySense[]
+    sense: Sense[]
 }
 
 
@@ -42,20 +42,6 @@ export type ReadingElementInfoTag =
     | "sk"
 
 
-export type PartOfSpeechTag = Api.Word.PartOfSpeechTag
-
-
-export type MiscTag =
-    | "col"
-    | "on-mim"
-    | "uk"
-    | "yoji"
-
-
-export type GlossTypeTag =
-    | "lit"
-
-
 export interface EntryKEle
 {
     keb: [string]
@@ -74,11 +60,14 @@ export interface EntryREle
 }
 
 
-export interface EntrySense
+export interface Sense
 {
-    pos: PartOfSpeechTag[]
+    pos: Api.Word.PartOfSpeechTag[]
     xref?: string[]
-    misc?: MiscTag[]
+    ant?: string[]
+    misc?: Api.Word.MiscTag[]
+    field?: Api.Word.FieldDomainTag[]
+    lsource?: LanguageSource[]
     s_inf?: string[]
     gloss: EntryGloss[]
 }
@@ -93,6 +82,16 @@ export interface EntryGlossExtended
 {
     [Xml.xml2jsTextKey]: string
     [Xml.xml2jsAttributeKey]: {
-        g_type?: GlossTypeTag
+        g_type?: Api.Word.GlossTypeTag
+    }
+}
+
+
+export type LanguageSource = {
+    [Xml.xml2jsTextKey]?: string
+    [Xml.xml2jsAttributeKey]: {
+        "xml:lang": Api.Word.LanguageTag
+        ls_wasei?: "y"
+        ls_type?: "part"
     }
 }

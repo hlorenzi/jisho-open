@@ -14,7 +14,7 @@ export function InflectionPath(props: {
         const ruleDisplay = Inflection.table.groups.get(step.ruleId)!.display
 
         steps.push(<span>{ step.sourceTerm }</span>)
-        steps.push(<span>{" → ["}{ ruleDisplay }{ "] " }</span>)
+        steps.push(<span>{" 🡆 ["}{ ruleDisplay }{ "] " }</span>)
     }
 
     steps.push(<span>{ props.path[props.path.length - 1].targetTerm }</span>)

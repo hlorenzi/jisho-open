@@ -73,7 +73,7 @@ function normalizeEntry(
     const entry: Api.Word.Entry = {
         id: `w${ raw.ent_seq[0] }`,
         headings: [],
-        defs: [],
+        senses: [],
         score: 0,
     }
 
@@ -81,7 +81,7 @@ function normalizeEntry(
     entry.headings = normalizeHeadings(raw)
 
     // Import senses/definitions.
-    entry.defs = normalizeDefinitions(raw)
+    entry.senses = normalizeSenses(raw)
 
     // Calculate the whole entry commonness score.
     entry.score = entry.headings.reduce(
@@ -133,7 +133,8 @@ function normalizeHeadings(
     // Extract remaining reading elements that
     // have no associated kanji element.
     // If the word is usually written in plain kana,
-    // extract the first reading element unconditionally.
+    // extract the first reading element unconditionally,
+    // unless there's already a pure-katakana heading.
     const kanaOnlyHeadings: Api.Word.Heading[] = []
     let gotFirstOnlyKana = false
 
@@ -149,7 +150,10 @@ function normalizeHeadings(
             if (gotFirstOnlyKana)
                 continue
 
-            if (raw.r_ele.some(r => r.reb[0] === Kana.toKatakana(reb)))
+            const asKatakana = Kana.toKatakana(reb)
+
+            if (asKatakana !== reb &&
+                raw.r_ele.some(r => r.reb[0] === asKatakana))
             {
                 gotFirstOnlyKana = true
                 continue
@@ -375,11 +379,11 @@ function scoreHeading(
 }
 
 
-function normalizeDefinitions(
+function normalizeSenses(
     raw: JmdictRaw.Entry)
-    : Api.Word.Definition[]
+    : Api.Word.Sense[]
 {
-    const defs: Api.Word.Definition[] = []
+    const senses: Api.Word.Sense[] = []
 
     for (const rawSense of raw.sense)
     {
@@ -388,13 +392,95 @@ function normalizeDefinitions(
         const gloss = rawSense.gloss
             .map(g => typeof g === "string" ? g : g.text)
 
-        defs.push({
+        const sense: Api.Word.Sense = {
             pos,
             gloss,
-        })
+        }
+
+        if (rawSense.misc)
+            sense.misc = rawSense.misc
+
+        if (rawSense.field)
+            sense.field = rawSense.field
+
+        if (rawSense.s_inf)
+            sense.info = rawSense.s_inf
+
+        if (rawSense.xref)
+        {
+            sense.xref = []
+            for (const rawXref of rawSense.xref)
+                sense.xref.push(normalizeXref(rawXref))
+        }
+
+        if (rawSense.ant)
+        {
+            if (sense.xref === undefined)
+                sense.xref = []
+
+            for (const rawAnt of rawSense.ant)
+                sense.xref.push({
+                    ...normalizeXref(rawAnt),
+                    type: "antonym",
+                })
+        }
+
+        if (rawSense.lsource)
+        {
+            sense.lang = []
+
+            for (const lsource of rawSense.lsource)
+            {
+                const langSrc: Api.Word.LanguageSource = {}
+
+                if (lsource.attr["xml:lang"] !== undefined)
+                    langSrc.language = lsource.attr["xml:lang"]
+
+                if (lsource.attr.ls_type !== undefined)
+                    langSrc.partial = !!lsource.attr.ls_type
+                
+                if (lsource.attr.ls_wasei !== undefined)
+                    langSrc.wasei = !!lsource.attr.ls_wasei
+                
+                if (lsource.text !== undefined)
+                    langSrc.source = lsource.text
+
+                sense.lang.push(langSrc)
+            }
+        }
+
+        senses.push(sense)
     }
 
-    return defs
+    return senses
+}
+
+
+function normalizeXref(
+    rawXref: string)
+    : Api.Word.CrossReference
+{
+    const split = rawXref.split("・")
+
+    if (split.length === 1)
+        return { base: rawXref }
+
+    if (split.length === 2)
+    {
+        if (Kana.hasJapanese(split[1]))
+            return { base: split[0], reading: split[1] }
+        else
+            return { base: split[0], senseIndex: parseInt(split[1]) }
+    }
+
+    if (split.length === 3)
+        return {
+            base: split[0],
+            reading: split[1],
+            senseIndex: parseInt(split[2]),
+        }
+
+    throw `invalid xref`
 }
 
 
@@ -440,15 +526,28 @@ export function gatherLookUpTags(
     apiWord: Api.Word.Entry)
     : Api.Word.FilterTag[]
 {
-    const partsOfSpeech = apiWord.defs
+    const partsOfSpeech = apiWord.senses
         .flatMap(d => d.pos)
+
+    const fieldTags = apiWord.senses
+        .flatMap(d => d.field ?? [])
+
+    const miscTags = apiWord.senses
+        .flatMap(d => d.misc ?? [])
+
+    const langTags = apiWord.senses
+        .flatMap(d => d.lang ?? [])
+        .flatMap(l => l.language ?? "wasei")
 
     const commonness = apiWord.headings
         .map(h => JmdictTags.getCommonness(h))
         .filter(t => t !== null) as Api.Word.CommonnessTag[]
 
-    return JmdictTags.expandFilterTags([...new Set(
+    return JmdictTags.expandFilterTags([...new Set<Api.Word.FilterTag>([
         ...partsOfSpeech,
+        ...fieldTags,
+        ...miscTags,
+        ...langTags,
         ...commonness,
-    )])
+    ])])
 }

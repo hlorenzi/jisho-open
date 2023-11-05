@@ -30,6 +30,11 @@ export interface Db
         tags: Set<string>,
         inverseTags: Set<string>)
         => Promise<Api.Word.Entry[]>
+
+    searchByTags: (
+        tags: Set<string>,
+        inverseTags: Set<string>)
+        => Promise<Api.Word.Entry[]>
 }
 
 
@@ -42,5 +47,6 @@ export function createDummy(): Db
         searchByHeadingPrefix: async () => [],
         searchByInflections: async () => [],
         searchByDefinition: async () => [],
+        searchByTags: async () => [],
     }
 }

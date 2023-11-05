@@ -2,11 +2,10 @@ import * as JmdictRaw from "../../../backend/src/importing/jmdict_raw.ts"
 import * as Inflection from "../inflection.ts"
 
 
-export interface Entry
-{
+export type Entry = {
     id: string
     headings: Heading[]
-    defs: Definition[]
+    senses: Sense[]
     inflections?: Inflection.Breakdown
 
     /// Commonness score for this entry as a whole,
@@ -15,8 +14,7 @@ export interface Entry
 }
 
 
-export interface Heading
-{
+export type Heading = {
     /// The word written in kanji, or kana-only if applicable.
     base: string
 
@@ -76,10 +74,30 @@ export type LookUpHeading = {
 }
 
 
-export interface Definition
-{
+export type Sense = {
     pos: PartOfSpeechTag[]
     gloss: string[]
+    misc?: MiscTag[]
+    field?: FieldDomainTag[]
+    info?: string[]
+    lang?: LanguageSource[]
+    xref?: CrossReference[]
+}
+
+
+export type LanguageSource = {
+    language?: LanguageTag
+    partial?: boolean
+    wasei?: boolean
+    source?: string
+}
+
+
+export type CrossReference = {
+    base: string
+    reading?: string
+    senseIndex?: number
+    type?: "antonym"
 }
 
 
@@ -181,7 +199,15 @@ export type PartOfSpeechTag =
     | "vs-s"
     | "vt"
     | "vz"
+    | "adj" // custom
+    | "v" // custom
+    | "v2" // custom
+    | "v2-k" // custom
+    | "v2-s" // custom
+    | "v4" // custom
+    | "v5" // custom
     | "vmasu" // custom
+    | "virr" // custom
     | "surname"
     | "place"
     | "unclass"
@@ -196,7 +222,236 @@ export type PartOfSpeechTag =
     | "organization"
 
 
+export type LanguageTag =
+    | "eng"
+    | "afr"
+    | "ain"
+    | "alg"
+    | "amh"
+    | "ara"
+    | "arn"
+    | "bnt"
+    | "bre"
+    | "bul"
+    | "bur"
+    | "chi"
+    | "chn"
+    | "cze"
+    | "dan"
+    | "dut"
+    | "epo"
+    | "est"
+    | "fil"
+    | "fin"
+    | "fre"
+    | "geo"
+    | "ger"
+    | "glg"
+    | "grc"
+    | "gre"
+    | "haw"
+    | "heb"
+    | "hin"
+    | "hun"
+    | "ice"
+    | "ind"
+    | "ita"
+    | "khm"
+    | "kor"
+    | "kur"
+    | "lat"
+    | "lit"
+    | "mal"
+    | "mao"
+    | "mas"
+    | "may"
+    | "mnc"
+    | "mol"
+    | "mon"
+    | "nor"
+    | "per"
+    | "pol"
+    | "por"
+    | "rum"
+    | "rus"
+    | "san"
+    | "scr"
+    | "slo"
+    | "slv"
+    | "som"
+    | "spa"
+    | "swa"
+    | "swe"
+    | "tah"
+    | "tam"
+    | "tgl"
+    | "tha"
+    | "tib"
+    | "tur"
+    | "ukr"
+    | "urd"
+    | "vie"
+    | "yid"
+
+
+export type MiscTag =
+    | "abbr"
+    | "aphorism"
+    | "arch"
+    | "char"
+    | "chn"
+    | "col"
+    | "company"
+    | "creat"
+    | "dated"
+    | "dei"
+    | "derog"
+    | "doc"
+    | "euph"
+    | "ev"
+    | "fam"
+    | "fem"
+    | "fict"
+    | "form"
+    | "given"
+    | "group"
+    | "hist"
+    | "hon"
+    | "hum"
+    | "id"
+    | "joc"
+    | "leg"
+    | "m-sl"
+    | "male"
+    | "myth"
+    | "net-sl"
+    | "obj"
+    | "obs"
+    | "on-mim"
+    | "organization"
+    | "oth"
+    | "person"
+    | "place"
+    | "poet"
+    | "pol"
+    | "product"
+    | "proverb"
+    | "quote"
+    | "rare"
+    | "relig"
+    | "sens"
+    | "serv"
+    | "ship"
+    | "sl"
+    | "station"
+    | "surname"
+    | "uk"
+    | "unclass"
+    | "vulg"
+    | "work"
+    | "X"
+    | "yoji"
+
+
+export type FieldDomainTag =
+    | "agric"
+    | "anat"
+    | "archeol"
+    | "archit"
+    | "art"
+    | "astron"
+    | "audvid"
+    | "aviat"
+    | "baseb"
+    | "biochem"
+    | "biol"
+    | "bot"
+    | "Buddh"
+    | "bus"
+    | "cards"
+    | "chem"
+    | "Christn"
+    | "cloth"
+    | "comp"
+    | "cryst"
+    | "dent"
+    | "ecol"
+    | "econ"
+    | "elec"
+    | "electr"
+    | "embryo"
+    | "engr"
+    | "ent"
+    | "film"
+    | "finc"
+    | "fish"
+    | "food"
+    | "gardn"
+    | "genet"
+    | "geogr"
+    | "geol"
+    | "geom"
+    | "go"
+    | "golf"
+    | "gramm"
+    | "grmyth"
+    | "hanaf"
+    | "horse"
+    | "kabuki"
+    | "law"
+    | "ling"
+    | "logic"
+    | "MA"
+    | "mahj"
+    | "manga"
+    | "math"
+    | "mech"
+    | "med"
+    | "met"
+    | "mil"
+    | "mining"
+    | "music"
+    | "noh"
+    | "ornith"
+    | "paleo"
+    | "pathol"
+    | "pharm"
+    | "phil"
+    | "photo"
+    | "physics"
+    | "physiol"
+    | "politics"
+    | "print"
+    | "psy"
+    | "psyanal"
+    | "psych"
+    | "rail"
+    | "rommyth"
+    | "Shinto"
+    | "shogi"
+    | "ski"
+    | "sports"
+    | "stat"
+    | "stockm"
+    | "sumo"
+    | "telec"
+    | "tradem"
+    | "tv"
+    | "vidg"
+    | "zool"
+
+
+export type GlossTypeTag =
+    | "equ"
+    | "expl"
+    | "fig"
+    | "lit"
+    | "tm"
+
+
 export type FilterTag =
-    PartOfSpeechTag |
     CommonnessTag |
-    string
+    PartOfSpeechTag |
+    LanguageTag | "wasei" |
+    MiscTag |
+    FieldDomainTag
