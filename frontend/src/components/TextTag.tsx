@@ -2,8 +2,8 @@ import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 
 
-const DivTextTag = styled.div<{
-    color: string,
+const Styled = styled.div<{
+    textColor: string,
     bkgColor: string,
 }>`
     display: inline-block;
@@ -12,7 +12,7 @@ const DivTextTag = styled.div<{
     padding: 0.1em 0.25em;
     border-radius: 0.25em;
     font-weight: bold;
-    color: ${ props => props.color };
+    color: ${ props => props.textColor };
     background-color: ${ props => props.bkgColor };
     text-indent: 0;
     user-select: none;
@@ -22,16 +22,16 @@ const DivTextTag = styled.div<{
 export function TextTag(props: {
     title: string,
     label: string,
-    color?: string,
+    textColor?: string,
     bkgColor?: string,
 })
 {
-    return <DivTextTag
+    return <Styled
         lang="en"
         title={ props.title }
-        color={ props.color ?? "white" }
+        textColor={ props.textColor ?? "white" }
         bkgColor={ props.bkgColor ?? "gray" }
     >
         { props.label }
-    </DivTextTag>
+    </Styled>
 }

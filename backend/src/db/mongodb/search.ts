@@ -173,9 +173,9 @@ export async function searchByTags(
 
     const tagFilter = makeTagFilter(tags, inverseTags)
 
-    // Sorted automatically by the index for `lookUp.headings.score`
     const results = await state.collWords
         .find(tagFilter)
+        .sort({ score: -1 })
         .toArray()
 
     return results

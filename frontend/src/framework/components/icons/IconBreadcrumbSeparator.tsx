@@ -9,8 +9,8 @@ export function IconBreadcrumbSeparator(props: Framework.IconBaseProps)
             <path
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="15"
-                strokeLinecap="round"
+                stroke-width="15"
+                stroke-linecap="round"
                 d="
                 M 50,30
                 L 70,50

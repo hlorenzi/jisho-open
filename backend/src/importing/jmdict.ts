@@ -132,33 +132,12 @@ function normalizeHeadings(
 
     // Extract remaining reading elements that
     // have no associated kanji element.
-    // If the word is usually written in plain kana,
-    // extract the first reading element unconditionally,
-    // unless there's already a pure-katakana heading.
-    const kanaOnlyHeadings: Api.Word.Heading[] = []
-    let gotFirstOnlyKana = false
-
     for (const r_ele of raw.r_ele)
     {
         const reb = r_ele.reb[0]
 
         if (seenReadings.has(reb))
-        {
-            if (!usuallyOnlyKana)
-                continue
-
-            if (gotFirstOnlyKana)
-                continue
-
-            const asKatakana = Kana.toKatakana(reb)
-
-            if (asKatakana !== reb &&
-                raw.r_ele.some(r => r.reb[0] === asKatakana))
-            {
-                gotFirstOnlyKana = true
-                continue
-            }
-        }
+            continue
 
         if (r_ele.re_inf &&
             r_ele.re_inf.some(tag => tag === "sk"))
@@ -173,19 +152,76 @@ function normalizeHeadings(
         }
         
         const heading = normalizeHeading(r_ele, undefined)
-
-        if (usuallyOnlyKana)
-        {
-            kanaOnlyHeadings.push(heading)
-            gotFirstOnlyKana = true
-        }
-        else
-            headings.push(heading)
+        headings.push(heading)
         
         seenReadings.add(reb)
     }
 
-    return [...kanaOnlyHeadings, ...headings]
+    // Sort rare/outdated entries to the back,
+    // and usually-only-kana entries to the front.
+    const score = (h: Api.Word.Heading) => {
+        return (
+            (h.outdatedKanji ? -100 : 0) +
+            (h.outdatedKana ? -100 : 0) +
+            (h.rareKanji ? -10 : 0) +
+            (h.irregularKana ? -1 : 0) +
+            (h.irregularKanji ? -1 : 0) +
+            (h.irregularOkurigana ? -1 : 0) +
+            (usuallyOnlyKana && !Kana.hasKanji(h.base) ? 1000 : 0)
+        )
+    }
+
+    headings.sort((a, b) => score(b) - score(a))
+
+    // If the word is usually written in plain kana,
+    // extract the first hiragana reading element and put it
+    // at the front, unless we've already got it or
+    // there's already a "common" katakana heading for it.
+    if (usuallyOnlyKana)
+    {
+        for (const r_ele of raw.r_ele)
+        {
+            const reb = r_ele.reb[0]
+
+            if (seenReadings.has(reb))
+            {
+                if (Kana.hasHiragana(reb))
+                {
+                    const asKatakana = Kana.toKatakana(reb)
+
+                    const isMatchingCommonKatakana = (r: JmdictRaw.EntryREle) => {
+                        return r.reb[0] === asKatakana &&
+                            r.re_nokanji &&
+                            r.re_pri && r.re_pri.length !== 0
+                    }
+
+                    if (reb !== asKatakana &&
+                        raw.r_ele.some(isMatchingCommonKatakana))
+                        continue
+                }
+                else
+                {
+                    const isMatchingKatakana = (r: JmdictRaw.EntryREle) => {
+                        return r.reb[0] === reb &&
+                            r.re_nokanji
+                    }
+
+                    if (raw.r_ele.some(isMatchingKatakana))
+                        continue
+                }
+            }
+            
+            if (r_ele.re_inf &&
+                r_ele.re_inf.some(tag => tag === "sk"))
+                continue
+            
+            const heading = normalizeHeading(r_ele, undefined)
+            headings.unshift(heading)
+            break
+        }
+    }
+
+    return [...headings]
 }
 
 
@@ -389,8 +425,17 @@ function normalizeSenses(
     {
         const pos = rawSense.pos
         
-        const gloss = rawSense.gloss
-            .map(g => typeof g === "string" ? g : g.text)
+        const gloss: Api.Word.Gloss[] = []
+        for (const rawGloss of rawSense.gloss)
+        {
+            if (typeof rawGloss === "string")
+                gloss.push(rawGloss)
+            else
+                gloss.push({
+                    text: rawGloss.text,
+                    type: rawGloss.attr.g_type,
+                })
+        }
 
         const sense: Api.Word.Sense = {
             pos,
@@ -448,6 +493,12 @@ function normalizeSenses(
                 sense.lang.push(langSrc)
             }
         }
+
+        if (rawSense.dial)
+            sense.dialect = rawSense.dial
+
+        if (rawSense.stagr)
+            sense.restrict = rawSense.stagr
 
         senses.push(sense)
     }
@@ -529,6 +580,10 @@ export function gatherLookUpTags(
     const partsOfSpeech = apiWord.senses
         .flatMap(d => d.pos)
 
+    const glossTypes = apiWord.senses
+        .flatMap(d => d.gloss.map(g => typeof g !== "string" ? [g.type] : []))
+        .flat()
+    
     const fieldTags = apiWord.senses
         .flatMap(d => d.field ?? [])
 
@@ -538,6 +593,9 @@ export function gatherLookUpTags(
     const langTags = apiWord.senses
         .flatMap(d => d.lang ?? [])
         .flatMap(l => l.language ?? "wasei")
+    
+    const dialectTags = apiWord.senses
+        .flatMap(d => d.dialect ?? [])
 
     const commonness = apiWord.headings
         .map(h => JmdictTags.getCommonness(h))
@@ -545,9 +603,11 @@ export function gatherLookUpTags(
 
     return JmdictTags.expandFilterTags([...new Set<Api.Word.FilterTag>([
         ...partsOfSpeech,
+        ...glossTypes,
         ...fieldTags,
         ...miscTags,
         ...langTags,
+        ...dialectTags,
         ...commonness,
     ])])
 }

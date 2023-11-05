@@ -9,7 +9,7 @@ export function IconUser(props: Framework.IconBaseProps)
             <circle
                 fill="currentColor"
                 stroke="none"
-                fillRule="evenodd"
+                fill-rule="evenodd"
                 cx="50"
                 cy="30"
                 r="20"

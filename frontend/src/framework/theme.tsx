@@ -1,6 +1,14 @@
 import * as Styled from "solid-styled-components"
 
 
+export function themeVar<T extends keyof Theme>(
+    name: T)
+    : string
+{
+    return `var(--theme-${ name })`
+}
+
+
 export type Theme = {
     name: string
 
@@ -13,7 +21,8 @@ export type Theme = {
     pageBkgColor: string
 
     borderColor: string
-    focusColor: string
+    focusOutlineColor: string
+    focusOutlineWidth: string
     popupOverlayColor: string
     popupShadowColor: string
 
@@ -67,15 +76,16 @@ export const themeLight: Theme = {
     name: "Light",
     
     pageBigMinWidth: "900px",
-    pagePaddingBig: "4rem",
-    pagePaddingSmall: "1.5rem",
+    pagePaddingBig: "3rem",
+    pagePaddingSmall: "1rem",
 
     themeColor: "#77ab00",
     voidBkgColor: "#f8f8f8",
     pageBkgColor: "#ffffff",
 
     borderColor: "#cccccc",
-    focusColor: "#77ab00",
+    focusOutlineColor: "#77ab00",
+    focusOutlineWidth: "2px",
     popupOverlayColor: "#00000018",
     popupShadowColor: "#00000020",
 
@@ -135,7 +145,7 @@ export const themeDarkGray: Theme = {
     pageBkgColor: "#2c2e31",
 
     borderColor: "#616671",
-    focusColor: "#77ab00",
+    focusOutlineColor: "#77ab00",
     popupOverlayColor: "#00000040",
     popupShadowColor: "#00000060",
 

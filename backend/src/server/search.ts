@@ -33,49 +33,52 @@ async function search(
 {
     const query = normalizeQuery(req.query)
     if (query.str.length === 0 &&
-        query.tags.size === 0)
-        return { entries: [] }
+        query.tags.length === 0)
+        return { query, entries: [] }
 
     console.dir(query, { depth: null })
 
+    const tagsSet = new Set<string>(query.tags)
+    const inverseTagsSet = new Set<string>(query.inverseTags)
+
     const byTags =
-        query.forcedType !== "tags" ?
+        query.type !== "tags" ?
             [] :
             db.searchByTags(
-                query.tags,
-                query.inverseTags)
+                tagsSet,
+                inverseTagsSet)
 
     const byHeading =
-        query.forcedType !== "none" && query.forcedType !== "verbatim" ?
+        query.type !== "any" && query.type !== "verbatim" ?
             [] :
             db.searchByHeading(
                 [query.str, query.strJapanese, query.strHiragana],
-                query.tags,
-                query.inverseTags)
+                tagsSet,
+                inverseTagsSet)
 
     const byHeadingPrefix =
-        query.forcedType !== "none" && query.forcedType !== "prefix" ?
+        query.type !== "any" && query.type !== "prefix" ?
             [] :
             db.searchByHeadingPrefix(
                 [query.str, query.strJapanese],
-                query.tags,
-                query.inverseTags)
+                tagsSet,
+                inverseTagsSet)
 
     const byInflections = 
-        query.forcedType !== "none" && query.forcedType !== "inflected" ?
+        query.type !== "any" && query.type !== "inflected" ?
             [] :
             db.searchByInflections(
                 Inflection.breakdown(query.strJapanese),
-                query.tags,
-                query.inverseTags)
+                tagsSet,
+                inverseTagsSet)
 
     const byDefinition =
-        query.forcedType !== "none" && query.forcedType !== "definition" ?
+        query.type !== "any" && query.type !== "definition" ?
             [] :
             db.searchByDefinition(
                 query.strInQuotes || query.str,
-                query.tags,
-                query.inverseTags)
+                tagsSet,
+                inverseTagsSet)
 
     const translateToSearchEntry = (word: Api.Word.Entry): Api.Search.Entry =>
         ({ ...word, type: "word" })
@@ -92,31 +95,14 @@ async function search(
         ...(await byDefinition).map(translateToSearchEntry),
     ]
 
-    return { entries: searchEntries }
+    return {
+        query,
+        entries: searchEntries,
+    }
 }
 
 
-type QueryForcedType =
-    | "none"
-    | "tags"
-    | "verbatim"
-    | "inflected"
-    | "prefix"
-    | "definition"
-
-
-type Query = {
-    forcedType: QueryForcedType
-    str: string
-    strJapanese: string
-    strHiragana: string
-    strInQuotes: string
-    tags: Set<string>
-    inverseTags: Set<string>
-}
-
-
-function normalizeQuery(queryRaw: string): Query
+function normalizeQuery(queryRaw: string): Api.Search.Query
 {
     const regexFancyQuotes = /\“|\”|\„|\‟|\＂/g
     const regexQuoted = /\"(.*?)\"/g
@@ -166,20 +152,20 @@ function normalizeQuery(queryRaw: string): Query
     const queryJapanese = Kana.toKana(queryWithoutTags)
     const queryHiragana = Kana.toHiragana(queryWithoutTags)
 
-    let forcedType: QueryForcedType = "none"
+    let type: Api.Search.QueryType = "any"
     if (queryInQuotes.length !== 0)
-        forcedType = "definition"
+        type = "definition"
     if (queryWithoutTags.length === 0 &&
         tags.length > 0)
-        forcedType = "tags"
+        type = "tags"
 
     return {
-        forcedType,
+        type,
         str: queryWithoutTags,
         strJapanese: queryJapanese,
         strHiragana: queryHiragana,
         strInQuotes: queryInQuotes,
-        tags: new Set<string>(trueTags),
-        inverseTags: new Set<string>(inverseTags),
+        tags: trueTags,
+        inverseTags,
     }
 }

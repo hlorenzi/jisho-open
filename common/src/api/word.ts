@@ -76,13 +76,20 @@ export type LookUpHeading = {
 
 export type Sense = {
     pos: PartOfSpeechTag[]
-    gloss: string[]
+    gloss: Gloss[]
     misc?: MiscTag[]
     field?: FieldDomainTag[]
     info?: string[]
     lang?: LanguageSource[]
     xref?: CrossReference[]
+    dialect?: DialectTag[]
+    restrict?: string[]
 }
+
+
+export type Gloss =
+    | string
+    | { text: string, type: GlossTypeTag }
 
 
 export type LanguageSource = {
@@ -441,6 +448,22 @@ export type FieldDomainTag =
     | "zool"
 
 
+export type DialectTag =
+    | "bra"
+    | "hob"
+    | "ksb"
+    | "ktb"
+    | "kyb"
+    | "kyu"
+    | "nab"
+    | "osb"
+    | "rkb"
+    | "std"
+    | "thb"
+    | "tsb"
+    | "tsug"
+
+
 export type GlossTypeTag =
     | "equ"
     | "expl"
@@ -452,6 +475,8 @@ export type GlossTypeTag =
 export type FilterTag =
     CommonnessTag |
     PartOfSpeechTag |
-    LanguageTag | "wasei" |
     MiscTag |
-    FieldDomainTag
+    FieldDomainTag |
+    LanguageTag | "wasei" |
+    DialectTag |
+    GlossTypeTag

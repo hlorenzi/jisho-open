@@ -14,7 +14,7 @@ export function Searchbox(props: {
         if (text.length === 0)
             return
         
-        Framework.historyPushNoReload(Pages.Search.url(text))
+        Framework.historyPushNoReload(Pages.Search.urlForQuery(text))
     }
 
     return <div>

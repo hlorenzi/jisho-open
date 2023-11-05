@@ -16,7 +16,7 @@ export function IconMagnifyingGlass(props: Framework.IconBaseProps)
             <circle
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="15"
+                stroke-width="15"
                 cx="40"
                 cy="40"
                 r="25"

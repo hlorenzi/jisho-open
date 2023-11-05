@@ -69,6 +69,8 @@ export interface Sense
     field?: Api.Word.FieldDomainTag[]
     lsource?: LanguageSource[]
     s_inf?: string[]
+    dial?: Api.Word.DialectTag[]
+    stagr?: string[]
     gloss: EntryGloss[]
 }
 
@@ -82,7 +84,7 @@ export interface EntryGlossExtended
 {
     [Xml.xml2jsTextKey]: string
     [Xml.xml2jsAttributeKey]: {
-        g_type?: Api.Word.GlossTypeTag
+        g_type: Api.Word.GlossTypeTag
     }
 }
 

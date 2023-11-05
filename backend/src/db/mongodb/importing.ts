@@ -135,7 +135,11 @@ function gatherDefinitionEntries(
         const newGlosses: Gloss[] = []
         for (let g = 0; g < glosses.length; g++)
         {
-            const gloss = glosses[g]
+            const apiGloss = glosses[g]
+            const gloss = typeof apiGloss === "string" ?
+                apiGloss :
+                apiGloss.text
+            
             const [outsideParen, insideParen] = splitParentheses(gloss)
             newGlosses.push({ str: outsideParen, score: 1, index: g })
 

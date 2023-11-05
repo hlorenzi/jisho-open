@@ -1,27 +1,39 @@
+import * as Solid from "solid-js"
 import * as Framework from "./index.ts"
+
+
+export type OnClickEvent<T> = {
+    currentTarget: T
+    target: Element
+}
+
+
+export type OnClickHandler = (
+    ev: OnClickEvent<HTMLButtonElement | HTMLAnchorElement>)
+    => boolean | void
 
 
 export interface ButtonBehaviorProps
 {
-    href?: string,
-    target?: string,
-    title?: string,
-    disabled?: boolean,
-    forceReload?: boolean,
-    blurOnClick?: boolean,
-    onClick?: (ev: any) => boolean | void,
+    href?: string
+    target?: string
+    title?: string
+    disabled?: boolean
+    forceReload?: boolean
+    blurOnClick?: boolean
+    onClick?: OnClickHandler
 }
 
 
 export interface AnchorBehaviorProps
 {
-    href?: string,
-    target?: string,
-    title?: string,
-    disabled?: boolean,
-    forceReload?: boolean,
-    blurOnClick?: boolean,
-    onClick?: (ev: any) => boolean | void,
+    href?: string
+    target?: string
+    title?: string
+    disabled?: boolean
+    forceReload?: boolean
+    blurOnClick?: boolean
+    onClick?: OnClickHandler
 }
 
 

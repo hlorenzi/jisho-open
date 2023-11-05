@@ -7,34 +7,28 @@ const styleClass = css`
     color: ${ Framework.themeVar("textColor") };
     --local-borderColor: ${ Framework.themeVar("borderColor") };
 
-    &.accent
-    {
-        color: ${ Framework.themeVar("buttonAccentColor") };
-        --local-borderColor: ${ Framework.themeVar("buttonAccentColor") };
-    }
-
-    &.danger
-    {
-        color: ${ Framework.themeVar("buttonDangerColor") };
-        --local-borderColor: ${ Framework.themeVar("buttonDangerColor") };
-    }
-
-    appearance: button;
-    display: inline-block;
-    border: 1px solid transparent;
+    appearance: none;
+    display: block;
+    width: calc(100% + var(--local-pagePadding) * 2);
     background-color: transparent;
-    box-shadow: inset 0px 0px 0px 1px var(--local-borderColor);
-    transition: box-shadow 0.05s, background-color 0.05s;
+    transition: background-color 0.05s;
     cursor: pointer;
+    text-align: left;
     text-decoration: none;
     box-sizing: border-box;
 
-    margin: 0.125em;
-    padding: 0.3em;
-    border-radius: 0.25rem;
+    margin: 0;
+    margin-left: calc(0px - var(--local-pagePadding));
+    margin-right: calc(0px - var(--local-pagePadding));
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+    padding-left: var(--local-pagePadding);
+    padding-right: var(--local-pagePadding);
+    border: 0;
+    border-radius: 0;
     font-family: inherit;
     font-weight: inherit;
-    font-size: 0.9em;
+    font-size: 1em;
 
     @media (pointer: coarse)
     {
@@ -43,13 +37,11 @@ const styleClass = css`
 
     &:hover
     {
-        box-shadow: inset 0px 0px 0px 1.5px var(--local-borderColor);
         background-color: ${ Framework.themeVar("buttonHoverBkgColor") };
     }
 
     &:active
     {
-        box-shadow: inset 0px 0px 0px 1.5px var(--local-borderColor);
         background-color: ${ Framework.themeVar("buttonPressBkgColor") };
     }
 
@@ -57,8 +49,6 @@ const styleClass = css`
     {
         cursor: default;
         color: ${ Framework.themeVar("textDisabledColor") };
-        border: 1px dashed var(--local-borderColor);
-        box-shadow: none;
     }
 
     &:focus
@@ -69,7 +59,7 @@ const styleClass = css`
 `
 
 
-export function Button(props: Framework.ButtonBehaviorProps & {
+export function ButtonPopupPageWide(props: Framework.ButtonBehaviorProps & {
     children?: Solid.JSX.Element,
     label?: Solid.JSX.Element,
     icon?: Solid.JSX.Element,

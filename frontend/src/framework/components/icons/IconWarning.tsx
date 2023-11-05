@@ -15,8 +15,8 @@ export function IconWarning(props: Framework.IconBaseProps)
             <path
                 fill="none"
                 stroke="var(--theme-iconDetailColor)"
-                strokeWidth="12"
-                strokeLinecap="square"
+                stroke-width="12"
+                stroke-linecap="square"
                 d="
                 M 50,30
                 L 50,60

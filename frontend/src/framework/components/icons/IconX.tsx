@@ -13,7 +13,6 @@ export function IconX(props: Framework.IconBaseProps)
                 L 90,75
                 Z
             "/>
-
             <path fill={ "currentColor" } stroke="none" d="
                 M 75,10
                 L 10,75

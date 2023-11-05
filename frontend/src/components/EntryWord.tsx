@@ -19,7 +19,11 @@ export function EntryWord(props: {
         !Kana.hasKanji(props.entry.headings[0].base)
 
     return <Entry>
-        <Headings headings={ props.entry.headings }/>
+        <Headings
+            entry={ props.entry }
+            wordId={ props.entry.id }
+            headings={ props.entry.headings }
+        />
         <InflectionBreakdown breakdown={ props.entry.inflections }/>
         <Senses
             ignoreUkMiscTag={ ignoreUsageInPlainKanaMiscTag }
@@ -35,18 +39,79 @@ const Entry = styled.article`
 
 
 function Headings(props: {
+    entry: Api.Word.Entry,
+    wordId: string,
     headings: Api.Word.Heading[],
 })
 {
     const headings = props.headings
         .filter(h => !h.searchOnlyKanji && !h.searchOnlyKana)
 
+    const allKanjiWithDuplicates = headings
+        .flatMap(h => [...h.base].filter(c => Kana.isKanji(c)))
+    
+    const allKanji =
+        [...new Set<string>(allKanjiWithDuplicates)].join("")
+
+    const popupEllipsis = Framework.makePopupPageWide({
+        childrenFn: () =>
+            <HeadingEllipsisPopup
+                entry={ props.entry }
+                wordId={ props.wordId }
+                allKanji={ allKanji }
+            />,
+    })
+
+    const popupBookmark = Framework.makePopupPageWide({
+        childrenFn: () =>
+            <div>In construction...</div>,
+    })
+
     return <header>
         <Solid.For each={ headings }>{ (heading, index) =>
             <Heading heading={ heading } first={ index() === 0 }/>
         }
         </Solid.For>
+
+        <Framework.Button
+            label={ <Framework.IconEllipsis/> }
+            onClick={ ev => popupEllipsis.onOpen(ev.currentTarget) }
+        />
+
+        <Framework.Button
+            label={ <Framework.IconBookmark color={ Framework.themeVar("iconGreenColor") }/> }
+            onClick={ ev => popupBookmark.onOpen(ev.currentTarget) }
+        />
+
+        { popupEllipsis.rendered }
+
+        { popupBookmark.rendered }
     </header> 
+}
+
+
+function HeadingEllipsisPopup(props: {
+    entry: Api.Word.Entry,
+    wordId: string,
+    allKanji: string,
+})
+{
+    return <>
+        <Solid.Show when={ props.allKanji.length !== 0 }>
+            <Framework.ButtonPopupPageWide
+                label={ `Inspect all kanji: ${ props.allKanji }` }
+                href={ Pages.Search.urlForQuery(`${ props.allKanji } #k`) }
+            />
+        </Solid.Show>
+        <Framework.ButtonPopupPageWide
+            label="View in JMdict"
+            href={ Pages.Jmdict.urlForWordId(props.wordId) }
+        />
+        <Framework.ButtonPopupPageWide
+            label="Log entry to console"
+            onClick={ () => console.log(props.entry) }
+        />
+    </>
 }
 
 
@@ -68,182 +133,236 @@ function Heading(props: {
     const commonness =
         JmdictTags.getCommonness(props.heading)
 
-    return <HeadingBlock>
+    const kanjiWithDuplicates = [...props.heading.base]
+        .filter(c => Kana.isKanji(c))
+    
+    const kanji =
+        [...new Set<string>(kanjiWithDuplicates)].join("")
 
-        <HeadingText
+    const popup = Framework.makePopupPageWide({
+        childrenFn: () =>
+            <HeadingPopup
+                kanji={ kanji }
+            />,
+    })
+    
+    return <>
+        <HeadingBlock
             first={ props.first }
             faded={ !!faded }
+            onClick={ ev => popup.onOpen(ev.currentTarget) }
         >
-            <FuriganaRender encoded={ props.heading.furigana }/>
-        </HeadingText>
 
-        <HeadingTagsWrapper first={ props.first }>
-            <HeadingTags>
+            <HeadingText>
+                <FuriganaRender encoded={ props.heading.furigana }/>
+            </HeadingText>
 
-                <Solid.Show when={ commonness === "veryCommon" }>
-                    <Framework.IconArrowUp
-                        title="very common"
-                        color="var(--theme-iconGreenColor)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ commonness === "common" }>
-                    <Framework.IconArrowUpHollow
-                        title="common"
-                        color="var(--theme-iconGreenColor)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.ateji }>
-                    <TextTag
-                        title="ateji reading"
-                        label="A"
-                        bkgColor="var(--theme-iconAtejiColor)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.gikunOrJukujikun }>
-                    <TextTag
-                        title="gikun reading"
-                        label="G"
-                        bkgColor="var(--theme-iconGikunColor)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.jlpt === 5 }>
-                    <TextTag
-                        title="JLPT N5"
-                        label="N5"
-                        bkgColor="var(--theme-iconJlptN5Color)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.jlpt === 4 }>
-                    <TextTag
-                        title="JLPT N4"
-                        label="N4"
-                        bkgColor="var(--theme-iconJlptN4Color)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.jlpt === 3 }>
-                    <TextTag
-                        title="JLPT N3"
-                        label="N3"
-                        bkgColor="var(--theme-iconJlptN3Color)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.jlpt === 2 }>
-                    <TextTag
-                        title="JLPT N2"
-                        label="N2"
-                        bkgColor="var(--theme-iconJlptN2Color)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.jlpt === 1 }>
-                    <TextTag
-                        title="JLPT N1"
-                        label="N1"
-                        bkgColor="var(--theme-iconJlptN1Color)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.rareKanji }>
-                    <Framework.IconArrowDownHollow
-                        title="rare kanji"
-                        color="var(--theme-iconBlueColor)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.outdatedKanji }>
-                    <Framework.IconArrowDown
-                        title="outdated kanji"
-                        color="var(--theme-iconBlueColor)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.outdatedKana }>
-                    <Framework.IconArrowDown
-                        title="outdated kana"
-                        color="var(--theme-iconBlueColor)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.irregularKanji }>
-                    <Framework.IconIrregular
-                        title="irregular kanji"
-                        color="var(--theme-iconRedColor)"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.irregularKana }>
-                    <Framework.IconIrregular
-                        title="irregular kana"
-                        color="var(--theme-iconRedColor)"
-                    />                    
-                </Solid.Show>
+            <HeadingTagsWrapper>
+                <HeadingTags>
 
-                <Solid.Show when={ props.heading.irregularOkurigana }>
-                    <Framework.IconIrregular
-                        title="irregular okurigana"
-                        color="#f00"
-                    />                    
-                </Solid.Show>
+                    <Solid.Show when={ commonness === "veryCommon" }>
+                        <Framework.IconArrowUp
+                            title="very common"
+                            color={ Framework.themeVar("iconGreenColor") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ commonness === "common" }>
+                        <Framework.IconArrowUpHollow
+                            title="common"
+                            color={ Framework.themeVar("iconGreenColor") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.ateji }>
+                        <TextTag
+                            title="ateji reading"
+                            label="A"
+                            bkgColor={ Framework.themeVar("iconAtejiColor") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.gikunOrJukujikun }>
+                        <TextTag
+                            title="gikun reading"
+                            label="G"
+                            bkgColor={ Framework.themeVar("iconGikunColor") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.jlpt === 5 }>
+                        <TextTag
+                            title="JLPT N5"
+                            label="N5"
+                            bkgColor={ Framework.themeVar("iconJlptN5Color") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.jlpt === 4 }>
+                        <TextTag
+                            title="JLPT N4"
+                            label="N4"
+                            bkgColor={ Framework.themeVar("iconJlptN4Color") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.jlpt === 3 }>
+                        <TextTag
+                            title="JLPT N3"
+                            label="N3"
+                            bkgColor={ Framework.themeVar("iconJlptN3Color") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.jlpt === 2 }>
+                        <TextTag
+                            title="JLPT N2"
+                            label="N2"
+                            bkgColor={ Framework.themeVar("iconJlptN2Color") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.jlpt === 1 }>
+                        <TextTag
+                            title="JLPT N1"
+                            label="N1"
+                            bkgColor={ Framework.themeVar("iconJlptN1Color") }
+                        />     
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.rareKanji }>
+                        <Framework.IconArrowDownHollow
+                            title="rare kanji"
+                            color={ Framework.themeVar("iconBlueColor") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.outdatedKanji }>
+                        <Framework.IconArrowDown
+                            title="outdated kanji"
+                            color={ Framework.themeVar("iconBlueColor") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.outdatedKana }>
+                        <Framework.IconArrowDown
+                            title="outdated kana"
+                            color={ Framework.themeVar("iconBlueColor") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.irregularKanji }>
+                        <Framework.IconIrregular
+                            title="irregular kanji"
+                            color={ Framework.themeVar("iconRedColor") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.irregularKana }>
+                        <Framework.IconIrregular
+                            title="irregular kana"
+                            color={ Framework.themeVar("iconRedColor") }
+                        />
+                    </Solid.Show>
 
-                <Solid.Show when={ props.heading.searchOnlyKanji }>
-                    <TextTag
-                        title="search-only kanji"
-                        label="Ø"
-                    />                    
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.searchOnlyKana }>
-                    <TextTag
-                        title="search-only kana"
-                        label="Ø"
-                    />                    
-                </Solid.Show>
+                    <Solid.Show when={ props.heading.irregularOkurigana }>
+                        <Framework.IconIrregular
+                            title="irregular okurigana"
+                            color={ Framework.themeVar("iconRedColor") }
+                        />
+                    </Solid.Show>
 
-            </HeadingTags>
-        </HeadingTagsWrapper>
-    </HeadingBlock>
+                    <Solid.Show when={ props.heading.searchOnlyKanji }>
+                        <TextTag
+                            title="search-only kanji"
+                            label="Ø"
+                            bkgColor={ Framework.themeVar("iconRedColor") }
+                        />
+                    </Solid.Show>
+                    
+                    <Solid.Show when={ props.heading.searchOnlyKana }>
+                        <TextTag
+                            title="search-only kana"
+                            label="Ø"
+                            bkgColor={ Framework.themeVar("iconRedColor") }
+                        />
+                    </Solid.Show>
+
+                </HeadingTags>
+            </HeadingTagsWrapper>
+        </HeadingBlock>
+
+        { popup.rendered }
+    </>
 }
 
 
-const HeadingBlock = styled.h1`
-    margin: 0;
-    margin-inline-end: 1.5em;
-    display: inline-block;
-    font-size: 1em;
-`
-
-
-const HeadingText = styled.span<{
-    first: boolean,
+const HeadingBlock = styled.button<{
     faded: boolean,
+    first: boolean,
 }>`
-    font-weight: bold;
+    margin: 0;
+    margin-inline-start: -0.2em;
+    margin-inline-end: 1em;
+    padding: 0.1em 0.2em 0 0.2em;
+    border: 0;
+    display: inline-block;
+    font-family: inherit;
     font-size: ${ props => props.first ? `1.6em` : `1.2em` };
+    border-radius: 0.25rem;
+    background-color: transparent;
+    transition: color 0.05s, background-color 0.05s;
+    cursor: pointer;
 
-    ${ props => props.faded ? `
-        color: var(--theme-text3rdColor);
-        &:hover { color: var(--theme-textColor); }
-    ` : `` }
+    color: ${ props => props.faded ?
+        Framework.themeVar("text3rdColor") :
+        Framework.themeVar("textColor")
+    };
+
+    &:hover
+    {
+        color: ${ Framework.themeVar("textColor") };
+        background-color: ${ Framework.themeVar("buttonHoverBkgColor") };
+    }
+
+    &:active
+    {
+        background-color: ${ Framework.themeVar("buttonPressBkgColor") };
+    }
 `
 
 
-const HeadingTagsWrapper = styled.sup<{
-    first: boolean,
-}>`
-    font-size: ${ props => props.first ? `1.6em` : `1.2em` };
+const HeadingText = styled.span`
+    font-weight: bold;
+`
+
+
+const HeadingTagsWrapper = styled.sup`
 `
 
 
 const HeadingTags = styled.sup`
     font-size: 0.5em;
 `
+
+
+function HeadingPopup(props: {
+    kanji: string,
+})
+{
+    return <>
+        <Solid.Show when={ props.kanji.length !== 0 }>
+            <Framework.ButtonPopupPageWide
+                label={ `Inspect kanji: ${ props.kanji }` }
+                href={ Pages.Search.urlForQuery(`${ props.kanji } #k`) }
+            />
+        </Solid.Show>
+        <Framework.ButtonPopupPageWide
+            label="Add this specific spelling to a study list..."
+            onClick={ () => {} }
+        />
+    </>
+}
 
 
 function InflectionBreakdown(props: {
@@ -272,7 +391,7 @@ function Senses(props: {
 
     for (const sense of props.senses)
     {
-        // Check whether the part-of-speech tags have changed between definitions
+        // Check whether the part-of-speech tags have changed between senses
         if (!sense.pos.every(pos => currentPos.some(curr => curr === pos)) ||
             !currentPos.every(pos => sense.pos.some(curr => curr === pos)))
         {
@@ -284,18 +403,55 @@ function Senses(props: {
             currentPos = sense.pos
         }
 
-        const line: Solid.JSX.Element[] = []
-        line.push(<span>{ sense.gloss.join("; ") }</span>)
+        // Build gloss text
+        const gloss: Solid.JSX.Element[] = []
+        for (let i = 0; i < sense.gloss.length; i++)
+        {
+            const apiGloss = sense.gloss[i]
 
+            if (i > 0)
+                gloss.push("; ")
+            
+            if (typeof apiGloss === "string")
+                gloss.push(apiGloss)
+            else
+            {
+                gloss.push(<SenseGlossExpl>{ apiGloss.text }</SenseGlossExpl>)
+
+                switch (apiGloss.type)
+                {
+                    case "lit":
+                        gloss.push(<sup title="literal meaning">[lit.]</sup>)
+                        break
+                    case "fig":
+                        gloss.push(<sup title="figuratively">[fig.]</sup>)
+                        break
+                    case "tm":
+                        gloss.push(<span title="trademark">™</span>)
+                        break
+                    case "expl":
+                        break
+                    default:
+                        gloss.push(<sup>[{ apiGloss.type }]</sup>)
+                        break
+                }
+            }
+        }
+
+        const line: Solid.JSX.Element[] = []
+        line.push(<span>{ gloss }</span>)
+
+        // Build field/domain tag text
         if (sense.field)
         {
             const text = sense.field
                 .map(tag => JmdictTags.nameForFieldDomainTag(tag))
                 .join(", ")
 
-            line.push(<SenseInfo> — { text }</SenseInfo>)
+            line.push(<SenseInfo> —&nbsp;{ text }</SenseInfo>)
         }
 
+        // Build misc tag text
         const miscTags = sense.misc?.filter(
             tag => !props.ignoreUkMiscTag || tag !== "uk")
 
@@ -305,39 +461,66 @@ function Senses(props: {
                 .map(tag => JmdictTags.nameForMiscTag(tag))
                 .join(", ")
 
-            line.push(<SenseInfo> — { text }</SenseInfo>)
+            line.push(<SenseInfo> —&nbsp;{ text }</SenseInfo>)
         }
 
+        // Build dialect text
+        if (sense.dialect)
+        {
+            const text = sense.dialect
+                .map(tag => JmdictTags.nameForDialectTag(tag))
+                .join(", ")
+
+            line.push(<SenseInfo> —&nbsp;{ text }</SenseInfo>)
+        }
+
+        // Build information text
         if (sense.info)
         {
             const text = sense.info.join(" — ")
-            line.push(<SenseInfo> — { text }</SenseInfo>)
+            line.push(<SenseInfo> —&nbsp;{ text }</SenseInfo>)
         }
 
+        // Build restriction text
+        if (sense.restrict)
+        {
+            const text = sense.restrict.join(", ")
+            line.push(<SenseInfo> —&nbsp;only applies to { text }</SenseInfo>)
+        }
+
+        // Build source-language text
         if (sense.lang)
         {
             const langs: string[] = []
 
-            for (const lang of sense.lang ?? [])
+            const isWasei = sense.lang.some(l => l.wasei)
+            const isPartial = sense.lang.some(l => l.partial)
+
+            if (isWasei)
+                langs.push(`wasei`)
+
+            for (let i = 0; i < sense.lang.length; i++)
             {
+                const lang = sense.lang[i]
+                const isFirst = i === 0
+
                 if (lang.language)
                     langs.push(
-                        `${ lang.wasei ? `wasei, ` : `` }` +
-                        `${ lang.partial ? `partially ` : `` }` +
-                        `from ${ JmdictTags.nameForLanguageTag(lang.language) }` +
+                        `${ isPartial && isFirst ? `partially ` : `` }` +
+                        `${ isFirst ? `from ` : `` }` +
+                        `${ JmdictTags.nameForLanguageTag(lang.language) }` +
                         `${ lang.source ? ` "${ lang.source }"` : `` }`)
                 else if (lang.source)
                     langs.push(
-                        `${ lang.wasei ? `wasei, ` : `` }` +
-                        `${ lang.partial ? `partially ` : `` }` +
-                        `from "${ lang.source }"`)
-                else
-                    langs.push(`wasei`)
+                        `${ isPartial && isFirst ? `partially ` : `` }` +
+                        `${ isFirst ? `from ` : `` }` +
+                        `"${ lang.source }"`)
             }
 
-            line.push(<SenseInfo> — { langs.join(", ") }</SenseInfo>)
+            line.push(<SenseInfo> —&nbsp;{ langs.join(", ") }</SenseInfo>)
         }
 
+        // Build cross-reference text and links
         for (const xref of sense.xref ?? [])
         {
             const text =
@@ -346,14 +529,16 @@ function Senses(props: {
 
             const link =
                 <Framework.Link
-                    href={ Pages.Search.url(xref.base) }
+                    href={ Pages.Search.urlForQuery(xref.base) }
                 >
                     { xref.base }
+                    { xref.reading ?
+                        `【${ xref.reading }】` : `` }
                     { xref.senseIndex ?
-                        ` (sense ${xref.senseIndex})` : `` }
+                        ` (sense ${ xref.senseIndex })` : `` }
                 </Framework.Link>
             
-            line.push(<SenseInfo> 🡆 { text }{ link }</SenseInfo>)
+            line.push(<SenseInfo> 🡆&nbsp;{ text }{ link }</SenseInfo>)
         }
 
         list.push(<li>{ line }</li>)
@@ -366,17 +551,20 @@ function Senses(props: {
 
 
 const PartOfSpeech = styled.p`
-    color: var(--theme-iconGreenColor);
+    color: ${ Framework.themeVar("iconGreenColor") };
     font-size: 0.8em;
 `
 
 
 const SenseList = styled.ol`
-    counter-reset: item;
+    margin-block-start: 0;
+    margin-block-end: 0;
     padding-inline-start: 1.75em;
 
+    counter-reset: item;
+
     & li::marker {
-        color: var(--theme-textFaintColor);
+        color: ${ Framework.themeVar("textFaintColor") };
         content: counter(item) " • ";
         font-size: 0.8em;
         padding-inline-end: 0.25em;
@@ -388,7 +576,12 @@ const SenseList = styled.ol`
 `
 
 
+const SenseGlossExpl = styled.span`
+    font-style: italic;
+`
+
+
 const SenseInfo = styled.span`
-    color: var(--theme-text2ndColor);
+    color: ${ Framework.themeVar("text2ndColor") };
     font-size: 0.8em;
 `

@@ -77,6 +77,11 @@ export async function connect(): Promise<Db.Db>
         [fieldLookUpHeadingsScore]: -1,
     })
 
+    await state.collWords.createIndex({
+        [fieldLookUpTags]: 1,
+        score: -1,
+    })
+
     await state.collDefinitions.createIndex({
         ["wordId" satisfies keyof DbDefinitionEntry]: 1,
         ["score" satisfies keyof DbDefinitionEntry]: -1,

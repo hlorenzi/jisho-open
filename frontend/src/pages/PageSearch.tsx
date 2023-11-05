@@ -25,8 +25,8 @@ export function PageSearch(props: Framework.RouteProps)
             return res.entries
         })
     
-    return <>
-        <h2>Lorenzi's Jisho</h2>
+    return <Framework.Page>
+        <h1 style={{ "font-size": "1.5em" }}>Lorenzi's Jisho</h1>
 
         <Framework.Link href="/test">Test Page</Framework.Link><br/><br/>
 
@@ -49,5 +49,5 @@ export function PageSearch(props: Framework.RouteProps)
             </Solid.Switch>
         }
         </Solid.For>
-    </>
+    </Framework.Page>
 }

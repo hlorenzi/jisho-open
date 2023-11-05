@@ -14,6 +14,12 @@
 
 		* {
 			box-sizing: border-box;
+			font-size: 1em;
+		}
+
+		*:focus {
+			outline-offset: calc(0px - var(--theme-focusOutlineWidth));
+			outline: var(--theme-focusOutlineWidth) solid var(--theme-focusOutlineColor);
 		}
 
 		html {
@@ -23,26 +29,21 @@
 			overflow-x: hidden;
 			
 			font-family: "Lexend Deca", sans-serif;
+			font-size: 1rem;
 			color: var(--theme-textColor);
 			background-color: var(--theme-voidBkgColor);
 		}
 
 		body {
-			margin: 1em;
+			margin: 0;
 			padding: 0;
-			width: calc(100vw - 2em);
+			width: 100%;
 			overflow-x: hidden;
 		}
 
 		p {
 			margin-block-start: 0;
 			margin-block-end: 0;
-		}
-
-		ol {
-			margin-block-start: 0;
-			margin-block-end: 0;
-			padding-inline-start: 1.5em;
 		}
 	</style>
 

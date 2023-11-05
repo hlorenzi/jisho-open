@@ -19,7 +19,7 @@ export function FuriganaRender(props: {
             return <>
                 { segment[0] }
                 <Rt dotted={ dotted }>
-                    { segment[1] === segment[0] ? "" : segment[1] }
+                    { segment[1] }
                 </Rt>
             </>
         }}
@@ -31,6 +31,7 @@ export function FuriganaRender(props: {
 const Rt = styled.rt<{
     dotted: boolean,
 }>`
+    font-size: 0.5em;
     user-select: none;
 
     ${ props => props.dotted ? `

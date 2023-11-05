@@ -1,9 +1,9 @@
 import * as Solid from "solid-js"
-import * as Styled from "solid-styled-components"
+import { styled } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
-const DivWrapper = Styled.styled("div")`
+const DivWrapper = styled("div")`
     position: fixed;
     top: 0;
     left: 0;

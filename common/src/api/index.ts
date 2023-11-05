@@ -14,7 +14,26 @@ export namespace Search
     }
     
     export type Response = {
+        query: Query
         entries: Entry[]
+    }
+
+    export type QueryType =
+        | "any"
+        | "tags"
+        | "verbatim"
+        | "inflected"
+        | "prefix"
+        | "definition"
+    
+    export type Query = {
+        type: QueryType
+        str: string
+        strJapanese: string
+        strHiragana: string
+        strInQuotes: string
+        tags: string[]
+        inverseTags: string[]
     }
 
     export type Entry =

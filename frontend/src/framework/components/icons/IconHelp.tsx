@@ -9,7 +9,7 @@ export function IconHelp(props: Framework.IconBaseProps)
             <circle
                 fill="currentColor"
                 stroke="none"
-                fillRule="evenodd"
+                fill-rule="evenodd"
                 cx="50"
                 cy="50"
                 r="50"
@@ -17,8 +17,8 @@ export function IconHelp(props: Framework.IconBaseProps)
             <path
                 fill="none"
                 stroke="var(--theme-iconDetailColor)"
-                strokeWidth="12"
-                strokeLinecap="square"
+                stroke-width="12"
+                stroke-linecap="square"
                 d="
                 M 30,40
                 Q 30,20, 50,20

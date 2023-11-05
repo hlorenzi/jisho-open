@@ -1,16 +1,9 @@
 import * as Solid from "solid-js"
-import * as Styled from "solid-styled-components"
+import { styled } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
 const debugFetchDelayMs = 0
-
-
-const DivPage = Styled.styled("div")`
-    position: absolute;
-    top: 0px;
-    width: 100%;
-`
 
 
 export function Router(props: {
