@@ -4,8 +4,11 @@ import * as Infletcion from "common/inflection.ts"
 
 export interface Db
 {
-    importWords:
+    importWordEntries:
         (words: Api.Word.Entry[]) => Promise<void>
+
+    importKanjiEntries:
+        (words: Api.Kanji.Entry[]) => Promise<void>
 
     searchByHeading: (
         queries: string[],
@@ -35,18 +38,26 @@ export interface Db
         tags: Set<string>,
         inverseTags: Set<string>)
         => Promise<Api.Word.Entry[]>
+
+    searchKanji: (
+        kanjiString: string,
+        tags: Set<string>,
+        inverseTags: Set<string>)
+        => Promise<Api.Kanji.Entry[]>
 }
 
 
 export function createDummy(): Db
 {
     return {
-        importWords: async () => {},
+        importWordEntries: async () => {},
+        importKanjiEntries: async () => {},
 
         searchByHeading: async () => [],
         searchByHeadingPrefix: async () => [],
         searchByInflections: async () => [],
         searchByDefinition: async () => [],
         searchByTags: async () => [],
+        searchKanji: async () => [],
     }
 }

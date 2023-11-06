@@ -1,0 +1,24 @@
+import * as Solid from "solid-js"
+import { styled } from "solid-styled-components"
+import * as Framework from "../index.ts"
+
+
+const StyledHr = styled.hr`
+    border: 0;
+    border-bottom: 1px solid ${ Framework.themeVar("borderColor") };
+    
+	padding-left:  var(--local-pagePadding);
+	padding-right: var(--local-pagePadding);
+	margin-left:   calc(0px - var(--local-pagePadding));
+    margin-right:  calc(0px - var(--local-pagePadding));
+`
+
+
+export function HorizontalBar(props: {
+    style?: Solid.JSX.CSSProperties,
+})
+{
+	return <StyledHr
+        style={ props.style }
+    />
+}

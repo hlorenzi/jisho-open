@@ -25,6 +25,7 @@ export namespace Search
         | "inflected"
         | "prefix"
         | "definition"
+        | "kanji"
     
     export type Query = {
         type: QueryType
@@ -32,6 +33,7 @@ export namespace Search
         strJapanese: string
         strHiragana: string
         strInQuotes: string
+        kanji: string[]
         tags: string[]
         inverseTags: string[]
     }
@@ -46,4 +48,5 @@ export namespace Search
         | "prefix"
         | "inflected"
         | "definition"
+        | "kanji"
 }

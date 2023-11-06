@@ -2,6 +2,7 @@ import * as Db from "../db/index.ts"
 import * as File from "./file.ts"
 import * as Xml from "./xml.ts"
 import * as KanjidicRaw from "./kanjidic_raw.ts"
+import * as Gatherer from "./gatherer.ts"
 import * as Api from "common/api/index.ts"
 import * as KanjiStructCat from "../data/kanji_structural_category.ts"
 
@@ -30,6 +31,25 @@ export async function downloadAndImport(
         "kanjidic2",
         "character")
 
+    const gatherer = new Gatherer.Gatherer(
+        25,
+        (items: Api.Kanji.Entry[]) => db.importKanjiEntries(items))
+    
+    for await (const rawEntry of entryIterator)
+    {
+        try
+        {
+            const apiEntry = normalizeEntry(rawEntry)
+            await gatherer.push(apiEntry)
+        }
+        catch (e: any)
+        {
+            throw `error normalizing kanji entry ${ rawEntry.literal[0] }: ${ e }`
+        }
+    }
+
+    await gatherer.finish()
+    
     for await (const rawEntry of entryIterator)
     {
         try

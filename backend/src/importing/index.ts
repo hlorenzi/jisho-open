@@ -7,6 +7,6 @@ export async function buildDatabase(
     db: Db.Db,
     useCachedFiles: boolean)
 {
-    //await Kanjidic.downloadAndImport(db, useCachedFiles)
+    await Kanjidic.downloadAndImport(db, useCachedFiles)
     await Jmdict.downloadAndImport(db, useCachedFiles)
 }

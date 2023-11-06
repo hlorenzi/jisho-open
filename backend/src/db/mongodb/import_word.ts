@@ -3,7 +3,7 @@ import * as Api from "common/api/index.ts"
 import * as Jmdict from "../../importing/jmdict.ts"
 
 
-export async function importWords(
+export async function importWordEntries(
     state: MongoDb.State,
     apiWords: Api.Word.Entry[])
     : Promise<void>

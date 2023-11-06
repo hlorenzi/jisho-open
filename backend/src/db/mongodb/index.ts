@@ -2,7 +2,8 @@ import * as MongoDb from "mongodb"
 import * as Db from "../index.ts"
 import * as Api from "common/api/index.ts"
 import * as Furigana from "common/furigana.ts"
-import * as MongoDbImporting from "./importing.ts"
+import * as MongoDbImportWords from "./import_word.ts"
+import * as MongoDbImportKanji from "./import_kanji.ts"
 import * as MongoDbSearch from "./search.ts"
 
 
@@ -10,16 +11,15 @@ export const dbUrl = "mongodb://localhost:27017"
 export const dbDatabase = "jisho2"
 export const dbCollectionWords = "words"
 export const dbCollectionDefinitions = "definitions"
+export const dbCollectionKanji = "kanji"
 
 
 export type State = {
     db: MongoDb.Db
     collWords: MongoDb.Collection<DbWordEntry>
     collDefinitions: MongoDb.Collection<DbDefinitionEntry>
+    collKanji: MongoDb.Collection<DbKanjiEntry>
 }
-
-
-export type DbWordHeading = Omit<Api.Word.Heading, "base" | "reading">
 
 
 export type DbWordEntry = Omit<Api.Word.Entry, "id" | "headings"> & {
@@ -34,11 +34,19 @@ export type DbWordEntry = Omit<Api.Word.Entry, "id" | "headings"> & {
 }
 
 
+export type DbWordHeading = Omit<Api.Word.Heading, "base" | "reading">
+
+
 export type DbDefinitionEntry = {
     _id: string
     wordId: string
     score: number
     words: string[]
+}
+
+
+export type DbKanjiEntry = Omit<Api.Kanji.Entry, "id"> & {
+    _id: string
 }
 
 
@@ -70,6 +78,7 @@ export async function connect(): Promise<Db.Db>
         db,
         collWords: db.collection<DbWordEntry>(dbCollectionWords),
         collDefinitions: db.collection<DbDefinitionEntry>(dbCollectionDefinitions),
+        collKanji: db.collection<DbKanjiEntry>(dbCollectionKanji),
     }
 
     await state.collWords.createIndex({
@@ -93,8 +102,10 @@ export async function connect(): Promise<Db.Db>
     })
 
     return {
-        importWords: (words) =>
-            MongoDbImporting.importWords(state, words),
+        importWordEntries: (words) =>
+            MongoDbImportWords.importWordEntries(state, words),
+        importKanjiEntries: (kanji) =>
+            MongoDbImportKanji.importKanjiEntries(state, kanji),
 
         searchByHeading: (queries, tags, invTags) =>
             MongoDbSearch.searchByHeading(state, queries, tags, invTags),
@@ -106,6 +117,8 @@ export async function connect(): Promise<Db.Db>
             MongoDbSearch.searchByDefinition(state, query, tags, invTags),
         searchByTags: (tags, invTags) =>
             MongoDbSearch.searchByTags(state, tags, invTags),
+        searchKanji: (kanjiString, tags, invTags) =>
+            MongoDbSearch.searchKanji(state, kanjiString, tags, invTags),
     }
 }
 
@@ -135,4 +148,21 @@ export function translateDbWordToApiWord(
     }
 
     return apiWord
+}
+
+
+export function translateDbKanjiToApiKanji(
+    dbKanji: DbKanjiEntry)
+    : Api.Kanji.Entry
+{
+    // Add and remove fields via destructuring assignment
+    const {
+        _id,
+        ...apiKanji
+    } = {
+        ...dbKanji,
+        id: dbKanji._id,
+    }
+
+    return apiKanji
 }

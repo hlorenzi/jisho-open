@@ -20,8 +20,8 @@ const Styled = styled.div<{
 
 
 export function TextTag(props: {
-    title: string,
     label: string,
+    title?: string,
     textColor?: string,
     bkgColor?: string,
 })

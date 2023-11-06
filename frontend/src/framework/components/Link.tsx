@@ -3,8 +3,18 @@ import { styled } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
-const Styled = styled.a`
+const StyledAnchor = styled.a<{
+    noUnderline: boolean,
+}>`
+    border-radius: 0.25rem;
+
     color: ${ Framework.themeVar("textColor") };
+    transition: color 0.05s;
+
+    ${ props => props.noUnderline ?
+        `text-decoration: none;` :
+        ``
+    }
 
     &:hover {
         color: ${ Framework.themeVar("linkHoverColor") };
@@ -19,14 +29,18 @@ const Styled = styled.a`
 export function Link(props: Framework.AnchorBehaviorProps & {
     children?: Solid.JSX.Element,
     label?: Solid.JSX.Element,
+    noUnderline?: boolean,
+    style?: Solid.JSX.CSSProperties,
 })
 {
-    return <Styled
+    return <StyledAnchor
         onClick={ ev => Framework.onAnchorClick(ev, props) }
         title={ props.title }
         href={ props.href || "#" }
         target={ props.target }
+        noUnderline={ !!props.noUnderline }
+        style={ props.style }
     >
         { props.children || props.label }
-    </Styled>
+    </StyledAnchor>
 }

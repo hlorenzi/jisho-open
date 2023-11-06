@@ -183,6 +183,37 @@ export async function searchByTags(
 }
 
 
+export async function searchKanji(
+    state: MongoDb.State,
+    kanjiString: string,
+    tags: Set<string>,
+    inverseTags: Set<string>)
+    : Promise<Api.Kanji.Entry[]>
+{
+    if (kanjiString.length === 0)
+        return []
+
+    const tagFilter = makeTagFilter(tags, inverseTags)
+
+    const kanjiChars = [...kanjiString]
+
+    const results = await state.collKanji
+        .find({
+            _id: { $in: kanjiChars },
+            ...tagFilter,
+        })
+        .toArray()
+
+    // Sort by the order in the query.
+    const kanjiOrdering = new Map<string, number>()
+    kanjiChars.forEach((c, i) => kanjiOrdering.set(c, i))
+    
+    return results
+        .map(MongoDb.translateDbKanjiToApiKanji)
+        .sort((a, b) => kanjiOrdering.get(a.id)! - kanjiOrdering.get(b.id)!)
+}
+
+
 function makeTagFilter(
     tags: Set<string>,
     inverseTags: Set<string>)

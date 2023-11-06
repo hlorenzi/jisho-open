@@ -8,7 +8,6 @@ import * as Inflection from "common/inflection.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import { FuriganaRender } from "./FuriganaRender.tsx"
 import { InflectionPath } from "./InflectionPath.tsx"
-import { TextTag } from "./TextTag.tsx"
 
 
 export function EntryWord(props: {
@@ -175,7 +174,7 @@ function Heading(props: {
                     </Solid.Show>
                     
                     <Solid.Show when={ props.heading.ateji }>
-                        <TextTag
+                        <Framework.TextTag
                             title="ateji reading"
                             label="A"
                             bkgColor={ Framework.themeVar("iconAtejiColor") }
@@ -183,7 +182,7 @@ function Heading(props: {
                     </Solid.Show>
                     
                     <Solid.Show when={ props.heading.gikunOrJukujikun }>
-                        <TextTag
+                        <Framework.TextTag
                             title="gikun reading"
                             label="G"
                             bkgColor={ Framework.themeVar("iconGikunColor") }
@@ -191,7 +190,7 @@ function Heading(props: {
                     </Solid.Show>
                     
                     <Solid.Show when={ props.heading.jlpt === 5 }>
-                        <TextTag
+                        <Framework.TextTag
                             title="JLPT N5"
                             label="N5"
                             bkgColor={ Framework.themeVar("iconJlptN5Color") }
@@ -199,7 +198,7 @@ function Heading(props: {
                     </Solid.Show>
                     
                     <Solid.Show when={ props.heading.jlpt === 4 }>
-                        <TextTag
+                        <Framework.TextTag
                             title="JLPT N4"
                             label="N4"
                             bkgColor={ Framework.themeVar("iconJlptN4Color") }
@@ -207,7 +206,7 @@ function Heading(props: {
                     </Solid.Show>
                     
                     <Solid.Show when={ props.heading.jlpt === 3 }>
-                        <TextTag
+                        <Framework.TextTag
                             title="JLPT N3"
                             label="N3"
                             bkgColor={ Framework.themeVar("iconJlptN3Color") }
@@ -215,7 +214,7 @@ function Heading(props: {
                     </Solid.Show>
                     
                     <Solid.Show when={ props.heading.jlpt === 2 }>
-                        <TextTag
+                        <Framework.TextTag
                             title="JLPT N2"
                             label="N2"
                             bkgColor={ Framework.themeVar("iconJlptN2Color") }
@@ -223,7 +222,7 @@ function Heading(props: {
                     </Solid.Show>
                     
                     <Solid.Show when={ props.heading.jlpt === 1 }>
-                        <TextTag
+                        <Framework.TextTag
                             title="JLPT N1"
                             label="N1"
                             bkgColor={ Framework.themeVar("iconJlptN1Color") }
@@ -273,7 +272,7 @@ function Heading(props: {
                     </Solid.Show>
 
                     <Solid.Show when={ props.heading.searchOnlyKanji }>
-                        <TextTag
+                        <Framework.TextTag
                             title="search-only kanji"
                             label="Ø"
                             bkgColor={ Framework.themeVar("iconRedColor") }
@@ -281,7 +280,7 @@ function Heading(props: {
                     </Solid.Show>
                     
                     <Solid.Show when={ props.heading.searchOnlyKana }>
-                        <TextTag
+                        <Framework.TextTag
                             title="search-only kana"
                             label="Ø"
                             bkgColor={ Framework.themeVar("iconRedColor") }

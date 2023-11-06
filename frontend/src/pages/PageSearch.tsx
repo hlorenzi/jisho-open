@@ -4,6 +4,7 @@ import * as Api from "../api.ts"
 import * as Pages from "../pages.ts"
 import { Searchbox } from "../components/Searchbox.tsx"
 import { EntryWord } from "../components/EntryWord.tsx"
+import { EntryKanji } from "../components/EntryKanji.tsx"
 
 
 export function PageSearch(props: Framework.RouteProps)
@@ -26,25 +27,27 @@ export function PageSearch(props: Framework.RouteProps)
         })
     
     return <Framework.Page>
-        <h1 style={{ "font-size": "1.5em" }}>Lorenzi's Jisho</h1>
-
-        <Framework.Link href="/test">Test Page</Framework.Link><br/><br/>
-
+        <Framework.LogoHeader/>
+        <br/>
         <Searchbox
             initialText={ searchQuery() }
         />
+        <br/>
 
         <Solid.Show when={ searchResults.loading }>
             <Framework.LoadingBar/>
         </Solid.Show>
     
-        <Solid.For each={ searchResults.latest }>{ (result) =>
+        <Solid.For each={ searchResults.latest }>{ (result, index) =>
             <Solid.Switch>
+                <Solid.Match when={ result.type === "section" && index() > 0 }>
+                    <Framework.HorizontalBar/>
+                </Solid.Match>
                 <Solid.Match when={ result.type === "word" }>
                     <EntryWord entry={ result as Api.Word.Entry }/>
                 </Solid.Match>
-                <Solid.Match when={ result.type === "section" }>
-                    <hr/>
+                <Solid.Match when={ result.type === "kanji" }>
+                    <EntryKanji entry={ result as Api.Kanji.Entry }/>
                 </Solid.Match>
             </Solid.Switch>
         }

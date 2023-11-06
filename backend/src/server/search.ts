@@ -80,20 +80,44 @@ async function search(
                 tagsSet,
                 inverseTagsSet)
 
-    const translateToSearchEntry = (word: Api.Word.Entry): Api.Search.Entry =>
+    const byKanji =
+        query.type !== "any" && query.type !== "kanji" ?
+            [] :
+            db.searchKanji(
+                [...new Set(query.kanji)].join(""),
+                tagsSet,
+                inverseTagsSet)
+
+    const translateToSearchWordEntry = (word: Api.Word.Entry): Api.Search.Entry =>
         ({ ...word, type: "word" })
+
+    const translateToSearchKanjiEntry = (kanji: Api.Kanji.Entry): Api.Search.Entry =>
+        ({ ...kanji, type: "kanji" })
 
     const searchEntries: Api.Search.Entry[] = [
         { type: "section", section: "verbatim" },
-        ...(await byTags).map(translateToSearchEntry),
-        ...(await byHeading).map(translateToSearchEntry),
+        ...(await byTags).map(translateToSearchWordEntry),
+        ...(await byHeading).map(translateToSearchWordEntry),
         { type: "section", section: "inflected" },
-        ...(await byInflections).map(translateToSearchEntry),
+        ...(await byInflections).map(translateToSearchWordEntry),
         { type: "section", section: "prefix" },
-        ...(await byHeadingPrefix).map(translateToSearchEntry),
+        ...(await byHeadingPrefix).map(translateToSearchWordEntry),
         { type: "section", section: "definition" },
-        ...(await byDefinition).map(translateToSearchEntry),
+        ...(await byDefinition).map(translateToSearchWordEntry),
+        { type: "section", section: "kanji" },
+        ...(await byKanji).map(translateToSearchKanjiEntry),
     ]
+
+    // Remove empty section markers
+    for (let i = searchEntries.length - 1; i >= 0; i--)
+    {
+        if (searchEntries[i].type === "section")
+        {
+            if (i + 1 >= searchEntries.length ||
+                searchEntries[i + 1].type === "section")
+                searchEntries.splice(i, 1)
+        }
+    }
 
     return {
         query,
@@ -135,13 +159,13 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
     
     //const queryNonQuotedSplit = queryNonQuoted.split(/\s/g).map(s => s.trim()).filter(s => !!s)
     
-    const tags = (queryNormalized.match(regexTags) ?? [])
+    const rawTags = (queryNormalized.match(regexTags) ?? [])
         .map(t => t.substring("#".length))
     
-    const trueTags = tags
+    let tags = rawTags
         .filter(t => t.indexOf("!") < 0)
 
-    const inverseTags = tags
+    let inverseTags = rawTags
         .filter(t => t.indexOf("!") >= 0)
         .map(t => t.substring("!".length))
 
@@ -151,13 +175,21 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
     
     const queryJapanese = Kana.toKana(queryWithoutTags)
     const queryHiragana = Kana.toHiragana(queryWithoutTags)
+    const queryKanji = [...queryNormalized]
+        .filter(c => Kana.isKanji(c))
 
     let type: Api.Search.QueryType = "any"
     if (queryInQuotes.length !== 0)
         type = "definition"
+    if (tags.some(tag => tag === "k" || tag === "kanji"))
+        type = "kanji"
     if (queryWithoutTags.length === 0 &&
         tags.length > 0)
         type = "tags"
+
+    const removeTags = new Set(["k", "kanji"])
+    tags = tags.filter(tag => !removeTags.has(tag))
+    inverseTags = inverseTags.filter(tag => !removeTags.has(tag))
 
     return {
         type,
@@ -165,7 +197,8 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         strJapanese: queryJapanese,
         strHiragana: queryHiragana,
         strInQuotes: queryInQuotes,
-        tags: trueTags,
+        kanji: queryKanji,
+        tags,
         inverseTags,
     }
 }

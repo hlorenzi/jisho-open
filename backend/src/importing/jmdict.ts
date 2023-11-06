@@ -37,7 +37,7 @@ export async function downloadAndImport(
 
     const gatherer = new Gatherer.Gatherer(
         25,
-        (items: Api.Word.Entry[]) => db.importWords(items))
+        (items: Api.Word.Entry[]) => db.importWordEntries(items))
     
     for await (const rawEntry of entryIterator)
     {

@@ -1,5 +1,5 @@
 import * as Solid from "solid-js"
-import { styled, css } from "solid-styled-components"
+import { css } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
@@ -49,12 +49,6 @@ const styleClass = css`
     {
         cursor: default;
         color: ${ Framework.themeVar("textDisabledColor") };
-    }
-
-    &:focus
-    {
-        outline-offset: calc(0px - ${ Framework.themeVar("focusOutlineWidth") });
-        outline: ${ Framework.themeVar("focusOutlineWidth") } solid ${ Framework.themeVar("focusOutlineColor") };
     }
 `
 

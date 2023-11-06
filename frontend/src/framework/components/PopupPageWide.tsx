@@ -34,10 +34,10 @@ const ArrowTipShadow = styled.div<{
     z-index: -1;
     contain: layout;
     position: relative;
-    left: ${ props => props.x - (arrowTipSize) - 1 }px;
-    top: ${ (-arrowTipSize - 0.5).toString() }px;
+    left: ${ props => props.x - arrowTipSize - 0.5 }px;
+    top: ${ (-arrowTipSize - 1).toString() }px;
     border-color: #0000 #0000 ${ Framework.themeVar("borderColor") } #0000;
-    border-width: ${ (arrowTipSize + 2).toString() }px;
+    border-width: ${ (arrowTipSize + 1.5).toString() }px;
     border-style: solid;
     margin-bottom: ${ (-arrowTipSize * 2 - 2).toString() }px;
 	pointer-events: none;
@@ -52,7 +52,7 @@ const ArrowTip = styled.div<{
     z-index: 1;
     contain: layout;
     position: relative;
-    left: ${ props => props.x - (arrowTipSize) }px;
+    left: ${ props => props.x - arrowTipSize }px;
     top: ${ (-arrowTipSize).toString() }px;
     border-color: #0000 #0000 ${ Framework.themeVar("pageBkgColor") } #0000;
     border-width: ${ (arrowTipSize + 1).toString() }px;
