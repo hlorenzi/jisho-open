@@ -30,7 +30,7 @@ export function IconBase(props: IconBaseProps)
 	return <span title={ props.title }>
         <StyledSvg
             viewBox={ props.viewBox || "0 0 100 100" }
-            color={ props.color ?? "black" }
+            color={ props.color ?? "currentColor" }
             style={ props.style }
         >
             { props.children }

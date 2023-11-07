@@ -5,10 +5,13 @@ import * as Infletcion from "common/inflection.ts"
 export interface Db
 {
     importWordEntries:
-        (words: Api.Word.Entry[]) => Promise<void>
+        (entries: Api.Word.Entry[]) => Promise<void>
 
     importKanjiEntries:
-        (words: Api.Kanji.Entry[]) => Promise<void>
+        (entries: Api.Kanji.Entry[]) => Promise<void>
+
+    importKanjiWordCrossRefEntries:
+        (entries: Api.KanjiWordCrossRef.Entry[]) => Promise<void>
 
     searchByHeading: (
         queries: string[],
@@ -44,6 +47,13 @@ export interface Db
         tags: Set<string>,
         inverseTags: Set<string>)
         => Promise<Api.Kanji.Entry[]>
+
+    listAllKanji: ()
+        => Promise<Api.Kanji.Entry[]>
+    
+    listWordsWithChars: (
+        chars: string[])
+        => Promise<Api.Word.Entry[]>
 }
 
 
@@ -52,6 +62,7 @@ export function createDummy(): Db
     return {
         importWordEntries: async () => {},
         importKanjiEntries: async () => {},
+        importKanjiWordCrossRefEntries: async () => {},
 
         searchByHeading: async () => [],
         searchByHeadingPrefix: async () => [],
@@ -59,5 +70,8 @@ export function createDummy(): Db
         searchByDefinition: async () => [],
         searchByTags: async () => [],
         searchKanji: async () => [],
+
+        listAllKanji: async () => [],
+        listWordsWithChars: async () => [],
     }
 }

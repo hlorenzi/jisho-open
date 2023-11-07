@@ -65,7 +65,10 @@ export type Theme = {
     iconJouyou4Color: string
     iconJouyou5Color: string
     iconJouyou6Color: string
-    iconJouyouSColor: string
+    iconJouyou7Color: string
+    iconJouyou8Color: string
+    iconJouyou9Color: string
+    iconJouyou10Color: string
     iconNewsColor: string
     iconWikipediaColor: string
     iconAnimeDramaColor: string
@@ -128,7 +131,10 @@ export const themeLight: Theme = {
     iconJouyou4Color: "#3b5ce8",
     iconJouyou5Color: "#4851f1",
     iconJouyou6Color: "#5e43da",
-    iconJouyouSColor: "#7742c3",
+    iconJouyou7Color: "#7742c3",
+    iconJouyou8Color: "#7742c3",
+    iconJouyou9Color: "#7742c3",
+    iconJouyou10Color: "#7742c3",
     iconNewsColor: "#0096ee",
     iconWikipediaColor: "#53abab",
     iconAnimeDramaColor: "#5c6ebb",

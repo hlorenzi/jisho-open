@@ -3,6 +3,7 @@ import * as Kanji from "./kanji.ts"
 
 export * as Kanji from "./kanji.ts"
 export * as Word from "./word.ts"
+export * as KanjiWordCrossRef from "./kanji_word_crossref.ts"
 
 
 export namespace Search

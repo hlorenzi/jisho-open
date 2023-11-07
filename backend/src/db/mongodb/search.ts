@@ -214,6 +214,33 @@ export async function searchKanji(
 }
 
 
+export async function listAllKanji(
+    state: MongoDb.State)
+    : Promise<Api.Kanji.Entry[]>
+{
+    const dbKanji = await state.collKanji
+        .find({})
+        .toArray()
+
+    return dbKanji
+        .map(MongoDb.translateDbKanjiToApiKanji)
+}
+
+
+export async function listWordsWithChars(
+    state: MongoDb.State,
+    chars: string[])
+    : Promise<Api.Word.Entry[]>
+{
+    const dbWord = await state.collWords
+        .find({ [MongoDb.fieldLookUpChars]: { $all: chars } })
+        .toArray()
+
+    return dbWord
+        .map(MongoDb.translateDbWordToApiWord)
+}
+
+
 function makeTagFilter(
     tags: Set<string>,
     inverseTags: Set<string>)

@@ -7,6 +7,7 @@ export type Entry = {
     headings: Heading[]
     senses: Sense[]
     inflections?: Inflection.Breakdown
+    pitch?: PitchAccent[]
 
     /// Commonness score for this entry as a whole,
     /// for sorting search results. Higher is more common.
@@ -37,7 +38,7 @@ export type Heading = {
     searchOnlyKana?: boolean
 
     /// Appearence in a JLPT level. (5 to 1)
-    jlpt?: number
+    jlpt?: 5 | 4 | 3 | 2 | 1
     /// Ranking of commonness in newspapers. (1 to 2)
     rankNews?: number
     /// Ranking of commonness in newspapers. (1 to 48)
@@ -71,6 +72,11 @@ export type HeadingTag =
 export type LookUpHeading = {
     text: string
     score: number
+}
+
+
+export type PitchAccent = {
+    text: string
 }
 
 

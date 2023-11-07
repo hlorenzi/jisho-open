@@ -1,4 +1,5 @@
 import * as Db from "../db/index.ts"
+import * as Logging from "./logging.ts"
 import * as File from "./file.ts"
 import * as Xml from "./xml.ts"
 import * as JmdictRaw from "./jmdict_raw.ts"
@@ -9,6 +10,7 @@ import * as Furigana from "common/furigana.ts"
 import * as Mazegaki from "common/mazegaki.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import * as JlptWords from "../data/jlpt_words.ts"
+import * as PitchAccent from "../data/pitch_accent.ts"
 import * as FuriganaHelpers from "../data/furigana_helpers.ts"
 
 export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"
@@ -17,6 +19,7 @@ export const xmlFilename = File.downloadFolder + "JMdict_e.xml"
 
 
 export async function downloadAndImport(
+    logger: Logging.Logger,
     db: Db.Db,
     useCachedFiles: boolean)
 {
@@ -34,6 +37,8 @@ export async function downloadAndImport(
         xmlFilename,
         "JMdict",
         "entry")
+
+    logger.writeLn("importing word entries...")
 
     const gatherer = new Gatherer.Gatherer(
         25,
@@ -55,7 +60,8 @@ export async function downloadAndImport(
         }
         catch (e: any)
         {
-            throw `error normalizing word entry ${ rawEntry.ent_seq[0] }: ${ e }`
+            logger.writeLn(`error normalizing word entry ${ rawEntry.ent_seq[0] }: ${ e }`)
+            throw e
         }
     }
 
@@ -63,6 +69,7 @@ export async function downloadAndImport(
 
     JlptWords.clearCache()
     FuriganaHelpers.clearCache()
+    PitchAccent.clearCache()
 }
 
 
@@ -83,7 +90,12 @@ function normalizeEntry(
     // Import senses/definitions.
     entry.senses = normalizeSenses(raw)
 
-    // Calculate the whole entry commonness score.
+    // Import pitch accent entries.
+    const pitchEntries = gatherPitchAccentEntries(entry.headings)
+    if (pitchEntries.length !== 0)
+        entry.pitch = pitchEntries
+
+    // Calculate the whole entry's commonness score.
     entry.score = entry.headings.reduce(
         (score, heading) => Math.max(score, heading.score ?? 0),
         -Infinity)
@@ -362,7 +374,7 @@ function normalizeHeading(
 
     const jlpt = JlptWords.get(heading.base, heading.reading)
     if (jlpt !== undefined)
-        heading.jlpt = jlpt
+        heading.jlpt = jlpt as Api.Word.Heading["jlpt"]
 
     const score = scoreHeading(heading)
     if (score !== 0)
@@ -532,6 +544,45 @@ function normalizeXref(
         }
 
     throw `invalid xref`
+}
+
+
+function gatherPitchAccentEntries(
+    apiHeadings: Api.Word.Heading[])
+    : Api.Word.PitchAccent[]
+{
+    const hasAnyKanji = apiHeadings.some(h => Kana.hasKanji(h.base))
+
+    const pitchKeys: [base: string, reading?: string][] = []
+
+    for (const heading of apiHeadings)
+    {
+        if (!Kana.hasKanji(heading.base))
+        {
+            if (!hasAnyKanji)
+            {
+                pitchKeys.push([heading.base, undefined])
+                continue
+            }
+
+            const kanjiCandidates = apiHeadings.filter(h =>
+                Kana.hasKanji(h.base) &&
+                h.reading === heading.base)
+
+            for (const kanji of kanjiCandidates)
+                pitchKeys.push([kanji.base, heading.base])
+
+            continue
+        }
+
+        pitchKeys.push([heading.base, heading.reading])
+    }
+
+    const pitch = pitchKeys
+        .flatMap(p => PitchAccent.get(p[0], p[1]))
+
+    return [...new Set<string>(pitch)]
+        .map(p => ({ text: p }))
 }
 
 

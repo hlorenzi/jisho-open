@@ -3,12 +3,12 @@ import * as Api from "./api/index.ts"
 
 export function getCommonness(
     heading: Api.Word.Heading)
-    : Api.Word.CommonnessTag | null
+    : Api.Word.CommonnessTag | undefined
 {
     if (heading.outdatedKanji ||
         heading.outdatedKana ||
         heading.rareKanji)
-        return null
+        return undefined
 
     if (heading.rankIchi === 1 ||
         heading.rankNews === 1 ||
@@ -23,7 +23,22 @@ export function getCommonness(
         heading.rankSpec === 2)
         return "common"
 
-    return null
+    return undefined
+}
+
+
+export function getKanjiCommonness(
+    entry: Api.Kanji.Entry)
+    : Api.Kanji.CommonnessTag | undefined
+{
+    if (entry.jouyou !== undefined)
+        return "veryCommon"
+
+    if (entry.rankNews !== undefined ||
+        entry.jlpt !== undefined)
+        return "common"
+
+    return undefined
 }
 
 

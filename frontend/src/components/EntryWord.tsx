@@ -6,8 +6,10 @@ import * as Api from "common/api/index.ts"
 import * as Kana from "common/kana.ts"
 import * as Inflection from "common/inflection.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
-import { FuriganaRender } from "./FuriganaRender.tsx"
+import { FuriganaRuby } from "./Furigana.tsx"
 import { InflectionPath } from "./InflectionPath.tsx"
+import { PitchAccentRender } from "./PitchAccentRender.tsx"
+import * as Tags from "./Tags.tsx"
 
 
 export function EntryWord(props: {
@@ -28,12 +30,15 @@ export function EntryWord(props: {
             ignoreUkMiscTag={ ignoreUsageInPlainKanaMiscTag }
             senses={ props.entry.senses }
         />
+        <PitchAccentEntries
+            pitches={ props.entry.pitch }
+        />
     </Entry>
 }
 
 
 const Entry = styled.article`
-    margin-block-end: 1em;
+    margin-block-end: 0.75em;
 `
 
 
@@ -68,18 +73,24 @@ function Headings(props: {
 
     return <header>
         <Solid.For each={ headings }>{ (heading, index) =>
-            <Heading heading={ heading } first={ index() === 0 }/>
+            <Heading
+                heading={ heading }
+                first={ index() === 0 }
+                last={ index() === headings.length - 1 }
+            />
         }
         </Solid.For>
 
         <Framework.Button
             label={ <Framework.IconEllipsis/> }
             onClick={ ev => popupEllipsis.onOpen(ev.currentTarget) }
+            style={{ position: "relative", top: "-0.4em" }}
         />
 
         <Framework.Button
             label={ <Framework.IconBookmark color={ Framework.themeVar("iconGreenColor") }/> }
             onClick={ ev => popupBookmark.onOpen(ev.currentTarget) }
+            style={{ position: "relative", top: "-0.4em" }}
         />
 
         { popupEllipsis.rendered }
@@ -116,6 +127,7 @@ function HeadingEllipsisPopup(props: {
 
 function Heading(props: {
     first: boolean,
+    last: boolean,
     heading: Api.Word.Heading,
 })
 {
@@ -148,30 +160,19 @@ function Heading(props: {
     return <>
         <HeadingBlock
             first={ props.first }
+            last={ props.last }
             faded={ !!faded }
             onClick={ ev => popup.onOpen(ev.currentTarget) }
         >
 
             <HeadingText>
-                <FuriganaRender encoded={ props.heading.furigana }/>
+                <FuriganaRuby encoded={ props.heading.furigana }/>
             </HeadingText>
 
             <HeadingTagsWrapper>
                 <HeadingTags>
-
-                    <Solid.Show when={ commonness === "veryCommon" }>
-                        <Framework.IconArrowUp
-                            title="very common"
-                            color={ Framework.themeVar("iconGreenColor") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ commonness === "common" }>
-                        <Framework.IconArrowUpHollow
-                            title="common"
-                            color={ Framework.themeVar("iconGreenColor") }
-                        />
-                    </Solid.Show>
+                    <Tags.TagCommonness commonness={ commonness }/>
+                    <Tags.TagJlpt jlpt={ props.heading.jlpt }/>
                     
                     <Solid.Show when={ props.heading.ateji }>
                         <Framework.TextTag
@@ -187,46 +188,6 @@ function Heading(props: {
                             label="G"
                             bkgColor={ Framework.themeVar("iconGikunColor") }
                         />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.jlpt === 5 }>
-                        <Framework.TextTag
-                            title="JLPT N5"
-                            label="N5"
-                            bkgColor={ Framework.themeVar("iconJlptN5Color") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.jlpt === 4 }>
-                        <Framework.TextTag
-                            title="JLPT N4"
-                            label="N4"
-                            bkgColor={ Framework.themeVar("iconJlptN4Color") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.jlpt === 3 }>
-                        <Framework.TextTag
-                            title="JLPT N3"
-                            label="N3"
-                            bkgColor={ Framework.themeVar("iconJlptN3Color") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.jlpt === 2 }>
-                        <Framework.TextTag
-                            title="JLPT N2"
-                            label="N2"
-                            bkgColor={ Framework.themeVar("iconJlptN2Color") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.jlpt === 1 }>
-                        <Framework.TextTag
-                            title="JLPT N1"
-                            label="N1"
-                            bkgColor={ Framework.themeVar("iconJlptN1Color") }
-                        />     
                     </Solid.Show>
                     
                     <Solid.Show when={ props.heading.rareKanji }>
@@ -299,10 +260,11 @@ function Heading(props: {
 const HeadingBlock = styled.button<{
     faded: boolean,
     first: boolean,
+    last: boolean,
 }>`
     margin: 0;
     margin-inline-start: -0.2em;
-    margin-inline-end: 1em;
+    margin-inline-end: ${ props => props.last ? `0.25em` : `1em` };
     padding: 0.1em 0.2em 0 0.2em;
     border: 0;
     display: inline-block;
@@ -583,4 +545,25 @@ const SenseGlossExpl = styled.span`
 const SenseInfo = styled.span`
     color: ${ Framework.themeVar("text2ndColor") };
     font-size: 0.8em;
+`
+
+
+function PitchAccentEntries(props: {
+    pitches?: Api.Word.PitchAccent[],
+})
+{
+    return <Solid.Show when={ props.pitches }>
+        <PitchAccentSection>
+            <Solid.For each={ props.pitches }>{ (pitch) =>
+                <PitchAccentRender pitch={ pitch.text }/>
+            }
+            </Solid.For>
+        </PitchAccentSection>
+    </Solid.Show>
+}
+
+
+const PitchAccentSection = styled.section`
+    margin-top: 0.4em;
+    padding-inline-start: 1.75em;
 `

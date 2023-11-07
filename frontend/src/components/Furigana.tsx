@@ -3,7 +3,7 @@ import { styled } from "solid-styled-components"
 import * as Furigana from "common/furigana.ts"
 
 
-export function FuriganaRender(props: {
+export function FuriganaRuby(props: {
     encoded?: string,
 })
 {
@@ -40,3 +40,24 @@ const Rt = styled.rt<{
         border-top-right-radius: 0.5em;
     ` : `` }
 `
+
+
+export function FuriganaSideBySide(props: {
+    encoded?: string,
+    children?: Solid.JSX.Element,
+})
+{
+    const furigana = Furigana.decode(props.encoded ?? "")
+    const base = Furigana.extractBase(furigana)
+    const reading = Furigana.extractReading(furigana)
+
+    return <>
+        { base }
+        { props.children }
+        <Solid.Show when={ reading !== "" && reading !== base }>
+            【
+            { furigana.map(f => f[1] || f[0]).join("・") }
+            】
+        </Solid.Show>
+    </>
+}

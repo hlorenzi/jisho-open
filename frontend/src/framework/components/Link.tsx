@@ -8,7 +8,7 @@ const StyledAnchor = styled.a<{
 }>`
     border-radius: 0.25rem;
 
-    color: ${ Framework.themeVar("textColor") };
+    color: currentColor;
     transition: color 0.05s;
 
     ${ props => props.noUnderline ?

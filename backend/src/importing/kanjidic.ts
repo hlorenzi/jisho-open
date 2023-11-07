@@ -1,4 +1,5 @@
 import * as Db from "../db/index.ts"
+import * as Logging from "./logging.ts"
 import * as File from "./file.ts"
 import * as Xml from "./xml.ts"
 import * as KanjidicRaw from "./kanjidic_raw.ts"
@@ -13,6 +14,7 @@ export const xmlFilename = File.downloadFolder + "kanjidic2.xml"
 
 
 export async function downloadAndImport(
+    logger: Logging.Logger,
     db: Db.Db,
     useCachedFiles: boolean)
 {
@@ -31,6 +33,8 @@ export async function downloadAndImport(
         "kanjidic2",
         "character")
 
+    logger.writeLn("importing kanji entries...")
+
     const gatherer = new Gatherer.Gatherer(
         25,
         (items: Api.Kanji.Entry[]) => db.importKanjiEntries(items))
@@ -44,7 +48,8 @@ export async function downloadAndImport(
         }
         catch (e: any)
         {
-            throw `error normalizing kanji entry ${ rawEntry.literal[0] }: ${ e }`
+            logger.writeLn(`error normalizing kanji entry ${ rawEntry.literal[0] }: ${ e }`)
+            throw e
         }
     }
 
@@ -72,7 +77,6 @@ function normalizeEntry(
 {
     const entry: Api.Kanji.Entry = {
         id: raw.literal[0],
-        tags: [],
 
         strokeCount: parseInt(raw.misc[0].stroke_count[0]),
 
@@ -90,19 +94,19 @@ function normalizeEntry(
     // Import jouyou level
     const jouyou = raw.misc[0].grade?.[0]
     if (jouyou)
-        entry.jouyou = parseInt(jouyou)
+        entry.jouyou = parseInt(jouyou) as Api.Kanji.Entry["jouyou"]
 
 
     // Import JLPT level
     const jlpt = raw.misc[0].jlpt?.[0]
     if (jlpt)
-        entry.jlpt = parseInt(jlpt)
+        entry.jlpt = parseInt(jlpt) as Api.Kanji.Entry["jlpt"]
 
 
     // Import frequency in news
     const freqNews = raw.misc[0].freq?.[0]
     if (freqNews)
-        entry.freqNews = parseInt(freqNews)
+        entry.rankNews = parseInt(freqNews)
 
 
     // Import readings, meanings
@@ -170,13 +174,6 @@ function normalizeEntry(
     const structCat = KanjiStructCat.get(entry.id)
     if (structCat !== null)
         entry.structuralCategory = structCat
-
-
-    // Annotate with tags
-    if (entry.jouyou !== undefined)
-        entry.tags.push("veryCommon")
-    else if (entry.jlpt !== undefined || entry.freqNews !== undefined)
-        entry.tags.push("common")
 
 
     return entry

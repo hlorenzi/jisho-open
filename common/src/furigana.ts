@@ -663,7 +663,7 @@ function getRevisionMetadata(
 }
 
 
-function getPossibleRendaku(str: string): string[]
+export function getPossibleRendaku(str: string): string[]
 {
     const rendaku: string[] = []
     

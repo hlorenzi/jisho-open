@@ -1,11 +1,13 @@
+import * as Api from "./index.ts"
+
+
 export interface Entry
 {
     id: string
-    tags: Tag[]
 
-    jouyou?: number
-    jlpt?: number
-    freqNews?: number
+    jouyou?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+    jlpt?: 5 | 4 | 3 | 2 | 1
+    rankNews?: number
 
     strokeCount: number
     strokeCounts?: number[]
@@ -17,13 +19,12 @@ export interface Entry
     nanori?: string[]
 
     structuralCategory?: StructuralCategory
+
+    wordCount?: number
+    exampleWords: Api.KanjiWordCrossRef.Word[]
 }
 
 
-export type Tag =
-    CommonnessTag
-    
-    
 export type CommonnessTag =
     | "veryCommon"
     | "common"
@@ -32,12 +33,11 @@ export type CommonnessTag =
 export interface Reading
 {
     text: string
-    tags?: ReadingTag[]
+    commonness?: CommonnessIndex
 }
 
 
-export type ReadingTag =
-    ""
+export type CommonnessIndex = 2 | 1
 
 
 export type StructuralCategory =

@@ -23449,6 +23449,7 @@
 塔;uncl;と
 惚;uncl;ぼれ
 男;uncl;おの
+凡;uncl;よそ
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
 吉;ateji;ぎ
