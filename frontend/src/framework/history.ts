@@ -1,17 +1,39 @@
-/*export function historyUpdateScroll()
+import * as Solid from "solid-js"
+
+
+type HistoryState = {
+    scrollY?: number
+    [key: string]: any
+}
+
+
+export function historyUpdateScroll()
 {
     const scrollY = window.scrollY
 
-    const newHistoryState = {
+    const newHistoryState: HistoryState = {
         ...window.history.state,
         scrollY,
     }
     
-    if (window.params.env === "development")
-        console.log(window.location.href, "newState", newHistoryState)
+    //console.log(window.location.href, "scrollY set", scrollY)
 
-    window.history.replaceState(newHistoryState, null, window.location.href)
-}*/
+    window.history.replaceState(
+        newHistoryState,
+        "",
+        window.location.href)
+}
+
+
+export function historyGetScroll()
+{
+    const state = window.history.state as HistoryState | undefined
+    const scrollY = state?.scrollY ?? 0
+
+    //console.log(window.location.href, "scrollY get", scrollY)
+
+    return scrollY
+}
 
 
 export interface HistoryEvent extends Event
@@ -77,4 +99,37 @@ export function historyReload()
 {
     //historyUpdateScroll()
     dispatchEventOrSetLocation(historyReloadStateEvent, window.location.pathname)
+}
+
+
+export function createHistorySignal<N extends string, T>(
+    name: N,
+    defaultValue: Exclude<T, Function>)
+    : [Solid.Accessor<T>, (newValue: Exclude<T, Function>) => void]
+{
+    type HistoryStateWithKey = HistoryState & {
+        [key in N]: Exclude<T, Function>
+    }
+
+    const historyState = (window.history.state as HistoryStateWithKey) ?? {}
+    if (historyState[name] !== undefined)
+        defaultValue = historyState[name]
+
+    const [state, setState] = Solid.createSignal<T>(defaultValue)
+
+    const setState2 = (newState: Exclude<T, Function>) => {
+        const newHistoryState: HistoryStateWithKey = {
+            ...window.history.state,
+            [name]: newState,
+        }
+
+        window.history.replaceState(
+            newHistoryState,
+            "",
+            window.location.href)
+
+        setState(newState)
+    }
+
+    return [state, setState2]
 }

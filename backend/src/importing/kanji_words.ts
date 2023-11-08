@@ -71,6 +71,11 @@ export async function crossReferenceKanjiWords(
             for (let h = 0; h < word.headings.length; h++)
             {
                 const heading = word.headings[h]
+
+                if (heading.searchOnlyKanji ||
+                    heading.searchOnlyKana)
+                    continue
+                
                 const headingCommonness = JmdictTags.getCommonness(heading)
                 const furigana = Furigana.decode(heading.furigana)
 
@@ -224,31 +229,44 @@ export async function crossReferenceKanjiWords(
             })
         }
 
+        const bucketGetOrder = (reading: string) =>
+        {
+            if (!reading)
+                return 10000
+
+            const index = bucketOrder.findIndex(r => r == reading)
+            if (index >= 0)
+                return index
+
+            return 9000
+        }
+
+        dbBuckets.sort((a, b) =>
+        {
+            const ordA = bucketGetOrder(a.reading)
+            const ordB = bucketGetOrder(b.reading)
+
+            if (ordA == 9000 && ordB == 9000)
+                return a.reading.localeCompare(b.reading)
+
+            return ordA - ordB
+        })
+
+        // Sort once more by the number of common words in each bucket.
+        const bucketCommonness = new Map<string, number>()
+        for (const dbBucket of dbBuckets)
+        {
+            const score = dbBucket.entries
+                .reduce((s, entry) => s + (entry.commonness !== undefined || entry.jlpt !== undefined ? 1 : 0), 0)
+            
+            bucketCommonness.set(dbBucket.reading, score)
+        }
+
+        dbBuckets.sort((a, b) =>
+            bucketCommonness.get(b.reading)! - bucketCommonness.get(a.reading)!)
+
         if (dbBuckets.length > 0)
         {
-            const bucketGetOrder = (reading: string) =>
-            {
-                if (!reading)
-                    return 10000
-
-                const index = bucketOrder.findIndex(r => r == reading)
-                if (index >= 0)
-                    return index
-
-                return 9000
-            }
-
-            dbBuckets.sort((a, b) =>
-            {
-                const ordA = bucketGetOrder(a.reading)
-                const ordB = bucketGetOrder(b.reading)
-
-                if (ordA == 9000 && ordB == 9000)
-                    return a.reading.localeCompare(b.reading)
-
-                return ordA - ordB
-            })
-
             await db.importKanjiWordCrossRefEntries([{
                 id: kanji,
                 readings: dbBuckets,

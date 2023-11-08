@@ -189,6 +189,8 @@ function normalizeHeadings(
     // extract the first hiragana reading element and put it
     // at the front, unless we've already got it or
     // there's already a "common" katakana heading for it.
+    // TODO: Keep an "uncommon" katakana if the hiragana
+    // reading isn't marked as common either.
     if (usuallyOnlyKana)
     {
         for (const r_ele of raw.r_ele)
@@ -391,7 +393,7 @@ function scoreHeading(
     let score = 0
 
     if (heading.jlpt !== undefined)
-        score += Math.max(0, 6000 + ((heading.jlpt - 1) * 1000))
+        score += Math.max(0, 100 + ((heading.jlpt - 1) * 100))
 
     if (heading.rankIchi !== undefined)
         score += Math.max(0, 500 - ((heading.rankIchi - 1) * 250))

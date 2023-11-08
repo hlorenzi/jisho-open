@@ -87,13 +87,10 @@ export async function searchByInflections(
 
     const tagFilter = makeTagFilter(tags, inverseTags)
         
-    let dbResults = await state.collWords
+    const dbResults = await state.collWords
         .find({ $or: dbFindQueries, ...tagFilter })
         .sort({ [`${fieldLookUp}.${fieldLen}`]: -1, score: -1 })
         .toArray()
-
-    dbResults = dbResults
-        .filter(r => r.lookUp.tags.every(t => !inverseTags.has(t)))
 
     const apiResults: Api.Word.Entry[] = []
         
@@ -157,7 +154,6 @@ export async function searchByDefinition(
     } 
 
     return wordEntriesDedup
-        .filter(r => r.lookUp.tags.every(t => !inverseTags.has(t)))
         .map(MongoDb.translateDbWordToApiWord)
 }
 
@@ -177,6 +173,39 @@ export async function searchByTags(
         .find(tagFilter)
         .sort({ score: -1 })
         .toArray()
+
+    return results
+        .map(MongoDb.translateDbWordToApiWord)
+}
+
+
+export async function searchByWildcards(
+    state: MongoDb.State,
+    queries: string[],
+    tags: Set<string>,
+    inverseTags: Set<string>)
+    : Promise<Api.Word.Entry[]>
+{
+    const regexes = queries.map(q =>
+        "^" +
+        q
+            .replace(/\?/g, "(.)")
+            .replace(/\*/g, "(.*?)") +
+        "$")
+
+    const dbFind: any[] = []
+    for (const regex of regexes)
+        dbFind.push({ [MongoDb.fieldLookUpHeadingsText]: { $regex: regex } })
+        
+    const tagFilter = makeTagFilter(tags, inverseTags)
+
+    const results = await state.collWords.aggregate([
+        //{ $match: { chars: { $all: regexCharsFilter } } },
+        { $match: { $or: dbFind } },
+        { $match: tagFilter },
+        { $sort: { score: -1 } },
+        { $limit: 1000 },
+    ]).toArray()
 
     return results
         .map(MongoDb.translateDbWordToApiWord)
@@ -210,6 +239,30 @@ export async function searchKanji(
     
     return results
         .map(MongoDb.translateDbKanjiToApiKanji)
+        .sort((a, b) => kanjiOrdering.get(a.id)! - kanjiOrdering.get(b.id)!)
+}
+
+
+export async function listKanjiWordCrossRefEntries(
+    state: MongoDb.State,
+    kanjiString: string)
+    : Promise<Api.KanjiWordCrossRef.Entry[]>
+{
+    const kanjiChars = [...kanjiString]
+
+    if (kanjiChars.length === 0)
+        return []
+
+    const results = await state.collKanjiWords
+        .find({ _id: { $in: kanjiChars }})
+        .toArray()
+
+    // Sort by the order in the query.
+    const kanjiOrdering = new Map<string, number>()
+    kanjiChars.forEach((c, i) => kanjiOrdering.set(c, i))
+    
+    return results
+        .map(MongoDb.translateDbKanjiWordToApiKanjiWord)
         .sort((a, b) => kanjiOrdering.get(a.id)! - kanjiOrdering.get(b.id)!)
 }
 

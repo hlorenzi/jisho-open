@@ -34,7 +34,7 @@ const StyledInput = styled.input`
 
     &::placeholder
     {
-        color: ${ Framework.themeVar("textFaintColor") };
+        color: ${ Framework.themeVar("text4thColor") };
     }
 `
 

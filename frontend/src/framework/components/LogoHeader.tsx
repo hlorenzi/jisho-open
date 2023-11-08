@@ -39,6 +39,7 @@ export function LogoHeader()
 const Layout = styled.div`
     display: grid;
     margin-top: 0.25em;
+    margin-bottom: 0.5em;
     grid-template: auto / auto auto;
     width: fit-content;
     align-content: center;

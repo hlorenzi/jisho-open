@@ -18,8 +18,11 @@ function App()
         <Framework.Router
             routes={[
                 { patterns: ["/", Pages.Search.urlPattern],
-                    noReload: true,
-                    load: async () => PageSearch },
+                    acceptsNoReload: true,
+                    load: async () => (await import("./pages/PageSearch.tsx")).PageSearch },
+
+                { patterns: ["/", Pages.KanjiWords.urlPattern],
+                    load: async () => (await import("./pages/PageKanjiWords.tsx")).PageKanjiWords },
 
                 { patterns: ["/test"],
                     load: async () => Framework.PageTest },

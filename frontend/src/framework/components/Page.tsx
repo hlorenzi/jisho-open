@@ -67,10 +67,20 @@ export function Page(props: {
     children: Solid.JSX.Element,
     width?: string,
     sideMenu?: Solid.JSX.Element,
+    title?: string,
 })
 {
+    const siteTitle = "Lorenzi's Jisho Open"
+
+    Solid.createComputed(() => {
+        document.title = props.title ?
+            `${ props.title } • ${ siteTitle }` :
+            siteTitle
+    })
+
     return <DivLayout>
         <DivContent>
+            <Framework.LogoHeader/>
             <main>
                 { props.children }
             </main>

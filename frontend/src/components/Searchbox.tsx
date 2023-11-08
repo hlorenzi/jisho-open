@@ -45,4 +45,5 @@ export function Searchbox(props: {
 const Layout = styled.div`
     display: grid;
     grid-template: auto / 1fr auto auto;
+    margin-bottom: 0.5em;
 `

@@ -4,7 +4,7 @@ import * as Solid from "solid-js"
 export interface Route
 {
     patterns: string[]
-    noReload?: boolean
+    acceptsNoReload?: boolean
     load: () => Promise<PageFactory>
 }
 

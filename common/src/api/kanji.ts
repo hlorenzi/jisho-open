@@ -21,7 +21,7 @@ export interface Entry
     structuralCategory?: StructuralCategory
 
     wordCount?: number
-    exampleWords: Api.KanjiWordCrossRef.Word[]
+    exampleWords?: Api.KanjiWordCrossRef.Word[]
 }
 
 

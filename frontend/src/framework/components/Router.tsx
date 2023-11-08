@@ -10,6 +10,8 @@ export function Router(props: {
     routes: Framework.Route[],
 })
 {
+    window.history.scrollRestoration = "manual"
+
     const [pending, transitionStart] = Solid.useTransition()
 
     const [routeMatch, setRouteMatch] =
@@ -36,9 +38,12 @@ export function Router(props: {
 
             // FIXME: Why is reference-equality for
             // `match.route === matchPrev.route` not working?
-            const isSameRoute = match?.route.patterns[0] === matchPrev?.route.patterns[0]
+            const isSameRoute = 
+                match?.route.patterns[0] === matchPrev?.route.patterns[0]
 
-            if (isSameRoute && ev.data?.noReload)
+            if (isSameRoute &&
+                ev.data?.noReload &&
+                match?.route.acceptsNoReload)
             {
                 console.log("Router.onNavigation without transition")
                 setRouteProps(match)
@@ -53,6 +58,11 @@ export function Router(props: {
                 })
 
                 console.log("Router.onNavigation transition ended")
+
+                window.requestAnimationFrame(() => {
+                    const scrollY = Framework.historyGetScroll()
+                    window.scrollTo({ top: scrollY, behavior: "instant" })
+                })
             }
         }
 
@@ -67,6 +77,25 @@ export function Router(props: {
         })
         
         onNavigation(new Event(Framework.historyPushStateEvent) as Framework.HistoryEvent)
+    })
+
+
+    Solid.onMount(() => {
+        const onScroll = () => {
+            if (pending())
+                return
+
+            if (window.requestIdleCallback)
+                window.requestIdleCallback(Framework.historyUpdateScroll)
+            else
+                Framework.historyUpdateScroll()
+        }
+
+        window.addEventListener("scroll", onScroll)
+
+        Solid.onCleanup(() => {
+            window.removeEventListener("scroll", onScroll)
+        })
     })
 
     return <>

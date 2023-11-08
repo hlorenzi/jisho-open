@@ -12,10 +12,6 @@ export function PageSearch(props: Framework.RouteProps)
     const searchQuery = Solid.createMemo(
         () => props.routeMatch()?.matches[Pages.Search.matchQuery] ?? "")
 
-    Solid.createComputed(() => {
-        document.title = `${ searchQuery() } • Lorenzi's Jisho Open`
-    })
-
     const [searchResults] = Solid.createResource(
         searchQuery,
         async (searched) => {
@@ -26,13 +22,10 @@ export function PageSearch(props: Framework.RouteProps)
             return res.entries
         })
     
-    return <Framework.Page>
-        <Framework.LogoHeader/>
-        <br/>
+    return <Framework.Page title={ searchQuery() }>
         <Searchbox
             initialText={ searchQuery() }
         />
-        <br/>
 
         <Solid.Show when={ searchResults.loading }>
             <Framework.LoadingBar/>

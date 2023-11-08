@@ -139,6 +139,8 @@ export async function connect(): Promise<Db.Db>
             MongoDbSearch.searchByDefinition(state, query, tags, invTags),
         searchByTags: (tags, invTags) =>
             MongoDbSearch.searchByTags(state, tags, invTags),
+        searchByWildcards: (queries, tags, invTags) =>
+            MongoDbSearch.searchByWildcards(state, queries, tags, invTags),
         searchKanji: (kanjiString, tags, invTags) =>
             MongoDbSearch.searchKanji(state, kanjiString, tags, invTags),
 
@@ -146,6 +148,8 @@ export async function connect(): Promise<Db.Db>
             MongoDbSearch.listAllKanji(state),
         listWordsWithChars: (chars: string[]) =>
             MongoDbSearch.listWordsWithChars(state, chars),
+        listKanjiWordCrossRefEntries: (kanjiString: string) =>
+            MongoDbSearch.listKanjiWordCrossRefEntries(state, kanjiString),
     }
 }
 
@@ -192,4 +196,21 @@ export function translateDbKanjiToApiKanji(
     }
 
     return apiKanji
+}
+
+
+export function translateDbKanjiWordToApiKanjiWord(
+    dbEntry: DbKanjiWordEntry)
+    : Api.KanjiWordCrossRef.Entry
+{
+    // Add and remove fields via destructuring assignment
+    const {
+        _id,
+        ...apiEntry
+    } = {
+        ...dbEntry,
+        id: dbEntry._id,
+    }
+
+    return apiEntry
 }

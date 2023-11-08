@@ -29,7 +29,7 @@ export type Theme = {
     textColor: string
     text2ndColor: string
     text3rdColor: string
-    textFaintColor: string
+    text4thColor: string
     textDisabledColor: string
     textStrongBkgColor: string
     textHighlightBkgColor: string
@@ -95,7 +95,7 @@ export const themeLight: Theme = {
     textColor: "#454545",
     text2ndColor: "#666666",
     text3rdColor: "#aaaaaa",
-    textFaintColor: "#cccccc",
+    text4thColor: "#cccccc",
     textDisabledColor: "#a0a0a0",
     textStrongBkgColor: "#eee",
     textHighlightBkgColor: "#fffcaa",
@@ -158,7 +158,7 @@ export const themeDarkGray: Theme = {
     textColor: "#dcddde",
     text2ndColor: "#72767d",
     text3rdColor: "#444548",
-    textFaintColor: "#444548",
+    text4thColor: "#444548",
     textDisabledColor: "#72767d",
     textHighlightBkgColor: "#35363a",
     textStrongBkgColor: "#212225",

@@ -525,7 +525,7 @@ const SenseList = styled.ol`
     counter-reset: item;
 
     & li::marker {
-        color: ${ Framework.themeVar("textFaintColor") };
+        color: ${ Framework.themeVar("text4thColor") };
         content: counter(item) " • ";
         font-size: 0.8em;
         padding-inline-end: 0.25em;

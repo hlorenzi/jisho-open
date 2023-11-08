@@ -13,8 +13,7 @@ export function getCommonness(
     if (heading.rankIchi === 1 ||
         heading.rankNews === 1 ||
         heading.rankGai === 1 ||
-        heading.rankSpec === 1 ||
-        heading.jlpt !== undefined)
+        heading.rankSpec === 1)
         return "veryCommon"
 
     if (heading.rankIchi === 2 ||

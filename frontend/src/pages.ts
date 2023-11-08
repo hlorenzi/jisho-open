@@ -14,3 +14,12 @@ export namespace Jmdict
         return `http://www.edrdg.org/jmdictdb/cgi-bin/entr.py?svc=jmdict&sid=&q=${ jmdictId }`
     }
 }
+
+
+export namespace KanjiWords
+{
+    export const matchKanji = "kanji"
+    export const urlPattern = `/words/:${ matchKanji }`
+
+    export const urlForQuery = (query: string) => `/words/${ encodeURIComponent(query) }`
+}

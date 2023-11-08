@@ -48,6 +48,14 @@ async function search(
                 tagsSet,
                 inverseTagsSet)
 
+    const byWildcards =
+        query.type !== "wildcards" ?
+            [] :
+            db.searchByWildcards(
+                [query.strWildcards, query.strWildcardsHiragana],
+                tagsSet,
+                inverseTagsSet)
+
     const byHeading =
         query.type !== "any" && query.type !== "verbatim" ?
             [] :
@@ -73,6 +81,7 @@ async function search(
                 inverseTagsSet)
 
     const byDefinition =
+        !query.searchDefinitions &&
         query.type !== "any" && query.type !== "definition" ?
             [] :
             db.searchByDefinition(
@@ -83,6 +92,12 @@ async function search(
     const byKanji =
         query.type !== "any" && query.type !== "kanji" ?
             [] :
+        !Kana.hasKanji(query.str) ?
+            db.searchKanji(
+                extractKanjiFromFirstHeadings(await byHeading, 3).join(""),
+                new Set<string>(),
+                new Set<string>())
+        :
             db.searchKanji(
                 [...new Set(query.kanji)].join(""),
                 tagsSet,
@@ -96,8 +111,9 @@ async function search(
 
     const searchEntries: Api.Search.Entry[] = [
         { type: "section", section: "verbatim" },
-        ...(await byTags).map(translateToSearchWordEntry),
         ...(await byHeading).map(translateToSearchWordEntry),
+        ...(await byTags).map(translateToSearchWordEntry),
+        ...(await byWildcards).map(translateToSearchWordEntry),
         { type: "section", section: "inflected" },
         ...(await byInflections).map(translateToSearchWordEntry),
         { type: "section", section: "prefix" },
@@ -139,26 +155,6 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         .toLowerCase()
         .replace(regexFancyQuotes, "\"")
 
-    const queryInQuotes = (queryNormalized.match(regexQuoted) ?? [])
-        .join(" ")
-        .replace(regexPunctuationToSplit, " ")
-        .replace(regexPunctuationToCollapse, "")
-        .trim()
-
-    /*const queryNonQuoted = query
-        .replace(regexQuoted, " ")
-        .replace(regexTags, " ")
-        .replace(regexPunctuationToSplit, " ")
-        .replace(regexPunctuationToCollapse, "")
-        .trim()
-
-    const queryQuotedSplit = queryQuoted
-        .split(/\s/g)
-        .map(s => s.trim())
-        .filter(s => s.length !== 0)*/
-    
-    //const queryNonQuotedSplit = queryNonQuoted.split(/\s/g).map(s => s.trim()).filter(s => !!s)
-    
     const rawTags = (queryNormalized.match(regexTags) ?? [])
         .map(t => t.substring("#".length))
     
@@ -168,15 +164,36 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
     let inverseTags = rawTags
         .filter(t => t.indexOf("!") >= 0)
         .map(t => t.substring("!".length))
-
+    
     const queryWithoutTags = queryNormalized
         .replace(regexTags, " ")
         .trim()
     
+
+    const queryInQuotes = (queryWithoutTags.match(regexQuoted) ?? [])
+        .join(" ")
+        .replace(regexPunctuationToSplit, " ")
+        .replace(regexPunctuationToCollapse, "")
+        .trim()
+    
+    const queryHasWildcards =
+        queryWithoutTags.indexOf("*") >= 0 ||
+        queryWithoutTags.indexOf("?") >= 0
+        
+    const queryCanBeEnglish =
+        !Kana.hasJapanese(queryWithoutTags) ||
+        queryInQuotes.length !== 0
+
     const queryJapanese = Kana.toKana(queryWithoutTags)
     const queryHiragana = Kana.toHiragana(queryWithoutTags)
-    const queryKanji = [...queryNormalized]
+    const queryKanji = [...queryWithoutTags]
         .filter(c => Kana.isKanji(c))
+
+    const queryWildcards = queryHasWildcards ?
+        queryWithoutTags.replace(/[-.+^${}()|!&%#[\]\\]/g, "") :
+        ""
+        
+    const queryWildcardsHiragana = Kana.toHiragana(queryWildcards)
 
     let type: Api.Search.QueryType = "any"
     if (queryInQuotes.length !== 0)
@@ -186,10 +203,12 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
     if (queryWithoutTags.length === 0 &&
         tags.length > 0)
         type = "tags"
+    if (queryWildcards.length !== 0)
+        type = "wildcards"
 
-    const removeTags = new Set(["k", "kanji"])
-    tags = tags.filter(tag => !removeTags.has(tag))
-    inverseTags = inverseTags.filter(tag => !removeTags.has(tag))
+    const tagsToRemove = new Set(["k", "kanji"])
+    tags = tags.filter(tag => !tagsToRemove.has(tag))
+    inverseTags = inverseTags.filter(tag => !tagsToRemove.has(tag))
 
     return {
         type,
@@ -197,8 +216,34 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         strJapanese: queryJapanese,
         strHiragana: queryHiragana,
         strInQuotes: queryInQuotes,
+        strWildcards: queryWildcards,
+        strWildcardsHiragana: queryWildcardsHiragana,
         kanji: queryKanji,
+        searchDefinitions: queryCanBeEnglish,
         tags,
         inverseTags,
     }
+}
+
+
+function extractKanjiFromFirstHeadings(
+    entries: Api.Word.Entry[],
+    maxEntries: number)
+    : string[]
+{
+    const kanji = new Set<string>()
+
+    for (let e = 0; e < entries.length && e < maxEntries; e++)
+    {
+        for (const heading of entries[e].headings)
+        {
+            for (const c of heading.base)
+            {
+                if (Kana.isKanji(c))
+                    kanji.add(c)
+            }
+        }
+    }
+
+    return [...kanji]
 }

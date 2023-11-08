@@ -29,3 +29,11 @@ export async function search(
 {
     return post(Api.Search.url, req)
 }
+
+
+export async function getKanjiWords(
+    req: Api.KanjiWords.Request)
+    : Promise<Api.KanjiWords.Response>
+{
+    return post(Api.KanjiWords.url, req)
+}

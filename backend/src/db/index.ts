@@ -42,11 +42,21 @@ export interface Db
         inverseTags: Set<string>)
         => Promise<Api.Word.Entry[]>
 
+    searchByWildcards: (
+        queries: string[],
+        tags: Set<string>,
+        inverseTags: Set<string>)
+        => Promise<Api.Word.Entry[]>
+
     searchKanji: (
         kanjiString: string,
         tags: Set<string>,
         inverseTags: Set<string>)
         => Promise<Api.Kanji.Entry[]>
+
+    listKanjiWordCrossRefEntries(
+        kanjiString: string)
+        : Promise<Api.KanjiWordCrossRef.Entry[]>
 
     listAllKanji: ()
         => Promise<Api.Kanji.Entry[]>
@@ -69,9 +79,11 @@ export function createDummy(): Db
         searchByInflections: async () => [],
         searchByDefinition: async () => [],
         searchByTags: async () => [],
+        searchByWildcards: async () => [],
         searchKanji: async () => [],
-
+        
         listAllKanji: async () => [],
         listWordsWithChars: async () => [],
+        listKanjiWordCrossRefEntries: async() => [], 
     }
 }

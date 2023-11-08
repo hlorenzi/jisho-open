@@ -23450,6 +23450,11 @@
 惚;uncl;ぼれ
 男;uncl;おの
 凡;uncl;よそ
+翁;uncl;のう
+帝;uncl;て
+酒;uncl;ささ
+構;uncl;かん
+青;uncl;さお
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
 吉;ateji;ぎ
@@ -23572,7 +23577,6 @@
 鼠;auto;す
 難;auto;がと
 真;auto;まっ
-東;auto;あずま;とん
 空;auto;うつ
 姉;auto;ねえ
 原;auto;わら;ら
@@ -23942,6 +23946,8 @@
 延;chinese;よん
 坪;chinese;ぴょん
 島;chinese;ど
+広;chinese;かん
+東;chinese;とん
 大人;gikun;おとな
 大和;gikun;やまと
 日本;gikun;やまと
@@ -24012,6 +24018,7 @@
 旗魚;gikun;かじき
 百合;gikun;ゆり
 蚯蚓;gikun;みみず
+蚯蚓;gikun;めめず
 眩暈;gikun;めまい
 女将;gikun;おかみ
 下手;gikun;へた
@@ -24232,6 +24239,15 @@
 大凡;gikun;おおよそ
 卓袱;gikun;しっぽく
 桑鳲;gikun;いかる
+百足;gikun;むかで
+蜈蚣;gikun;むかで
+信天翁;gikun;あほうどり
+隠子;gikun;がぜ
+甲蠃;gikun;がぜ
+磯蚯蚓;gikun;いそめ
+鎮魂;gikun;たましずめ
+冬眠鼠;gikun;やまね
+不老;conjug;おいず
 下関;patch;しものせき
 ｗｅｂ;spec;うぇぶ
 Ｗｅｂ;spec;うぇぶ
@@ -24239,6 +24255,7 @@
 ＲＯＭ;spec;ろむ
 ＲＡＭ;spec;らむ
 ＥＰＲＯＭ;spec;いーぷろむ
+ＲＥＭ;spec;れむ
 ＰＯＰ;spec;ぽっぷ
 ＭＩＸ;spec;みっくす
 ＡＮＤ;spec;あんど

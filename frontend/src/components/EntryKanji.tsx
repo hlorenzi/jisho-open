@@ -6,15 +6,23 @@ import * as Api from "common/api/index.ts"
 import * as Kana from "common/kana.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import * as Furigana from "common/furigana.ts"
-import { FuriganaSideBySide } from "./Furigana.tsx"
+import { KanjiStrokeDiagram } from "./KanjiStrokeDiagram.tsx"
 import * as Tags from "./Tags.tsx"
 
 
 export function EntryKanji(props: {
-    entry: Api.Kanji.Entry
+    entry: Api.Kanji.Entry,
+    noExampleWords?: boolean,
 })
 {
     const commonness = JmdictTags.getKanjiCommonness(props.entry)
+
+    const popupDiagram = Framework.makePopupPageWide({
+        childrenFn: () =>
+            <KanjiDiagramWrapper>
+                <KanjiStrokeDiagram kanji={ props.entry.id }/>
+            </KanjiDiagramWrapper>,
+    })
 
     return <Entry>
         <Header>
@@ -23,15 +31,18 @@ export function EntryKanji(props: {
                 
                 <KanjiTagsWrapper>
                     <Tags.TagCommonness commonness={ commonness }/>
-                    <Tags.TagJlpt jlpt={ props.entry.jlpt }/>
                 </KanjiTagsWrapper>
 
             </KanjiCharacter>
             <div>
-                <div>
+                <Solid.Show
+                    when={ props.entry.meanings.length !== 0 }
+                    fallback={ <span style={{ "font-style": "italic" }}>(No information available.)</span> }
+                >
                     { props.entry.meanings.join("; ") }
-                </div>
+                </Solid.Show>
                 <TagsWrapper>
+                    <Tags.TagJlpt jlpt={ props.entry.jlpt }/>
                     <Tags.TagJouyou jouyou={ props.entry.jouyou }/>
                     <Tags.TagKanjiNews rankNews={ props.entry.rankNews }/>
                 </TagsWrapper>
@@ -64,6 +75,7 @@ export function EntryKanji(props: {
                 <StrokeCount>
                     { props.entry.strokeCount }
                     <Solid.Show when={ props.entry.strokeCounts }>
+                        { " " }
                         (or { props.entry.strokeCounts!.join(", ") })
                     </Solid.Show>
                 </StrokeCount>
@@ -77,30 +89,36 @@ export function EntryKanji(props: {
                         label={ <>
                             <Framework.IconMagnifyingGlass/>
                             View diagram
-                        </>}
+                        </> }
+                        onClick={ ev => popupDiagram.onOpen(ev.currentTarget) }
                     />
                 </span>
             </div>
         </ReadingsLayout>
 
-        <br/>
+        <Solid.Show when={ !props.noExampleWords && props.entry.exampleWords }>
+            <br/>
 
-        <ExampleWords
-            kanji={ props.entry.id }
-            exampleWords={ props.entry.exampleWords }
-        />
-
-        <span style={{
-            "font-size": "0.8em",
-            color: Framework.themeVar("text3rdColor"),
-        }}>
-            <Framework.Link
-                label={ <>
-                    <Framework.IconVerticalEllipsis/>
-                    View all { props.entry.wordCount ?? 0 } words
-                </>}
+            <ExampleWords
+                kanji={ props.entry.id }
+                exampleWords={ props.entry.exampleWords! }
             />
-        </span>
+
+            <span style={{
+                "font-size": "0.8em",
+                color: Framework.themeVar("text3rdColor"),
+            }}>
+                <Framework.Link
+                    href={ Pages.KanjiWords.urlForQuery(props.entry.id) }
+                    label={ <>
+                        <Framework.IconVerticalEllipsis/>
+                        View all { props.entry.wordCount ?? 0 } words
+                    </> }
+                />
+            </span>
+        </Solid.Show>
+
+        { popupDiagram.rendered }
     </Entry>
 }
 
@@ -116,7 +134,7 @@ const Header = styled.div`
     align-items: center;
     justify-items: start;
     justify-content: start;
-    column-gap: 1em;
+    column-gap: 0.5em;
     margin-top: -1em;
     margin-bottom: -1em;
 `
@@ -147,7 +165,7 @@ const ReadingsLayout = styled.div`
     align-items: baseline;
     justify-items: start;
     justify-content: start;
-    column-gap: 1em;
+    column-gap: 0.5em;
 `
 
 
@@ -161,6 +179,12 @@ const ReadingsLabel = styled.div`
 const StrokeCount = styled.div`
     display: inline-block;
     font-weight: bold;
+`
+
+
+const KanjiDiagramWrapper = styled.article`
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 `
 
 
