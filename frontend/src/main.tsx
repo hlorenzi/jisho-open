@@ -21,7 +21,7 @@ function App()
                     acceptsNoReload: true,
                     load: async () => (await import("./pages/PageSearch.tsx")).PageSearch },
 
-                { patterns: ["/", Pages.KanjiWords.urlPattern],
+                { patterns: [Pages.KanjiWords.urlPattern],
                     load: async () => (await import("./pages/PageKanjiWords.tsx")).PageKanjiWords },
 
                 { patterns: ["/test"],

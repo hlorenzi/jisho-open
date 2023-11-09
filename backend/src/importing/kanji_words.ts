@@ -34,8 +34,7 @@ export async function crossReferenceKanjiWords(
 
         const readingBuckets = new Map<string, Map<string, WorkingData>>()
 
-        const getPossibleReadings = (read: string) =>
-        {
+        const getPossibleReadings = (read: string) => {
             read = read.replace(/～/g, "")
 
             let readings = [Kana.toHiragana(read)]
@@ -43,8 +42,9 @@ export async function crossReferenceKanjiWords(
             return readings
         }
 
-        const setReadingCommonness = (str: string | undefined, commonness: Api.Kanji.CommonnessIndex) =>
-        {
+        const setReadingCommonness = (
+            str: string | undefined,
+            commonness: Api.CommonnessIndex) => {
             if (str === undefined)
                 return
             
@@ -273,25 +273,31 @@ export async function crossReferenceKanjiWords(
             }])
         }
 
-        /*const luRead = []
+        // Build the list of reading scores.
+        const readings: Api.Kanji.ReadingScore[] = []
         for (const bucket of dbBuckets)
         {
-            luRead.push({
-                str: bucket.read,
-                score: kanjiEntry.score + 5 * Math.min(500, bucket.entries.length),
+            readings.push({
+                reading: bucket.reading,
+                score:
+                    (kanjiEntry.score ?? 0) +
+                    5 * Math.min(500, bucket.entries.length),
             })
         }
 
         for (const r of standardReadings)
         {
-            if (luRead.find(r => r.str == r))
+            if (readings.some(r => r.reading == r.reading))
                 continue
             
-            luRead.push({
-                str: r,
-                score: kanjiEntry.score,
+            readings.push({
+                reading: r.text,
+                score: (kanjiEntry.score ?? 0),
             })
-        }*/
+        }
+
+        // Modify the base kanji entry.
+        kanjiEntry.readings = readings
 
         kanjiEntry.wordCount = dbBuckets
             .reduce((count, bucket) => count + bucket.entries.length, 0)

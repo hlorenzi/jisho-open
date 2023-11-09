@@ -38,7 +38,7 @@ const styleClass = css`
 
     @media (pointer: coarse)
     {
-        padding: 0.8em 1em;
+        padding: 0.5em 0.5em;
     }
 
     &:hover

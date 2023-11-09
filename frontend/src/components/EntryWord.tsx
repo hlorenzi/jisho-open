@@ -7,13 +7,14 @@ import * as Kana from "common/kana.ts"
 import * as Inflection from "common/inflection.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import { FuriganaRuby } from "./Furigana.tsx"
-import { InflectionPath } from "./InflectionPath.tsx"
+import { InflectionBreakdown } from "./InflectionBreakdown.tsx"
 import { PitchAccentRender } from "./PitchAccentRender.tsx"
 import * as Tags from "./Tags.tsx"
 
 
 export function EntryWord(props: {
-    entry: Api.Word.Entry
+    entry: Api.Word.Entry,
+    query: Api.Search.Query,
 })
 {
     const ignoreUsageInPlainKanaMiscTag =
@@ -24,6 +25,7 @@ export function EntryWord(props: {
             entry={ props.entry }
             wordId={ props.entry.id }
             headings={ props.entry.headings }
+            query={ props.query }
         />
         <InflectionBreakdown breakdown={ props.entry.inflections }/>
         <Senses
@@ -46,6 +48,7 @@ function Headings(props: {
     entry: Api.Word.Entry,
     wordId: string,
     headings: Api.Word.Heading[],
+    query: Api.Search.Query,
 })
 {
     const headings = props.headings
@@ -77,6 +80,7 @@ function Headings(props: {
                 heading={ heading }
                 first={ index() === 0 }
                 last={ index() === headings.length - 1 }
+                query={ props.query }
             />
         }
         </Solid.For>
@@ -109,10 +113,14 @@ function HeadingEllipsisPopup(props: {
     return <>
         <Solid.Show when={ props.allKanji.length !== 0 }>
             <Framework.ButtonPopupPageWide
-                label={ `Inspect all kanji: ${ props.allKanji }` }
+                label={ <>
+                    <Framework.IconMagnifyingGlass/>
+                    { ` Inspect all kanji: ${ props.allKanji }` }
+                </> }
                 href={ Pages.Search.urlForQuery(`${ props.allKanji } #k`) }
             />
         </Solid.Show>
+        <Framework.HorizontalBar/>
         <Framework.ButtonPopupPageWide
             label="View in JMdict"
             href={ Pages.Jmdict.urlForWordId(props.wordId) }
@@ -129,6 +137,7 @@ function Heading(props: {
     first: boolean,
     last: boolean,
     heading: Api.Word.Heading,
+    query: Api.Search.Query,
 })
 {
     const faded =
@@ -150,9 +159,23 @@ function Heading(props: {
     const kanji =
         [...new Set<string>(kanjiWithDuplicates)].join("")
 
+    const baseNormalized = Kana.normalizeWidthForms(props.heading.base)
+    const readingNormalized = Kana.normalizeWidthForms(props.heading.reading ?? "")
+
+    let isQueryMatch = false
+    if (props.query.strJapaneseSplit.some(s =>
+            s === baseNormalized ||
+            s === readingNormalized ||
+            s === Kana.toHiragana(baseNormalized) ||
+            s === Kana.toHiragana(readingNormalized)))
+        isQueryMatch = true
+
     const popup = Framework.makePopupPageWide({
         childrenFn: () =>
             <HeadingPopup
+                popup={ popup }
+                base={ props.heading.base }
+                reading={ props.heading.reading }
                 kanji={ kanji }
             />,
     })
@@ -162,6 +185,7 @@ function Heading(props: {
             first={ props.first }
             last={ props.last }
             faded={ !!faded }
+            queryMatch={ isQueryMatch }
             onClick={ ev => popup.onOpen(ev.currentTarget) }
         >
 
@@ -261,6 +285,7 @@ const HeadingBlock = styled.button<{
     faded: boolean,
     first: boolean,
     last: boolean,
+    queryMatch: boolean,
 }>`
     margin: 0;
     margin-inline-start: -0.2em;
@@ -271,9 +296,13 @@ const HeadingBlock = styled.button<{
     font-family: inherit;
     font-size: ${ props => props.first ? `1.6em` : `1.2em` };
     border-radius: 0.25rem;
-    background-color: transparent;
     transition: color 0.05s, background-color 0.05s;
     cursor: pointer;
+
+    background-color: ${ props => props.queryMatch ?
+        Framework.themeVar("textHighlightBkgColor") :
+        "transparent"
+    };
 
     color: ${ props => props.faded ?
         Framework.themeVar("text3rdColor") :
@@ -308,36 +337,49 @@ const HeadingTags = styled.sup`
 
 
 function HeadingPopup(props: {
+    popup: Framework.PopupData,
     kanji: string,
+    base: string,
+    reading?: string,
 })
 {
     return <>
         <Solid.Show when={ props.kanji.length !== 0 }>
             <Framework.ButtonPopupPageWide
-                label={ `Inspect kanji: ${ props.kanji }` }
+                label={ <>
+                    <Framework.IconMagnifyingGlass/>
+                    { ` Inspect kanji: ${ props.kanji }` }
+                </> }
                 href={ Pages.Search.urlForQuery(`${ props.kanji } #k`) }
             />
         </Solid.Show>
+
         <Framework.ButtonPopupPageWide
-            label="Add this specific spelling to a study list..."
+            label={ `Copy ${ props.base } to the clipboard` }
+            onClick={ () => {
+                Framework.copyToClipboard(props.base)
+                props.popup.onClose()
+            }}
+        />
+
+        <Solid.Show when={ props.reading }>
+            <Framework.ButtonPopupPageWide
+                label={ `Copy ${ props.reading } to the clipboard` }
+                onClick={ () => {
+                    Framework.copyToClipboard(props.reading!)
+                    props.popup.onClose()
+                }}
+            />
+        </Solid.Show>
+
+        <Framework.ButtonPopupPageWide
+            label={ <>
+                <Framework.IconBookmark color={ Framework.themeVar("iconGreenColor") }/>
+                { ` Add this specific spelling to a study list...` }
+            </> }
             onClick={ () => {} }
         />
     </>
-}
-
-
-function InflectionBreakdown(props: {
-    breakdown?: Inflection.Breakdown,
-})
-{
-    return <Solid.Show when={ props.breakdown }>
-        <section>
-            <Solid.For each={ props.breakdown }>{ (path) =>
-                <p> • <InflectionPath path={ path }/></p>
-            }
-            </Solid.For>
-        </section>
-    </Solid.Show>
 }
 
 
@@ -488,9 +530,13 @@ function Senses(props: {
                 xref.type === "antonym" ? "antonym: " :
                 "see "
 
+            const query = 
+                xref.base +
+                (xref.reading ? ` ${ xref.reading }` : ``)
+
             const link =
                 <Framework.Link
-                    href={ Pages.Search.urlForQuery(xref.base) }
+                    href={ Pages.Search.urlForQuery(query) }
                 >
                     { xref.base }
                     { xref.reading ?
@@ -565,5 +611,5 @@ function PitchAccentEntries(props: {
 
 const PitchAccentSection = styled.section`
     margin-top: 0.4em;
-    padding-inline-start: 1.75em;
+    padding-left: 1.75em;
 `

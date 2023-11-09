@@ -1,5 +1,7 @@
 import * as fs from "fs"
 import * as Furigana from "common/furigana.ts"
+import * as Kana from "common/kana.ts"
+
 
 let cacheReadings: Map<string, string[]> | null = null
 let cacheReadingsUsed: Set<string> = new Set()
@@ -13,7 +15,9 @@ export function getReadings(
 {
     if (!cacheReadings)
     {
-        const raw = fs.readFileSync("./src/data/furigana_readings.txt", { encoding: "utf-8" })
+        const raw = fs.readFileSync(
+            "./src/data/furigana_readings.txt",
+            { encoding: "utf-8" })
 
         cacheReadings = new Map()
         cacheReadingsUsed.clear()
@@ -33,7 +37,7 @@ export function getReadings(
                 ...entry.slice(2),
                 ...cacheReadings.get(term) ?? []
             ]
-            cacheReadings.set(term, readings)
+            cacheReadings.set(term, readings.map(r => Kana.toHiragana(r)))
         }
     }
 

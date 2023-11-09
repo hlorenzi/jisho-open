@@ -571,7 +571,8 @@ function getPossibleRevisions(
 
                     if (len == 1 && part[0].length <= 6 && noReadingMatch)
                     {
-                        if (readOrig.startsWith("の"))// || readOrig.startsWith("っ"))
+                        if (readOrig.startsWith("の"))
+                            // || readOrig.startsWith("っ"))
                         {
                             newAttempts.push({
                                 main: attempt.main,

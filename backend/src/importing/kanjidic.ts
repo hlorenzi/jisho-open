@@ -19,16 +19,19 @@ export async function downloadAndImport(
     useCachedFiles: boolean)
 {
     await File.download(
+        logger,
         url,
         gzipFilename,
         useCachedFiles)
     
     await File.extractGzip(
+        logger,
         gzipFilename,
         xmlFilename,
         useCachedFiles)
 
     const entryIterator = Xml.iterateEntriesStreamed<KanjidicRaw.Entry>(
+        logger,
         xmlFilename,
         "kanjidic2",
         "character")
@@ -94,13 +97,13 @@ function normalizeEntry(
     // Import jouyou level
     const jouyou = raw.misc[0].grade?.[0]
     if (jouyou)
-        entry.jouyou = parseInt(jouyou) as Api.Kanji.Entry["jouyou"]
+        entry.jouyou = parseInt(jouyou) as Api.JouyouGrade
 
 
     // Import JLPT level
     const jlpt = raw.misc[0].jlpt?.[0]
     if (jlpt)
-        entry.jlpt = parseInt(jlpt) as Api.Kanji.Entry["jlpt"]
+        entry.jlpt = parseInt(jlpt) as Api.JlptLevel
 
 
     // Import frequency in news
@@ -175,6 +178,52 @@ function normalizeEntry(
     if (structCat !== null)
         entry.structuralCategory = structCat
 
+    
+    // Calculate overall commonness score.
+    const score = scoreEntry(entry)
+    if (score !== 0)
+        entry.score = score
+
 
     return entry
+}
+
+
+function scoreEntry(
+    entry: Api.Kanji.Entry)
+    : number
+{
+    let score = 0
+
+    if (entry.jlpt !== undefined)
+        score += Math.max(0, 1000 + ((entry.jlpt - 1) * 100))
+
+    if (entry.jouyou !== undefined)
+        score += Math.max(0, 2000 - ((entry.jouyou - 1) * 100))
+
+    if (entry.rankNews !== undefined)
+        score += Math.max(0, 1000 / (1 + entry.rankNews))
+
+    return Math.round(score)
+}
+
+
+export function gatherLookUpMeanings(
+    entry: Api.Kanji.Entry)
+    : string[]
+{
+    const meanings = new Set<string>()
+    for (const meaning of entry.meanings)
+    {
+        const words = meaning
+            .replace(/\(|\)|\,|\.|\/|\"/g, " ")
+            .split(/\s/)
+            .map(w => w.trim().toLowerCase())
+            .filter(w => w.length !== 0)
+
+        for (const word of words)
+            meanings.add(word)
+    }
+
+    return [...meanings]
 }

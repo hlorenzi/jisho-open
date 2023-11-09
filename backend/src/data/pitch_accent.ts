@@ -13,7 +13,9 @@ export function get(
 {
     if (!cache)
     {
-        const raw = fs.readFileSync("./src/data/pitch_accent.txt", { encoding: "utf-8" })
+        const raw = fs.readFileSync(
+            "./src/data/pitch_accent.txt",
+            { encoding: "utf-8" })
 
         cache = new Map()
         cacheUsed.clear()

@@ -1,3 +1,4 @@
+import * as Db from "../index.ts"
 import * as MongoDb from "./index.ts"
 import * as Api from "common/api/index.ts"
 import * as Inflection from "common/inflection.ts"
@@ -6,21 +7,46 @@ import * as Inflection from "common/inflection.ts"
 export async function searchByHeading(
     state: MongoDb.State,
     queries: string[],
-    tags: Set<string>,
-    inverseTags: Set<string>)
+    options: Db.SearchOptions)
     : Promise<Api.Word.Entry[]>
 {
     if (queries.length === 0)
         return []
 
-    const tagFilter = makeTagFilter(tags, inverseTags)
+    const tagFilter = makeTagFilter(options.tags, options.inverseTags)
 
     // Sorted automatically by the index for `lookUp.headings.score`
     const results = await state.collWords
         .find({
-            [MongoDb.fieldLookUpHeadingsText]: { $in: queries },
+            [MongoDb.fieldWordLookUpHeadingsText]: { $in: queries },
             ...tagFilter,
         })
+        .limit(options.limit)
+        .toArray()
+
+    return results
+        .map(MongoDb.translateDbWordToApiWord)
+}
+
+
+export async function searchByHeadingAll(
+    state: MongoDb.State,
+    queries: string[],
+    options: Db.SearchOptions)
+    : Promise<Api.Word.Entry[]>
+{
+    if (queries.length === 0)
+        return []
+
+    const tagFilter = makeTagFilter(options.tags, options.inverseTags)
+
+    // Sorted automatically by the index for `lookUp.headings.score`
+    const results = await state.collWords
+        .find({
+            [MongoDb.fieldWordLookUpHeadingsText]: { $all: queries },
+            ...tagFilter,
+        })
+        .limit(options.limit)
         .toArray()
 
     return results
@@ -31,8 +57,7 @@ export async function searchByHeading(
 export async function searchByHeadingPrefix(
     state: MongoDb.State,
     queries: string[],
-    tags: Set<string>,
-    inverseTags: Set<string>)
+    options: Db.SearchOptions)
     : Promise<Api.Word.Entry[]>
 {
     if (queries.length === 0)
@@ -45,19 +70,19 @@ export async function searchByHeadingPrefix(
             continue
 
         dbFindQueries.push({
-            [MongoDb.fieldLookUpHeadingsText]: { $regex: "^" + query + "." },
+            [MongoDb.fieldWordLookUpHeadingsText]: { $regex: "^" + query + "." },
         })
     }
 
     if (dbFindQueries.length === 0)
         return []
 
-    const tagFilter = makeTagFilter(tags, inverseTags)
+    const tagFilter = makeTagFilter(options.tags, options.inverseTags)
         
     const results = await state.collWords
         .find({ $or: dbFindQueries, ...tagFilter })
-        .sort({ score: -1 })
-        .limit(100)
+        .sort({ score: -1, _id: 1 })
+        .limit(Math.min(options.limit, 1000))
         .toArray()
         
     return results
@@ -68,8 +93,7 @@ export async function searchByHeadingPrefix(
 export async function searchByInflections(
     state: MongoDb.State,
     inflections: Inflection.Breakdown,
-    tags: Set<string>,
-    inverseTags: Set<string>)
+    options: Db.SearchOptions)
     : Promise<Api.Word.Entry[]>
 {
     if (inflections.length === 0)
@@ -81,15 +105,16 @@ export async function searchByInflections(
     const dbFindQueries: any[] = []
     for (const infl of inflections)
         dbFindQueries.push({
-            [MongoDb.fieldLookUpHeadingsText]: infl[0].sourceTerm,
-            [MongoDb.fieldLookUpTags]: infl[0].sourceCategory,
+            [MongoDb.fieldWordLookUpHeadingsText]: infl[0].sourceTerm,
+            [MongoDb.fieldWordLookUpTags]: infl[0].sourceCategory,
         })
 
-    const tagFilter = makeTagFilter(tags, inverseTags)
+    const tagFilter = makeTagFilter(options.tags, options.inverseTags)
         
     const dbResults = await state.collWords
         .find({ $or: dbFindQueries, ...tagFilter })
-        .sort({ [`${fieldLookUp}.${fieldLen}`]: -1, score: -1 })
+        .sort({ [`${fieldLookUp}.${fieldLen}`]: -1, score: -1, _id: 1 })
+        .limit(Math.min(options.limit, 1000))
         .toArray()
 
     const apiResults: Api.Word.Entry[] = []
@@ -111,24 +136,18 @@ export async function searchByInflections(
 
 export async function searchByDefinition(
     state: MongoDb.State,
-    query: string,
-    tags: Set<string>,
-    inverseTags: Set<string>)
+    queries: string[],
+    options: Db.SearchOptions)
 {
-    const queryWords = query
-        .split(/\s/)
-        .map(w => w.trim().toLowerCase())
-        .filter(w => w.length !== 0)
-
-    if (queryWords.length === 0)
+    if (queries.length === 0)
         return []
 
-    const tagFilter = makeTagFilter(tags, inverseTags)
+    const tagFilter = makeTagFilter(options.tags, options.inverseTags)
 
     const wordEntries = await state.collDefinitions.aggregate<MongoDb.DbWordEntry>([
-        { $match: { words: { $all: queryWords } } },
-        { $sort: { score: -1 } },
-        { $limit: 500 },
+        { $match: { words: { $all: queries } } },
+        { $sort: { score: -1, _id: 1 } },
+        { $limit: 1000 },
         { $project: { _id: 0, wordId: 1 } },
         { $lookup: {
             from: "words",
@@ -140,6 +159,7 @@ export async function searchByDefinition(
         { $unwind: "$word" },
         { $replaceRoot: { newRoot: "$word" } },
         { $match: tagFilter },
+        { $limit: 1000 },
     ]).toArray()
 
     const wordIds = new Set()
@@ -154,24 +174,25 @@ export async function searchByDefinition(
     } 
 
     return wordEntriesDedup
+        .slice(0, Math.min(options.limit, 1000))
         .map(MongoDb.translateDbWordToApiWord)
 }
 
 
 export async function searchByTags(
     state: MongoDb.State,
-    tags: Set<string>,
-    inverseTags: Set<string>)
+    options: Db.SearchOptions)
     : Promise<Api.Word.Entry[]>
 {
-    if (tags.size === 0)
+    if (options.tags.size === 0)
         return []
 
-    const tagFilter = makeTagFilter(tags, inverseTags)
+    const tagFilter = makeTagFilter(options.tags, options.inverseTags)
 
     const results = await state.collWords
         .find(tagFilter)
-        .sort({ score: -1 })
+        .sort({ score: -1, _id: 1 })
+        .limit(options.limit)
         .toArray()
 
     return results
@@ -182,8 +203,7 @@ export async function searchByTags(
 export async function searchByWildcards(
     state: MongoDb.State,
     queries: string[],
-    tags: Set<string>,
-    inverseTags: Set<string>)
+    options: Db.SearchOptions)
     : Promise<Api.Word.Entry[]>
 {
     const regexes = queries.map(q =>
@@ -195,16 +215,16 @@ export async function searchByWildcards(
 
     const dbFind: any[] = []
     for (const regex of regexes)
-        dbFind.push({ [MongoDb.fieldLookUpHeadingsText]: { $regex: regex } })
+        dbFind.push({ [MongoDb.fieldWordLookUpHeadingsText]: { $regex: regex } })
         
-    const tagFilter = makeTagFilter(tags, inverseTags)
+    const tagFilter = makeTagFilter(options.tags, options.inverseTags)
 
     const results = await state.collWords.aggregate([
         //{ $match: { chars: { $all: regexCharsFilter } } },
         { $match: { $or: dbFind } },
         { $match: tagFilter },
-        { $sort: { score: -1 } },
-        { $limit: 1000 },
+        { $sort: { score: -1, _id: 1 } },
+        { $limit: Math.min(options.limit, 1000) },
     ]).toArray()
 
     return results
@@ -215,14 +235,13 @@ export async function searchByWildcards(
 export async function searchKanji(
     state: MongoDb.State,
     kanjiString: string,
-    tags: Set<string>,
-    inverseTags: Set<string>)
+    options: Db.SearchOptions)
     : Promise<Api.Kanji.Entry[]>
 {
     if (kanjiString.length === 0)
         return []
 
-    const tagFilter = makeTagFilter(tags, inverseTags)
+    const tagFilter = makeTagFilter(options.tags, options.inverseTags)
 
     const kanjiChars = [...kanjiString]
 
@@ -231,6 +250,7 @@ export async function searchKanji(
             _id: { $in: kanjiChars },
             ...tagFilter,
         })
+        .limit(Math.min(options.limit, 1000))
         .toArray()
 
     // Sort by the order in the query.
@@ -240,6 +260,56 @@ export async function searchKanji(
     return results
         .map(MongoDb.translateDbKanjiToApiKanji)
         .sort((a, b) => kanjiOrdering.get(a.id)! - kanjiOrdering.get(b.id)!)
+}
+
+
+export async function searchKanjiByReading(
+    state: MongoDb.State,
+    queries: string[],
+    options: Db.SearchOptions)
+    : Promise<Api.Kanji.Entry[]>
+{
+    if (queries.length === 0)
+        return []
+
+    const tagFilter = makeTagFilter(options.tags, options.inverseTags)
+
+    // Sorted automatically by the index.
+    const results = await state.collKanji
+        .find({
+            [MongoDb.fieldKanjiReadingsText]: { $all: queries },
+            ...tagFilter,
+        })
+        .limit(Math.min(options.limit, 1000))
+        .toArray()
+
+    return results
+        .map(MongoDb.translateDbKanjiToApiKanji)
+}
+
+
+export async function searchKanjiByMeaning(
+    state: MongoDb.State,
+    queries: string[],
+    options: Db.SearchOptions)
+    : Promise<Api.Kanji.Entry[]>
+{
+    if (queries.length === 0)
+        return []
+
+    const tagFilter = makeTagFilter(options.tags, options.inverseTags)
+
+    // Sorted automatically by the index.
+    const results = await state.collKanji
+        .find({
+            [MongoDb.fieldKanjiLookUpMeanings]: { $all: queries },
+            ...tagFilter,
+        })
+        .limit(Math.min(options.limit, 1000))
+        .toArray()
+
+    return results
+        .map(MongoDb.translateDbKanjiToApiKanji)
 }
 
 
@@ -286,7 +356,7 @@ export async function listWordsWithChars(
     : Promise<Api.Word.Entry[]>
 {
     const dbWord = await state.collWords
-        .find({ [MongoDb.fieldLookUpChars]: { $all: chars } })
+        .find({ [MongoDb.fieldWordLookUpChars]: { $all: chars } })
         .toArray()
 
     return dbWord
@@ -310,5 +380,5 @@ function makeTagFilter(
     if (Object.keys(dbFilter).length === 0)
         return {}
 
-    return { [MongoDb.fieldLookUpTags]: dbFilter }
+    return { [MongoDb.fieldWordLookUpTags]: dbFilter }
 }

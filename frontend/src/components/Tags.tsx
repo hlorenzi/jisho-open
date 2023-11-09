@@ -1,16 +1,11 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-
-
-type JlptLevel = 5 | 4 | 3 | 2 | 1
-
-
-type JouyouGrade = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+import * as Api from "common/api/index.ts"
 
 
 export function TagCommonness(props: {
-    commonness?: "veryCommon" | "common" | 2 | 1
+    commonness?: Api.CommonnessTag | Api.CommonnessIndex
 })
 {
     return <>
@@ -32,28 +27,28 @@ export function TagCommonness(props: {
 
 
 export function TagJlpt(props: {
-    jlpt?: JlptLevel,
+    jlpt?: Api.JlptLevel,
 })
 {
     return <Solid.Show when={ props.jlpt !== undefined }>
         <Framework.TextTag
             title={ `Appears in the Japanese Language Proficiency Test at level N${ props.jlpt }.` }
             label={ `N${ props.jlpt }` }
-            bkgColor={ Framework.themeVar(`iconJlptN${ props.jlpt!.toString() as `${ JlptLevel }` }Color`) }
+            bkgColor={ Framework.themeVar(`iconJlptN${ props.jlpt!.toString() as `${ Api.JlptLevel }` }Color`) }
         />     
     </Solid.Show>
 }
 
 
 export function TagJouyou(props: {
-    jouyou?: JouyouGrade,
+    jouyou?: Api.JouyouGrade,
 })
 {
     return <Solid.Show when={ props.jouyou !== undefined }>
         <Framework.TextTag
             title={ `Jōyō kanji, taught in grade ${ props.jouyou }.` }
             label={ `Jōyō Grade ${ props.jouyou }` }
-            bkgColor={ Framework.themeVar(`iconJouyou${ props.jouyou!.toString() as `${ JouyouGrade }` }Color`) }
+            bkgColor={ Framework.themeVar(`iconJouyou${ props.jouyou!.toString() as `${ Api.JouyouGrade }` }Color`) }
         />
     </Solid.Show>
 }

@@ -23415,7 +23415,7 @@
 母;uncl;あも
 狗;uncl;せみ
 従;uncl;おお
-祖;uncl;お
+祖;uncl;お;おお;じ;ば
 耨;uncl;のく
 藐;uncl;みゃく
 越;uncl;え
@@ -23455,6 +23455,11 @@
 酒;uncl;ささ
 構;uncl;かん
 青;uncl;さお
+馬;uncl;め;むま
+面;uncl;じ;も;もて;かお
+曾;uncl;ひ;ひい
+曽;uncl;ひ;ひい
+帳;uncl;や
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
 吉;ateji;ぎ
@@ -23557,7 +23562,7 @@
 似;auto;ね
 甲;auto;が;か;かっ
 頭;auto;じゅう;こうべ
-物;auto;もん;も
+物;auto;もん
 所;auto;そ;ど;せ;こ
 分;auto;わか
 飯;auto;いい;まま
@@ -23618,7 +23623,6 @@
 神;auto;み;かむ
 溝;auto;どぶ
 疾;auto;と
-面;auto;じ;も;もて
 水;auto;み;みな
 泊;auto;とま
 貞;auto;じょう
@@ -23634,7 +23638,6 @@
 守;auto;も
 止;auto;どま
 住;auto;ずま
-馬;auto;め
 暖;auto;の;あった
 除;auto;の
 法;auto;ぼ;ほ
@@ -23832,7 +23835,6 @@
 商;auto;あきん
 預;auto;あずか
 湯;auto;たん
-帳;auto;や
 聴;auto;てん
 氈;auto;かも
 戸;auto;べ
@@ -23948,6 +23950,8 @@
 島;chinese;ど
 広;chinese;かん
 東;chinese;とん
+吊;chinese;ディアオ;テイアオ;チャオ
+弔;chinese;ディアオ;テイアオ;チャオ
 大人;gikun;おとな
 大和;gikun;やまと
 日本;gikun;やまと
@@ -24203,7 +24207,7 @@
 飛沫;gikun;しぶき
 慈姑;gikun;くわい
 他人;gikun;ひと
-酸漿;gikun;ほおずき;ほおづき
+酸漿;gikun;ほおずき;ほおづき;かがち
 擬蟻;gikun;ありもど
 流離;gikun;さすら;さすらい
 椿象;gikun;かめ;かめむし
@@ -24247,8 +24251,15 @@
 磯蚯蚓;gikun;いそめ
 鎮魂;gikun;たましずめ
 冬眠鼠;gikun;やまね
+毛布;gikun;げっと
+孑孑;gikun;ぼうふり;ぼうふら
+漆姑;gikun;つめ
+母衣;gikun;ほろ
+蚊帳吊;gikun;しゃ
+浴衣;gikun;ゆかた
 不老;conjug;おいず
 下関;patch;しものせき
+物の;patch;ものの
 ｗｅｂ;spec;うぇぶ
 Ｗｅｂ;spec;うぇぶ
 ＬＡＮ;spec;らん

@@ -235,7 +235,7 @@ function ExampleWords(props: {
 
             return <ExampleWordEntry>
                 <Framework.Link
-                    href={ Pages.Search.urlForQuery(Furigana.extractBase(Furigana.decode(exampleWord.furigana))) }
+                    href={ Pages.Search.urlForQuery(`${ Furigana.extractBase(furigana) } ${ Furigana.extractReading(furigana) }`) }
                     noUnderline
                 >
                     <ExampleWordHeading>

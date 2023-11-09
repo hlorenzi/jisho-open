@@ -13,6 +13,7 @@ import * as JlptWords from "../data/jlpt_words.ts"
 import * as PitchAccent from "../data/pitch_accent.ts"
 import * as FuriganaHelpers from "../data/furigana_helpers.ts"
 
+
 export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"
 export const gzipFilename = File.downloadFolder + "JMdict_e.gz"
 export const xmlFilename = File.downloadFolder + "JMdict_e.xml"
@@ -24,16 +25,19 @@ export async function downloadAndImport(
     useCachedFiles: boolean)
 {
     await File.download(
+        logger,
         url,
         gzipFilename,
         useCachedFiles)
     
     await File.extractGzip(
+        logger,
         gzipFilename,
         xmlFilename,
         useCachedFiles)
 
     const entryIterator = Xml.iterateEntriesStreamed<JmdictRaw.Entry>(
+        logger,
         xmlFilename,
         "JMdict",
         "entry")
@@ -129,11 +133,11 @@ function normalizeHeadings(
             if (r_ele.re_nokanji !== undefined)
                 continue
         
-            if (r_ele.re_restr &&
+            if (r_ele.re_restr !== undefined &&
                 !r_ele.re_restr.some(restr => restr === keb))
                 continue
 
-            if (r_ele.re_inf &&
+            if (r_ele.re_inf !== undefined &&
                 r_ele.re_inf.some(tag => tag === "sk"))
                 continue
             
@@ -151,7 +155,7 @@ function normalizeHeadings(
         if (seenReadings.has(reb))
             continue
 
-        if (r_ele.re_inf &&
+        if (r_ele.re_inf !== undefined &&
             r_ele.re_inf.some(tag => tag === "sk"))
         {
             seenReadings.add(reb)
@@ -187,10 +191,9 @@ function normalizeHeadings(
 
     // If the word is usually written in plain kana,
     // extract the first hiragana reading element and put it
-    // at the front, unless we've already got it or
-    // there's already a "common" katakana heading for it.
-    // TODO: Keep an "uncommon" katakana if the hiragana
-    // reading isn't marked as common either.
+    // at the front, unless we've already got it, and unless
+    // there's already a katakana heading for it of the
+    // same or greater commonness score.
     if (usuallyOnlyKana)
     {
         for (const r_ele of raw.r_ele)
@@ -201,12 +204,15 @@ function normalizeHeadings(
             {
                 if (Kana.hasHiragana(reb))
                 {
+                    if (r_ele.re_inf?.some(tag => tag === "ik" || tag === "ok" || tag === "sk"))
+                        continue
+
                     const asKatakana = Kana.toKatakana(reb)
 
                     const isMatchingCommonKatakana = (r: JmdictRaw.EntryREle) => {
                         return r.reb[0] === asKatakana &&
                             r.re_nokanji &&
-                            r.re_pri && r.re_pri.length !== 0
+                            (r.re_pri?.length ?? 0) >= (r_ele.re_pri?.length ?? 0)
                     }
 
                     if (reb !== asKatakana &&
@@ -225,7 +231,7 @@ function normalizeHeadings(
                 }
             }
             
-            if (r_ele.re_inf &&
+            if (r_ele.re_inf !== undefined &&
                 r_ele.re_inf.some(tag => tag === "sk"))
                 continue
             
@@ -376,7 +382,7 @@ function normalizeHeading(
 
     const jlpt = JlptWords.get(heading.base, heading.reading)
     if (jlpt !== undefined)
-        heading.jlpt = jlpt as Api.Word.Heading["jlpt"]
+        heading.jlpt = jlpt
 
     const score = scoreHeading(heading)
     if (score !== 0)
@@ -425,7 +431,7 @@ function scoreHeading(
     if (heading.outdatedKana)
         score -= 30000
 
-    return score
+    return Math.round(score)
 }
 
 
@@ -645,14 +651,14 @@ export function gatherLookUpTags(
 
     const langTags = apiWord.senses
         .flatMap(d => d.lang ?? [])
-        .flatMap(l => l.language ?? "wasei")
+        .map(l => l.language ?? "wasei")
     
     const dialectTags = apiWord.senses
         .flatMap(d => d.dialect ?? [])
 
     const commonness = apiWord.headings
         .map(h => JmdictTags.getCommonness(h))
-        .filter(t => t !== null) as Api.Word.CommonnessTag[]
+        .filter(t => t !== null) as Api.CommonnessTag[]
 
     return JmdictTags.expandFilterTags([...new Set<Api.Word.FilterTag>([
         ...partsOfSpeech,

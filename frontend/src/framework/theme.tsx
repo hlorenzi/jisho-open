@@ -98,7 +98,7 @@ export const themeLight: Theme = {
     text4thColor: "#cccccc",
     textDisabledColor: "#a0a0a0",
     textStrongBkgColor: "#eee",
-    textHighlightBkgColor: "#fffcaa",
+    textHighlightBkgColor: "#f0ffda",
 
     linkHoverColor: "#408000",
     linkPressColor: "#224400",

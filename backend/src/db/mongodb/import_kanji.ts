@@ -1,6 +1,6 @@
 import * as MongoDb from "./index.ts"
 import * as Api from "common/api/index.ts"
-import * as Jmdict from "../../importing/jmdict.ts"
+import * as Kanjidic from "../../importing/kanjidic.ts"
 
 
 export async function importKanjiEntries(
@@ -28,6 +28,10 @@ function translateApiKanjiToDbKanji(
     apiKanji: Api.Kanji.Entry)
     : MongoDb.DbKanjiEntry
 {
+    const lookUp: MongoDb.DbKanjiEntry["lookUp"] = {
+        meanings: Kanjidic.gatherLookUpMeanings(apiKanji),
+    }
+
     // Add and remove fields via destructuring assignment
     const {
         id,
@@ -35,6 +39,7 @@ function translateApiKanjiToDbKanji(
     } = {
         ...apiKanji,
         _id: apiKanji.id,
+        lookUp,
     }
 
     return dbKanji

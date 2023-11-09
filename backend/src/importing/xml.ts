@@ -1,6 +1,7 @@
-import * as StreamedReader from "./streamed_reader.ts"
 // @ts-expect-error
 import xml2js from "xml2js"
+import * as StreamedReader from "./streamed_reader.ts"
+import * as Logging from "./logging.ts"
 
 
 export const xml2jsAttributeKey = "attr"
@@ -12,6 +13,7 @@ export const xml2jsTextKey = "text"
 /// to a JSON object, and yields these objects interpreted as the
 /// given `T` type (without type-checking).
 export async function* iterateEntriesStreamed<T extends object>(
+    logger: Logging.Logger,
     filename: string,
     mainTagId: string,
     entryTagId: string)
@@ -53,7 +55,7 @@ export async function* iterateEntriesStreamed<T extends object>(
         const curPercent = Math.floor(reader.getProgressFraction() * 100)
         if (curPercent !== prevPercent)
         {
-            process.stdout.write(`\r...${curPercent}%`)
+            Logging.logProgressPercentage(logger, curPercent)
             prevPercent = curPercent
         }
         
@@ -64,5 +66,5 @@ export async function* iterateEntriesStreamed<T extends object>(
         yield entryObj
     }
 
-    process.stdout.write("\r               \r")
+    Logging.logProgressPercentage(logger, 100)
 }

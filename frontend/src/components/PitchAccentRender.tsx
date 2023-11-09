@@ -13,6 +13,7 @@ export function PitchAccentRender(props: {
 
 	let c = 0
 	let prevPitch = false
+	let kanaIndex = 0
 	while (c < str.length)
 	{
 		let curPitch: boolean = prevPitch
@@ -64,6 +65,7 @@ export function PitchAccentRender(props: {
 		rendered.push(
             <PitchLines
                 topLine={ curPitch }
+                leftLine={ curPitch && !prevPitch && kanaIndex > 0 }
                 rightLine={ curPitch && !nextPitch }
             >
                 <PitchExtra
@@ -76,6 +78,7 @@ export function PitchAccentRender(props: {
         )
 
 		prevPitch = curPitch
+		kanaIndex++
 	}
 
 	return <Wrapper>
@@ -97,14 +100,19 @@ const Wrapper = styled.div`
 
 const PitchLines = styled.span<{
     topLine: boolean,
+    leftLine: boolean,
     rightLine: boolean,
 }>`
     ${ props => props.topLine ?
-        `border-top: 2px solid ${ Framework.themeVar("text2ndColor") };` :
+        `border-top: 2px solid ${ Framework.themeVar("text3rdColor") };` :
+        ``
+    }
+    ${ props => props.leftLine ?
+        `border-left: 2px solid ${ Framework.themeVar("text3rdColor") };` :
         ``
     }
     ${ props => props.rightLine ?
-        `border-right: 2px solid ${ Framework.themeVar("text2ndColor") };` :
+        `border-right: 2px solid ${ Framework.themeVar("text3rdColor") };` :
         ``
     }
 `
@@ -117,12 +125,12 @@ const PitchExtra = styled.span<{
     border-radius: 50%;
 
     ${ props => props.silent ?
-        `border: 2px dotted ${ Framework.themeVar("text2ndColor") };` :
+        `border: 2px dotted ${ Framework.themeVar("text3rdColor") };` :
         ``
     }
 
     ${ props => props.nasal ?
-        `text-decoration: ${ Framework.themeVar("text2ndColor") } wavy underline;` :
+        `text-decoration: ${ Framework.themeVar("text3rdColor") } wavy underline;` :
         ``
     }
 `

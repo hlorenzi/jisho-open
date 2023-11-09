@@ -2,6 +2,13 @@ import * as Api from "common/api/index.ts"
 import * as Infletcion from "common/inflection.ts"
 
 
+export type SearchOptions = {
+    limit: number
+    tags: Set<string>
+    inverseTags: Set<string>
+}
+
+
 export interface Db
 {
     importWordEntries:
@@ -15,43 +22,51 @@ export interface Db
 
     searchByHeading: (
         queries: string[],
-        tags: Set<string>,
-        inverseTags: Set<string>)
+        options: SearchOptions)
+        => Promise<Api.Word.Entry[]>
+    
+    searchByHeadingAll: (
+        queries: string[],
+        options: SearchOptions)
         => Promise<Api.Word.Entry[]>
     
     searchByHeadingPrefix: (
         queries: string[],
-        tags: Set<string>,
-        inverseTags: Set<string>)
+        options: SearchOptions)
         => Promise<Api.Word.Entry[]>
 
     searchByInflections: (
         inflections: Infletcion.Breakdown,
-        tags: Set<string>,
-        inverseTags: Set<string>)
+        options: SearchOptions)
         => Promise<Api.Word.Entry[]>
 
     searchByDefinition: (
-        query: string,
-        tags: Set<string>,
-        inverseTags: Set<string>)
+        queries: string[],
+        options: SearchOptions)
         => Promise<Api.Word.Entry[]>
 
     searchByTags: (
-        tags: Set<string>,
-        inverseTags: Set<string>)
+        options: SearchOptions)
         => Promise<Api.Word.Entry[]>
 
     searchByWildcards: (
         queries: string[],
-        tags: Set<string>,
-        inverseTags: Set<string>)
+        options: SearchOptions)
         => Promise<Api.Word.Entry[]>
 
     searchKanji: (
         kanjiString: string,
-        tags: Set<string>,
-        inverseTags: Set<string>)
+        options: SearchOptions)
+        => Promise<Api.Kanji.Entry[]>
+
+    searchKanjiByReading: (
+        queries: string[],
+        options: SearchOptions)
+        => Promise<Api.Kanji.Entry[]>
+
+    searchKanjiByMeaning: (
+        queries: string[],
+        options: SearchOptions)
         => Promise<Api.Kanji.Entry[]>
 
     listKanjiWordCrossRefEntries(
@@ -75,12 +90,15 @@ export function createDummy(): Db
         importKanjiWordCrossRefEntries: async () => {},
 
         searchByHeading: async () => [],
+        searchByHeadingAll: async () => [],
         searchByHeadingPrefix: async () => [],
         searchByInflections: async () => [],
         searchByDefinition: async () => [],
         searchByTags: async () => [],
         searchByWildcards: async () => [],
         searchKanji: async () => [],
+        searchKanjiByReading: async () => [],
+        searchKanjiByMeaning: async () => [],
         
         listAllKanji: async () => [],
         listWordsWithChars: async () => [],

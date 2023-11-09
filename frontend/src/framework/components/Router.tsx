@@ -38,7 +38,7 @@ export function Router(props: {
 
             // FIXME: Why is reference-equality for
             // `match.route === matchPrev.route` not working?
-            const isSameRoute = 
+            const isSameRoute =
                 match?.route.patterns[0] === matchPrev?.route.patterns[0]
 
             if (isSameRoute &&

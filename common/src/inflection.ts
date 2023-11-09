@@ -61,9 +61,14 @@ export function compile(raw: string): Table
 
         if (line.startsWith("@"))
         {
-            const entry = line.substring("@".length).split(":").map(s => s.trim())
-            const directive = entry[0]
-            const value = entry[1]
+            const entry = line.substring("@".length).trim()
+
+            let colonIndex = entry.indexOf(":")
+            if (colonIndex < 0)
+                colonIndex = entry.length
+
+            const directive = entry.substring(0, colonIndex).trim()
+            const value = entry.substring(colonIndex + 1).trim()
 
             if (directive === "id")
             {
@@ -249,6 +254,22 @@ export function breakdown(
     }
 
     return paths
+}
+
+
+export function getRuleGroup(
+    id: string)
+    : Group | undefined
+{
+    return table.groups.get(id)
+}
+
+
+export function getRules(
+    id: string)
+    : Rule[]
+{
+    return table.rules.filter(r => r.id === id)
 }
 
 

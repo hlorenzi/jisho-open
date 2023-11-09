@@ -14,8 +14,17 @@ export async function buildDatabase(
         writeLn: (str) => console.log(str),
     }
 
-    await Jmdict.downloadAndImport(logger, db, useCachedFiles)
-    await Kanjidic.downloadAndImport(logger, db, useCachedFiles)
-    await KanjiWords.crossReferenceKanjiWords(logger, db)
-    logger.writeLn("finished importing")
+    try
+    {
+        logger.writeLn("building database...")
+        await Jmdict.downloadAndImport(logger, db, useCachedFiles)
+        await Kanjidic.downloadAndImport(logger, db, useCachedFiles)
+        await KanjiWords.crossReferenceKanjiWords(logger, db)
+        logger.writeLn("finished building database")
+    }
+    catch (e)
+    {
+        logger.writeLn(`error building database: ${ e }`)
+        throw e
+    }
 }

@@ -1,4 +1,5 @@
 import * as Solid from "solid-js"
+import * as Framework from "./index.ts"
 
 
 type HistoryState = {
@@ -111,11 +112,30 @@ export function createHistorySignal<N extends string, T>(
         [key in N]: Exclude<T, Function>
     }
 
-    const historyState = (window.history.state as HistoryStateWithKey) ?? {}
-    if (historyState[name] !== undefined)
-        defaultValue = historyState[name]
+    const getFromHistory = () => {
+        const historyState = (window.history.state as HistoryStateWithKey) ?? {}
+        if (historyState[name] !== undefined)
+            return historyState[name]
 
-    const [state, setState] = Solid.createSignal<T>(defaultValue)
+        return defaultValue
+    }
+
+    const [state, setState] = Solid.createSignal<T>(getFromHistory())
+
+    const [pending, _] = Solid.useTransition()
+
+    const refreshFromHistory = () => {
+        if (!pending())
+        {
+            console.log("refreshFromHistory")
+            setState(getFromHistory())
+        }
+    }
+
+    const getState = () => {
+        state()
+        return getFromHistory()
+    }
 
     const setState2 = (newState: Exclude<T, Function>) => {
         const newHistoryState: HistoryStateWithKey = {
@@ -131,5 +151,15 @@ export function createHistorySignal<N extends string, T>(
         setState(newState)
     }
 
-    return [state, setState2]
+    window.addEventListener("popstate", refreshFromHistory)
+    window.addEventListener(Framework.historyPushStateEvent, refreshFromHistory)
+    window.addEventListener(Framework.historyReloadStateEvent, refreshFromHistory)
+    
+    Solid.onCleanup(() => {
+        window.removeEventListener("popstate", refreshFromHistory)
+        window.removeEventListener(Framework.historyPushStateEvent, refreshFromHistory)
+        window.removeEventListener(Framework.historyReloadStateEvent, refreshFromHistory)
+    })
+
+    return [getState, setState2]
 }

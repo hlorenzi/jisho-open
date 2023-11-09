@@ -3,6 +3,18 @@ import { styled, keyframes } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
+export function LoadingBar(props: {
+    height?: number,
+})
+{
+    return <Wrapper>
+        <DivLoadingBar
+            height={ props.height ?? 10 }
+        />
+    </Wrapper>
+}
+
+
 const stripeWidth = 20
 
 
@@ -16,6 +28,12 @@ const loadingBarKeyframes = keyframes`
     {
         transform: translate(-240px, 0);
     }
+`
+
+
+const Wrapper = styled.div`
+    height: 0;
+    overflow-y: visible;
 `
 
 
@@ -41,13 +59,3 @@ const DivLoadingBar = styled.div<{
     animation-iteration-count: infinite;
     animation-timing-function: linear;
 `
-
-
-export function LoadingBar(props: {
-    height?: number,
-})
-{
-    return <DivLoadingBar
-        height={ props.height ?? 10 }
-    />
-}

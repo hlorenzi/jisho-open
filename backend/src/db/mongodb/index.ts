@@ -51,6 +51,9 @@ export type DbDefinitionEntry = {
 
 export type DbKanjiEntry = Omit<Api.Kanji.Entry, "id"> & {
     _id: string
+    lookUp: {
+        meanings: string[]
+    }
 }
 
 
@@ -59,29 +62,47 @@ export type DbKanjiWordEntry = Omit<Api.KanjiWordCrossRef.Entry, "id"> & {
 }
 
 
-export const fieldLookUp = "lookUp" satisfies keyof DbWordEntry
+export const fieldWordLookUp = "lookUp" satisfies keyof DbWordEntry
 
 
-export const fieldLookUpHeadingsText =
-    `${fieldLookUp}` +
+export const fieldWordLookUpHeadingsText =
+    `${fieldWordLookUp}` +
     `.${"headings" satisfies keyof DbWordEntry["lookUp"]}` +
     `.${"text" satisfies keyof Api.Word.LookUpHeading}`
 
 
-export const fieldLookUpHeadingsScore =
-    `${fieldLookUp}` +
+export const fieldWordLookUpHeadingsScore =
+    `${fieldWordLookUp}` +
     `.${"headings" satisfies keyof DbWordEntry["lookUp"]}` +
     `.${"score" satisfies keyof Api.Word.LookUpHeading}`
 
 
-export const fieldLookUpTags =
-    `${fieldLookUp}` +
+export const fieldWordLookUpTags =
+    `${fieldWordLookUp}` +
     `.${"tags" satisfies keyof DbWordEntry["lookUp"]}`
 
 
-export const fieldLookUpChars =
-    `${fieldLookUp}` +
+export const fieldWordLookUpChars =
+    `${fieldWordLookUp}` +
     `.${"chars" satisfies keyof DbWordEntry["lookUp"]}`
+
+
+export const fieldKanjiLookUp = "lookUp" satisfies keyof DbKanjiEntry
+
+
+export const fieldKanjiReadingsText =
+    `${"readings" satisfies keyof DbKanjiEntry}` +
+    `.${"reading" satisfies keyof Api.Kanji.ReadingScore}`
+
+
+export const fieldKanjiReadingsScore =
+    `${"readings" satisfies keyof DbKanjiEntry}` +
+    `.${"score" satisfies keyof Api.Kanji.ReadingScore}`
+
+
+export const fieldKanjiLookUpMeanings =
+    `${fieldKanjiLookUp}` +
+    `.${"meanings" satisfies keyof DbKanjiEntry["lookUp"]}`
 
 
 export async function connect(): Promise<Db.Db>
@@ -97,17 +118,17 @@ export async function connect(): Promise<Db.Db>
     }
 
     await state.collWords.createIndex({
-        [fieldLookUpHeadingsText]: 1,
-        [fieldLookUpHeadingsScore]: -1,
+        [fieldWordLookUpHeadingsText]: 1,
+        [fieldWordLookUpHeadingsScore]: -1,
     })
 
     await state.collWords.createIndex({
-        [fieldLookUpTags]: 1,
+        [fieldWordLookUpTags]: 1,
         ["score" satisfies keyof DbWordEntry]: -1,
     })
 
     await state.collWords.createIndex({
-        [fieldLookUpChars]: 1,
+        [fieldWordLookUpChars]: 1,
         ["score" satisfies keyof DbWordEntry]: -1,
     })
 
@@ -121,6 +142,17 @@ export async function connect(): Promise<Db.Db>
         ["score" satisfies keyof DbDefinitionEntry]: -1,
     })
 
+    await state.collKanji.createIndex({
+        [fieldKanjiReadingsText]: 1,
+        [fieldKanjiReadingsScore]: -1,
+        ["score" satisfies keyof DbKanjiEntry]: -1,
+    })
+
+    await state.collKanji.createIndex({
+        [fieldKanjiLookUpMeanings]: 1,
+        ["score" satisfies keyof DbKanjiEntry]: -1,
+    })
+
     return {
         importWordEntries: (entries) =>
             MongoDbImportWords.importWordEntries(state, entries),
@@ -129,20 +161,26 @@ export async function connect(): Promise<Db.Db>
         importKanjiWordCrossRefEntries: (entries) =>
             MongoDbImportKanjiWord.importKanjiWordCrossRefEntry(state, entries),
 
-        searchByHeading: (queries, tags, invTags) =>
-            MongoDbSearch.searchByHeading(state, queries, tags, invTags),
-        searchByHeadingPrefix: (queries, tags, invTags) =>
-            MongoDbSearch.searchByHeadingPrefix(state, queries, tags, invTags),
-        searchByInflections: (inflections, tags, invTags) =>
-            MongoDbSearch.searchByInflections(state, inflections, tags, invTags),
-        searchByDefinition: (query, tags, invTags) =>
-            MongoDbSearch.searchByDefinition(state, query, tags, invTags),
-        searchByTags: (tags, invTags) =>
-            MongoDbSearch.searchByTags(state, tags, invTags),
-        searchByWildcards: (queries, tags, invTags) =>
-            MongoDbSearch.searchByWildcards(state, queries, tags, invTags),
-        searchKanji: (kanjiString, tags, invTags) =>
-            MongoDbSearch.searchKanji(state, kanjiString, tags, invTags),
+        searchByHeading: (queries, options) =>
+            MongoDbSearch.searchByHeading(state, queries, options),
+        searchByHeadingAll: (queries, options) =>
+            MongoDbSearch.searchByHeadingAll(state, queries, options),
+        searchByHeadingPrefix: (queries, options) =>
+            MongoDbSearch.searchByHeadingPrefix(state, queries, options),
+        searchByInflections: (inflections, options) =>
+            MongoDbSearch.searchByInflections(state, inflections, options),
+        searchByDefinition: (query, options) =>
+            MongoDbSearch.searchByDefinition(state, query, options),
+        searchByTags: (options) =>
+            MongoDbSearch.searchByTags(state, options),
+        searchByWildcards: (queries, options) =>
+            MongoDbSearch.searchByWildcards(state, queries, options),
+        searchKanji: (kanjiString, options) =>
+            MongoDbSearch.searchKanji(state, kanjiString, options),
+        searchKanjiByReading: (queries, options) =>
+            MongoDbSearch.searchKanjiByReading(state, queries, options),
+        searchKanjiByMeaning: (queries, options) =>
+            MongoDbSearch.searchKanjiByMeaning(state, queries, options),
 
         listAllKanji: () =>
             MongoDbSearch.listAllKanji(state),
@@ -189,6 +227,7 @@ export function translateDbKanjiToApiKanji(
     // Add and remove fields via destructuring assignment
     const {
         _id,
+        lookUp,
         ...apiKanji
     } = {
         ...dbKanji,

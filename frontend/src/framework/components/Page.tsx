@@ -3,8 +3,34 @@ import { styled } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
-export const pageWidth = "60rem"
-export const pageSmallWidthThreshold = "66rem"
+export function Page(props: {
+    children: Solid.JSX.Element,
+    width?: string,
+    sideMenu?: Solid.JSX.Element,
+    title?: string,
+})
+{
+    const siteTitle = "Lorenzi's Jisho Open"
+
+    Solid.createComputed(() => {
+        document.title = props.title ?
+            `${ props.title } • ${ siteTitle }` :
+            siteTitle
+    })
+
+    return <DivLayout>
+        <DivContent>
+            <Framework.LogoHeader/>
+            <main>
+                { props.children }
+            </main>
+        </DivContent>
+    </DivLayout>
+}
+
+
+export const pageWidth = "55rem"
+export const pageSmallWidthThreshold = "60rem"
 
 
 const DivLayout = styled.div`
@@ -32,7 +58,7 @@ const DivContent = styled.div`
 	max-width: 100vw;
 	overflow-x: hidden;
 
-	padding-bottom: 4rem;
+	padding-bottom: 10rem;
     
 	text-align: left;
 	color: ${ Framework.themeVar("textColor") };
@@ -53,37 +79,16 @@ const DivContent = styled.div`
 		border-left: 0;
 		border-right: 0;
 
-        --local-pagePaddingSmall: min(4vw, ${ Framework.themeVar("pagePaddingSmall") });
+        --local-pagePaddingSmall: min(2vw, ${ Framework.themeVar("pagePaddingSmall") });
 
         padding-left: var(--local-pagePaddingSmall);
         padding-right: var(--local-pagePaddingSmall);
         
         --local-pagePadding: var(--local-pagePaddingSmall);
 	}
+
+    @media (pointer: coarse)
+    {
+        width: 100%;
+    }
 `
-
-
-export function Page(props: {
-    children: Solid.JSX.Element,
-    width?: string,
-    sideMenu?: Solid.JSX.Element,
-    title?: string,
-})
-{
-    const siteTitle = "Lorenzi's Jisho Open"
-
-    Solid.createComputed(() => {
-        document.title = props.title ?
-            `${ props.title } • ${ siteTitle }` :
-            siteTitle
-    })
-
-    return <DivLayout>
-        <DivContent>
-            <Framework.LogoHeader/>
-            <main>
-                { props.children }
-            </main>
-        </DivContent>
-    </DivLayout>
-}

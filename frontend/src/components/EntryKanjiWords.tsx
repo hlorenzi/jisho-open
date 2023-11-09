@@ -68,7 +68,7 @@ function WordBuckets(props: {
 
                         return <WordEntry>
                             <Framework.Link
-                                href={ Pages.Search.urlForQuery(Furigana.extractBase(Furigana.decode(word.furigana))) }
+                                href={ Pages.Search.urlForQuery(`${ Furigana.extractBase(furigana) } ${ Furigana.extractReading(furigana) }`) }
                                 noUnderline
                             >
                                 <WordHeading>

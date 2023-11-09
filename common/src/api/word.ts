@@ -1,3 +1,4 @@
+import * as Api from "./index.ts"
 import * as JmdictRaw from "../../../backend/src/importing/jmdict_raw.ts"
 import * as Inflection from "../inflection.ts"
 
@@ -38,7 +39,7 @@ export type Heading = {
     searchOnlyKana?: boolean
 
     /// Appearence in a JLPT level. (5 to 1)
-    jlpt?: 5 | 4 | 3 | 2 | 1
+    jlpt?: Api.JlptLevel
     /// Ranking of commonness in newspapers. (1 to 2)
     rankNews?: number
     /// Ranking of commonness in newspapers. (1 to 48)
@@ -112,11 +113,6 @@ export type CrossReference = {
     senseIndex?: number
     type?: "antonym"
 }
-
-
-export type CommonnessTag =
-    | "veryCommon"
-    | "common"
 
 
 export type PartOfSpeechTag =
@@ -479,7 +475,7 @@ export type GlossTypeTag =
 
 
 export type FilterTag =
-    CommonnessTag |
+    Api.CommonnessTag |
     PartOfSpeechTag |
     MiscTag |
     FieldDomainTag |

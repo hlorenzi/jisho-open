@@ -5,8 +5,8 @@ export interface Entry
 {
     id: string
 
-    jouyou?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
-    jlpt?: 5 | 4 | 3 | 2 | 1
+    jouyou?: Api.JouyouGrade
+    jlpt?: Api.JlptLevel
     rankNews?: number
 
     strokeCount: number
@@ -18,6 +18,11 @@ export interface Entry
     onyomi: Reading[]
     nanori?: string[]
 
+    /// The overall commonness score for the kanji.
+    score?: number
+    /// All readings (even irregular) with commonness scores.
+    readings?: ReadingScore[]
+
     structuralCategory?: StructuralCategory
 
     wordCount?: number
@@ -25,19 +30,18 @@ export interface Entry
 }
 
 
-export type CommonnessTag =
-    | "veryCommon"
-    | "common"
-
-
 export interface Reading
 {
     text: string
-    commonness?: CommonnessIndex
+    commonness?: Api.CommonnessIndex
 }
 
 
-export type CommonnessIndex = 2 | 1
+export interface ReadingScore
+{
+    reading: string
+    score: number
+}
 
 
 export type StructuralCategory =

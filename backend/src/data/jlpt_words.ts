@@ -1,18 +1,21 @@
 import * as fs from "fs"
+import * as Api from "common/api/index.ts"
 
 
-let cache: Map<string, number> | null = null
+let cache: Map<string, Api.JlptLevel> | null = null
 let cacheUsed: Set<string> = new Set()
 
 
 export function get(
     base: string,
     reading?: string)
-    : number | undefined
+    : Api.JlptLevel | undefined
 {
     if (!cache)
     {
-        const raw = fs.readFileSync("./src/data/jlpt_words.txt", { encoding: "utf-8" })
+        const raw = fs.readFileSync(
+            "./src/data/jlpt_words.txt",
+            { encoding: "utf-8" })
 
         cache = new Map()
         cacheUsed.clear()
@@ -23,7 +26,7 @@ export function get(
                 continue
 
             const entry = line.trim().split(";")
-            const level = parseInt(entry[0])
+            const level = parseInt(entry[0]) as Api.JlptLevel
             const base = entry[1]
             const reading = entry[2]
 

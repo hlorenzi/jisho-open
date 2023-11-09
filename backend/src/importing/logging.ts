@@ -4,6 +4,16 @@ export type Logger = {
 }
 
 
+export function logProgressPercentage(
+    logger: Logger,
+    percent: number)
+{
+    if (percent < 100)
+        logger.write(`\r...${ percent }%`)
+    else
+        logger.write("\r               \r")
+}
+
 
 export async function loopWithProgress<T>(
     logger: Logger,
@@ -17,14 +27,12 @@ export async function loopWithProgress<T>(
         const curPercent = Math.floor(i / array.length * 100)
         if (curPercent != prevPercent)
         {
-            logger.write(`\r...${ curPercent }%`)
-            //process.stdout.write("\r..." + curPercent + "%")
+            logProgressPercentage(logger, curPercent)
             prevPercent = curPercent
         }
 
         await fn(array[i], i)
     }
 
-    logger.write("\r               \r")
-    //process.stdout.write("\r               \r")
+    logProgressPercentage(logger, 100)
 }

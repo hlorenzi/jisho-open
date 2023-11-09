@@ -3,7 +3,7 @@ import * as Api from "./api/index.ts"
 
 export function getCommonness(
     heading: Api.Word.Heading)
-    : Api.Word.CommonnessTag | undefined
+    : Api.CommonnessTag | undefined
 {
     if (heading.outdatedKanji ||
         heading.outdatedKana ||
@@ -28,7 +28,7 @@ export function getCommonness(
 
 export function getKanjiCommonness(
     entry: Api.Kanji.Entry)
-    : Api.Kanji.CommonnessTag | undefined
+    : Api.CommonnessTag | undefined
 {
     if (entry.jouyou !== undefined)
         return "veryCommon"
@@ -247,6 +247,7 @@ const fieldDomainDict: Partial<FieldDomainDict> = {
     "shogi": "shogi term",
     "sports": "sports term",
     "sumo": "sumo term",
+    "vidg": "videogame term",
     "zool": "Zoology",
 }
 

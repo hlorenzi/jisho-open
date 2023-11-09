@@ -36,7 +36,13 @@ async function getKanjiWords(
         !Kana.hasKanji(kanjiArray[0]))
         return { query: kanjiArray[0], kanji: [], entries: [] }
 
-    const kanji = db.searchKanji(kanjiArray[0], new Set(), new Set())
+    const options: Db.SearchOptions = {
+        limit: 1,
+        tags: new Set<string>(),
+        inverseTags: new Set<string>(),
+    }
+
+    const kanji = db.searchKanji(kanjiArray[0], options)
     const entries = db.listKanjiWordCrossRefEntries(kanjiArray[0])
 
     return {

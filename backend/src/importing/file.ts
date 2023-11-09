@@ -2,12 +2,14 @@ import * as fs from "fs"
 import * as http from "http"
 // @ts-expect-error
 import gunzip from "gunzip-file"
+import * as Logging from "./logging.ts"
 
 
 export const downloadFolder = "./.download/"
 
 
 export async function download(
+    logger: Logging.Logger,
     url: string,
     toFilename: string,
     useCachedFile: boolean)
@@ -19,11 +21,11 @@ export async function download(
 
     if (!fs.existsSync(downloadFolder))
     {
-        console.log(`creating folder ${downloadFolder}...`)
+        logger.writeLn(`creating folder ${downloadFolder}...`)
         fs.mkdirSync(downloadFolder)
     }
 
-    console.log(`downloading ${toFilename}...`)
+    logger.writeLn(`downloading ${toFilename}...`)
     
     await new Promise<void>((resolve, reject) => {
         const writeStream = fs.createWriteStream(toFilename)
@@ -39,7 +41,7 @@ export async function download(
         
         request.on("error", (err) => {
             fs.unlinkSync(downloadFolder + toFilename)
-            console.log(`error downloading ${toFilename}`)
+            logger.writeLn(`error downloading ${toFilename}`)
             reject(err.message)
         })
     })
@@ -47,6 +49,7 @@ export async function download(
 
 
 export async function extractGzip(
+    logger: Logging.Logger,
     gzipFilename: string,
     extractedFilename: string,
     useCachedFile: boolean)
@@ -56,7 +59,7 @@ export async function extractGzip(
         fs.existsSync(extractedFilename))
         return
 
-    console.log(`extracting ${gzipFilename}...`)
+    logger.writeLn(`extracting ${gzipFilename}...`)
 
     await new Promise<void>((resolve, _) => {
         gunzip(

@@ -108,6 +108,13 @@ const DivPageContent = styled.div`
 `
 
 
+export type PopupData = {
+    onOpen: (anchorElem?: HTMLElement) => void
+    onClose: () => void
+    rendered: Solid.JSX.Element
+}
+
+
 export function makePopupPageWide(props: {
     childrenFn?: () => Solid.JSX.Element,
 })
@@ -141,7 +148,7 @@ export function makePopupPageWide(props: {
             onClose()
     }
 
-    const render = <Solid.Show when={ open() }>
+    const rendered = <Solid.Show when={ open() }>
         <Dialog
             ref={ dialog }
             onClick={ onClick }
@@ -159,6 +166,7 @@ export function makePopupPageWide(props: {
 
     return {
         onOpen,
-        rendered: render,
+        onClose,
+        rendered,
     }
 }

@@ -7,12 +7,27 @@ export * as Word from "./word.ts"
 export * as KanjiWordCrossRef from "./kanji_word_crossref.ts"
 
 
+export type CommonnessTag =
+    | "veryCommon"
+    | "common"
+
+
+export type CommonnessIndex = 2 | 1
+
+
+export type JlptLevel = 5 | 4 | 3 | 2 | 1
+
+
+export type JouyouGrade = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+
+
 export namespace Search
 {
     export const url = "/api/v1/search"
 
     export type Request = {
         query: string
+        limit?: number
     }
     
     export type Response = {
@@ -33,15 +48,19 @@ export namespace Search
     export type Query = {
         type: QueryType
         str: string
+        strSplit: string[]
         strJapanese: string
+        strJapaneseSplit: string[]
         strHiragana: string
         strInQuotes: string
+        strInQuotesSplit: string[]
         strWildcards: string
         strWildcardsHiragana: string
-        searchDefinitions: boolean
+        canSearchDefinitions: boolean
         kanji: string[]
         tags: string[]
         inverseTags: string[]
+        limit?: number
     }
 
     export type Entry =
@@ -55,6 +74,8 @@ export namespace Search
         | "inflected"
         | "definition"
         | "kanji"
+        | "continue"
+        | "end"
 }
 
 

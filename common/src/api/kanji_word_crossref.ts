@@ -15,8 +15,8 @@ export type ReadingBucket = {
 
 export type Word = {
     furigana: string
-    commonness?: Api.Kanji.CommonnessIndex
-    jlpt?: 5 | 4 | 3 | 2 | 1
+    commonness?: Api.CommonnessIndex
+    jlpt?: Api.JlptLevel
     irregular?: boolean
     rare?: boolean
     outdated?: boolean
