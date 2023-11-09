@@ -161,10 +161,13 @@ export function compile(raw: string): Table
         }
 
         let ruleList = rules.get(currentGroupId) ?? []
-        ruleList = ruleList.filter(r =>
-            r.id !== currentGroupId ||
-            r.sourceCategory !== sourceCategory ||
-            r.removeFromEnd !== removeFromEnd)
+        if (invalid)
+        {
+            ruleList = ruleList.filter(r =>
+                r.id !== currentGroupId ||
+                r.sourceCategory !== sourceCategory ||
+                r.removeFromEnd !== removeFromEnd)
+        }
         ruleList.push(rule)
         rules.set(currentGroupId, ruleList)
 

@@ -42,11 +42,13 @@ export namespace Search
         | "inflected"
         | "prefix"
         | "definition"
+        | "sentence"
         | "wildcards"
         | "kanji"
     
     export type Query = {
         type: QueryType
+        strRaw: string
         str: string
         strSplit: string[]
         strJapanese: string
@@ -56,7 +58,8 @@ export namespace Search
         strInQuotesSplit: string[]
         strWildcards: string
         strWildcardsHiragana: string
-        canSearchDefinitions: boolean
+        canBeSentence: boolean
+        canBeDefinition: boolean
         kanji: string[]
         tags: string[]
         inverseTags: string[]
@@ -66,7 +69,20 @@ export namespace Search
     export type Entry =
         | { type: "word" } & Word.Entry
         | { type: "kanji" } & Kanji.Entry
+        | { type: "sentence" } & SentenceAnalysis
         | { type: "section", section: Section }
+
+    export type SentenceAnalysis = {
+        tokens: SentenceToken[]
+    }
+
+    export type SentenceToken = {
+        surface_form: string
+        basic_form: string
+        category: Word.PartOfSpeechTag
+        furigana: string
+        pronunciation?: string
+    }
 
     export type Section =
         | "verbatim"

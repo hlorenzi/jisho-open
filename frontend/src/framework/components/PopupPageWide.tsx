@@ -1,6 +1,82 @@
 import * as Solid from "solid-js"
-import { styled } from "solid-styled-components"
+import { styled, keyframes } from "solid-styled-components"
 import * as Framework from "../index.ts"
+
+
+export type PopupData = {
+    onOpen: (anchorElem?: HTMLElement) => void
+    onClose: () => void
+    rendered: Solid.JSX.Element
+}
+
+
+export function makePopupPageWide(props: {
+    childrenFn?: () => Solid.JSX.Element,
+})
+{
+    let dialog: HTMLDialogElement | undefined = undefined
+
+    const [open, setOpen] = Solid.createSignal(false)
+    const [anchor, setAnchor] = Solid.createSignal({ x: 0, y: 0 })
+
+    const onOpen = (anchorElem?: HTMLElement) => {
+        if (anchorElem)
+        {
+            const rect = anchorElem.getBoundingClientRect()
+            setAnchor({
+                x: rect.x + rect.width / 2 + window.scrollX,
+                y: rect.bottom + window.scrollY,
+            })
+        }
+
+        setOpen(true)
+        dialog?.showModal()
+    }
+
+    const onClose = () => {
+        setOpen(false)
+        dialog?.close()
+    }
+
+    const onClick = (ev: Event) => {
+        if (ev.target === dialog)
+            onClose()
+    }
+
+    const rendered = <Solid.Show when={ open() }>
+        <Dialog
+            ref={ dialog }
+            onClick={ onClick }
+            y={ anchor().y }
+            class="PopupPageWide"
+        >
+            <ArrowTipShadow x={ anchor().x }/>
+            <ArrowTip x={ anchor().x }/>
+            <DivPageLayout>
+                <DivPageContent>
+                    { props.childrenFn?.() }
+                </DivPageContent>
+            </DivPageLayout>
+        </Dialog>
+    </Solid.Show>
+
+    return {
+        onOpen,
+        onClose,
+        rendered,
+    }
+}
+
+
+const backdropKeyframes = keyframes`
+    0% {
+	    background-color: transparent;
+    }
+
+    100% {
+	    background-color: #00000018;
+    }
+`
 
 
 const Dialog = styled.dialog<{
@@ -18,7 +94,8 @@ const Dialog = styled.dialog<{
     outline: 0;
 
     &::backdrop {
-	    background-color: #00000018; //${ Framework.themeVar("popupOverlayColor") };
+        animation-name: ${ backdropKeyframes };
+        animation-duration: 0.1s;
     }
 `
 
@@ -95,8 +172,8 @@ const DivPageContent = styled.div`
     border: 1px solid ${ Framework.themeVar("borderColor") };
     box-shadow: 0 0.15em 0.15em ${ Framework.themeVar("popupShadowColor") };
     
-	//padding-left: var(--local-pagePadding);
-	//padding-right: var(--local-pagePadding);
+	padding-left: var(--local-pagePadding);
+	padding-right: var(--local-pagePadding);
 
 	@media (max-width: ${ Framework.pageSmallWidthThreshold })
 	{
@@ -105,68 +182,9 @@ const DivPageContent = styled.div`
 		border-left: 0;
 		border-right: 0;
 	}
+
+    @media (pointer: coarse)
+    {
+        width: 100%;
+    }
 `
-
-
-export type PopupData = {
-    onOpen: (anchorElem?: HTMLElement) => void
-    onClose: () => void
-    rendered: Solid.JSX.Element
-}
-
-
-export function makePopupPageWide(props: {
-    childrenFn?: () => Solid.JSX.Element,
-})
-{
-    let dialog: HTMLDialogElement | undefined = undefined
-
-    const [open, setOpen] = Solid.createSignal(false)
-    const [anchor, setAnchor] = Solid.createSignal({ x: 0, y: 0 })
-
-    const onOpen = (anchorElem?: HTMLElement) => {
-        if (anchorElem)
-        {
-            const rect = anchorElem.getBoundingClientRect()
-            setAnchor({
-                x: rect.x + rect.width / 2 + window.scrollX,
-                y: rect.bottom + window.scrollY,
-            })
-        }
-
-        setOpen(true)
-        dialog?.showModal()
-    }
-
-    const onClose = () => {
-        setOpen(false)
-        dialog?.close()
-    }
-
-    const onClick = (ev: Event) => {
-        if (ev.target === dialog)
-            onClose()
-    }
-
-    const rendered = <Solid.Show when={ open() }>
-        <Dialog
-            ref={ dialog }
-            onClick={ onClick }
-            y={ anchor().y }
-        >
-            <ArrowTipShadow x={ anchor().x }/>
-            <ArrowTip x={ anchor().x }/>
-            <DivPageLayout>
-                <DivPageContent>
-                    { props.childrenFn?.() }
-                </DivPageContent>
-            </DivPageLayout>
-        </Dialog>
-    </Solid.Show>
-
-    return {
-        onOpen,
-        onClose,
-        rendered,
-    }
-}

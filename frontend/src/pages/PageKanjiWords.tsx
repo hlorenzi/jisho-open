@@ -18,7 +18,9 @@ export function PageKanjiWords(props: Framework.RouteProps)
             const res = await Api.getKanjiWords({
                 kanji: kanji(),
             })
-            console.log("PageKanjiWords Api.getKanjiWords", searched, res)
+            console.log(
+                "%cApi.getKanjiWords", "color: white; background-color: magenta;",
+                searched, res)
             return res
         })
     

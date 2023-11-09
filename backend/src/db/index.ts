@@ -4,8 +4,8 @@ import * as Infletcion from "common/inflection.ts"
 
 export type SearchOptions = {
     limit: number
-    tags: Set<string>
-    inverseTags: Set<string>
+    tags?: Set<string>
+    inverseTags?: Set<string>
 }
 
 

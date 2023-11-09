@@ -40,6 +40,7 @@ const StyledInput = styled.input`
 
 
 export function InputText(props: {
+    ref?: Solid.Ref<HTMLInputElement>,
     initialValue?: string,
     value?: Solid.Accessor<string>,
     onChange?: (value: string) => void,
@@ -51,6 +52,7 @@ export function InputText(props: {
 })
 {
     return <StyledInput
+        ref={ props.ref }
         type="text"
         value={ props.value?.() ?? props.initialValue ?? "" }
         placeholder={ props.placeholder }

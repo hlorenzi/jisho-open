@@ -1,5 +1,6 @@
 import * as Express from "express"
 import * as Db from "../db/index.ts"
+import * as Morpho from "./morpho.ts"
 import * as Api from "common/api/index.ts"
 import * as Kana from "common/kana.ts"
 import * as Inflection from "common/inflection.ts"
@@ -104,7 +105,8 @@ async function search(
                 options)
 
     const byDefinition =
-        !query.canSearchDefinitions &&
+        !query.canBeDefinition ?
+            [] :
         query.type !== "any" && query.type !== "definition" ?
             [] :
             db.searchByDefinition(
@@ -123,14 +125,14 @@ async function search(
         :
             db.searchKanji(
                 [...new Set(query.kanji)].join(""),
-                options)
+                optionsNoTags)
 
     const byKanjiReading =
         query.type !== "any" && query.type !== "kanji" ?
             [] :
         db.searchKanjiByReading(
             query.strJapaneseSplit,
-            options)
+            optionsNoTags)
 
     const byKanjiMeaning =
         query.type !== "any" && query.type !== "kanji" ?
@@ -139,13 +141,34 @@ async function search(
             query.strInQuotes.length !== 0 ?
                 query.strInQuotesSplit :
                 query.strSplit,
-            options)
+            optionsNoTags)
+
+    const bySentence =
+        !query.canBeSentence ?
+            undefined :
+        query.type !== "any" &&
+        query.type !== "sentence" &&
+        query.type !== "wildcards" ?
+            undefined :
+        (await byHeading).length !== 0 ||
+        (await byHeadingAll).length !== 0 ||
+        (await byTags).length !== 0 ||
+        (await byWildcards).length !== 0 ||
+        (await byDefinition).length !== 0 ||
+        (await byInflections).length !== 0 ||
+        (await byHeadingPrefix).length !== 0 ?
+            undefined :
+            Morpho.tokenize(db, query.strJapanese)
+
 
     const translateToSearchWordEntry = (word: Api.Word.Entry): Api.Search.Entry =>
         ({ ...word, type: "word" })
 
     const translateToSearchKanjiEntry = (kanji: Api.Kanji.Entry): Api.Search.Entry =>
         ({ ...kanji, type: "kanji" })
+
+    const translateToSearchSentenceEntry = (sentence: Api.Search.SentenceAnalysis): Api.Search.Entry =>
+        ({ ...sentence, type: "sentence" })
 
     let searchEntries: Api.Search.Entry[] = [
         { type: "section", section: "verbatim" },
@@ -165,6 +188,13 @@ async function search(
         ...(await byHeadingPrefix).map(translateToSearchWordEntry),
         { type: "section", section: "end" },
     ]
+
+    if (bySentence !== undefined &&
+        (await bySentence).tokens.length > 1)
+        searchEntries = [
+            translateToSearchSentenceEntry(await bySentence),
+            { type: "section", section: "end" },
+        ]
 
     // Limit resulting entries, ignoring section headers
     let limitCount = 0
@@ -220,8 +250,10 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
 
     const queryNormalized = Kana.normalizeWidthForms(queryRaw)
         .trim()
-        .toLowerCase()
         .replace(regexFancyQuotes, "\"")
+
+    const queryNormalizedLowercase = queryNormalized
+        .toLowerCase()
 
     const rawTags = (queryNormalized.match(regexTags) ?? [])
         .map(t => t.substring("#".length))
@@ -241,6 +273,7 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         .join(" ")
         .replace(regexPunctuationToSplit, " ")
         .replace(regexPunctuationToCollapse, "")
+        .toLowerCase()
         .trim()
 
     const queryNotInQuotes = queryWithoutTags
@@ -254,11 +287,7 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         queryNotInQuotes.indexOf("*") >= 0 ||
         queryNotInQuotes.indexOf("?") >= 0
         
-    const queryCanBeEnglish =
-        !Kana.hasJapanese(queryWithoutTags) ||
-        queryInQuotes.length !== 0
-
-    const queryJapanese = Kana.toKana(queryNotInQuotes)
+    const queryJapanese = Kana.toKana(queryNotInQuotes, { ignoreJapanese: true })
     const queryHiragana = Kana.toHiragana(queryNotInQuotes)
     const queryKanji = [...queryNotInQuotes]
         .filter(c => Kana.isKanji(c))
@@ -272,6 +301,7 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
     const queryWithoutTagsSplit = queryWithoutTags
         .replace(regexPunctuationToSplit, " ")
         .replace(regexPunctuationToCollapse, "")
+        .toLowerCase()
         .split(/\s/)
         .map(s => s.trim())
         .filter(s => s.length !== 0)
@@ -286,6 +316,13 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         .map(w => w.trim().toLowerCase())
         .filter(w => w.length !== 0)
 
+    const queryCanBeDefinition =
+        !Kana.hasJapanese(queryWithoutTags) ||
+        queryInQuotes.length !== 0
+
+    const queryCanBeSentence =
+        !inverseTags.some(tag => tag === "sentence")
+
     let type: Api.Search.QueryType = "any"
     if (queryInQuotes.length !== 0)
         type = "definition"
@@ -294,15 +331,18 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         type = "tags"
     if (queryWildcards.length !== 0)
         type = "wildcards"
+    if (tags.some(tag => tag === "sentence"))
+        type = "sentence"
     if (tags.some(tag => tag === "k" || tag === "kanji"))
         type = "kanji"
 
-    const tagsToRemove = new Set(["k", "kanji"])
+    const tagsToRemove = new Set(["k", "kanji", "sentence"])
     tags = tags.filter(tag => !tagsToRemove.has(tag))
     inverseTags = inverseTags.filter(tag => !tagsToRemove.has(tag))
 
     return {
         type,
+        strRaw: queryRaw,
         str: queryWithoutTags,
         strSplit: queryWithoutTagsSplit,
         strJapanese: queryJapanese,
@@ -313,7 +353,8 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         strWildcards: queryWildcards,
         strWildcardsHiragana: queryWildcardsHiragana,
         kanji: queryKanji,
-        canSearchDefinitions: queryCanBeEnglish && type !== "kanji",
+        canBeSentence: queryCanBeSentence,
+        canBeDefinition: queryCanBeDefinition && type !== "kanji",
         tags,
         inverseTags,
     }

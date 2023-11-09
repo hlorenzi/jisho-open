@@ -1,9 +1,15 @@
 export namespace Search
 {
     export const matchQuery = "query"
+    export const matchToken = "token"
     export const urlPattern = `/search/:${ matchQuery }`
+    export const urlPatternToken = `/search/:${ matchQuery }/:${ matchToken }`
 
-    export const urlForQuery = (query: string) => `/search/${ encodeURIComponent(query) }`
+    export const urlForQuery = (query: string) =>
+        `/search/${ encodeURIComponent(query) }`
+    
+    export const urlForQueryToken = (query: string, token: number) =>
+        `/search/${ encodeURIComponent(query) }/${ token.toString() }`
 }
 
 

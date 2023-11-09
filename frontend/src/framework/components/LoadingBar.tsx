@@ -5,9 +5,10 @@ import * as Framework from "../index.ts"
 
 export function LoadingBar(props: {
     height?: number,
+    ignoreLayout?: boolean,
 })
 {
-    return <Wrapper>
+    return <Wrapper ignoreLayout={ !!props.ignoreLayout }>
         <DivLoadingBar
             height={ props.height ?? 10 }
         />
@@ -19,21 +20,26 @@ const stripeWidth = 20
 
 
 const loadingBarKeyframes = keyframes`
-    0%
-    {
+    0% {
         transform: translate(-320px, 0);
     }
 
-    100%
-    {
+    100% {
         transform: translate(-240px, 0);
     }
 `
 
 
-const Wrapper = styled.div`
-    height: 0;
-    overflow-y: visible;
+const Wrapper = styled.div<{
+    ignoreLayout: boolean,
+}>`
+    position: relative;
+    z-index: 1;
+    
+    ${ props => props.ignoreLayout ? `
+        height: 0;
+        overflow-y: visible;
+    ` : `` }
 `
 
 

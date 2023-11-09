@@ -401,20 +401,32 @@ function scoreHeading(
     if (heading.jlpt !== undefined)
         score += Math.max(0, 100 + ((heading.jlpt - 1) * 100))
 
-    if (heading.rankIchi !== undefined)
-        score += Math.max(0, 500 - ((heading.rankIchi - 1) * 250))
-
-    if (heading.rankNews !== undefined)
-        score += Math.max(0, 500 - ((heading.rankNews - 1) * 250))
-
     if (heading.rankNf !== undefined)
-        score += Math.max(0, 100 - ((heading.rankNf - 1) * 10))
+        score += Math.max(0, 500 - ((heading.rankNf - 1) * 10))
+
+    if (heading.rankIchi !== undefined)
+        score +=
+            heading.rankIchi === 2 ? 500 :
+            heading.rankIchi === 1 ? 100 :
+            0
+
+    /*if (heading.rankNews !== undefined)
+        score += 
+            heading.rankNews === 2 ? 500 :
+            heading.rankNews === 1 ? 100 :
+            0*/
 
     if (heading.rankSpec !== undefined)
-        score += Math.max(0, 500 - ((heading.rankSpec - 1) * 250))
+        score +=
+            heading.rankSpec === 2 ? 500 :
+            heading.rankSpec === 1 ? 100 :
+            0
 
     if (heading.rankGai !== undefined)
-        score += Math.max(0, 10 - ((heading.rankGai - 1) * 5))
+        score +=
+            heading.rankGai === 2 ? 50 :
+            heading.rankGai === 1 ? 10 :
+            0
 
     if (heading.irregularKanji)
         score -= 20000

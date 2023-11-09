@@ -127,7 +127,7 @@ export function createHistorySignal<N extends string, T>(
     const refreshFromHistory = () => {
         if (!pending())
         {
-            console.log("refreshFromHistory")
+            //console.log("refreshFromHistory")
             setState(getFromHistory())
         }
     }

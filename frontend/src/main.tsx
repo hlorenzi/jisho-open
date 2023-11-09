@@ -17,7 +17,7 @@ function App()
         <Framework.Theme/>
         <Framework.Router
             routes={[
-                { patterns: ["/", Pages.Search.urlPattern],
+                { patterns: ["/", Pages.Search.urlPattern, Pages.Search.urlPatternToken],
                     acceptsNoReload: true,
                     load: async () => (await import("./pages/PageSearch.tsx")).PageSearch },
 

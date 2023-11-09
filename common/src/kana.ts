@@ -19,6 +19,7 @@ export type ToKanaMode = "nihon" | "hepburn" | "kunrei" | "mixed"
 export interface ToKanaOptions
 {
     mode?: ToKanaMode
+    ignoreJapanese?: boolean
 }
 
 
@@ -73,7 +74,7 @@ export function toKana(str: string, options: ToKanaOptions = {})
 
     const mappings = toKanaMappings.get(mode)
     if (mappings)
-        return transform(mappings, str)
+        return transform(mappings, str, options)
 
     else
     {
@@ -119,7 +120,7 @@ export function toKana(str: string, options: ToKanaOptions = {})
         table.forEach(m => mappings.set(m[2].toUpperCase(), m[1]))
 
         toKanaMappings.set(mode, mappings)
-        return transform(mappings, str)
+        return transform(mappings, str, options)
     }
 }
 
@@ -133,7 +134,7 @@ export function toHiragana(str: string, options?: ToKanaOptions)
 
     const mappings = toHiraganaMappings.get("mixed")
     if (mappings)
-        return transform(mappings, str)
+        return transform(mappings, str, options)
     
     else
     {
@@ -143,7 +144,7 @@ export function toHiragana(str: string, options?: ToKanaOptions)
         table.forEach(m => mappings.set(m[1], m[0]))
 
         toHiraganaMappings.set("mixed", mappings)
-        return transform(mappings, str)
+        return transform(mappings, str, options)
     }
 
 }
@@ -158,7 +159,7 @@ export function toKatakana(str: string, options?: ToKanaOptions)
 
     const mappings = toKatakanaMappings.get("mixed")
     if (mappings)
-        return transform(mappings, str)
+        return transform(mappings, str, options)
 
     else
     {
@@ -168,7 +169,7 @@ export function toKatakana(str: string, options?: ToKanaOptions)
         table.forEach(m => mappings.set(m[0], m[1]))
 
         toKatakanaMappings.set("mixed", mappings)
-        return transform(mappings, str)
+        return transform(mappings, str, options)
     }
 }
 
@@ -467,7 +468,8 @@ export function withoutDakuten(kana: string)
 
 function transform(
     mappings: Map<string, string>,
-    str: string)
+    str: string,
+    options?: ToKanaOptions)
 {
     let res = ""
     let i = 0
@@ -475,19 +477,23 @@ function transform(
     {
         let foundMapping = false
 
-        for (let j = 4; j >= 1; j--)
+        if (!options?.ignoreJapanese ||
+            !isJapanese(str[i]))
         {
-            if (i + j > str.length)
-                continue
-            
-            const chars = str.slice(i, i + j)
-            const mapping = mappings.get(chars)
-            if (mapping)
+            for (let j = 4; j >= 1; j--)
             {
-                foundMapping = true
-                res += mapping
-                i += j
-                break
+                if (i + j > str.length)
+                    continue
+                
+                const chars = str.slice(i, i + j)
+                const mapping = mappings.get(chars)
+                if (mapping)
+                {
+                    foundMapping = true
+                    res += mapping
+                    i += j
+                    break
+                }
             }
         }
 

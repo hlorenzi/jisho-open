@@ -23447,7 +23447,7 @@
 卒;uncl;そ
 率;uncl;そ
 塔;uncl;と
-惚;uncl;ぼれ
+惚;uncl;ほれ;ほう;とぼ;のろ
 男;uncl;おの
 凡;uncl;よそ
 翁;uncl;のう
@@ -23798,7 +23798,6 @@
 極;auto;きま
 傾;auto;なだ
 遊;auto;すさ
-惚;auto;とぼ
 昆;auto;こ
 賢;auto;さか
 擦;auto;かす
@@ -24255,7 +24254,7 @@
 孑孑;gikun;ぼうふり;ぼうふら
 漆姑;gikun;つめ
 母衣;gikun;ほろ
-蚊帳吊;gikun;しゃ
+蚊帳吊;gikun;しゃ # jmdict mistake?
 浴衣;gikun;ゆかた
 不老;conjug;おいず
 下関;patch;しものせき

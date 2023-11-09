@@ -141,7 +141,9 @@ const partOfSpeechDict: Partial<PartOfSpeechDict> = {
     "v5uru": "archaic uru verb",
     "v-unspec": "verb (unspecified class)",
     
+    "v1contr": "contracted iru verb",
     "vmasu": "polite verb",
+    "vte": "verb in conjunctive form",
 
     "surname": "surname",
     "place": "place name",

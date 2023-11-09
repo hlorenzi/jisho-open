@@ -122,7 +122,7 @@ function HeadingEllipsisPopup(props: {
         </Solid.Show>
         <Framework.HorizontalBar/>
         <Framework.ButtonPopupPageWide
-            label="View in JMdict"
+            label={ <>View JMdict entry <Framework.IconExternal/></> }
             href={ Pages.Jmdict.urlForWordId(props.wordId) }
         />
         <Framework.ButtonPopupPageWide
@@ -354,6 +354,8 @@ function HeadingPopup(props: {
             />
         </Solid.Show>
 
+        <Framework.HorizontalBar/>
+
         <Framework.ButtonPopupPageWide
             label={ `Copy ${ props.base } to the clipboard` }
             onClick={ () => {
@@ -362,7 +364,7 @@ function HeadingPopup(props: {
             }}
         />
 
-        <Solid.Show when={ props.reading }>
+        <Solid.Show when={ props.reading && props.reading !== props.base }>
             <Framework.ButtonPopupPageWide
                 label={ `Copy ${ props.reading } to the clipboard` }
                 onClick={ () => {
@@ -371,6 +373,8 @@ function HeadingPopup(props: {
                 }}
             />
         </Solid.Show>
+
+        <Framework.HorizontalBar/>
 
         <Framework.ButtonPopupPageWide
             label={ <>

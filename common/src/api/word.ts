@@ -217,6 +217,8 @@ export type PartOfSpeechTag =
     | "v5" // custom
     | "vmasu" // custom
     | "virr" // custom
+    | "v1contr" // custom
+    | "vte" // custom
     | "surname"
     | "place"
     | "unclass"

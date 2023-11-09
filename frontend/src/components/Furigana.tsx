@@ -7,7 +7,7 @@ export function FuriganaRuby(props: {
     encoded?: string,
 })
 {
-    const furigana = Furigana.decode(props.encoded ?? "")
+    let furigana = Furigana.decode(props.encoded ?? "")
 
     return <ruby lang="ja">
         <Solid.For each={ furigana }>{ (segment) => {

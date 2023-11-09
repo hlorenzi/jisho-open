@@ -159,7 +159,7 @@ function InflectionRulePopup(props: {
     return <InflectionPopupWrapper>
         <Solid.Show when={ rules.length !== 0 }>
             <span style={{ "font-weight": "bold" }}>
-                Rules:
+                Derivation for <CategoryName>{ ruleGroup!.display }</CategoryName>:
             </span>
             <br/>
             <InflectionTableSection>
@@ -194,7 +194,7 @@ function InflectionRulePopup(props: {
                 }}>
                     <Framework.Link
                         label={ !rulesExpanded() ?
-                            <><Framework.IconVerticalEllipsis/> View all rules</> :
+                            <><Framework.IconVerticalEllipsis/> View for all categories</> :
                             <><Framework.IconTriangleUp/> Collapse</>
                         }
                         onClick={ () => setRulesExpanded(!rulesExpanded()) }
@@ -203,12 +203,12 @@ function InflectionRulePopup(props: {
             </InflectionTableSection>
         </Solid.Show>
         
-        <Solid.Show when={ ruleGroup?.refs }>
+        <Solid.Show when={ ruleGroup?.refs.length !== 0 }>
             <span style={{ "font-weight": "bold" }}>
-                References:
+                Resources:
             </span>
             <br/>
-            <ul>
+            <ResourcesList>
                 <Solid.For each={ ruleGroup!.refs }>{ (ref) =>
                     <li>
                         <Framework.Link
@@ -218,7 +218,7 @@ function InflectionRulePopup(props: {
                     </li>
                 }
                 </Solid.For>
-            </ul>
+            </ResourcesList>
         </Solid.Show>
     </InflectionPopupWrapper>
 }
@@ -229,8 +229,17 @@ const InflectionPopupWrapper = styled.div`
 `
 
 
+const CategoryName = styled.span`
+    display: inline-block;
+    padding: 0.2em 0.4em;
+    margin-bottom: 0.2em;
+    background-color: ${ Framework.themeVar("textStrongBkgColor") };
+    border-radius: 0.25em;
+`
+
+
 const InflectionTableSection = styled.section`
-    margin-left: 1.75em;
+    margin-left: 1em;
     margin-bottom: 1em;
 `
 
@@ -264,4 +273,17 @@ const InflectionTablePattern = styled.span`
 const InflectionTablePatternChange = styled.span`
     color: ${ Framework.themeVar("textColor") };
     font-weight: bold;
+`
+
+
+const ResourcesList = styled.ul`
+    margin: 0;
+    padding-left: 1em;
+    word-wrap: break-word;
+
+    & li::marker {
+        color: ${ Framework.themeVar("text4thColor") };
+        content: "• ";
+        padding-right: 0.25em;
+    }
 `

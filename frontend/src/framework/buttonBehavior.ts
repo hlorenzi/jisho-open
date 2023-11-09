@@ -31,6 +31,7 @@ export interface AnchorBehaviorProps
     target?: string
     title?: string
     disabled?: boolean
+    noReload?: boolean
     forceReload?: boolean
     blurOnClick?: boolean
     onClick?: OnClickHandler
@@ -100,7 +101,12 @@ export function onAnchorClick(ev: any, props: AnchorBehaviorProps)
             ev.preventDefault()
             ev.stopPropagation()
             ev.returnValue = false
-            Framework.historyPush(props.href)
+
+            if (props.noReload)
+                Framework.historyPushNoReload(props.href)
+            else
+                Framework.historyPush(props.href)
+            
             return false
         }
     }

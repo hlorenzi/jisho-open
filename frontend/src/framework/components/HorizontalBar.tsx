@@ -11,6 +11,15 @@ const StyledHr = styled.hr`
 	padding-right: var(--local-pagePadding);
 	margin-left:   calc(0px - var(--local-pagePadding));
     margin-right:  calc(0px - var(--local-pagePadding));
+
+    .PopupPageWide & {
+        margin-top: 0;
+        margin-bottom: 0;
+
+        &:first-child {
+            border-bottom: 0;
+        }
+    }
 `
 
 
