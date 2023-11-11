@@ -44,7 +44,7 @@ async function search(
 
     if (query.str.length === 0 &&
         query.tags.length === 0)
-        return { query, entries: [] }
+        return { query, entries: [{ type: "section", section: "end" }] }
 
     console.dir(query, { depth: null })
 
@@ -66,6 +66,8 @@ async function search(
             db.searchByTags(options)
 
     const byWildcards =
+        !query.canBeWildcards ?
+            [] :
         query.type !== "wildcards" ?
             [] :
             db.searchByWildcards(
@@ -249,10 +251,12 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
     const regexTags = /\#[!]?[-0-9A-Za-z]+/g
     const regexPunctuationToSplit = /\(|\)|\,|\.|\/|\"/g
     const regexPunctuationToCollapse = /\-|\'/g
+    const regexRemove = /[\.\+\^\$\%\|\;\:\{\}\[\]\(\)\/\\]/g
 
     const queryNormalized = Kana.normalizeWidthForms(queryRaw)
         .trim()
         .replace(regexFancyQuotes, "\"")
+        .replace(regexRemove, " ")
 
     const queryNormalizedLowercase = queryNormalized
         .toLowerCase()
@@ -285,7 +289,7 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         .replace(regexPunctuationToCollapse, "")
         .trim()
 
-    const queryHasWildcards =
+    const queryCanBeWildcards =
         queryNotInQuotes.indexOf("*") >= 0 ||
         queryNotInQuotes.indexOf("?") >= 0
         
@@ -294,8 +298,8 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
     const queryKanji = [...queryNotInQuotes]
         .filter(c => Kana.isKanji(c))
 
-    const queryWildcards = queryHasWildcards ?
-        queryNotInQuotes.replace(/[-.+^${}()|!&%#[\]\\]/g, "") :
+    const queryWildcards = queryCanBeWildcards ?
+        queryNotInQuotes :
         ""
         
     const queryWildcardsHiragana = Kana.toHiragana(queryWildcards)
@@ -355,8 +359,9 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         strWildcards: queryWildcards,
         strWildcardsHiragana: queryWildcardsHiragana,
         kanji: queryKanji,
-        canBeSentence: queryCanBeSentence,
         canBeDefinition: queryCanBeDefinition && type !== "kanji",
+        canBeWildcards: queryCanBeWildcards,
+        canBeSentence: queryCanBeSentence,
         tags,
         inverseTags,
     }

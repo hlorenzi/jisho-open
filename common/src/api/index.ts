@@ -58,8 +58,9 @@ export namespace Search
         strInQuotesSplit: string[]
         strWildcards: string
         strWildcardsHiragana: string
-        canBeSentence: boolean
         canBeDefinition: boolean
+        canBeWildcards: boolean
+        canBeSentence: boolean
         kanji: string[]
         tags: string[]
         inverseTags: string[]

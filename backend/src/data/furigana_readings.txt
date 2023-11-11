@@ -24256,6 +24256,7 @@
 漆姑;gikun;つめ
 母衣;gikun;ほろ
 浴衣;gikun;ゆかた
+火傷;gikun;やけど
 不老;conjug;おいず
 下関;patch;しものせき
 物の;patch;ものの

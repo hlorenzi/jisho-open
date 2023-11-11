@@ -261,8 +261,15 @@ export async function crossReferenceKanjiWords(
         const bucketCommonness = new Map<string, number>()
         for (const dbBucket of dbBuckets)
         {
-            const score = dbBucket.entries
-                .reduce((s, entry) => s + (entry.commonness !== undefined || entry.jlpt !== undefined ? 1 : 0), 0)
+            const score = dbBucket.reading === "" ?
+                -1 :            
+                dbBucket.entries
+                    .reduce((s, entry) =>
+                        s + (entry.commonness !== undefined ||
+                            entry.jlpt !== undefined ?
+                            1 :
+                            0),
+                        0)
             
             bucketCommonness.set(dbBucket.reading, score)
         }
