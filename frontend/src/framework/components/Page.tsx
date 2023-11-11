@@ -6,21 +6,22 @@ import * as Framework from "../index.ts"
 export function Page(props: {
     children: Solid.JSX.Element,
     width?: string,
-    sideMenu?: Solid.JSX.Element,
+    sideMenu?: () => Solid.JSX.Element,
     title?: string,
+    siteTitle?: string,
 })
 {
-    const siteTitle = "Lorenzi's Jisho Open"
-
     Solid.createComputed(() => {
         document.title = props.title ?
-            `${ props.title } • ${ siteTitle }` :
-            siteTitle
+            `${ props.title } • ${ props.siteTitle ?? "" }` :
+            props.siteTitle ?? ""
     })
 
     return <DivLayout>
         <DivContent>
-            <Framework.LogoHeader/>
+            <Framework.LogoHeader
+                sideMenuFn={ props.sideMenu }
+            />
             <main>
                 { props.children }
             </main>

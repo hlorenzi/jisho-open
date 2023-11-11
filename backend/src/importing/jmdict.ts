@@ -21,7 +21,7 @@ export const xmlFilename = File.downloadFolder + "JMdict_e.xml"
 
 export async function downloadAndImport(
     logger: Logging.Logger,
-    db: Db.Db,
+    db: Db.Interface,
     useCachedFiles: boolean)
 {
     await File.download(

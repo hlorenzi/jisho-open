@@ -19,7 +19,7 @@ export interface ButtonBehaviorProps
     target?: string
     title?: string
     disabled?: boolean
-    forceReload?: boolean
+    native?: boolean
     blurOnClick?: boolean
     onClick?: OnClickHandler
 }
@@ -31,8 +31,8 @@ export interface AnchorBehaviorProps
     target?: string
     title?: string
     disabled?: boolean
+    native?: boolean
     noReload?: boolean
-    forceReload?: boolean
     blurOnClick?: boolean
     onClick?: OnClickHandler
 }
@@ -56,7 +56,7 @@ export function onButtonClick(ev: any, props: ButtonBehaviorProps)
         }
     }
     
-    if (props.href && !ev.ctrlKey && !props.forceReload)
+    if (props.href && !ev.ctrlKey && !props.native)
     {
         if (!props.href.startsWith("http"))
         {
@@ -94,7 +94,7 @@ export function onAnchorClick(ev: any, props: AnchorBehaviorProps)
         return false
     }
     
-    if (props.href && !ev.ctrlKey && !props.forceReload)
+    if (props.href && !ev.ctrlKey && !props.native)
     {
         if (!props.href.startsWith("http"))
         {

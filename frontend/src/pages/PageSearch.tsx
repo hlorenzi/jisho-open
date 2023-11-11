@@ -3,6 +3,7 @@ import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
 import * as Api from "../api.ts"
 import * as Pages from "../pages.ts"
+import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
 import { EntryWord } from "../components/EntryWord.tsx"
 import { EntryKanji } from "../components/EntryKanji.tsx"
@@ -26,7 +27,7 @@ export function PageSearch(props: Framework.RouteProps)
         return parseInt(tokenStr)
     })
     
-    return <Framework.Page title={ query() }>
+    return <Page title={ query() }>
 
         <Searchbox
             initialText={ query() }
@@ -39,7 +40,7 @@ export function PageSearch(props: Framework.RouteProps)
             tokenIndex={ tokenIndex }
         />
     
-    </Framework.Page>
+    </Page>
 }
 
 

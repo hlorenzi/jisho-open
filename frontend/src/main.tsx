@@ -3,7 +3,6 @@ import * as SolidWeb from "solid-js/web"
 import * as Framework from "./framework/index.ts"
 import * as Api from "./api.ts"
 import * as Pages from "./pages.ts"
-import { PageSearch } from "./pages/PageSearch.tsx"
 
 
 SolidWeb.render(
@@ -24,9 +23,9 @@ function App()
                 { patterns: [Pages.KanjiWords.urlPattern],
                     load: async () => (await import("./pages/PageKanjiWords.tsx")).PageKanjiWords },
 
-                { patterns: ["/test"],
-                    load: async () => Framework.PageTest },
-
+                { patterns: [Pages.LoginFake.urlPattern],
+                    load: async () => (await import("./pages/PageLoginFake.tsx")).PageLoginFake },
+    
                 { patterns: ["*"],
                     load: async () => () => <h2>Page not found</h2> },
             ]}

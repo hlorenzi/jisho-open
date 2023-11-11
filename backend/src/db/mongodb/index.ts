@@ -117,7 +117,7 @@ export const fieldKanjiLookUpMeanings =
     `.${"meanings" satisfies keyof DbKanjiEntry["lookUp"]}`
 
 
-export async function connect(): Promise<Db.Db>
+export async function connect(): Promise<Db.Interface>
 {
     const client = await MongoDb.MongoClient.connect(dbUrl)
     const db = client.db(dbDatabase)

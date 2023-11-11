@@ -2,6 +2,7 @@ import * as Solid from "solid-js"
 import * as Framework from "../framework/index.ts"
 import * as Api from "../api.ts"
 import * as Pages from "../pages.ts"
+import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
 import { EntryKanji } from "../components/EntryKanji.tsx"
 import { EntryKanjiWords } from "../components/EntryKanjiWords.tsx"
@@ -21,7 +22,7 @@ export function PageKanjiWords(props: Framework.RouteProps)
             return res
         })
     
-    return <Framework.Page title={ `Words for ${ kanji() }` }>
+    return <Page title={ `Words for ${ kanji() }` }>
         <Searchbox
             initialText={ kanji() }
         />
@@ -38,5 +39,5 @@ export function PageKanjiWords(props: Framework.RouteProps)
             }
             </Solid.For>
         </Solid.Show>
-    </Framework.Page>
+    </Page>
 }

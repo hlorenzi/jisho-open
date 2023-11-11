@@ -6,7 +6,7 @@ import * as Logging from "./logging.ts"
 
 
 export async function buildDatabase(
-    db: Db.Db,
+    db: Db.Interface,
     useCachedFiles: boolean)
 {
     const logger: Logging.Logger = {

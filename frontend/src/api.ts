@@ -15,11 +15,22 @@ function post(
                 headers: {
                     "Content-Type": "application/json; charset=utf-8",
                 },
-                body: JSON.stringify(payload),
+                body: !payload ? undefined : JSON.stringify(payload),
             })
         .then(res => res.json())
         .then(resolve)
     )
+}
+
+
+export async function authenticate()
+    : Promise<Api.Authenticate.Response>
+{
+    const res = await post(Api.Authenticate.url, undefined)
+    console.log(
+        "%cApi.authenticate", "color: white; background-color: magenta;",
+        res)
+    return res
 }
 
 

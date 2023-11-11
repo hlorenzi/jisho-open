@@ -41,7 +41,7 @@ const kuromojiTokenizer = new Promise<Tokenizer>((resolve, reject) => {
 
 
 export async function tokenize(
-    db: Db.Db,
+    db: Db.Interface,
     query: string)
     : Promise<Api.Search.SentenceAnalysis>
 {

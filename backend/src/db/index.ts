@@ -9,7 +9,7 @@ export type SearchOptions = {
 }
 
 
-export interface Db
+export interface Interface
 {
     importWordEntries:
         (entries: Api.Word.Entry[]) => Promise<void>
@@ -87,7 +87,7 @@ export interface Db
 }
 
 
-export function createDummy(): Db
+export function createDummy(): Interface
 {
     return {
         importWordEntries: async () => {},

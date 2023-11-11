@@ -1,3 +1,12 @@
+import * as Api from "common/api/index.ts"
+
+
+export namespace LoginFake
+{
+    export const urlPattern = Api.Login.urlFrontendFake
+}
+
+
 export namespace Search
 {
     export const matchQuery = "query"

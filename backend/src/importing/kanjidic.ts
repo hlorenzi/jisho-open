@@ -16,7 +16,7 @@ export const xmlFilename = File.downloadFolder + "kanjidic2.xml"
 
 export async function downloadAndImport(
     logger: Logging.Logger,
-    db: Db.Db,
+    db: Db.Interface,
     useCachedFiles: boolean)
 {
     await File.download(

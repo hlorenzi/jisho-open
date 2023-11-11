@@ -8,7 +8,7 @@ import * as JmdictTags from "common/jmdict_tags.ts"
 
 export async function crossReferenceKanjiWords(
     logger: Logging.Logger,
-    db: Db.Db)
+    db: Db.Interface)
 {
     logger.writeLn("cross-referencing kanji and word entries...")
 

@@ -6,9 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "webpack --config webpack.config.cjs",
-    "build-dev": "webpack --config webpack.config.cjs --watch --mode development",
+    "dev": "webpack --config webpack.config.cjs --watch --mode development",
     "serve": "http-server -p 80",
-    "dev": "npm run build-dev & npm run serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "",

@@ -7,7 +7,7 @@ import * as Inflection from "common/inflection.ts"
 
 export function init(
     app: Express.Application,
-    db: Db.Db)
+    db: Db.Interface)
 {
     app.post(Api.KanjiWords.url, async (req, res) => {
 
@@ -27,7 +27,7 @@ export function init(
 
 
 async function getKanjiWords(
-    db: Db.Db,
+    db: Db.Interface,
     req: Api.KanjiWords.Request)
     : Promise<Api.KanjiWords.Response>
 {

@@ -7,6 +7,66 @@ export * as Word from "./word.ts"
 export * as KanjiWordCrossRef from "./kanji_word_crossref.ts"
 
 
+export type User = {
+    id: string
+    name: string
+    tags: string[]
+    createDate: number
+    modifyDate: number
+    activityDate: number
+    loginDate: number
+}
+
+
+export namespace Login
+{
+    export const url = "/login"
+
+    export const urlForRedirect = (redirect: string) =>
+        `${ url }?redirect=${ encodeURIComponent(redirect) }`
+
+    export const urlFrontendFake =
+        `/login_fake_page`
+
+    export const urlFakeMatchUserId = "userId"
+
+    export const urlFake =
+        `/login_fake/:${ urlFakeMatchUserId }`
+
+    export const urlFakeForUserId = (userId: string, redirect: string) =>
+        `/login_fake/${ userId }?redirect=${ encodeURIComponent(redirect) }`
+}
+
+
+export namespace Logout
+{
+    export const url = "/logout"
+    
+    export const urlForRedirect = (redirect: string) =>
+        `${ url }?redirect=${ encodeURIComponent(redirect) }`
+}
+
+
+export namespace Authenticate
+{
+    export const url = "/api/v1/authenticate"
+    export type Request = {}
+    export type Response = User | { [key in keyof User]: undefined }
+}
+
+
+export namespace GetUser
+{
+    export const url = "/api/v1/user"
+
+    export type Request = {
+        userId: string
+    }
+
+    export type Response = User | { [key in keyof User]: undefined }
+}
+
+
 export type CommonnessTag =
     | "veryCommon"
     | "common"

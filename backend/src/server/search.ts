@@ -8,7 +8,7 @@ import * as Inflection from "common/inflection.ts"
 
 export function init(
     app: Express.Application,
-    db: Db.Db)
+    db: Db.Interface)
 {
     app.post(Api.Search.url, async (req, res) => {
 
@@ -27,26 +27,29 @@ export function init(
             return
         }
         
-        const entries = await search(db, body)
-
-        res.send(entries)
+        res.send(await search(db, body))
     })
 }
 
 
 async function search(
-    db: Db.Db,
+    db: Db.Interface,
     req: Api.Search.Request)
     : Promise<Api.Search.Response>
 {
     const query = normalizeQuery(req.query)
     query.limit = req.limit
 
+    const sectionEnd: Api.Search.Entry = {
+        type: "section",
+        section: "end",
+    }
+
     if (query.str.length === 0 &&
         query.tags.length === 0)
-        return { query, entries: [{ type: "section", section: "end" }] }
+        return { query, entries: [sectionEnd] }
 
-    console.dir(query, { depth: null })
+    //console.dir(query, { depth: null })
 
     const options: Db.SearchOptions = {
         limit: req.limit ?? 1000,
@@ -188,7 +191,7 @@ async function search(
         ...(await byKanjiMeaning).map(translateToSearchKanjiEntry),
         { type: "section", section: "prefix" },
         ...(await byHeadingPrefix).map(translateToSearchWordEntry),
-        { type: "section", section: "end" },
+        sectionEnd,
     ]
 
     if (bySentence !== undefined &&
@@ -233,7 +236,8 @@ async function search(
 
     // Add a continue section if applicable.
     const lastEntry = searchEntries[searchEntries.length - 1]
-    if (lastEntry.type !== "section" ||
+    if (lastEntry !== undefined &&
+        lastEntry.type !== "section" ||
         lastEntry.section !== "end")
         searchEntries.push({ type: "section", section: "continue" })
 

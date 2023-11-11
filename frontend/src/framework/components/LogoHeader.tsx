@@ -3,15 +3,21 @@ import { styled } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
-export function LogoHeader()
+export function LogoHeader(props: {
+    sideMenuFn?: () => Solid.JSX.Element,
+})
 {
-    return <header>
+    const popup = Framework.makePopupSideMenu({
+        childrenFn: props.sideMenuFn,
+    })
+
+    return <Layout>
         <Framework.Link
             href="/"
             noUnderline
             style={{ display: "block", width: "fit-content" }}
         >
-            <Layout>
+            <LogoLayout>
                 <IconWrapper>
                     <Icon
                         src="https://accounts.hlorenzi.com/icon_round_75.png"
@@ -30,16 +36,39 @@ export function LogoHeader()
                         />
                     </sup>
                 </StyledH1>
-            </Layout>
+            </LogoLayout>
         </Framework.Link>
-    </header>
+
+        <div/>
+
+        <Framework.Button
+            label={ <Framework.IconMenu/> }
+            title="Menu"
+            onClick={ popup.open }
+            noBorder
+            style={{ width: "3em", height: "3em"}}
+        />
+
+        { popup.rendered }
+    </Layout>
 }
 
 
-const Layout = styled.div`
+const Layout = styled.header`
     display: grid;
     margin-top: 0.25em;
     margin-bottom: 0.5em;
+    grid-template: auto / auto 1fr auto;
+    width: 100%;
+    align-content: center;
+    align-items: center;
+    justify-content: start;
+    justify-items: start;
+`
+
+
+const LogoLayout = styled.div`
+    display: grid;
     grid-template: auto / auto auto;
     width: fit-content;
     align-content: center;
