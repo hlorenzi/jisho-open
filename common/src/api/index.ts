@@ -90,6 +90,7 @@ export namespace Search
         | "inflected"
         | "definition"
         | "kanji"
+        | "sentence"
         | "continue"
         | "end"
 }

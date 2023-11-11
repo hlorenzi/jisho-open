@@ -1,5 +1,5 @@
 import * as Solid from "solid-js"
-import { styled } from "solid-styled-components"
+import { styled, keyframes } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
 import * as Pages from "../pages.ts"
 import { InputKanjiComponents } from "./InputKanjiComponents.tsx"
@@ -7,9 +7,13 @@ import { InputKanjiComponents } from "./InputKanjiComponents.tsx"
 
 export function Searchbox(props: {
     initialText?: string,
+    textSignal?: Solid.Signal<string>,
+    noInputButton?: boolean,
+    onSearch?: () => void,
 })
 {
     const [searchbox, setSearchbox] =
+        props.textSignal ??
         Solid.createSignal(props.initialText ?? "")
 
     let [inputRef, setInputRef] =
@@ -21,11 +25,14 @@ export function Searchbox(props: {
         inputRef()?.focus()
     }
 
-    const onSearch = () => {
+    const onSearch = (ev: Event) => {
         const text = searchbox()
         if (text.length === 0)
             return
         
+        ev.preventDefault()
+        ev.stopPropagation()
+        props.onSearch?.()
         Framework.historyPushNoReload(Pages.Search.urlForQuery(text))
     }
 
@@ -41,27 +48,38 @@ export function Searchbox(props: {
         })
     })
 
-    const inputPopup = makeInputPopup({})
+    const inputPopup =
+        props.noInputButton ?
+            undefined :
+            makeInputPopup({
+                textSignal: [searchbox, setSearchbox],
+            })
 
     return <Layout>
         <Framework.InputText
             ref={ setInputRef }
             autofocus
-            placeholder="Search in English, Japanese, rōmaji..."
+            placeholder={
+                document.body.getBoundingClientRect().width < 800 ?
+                    "Eng., Jap., rōmaji..." :
+                    "Search in English, Japanese, rōmaji..."
+            }
             value={ searchbox }
             onInput={ setSearchbox }
             onEnter={ onSearch }
         />
-        <Framework.Button
-            title="Input kanji by components"
-            label={
-                <span style={{ "font-size": "1.25em", "font-weight": "bold" }}>
-                    部
-                </span>
-            }
-            onClick={ inputPopup.open }
-            style={{ width: "3em" }}
-        />
+        <Solid.Show when={ !props.noInputButton }>
+            <Framework.Button
+                title="Input kanji by components"
+                label={
+                    <span style={{ "font-size": "1.25em", "font-weight": "bold" }}>
+                        部
+                    </span>
+                }
+                onClick={ inputPopup!.open }
+                style={{ width: "3em" }}
+            />
+        </Solid.Show>
         <Framework.Button
             title="Clear"
             label={ <Framework.IconX/> }
@@ -74,7 +92,7 @@ export function Searchbox(props: {
             onClick={ onSearch }
             style={{ width: "3em" }}
         />
-        { inputPopup.rendered }
+        { inputPopup?.rendered }
     </Layout>
 }
 
@@ -124,12 +142,11 @@ function windowOnKeyDown(
 const Layout = styled.div`
     display: grid;
     grid-template: auto / 1fr auto auto auto;
-    margin-bottom: 0.5em;
 `
 
 
 function makeInputPopup(props: {
-
+    textSignal: Solid.Signal<string>,
 })
 {
     let dialog: HTMLDialogElement | undefined = undefined
@@ -142,11 +159,22 @@ function makeInputPopup(props: {
         dialog?.close()
     }
 
-    const rendered = <PopupLayout
+    const onClick = (ev: Event) => {
+        if (ev.target === dialog)
+            close()
+    }
+
+    const rendered = <PopupDialog
             ref={ dialog }
+            onClick={ onClick }
         >
-            <InputKanjiComponents/>
-        </PopupLayout>
+            <PopupWrapper>
+                <InputKanjiComponents
+                    textSignal={ props.textSignal }
+                    close={ close }
+                />
+            </PopupWrapper>
+        </PopupDialog>
 
     return {
         rendered,
@@ -156,9 +184,34 @@ function makeInputPopup(props: {
 }
 
 
-const PopupLayout = styled.dialog`
-    max-width: min(calc(100% - 1em), ${ Framework.pageWidth });
+const backdropKeyframes = keyframes`
+    0% {
+	    background-color: transparent;
+    }
+
+    100% {
+	    background-color: #00000018;
+    }
+`
+
+
+const PopupDialog = styled.dialog`
+    padding: 0.25em;
+    border: 0;
+    max-width: min(calc(100% - 0.5em), ${ Framework.pageWidth });
     max-height: calc(100vh - 4em);
+    background-color: transparent;
+
+    &::backdrop {
+        animation-name: ${ backdropKeyframes };
+        animation-duration: 0.1s;
+    }
+`
+
+
+const PopupWrapper = styled.div`
+    max-width: 100%;
+    max-height: 100%;
     padding: 0.5em;
     border: 1px solid ${ Framework.themeVar("borderColor") };
     background-color: ${ Framework.themeVar("pageBkgColor") };

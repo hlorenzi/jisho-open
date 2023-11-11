@@ -27,7 +27,7 @@ export async function search(
     req: Api.Search.Request)
     : Promise<Api.Search.Response>
 {
-    const res =  post(Api.Search.url, req)
+    const res = await post(Api.Search.url, req)
     console.log(
         "%cApi.search", "color: white; background-color: magenta;",
         req, res)
@@ -39,7 +39,7 @@ export async function getKanjiWords(
     req: Api.KanjiWords.Request)
     : Promise<Api.KanjiWords.Response>
 {
-    const res =  post(Api.KanjiWords.url, req)
+    const res = await post(Api.KanjiWords.url, req)
     console.log(
         "%cApi.getKanjiWords", "color: white; background-color: magenta;",
         req, res)

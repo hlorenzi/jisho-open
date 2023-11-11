@@ -136,7 +136,7 @@ const Header = styled.div`
     justify-content: start;
     column-gap: 0.5em;
     margin-top: -1em;
-    margin-bottom: -1em;
+    margin-bottom: -0.5em;
 `
 
 

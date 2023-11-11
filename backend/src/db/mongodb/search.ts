@@ -120,18 +120,33 @@ export async function searchByInflections(
 
     const apiResults: Api.Word.Entry[] = []
         
+    // Attach the inflection paths to the results,
+    // respecting the part-of-speech categories.
     for (const dbResult of dbResults)
     {
         const apiResult = MongoDb.translateDbWordToApiWord(dbResult)
 
         const resultInfls = []
+        const alreadySeen = new Set<string>()
         for (const infl of inflections)
         {
             for (let i = 0; i < infl.length; i++)
             {
                 if (dbResult.lookUp.headings.find(h => h.text == infl[i].sourceTerm) &&
                     dbResult.lookUp.tags.find(t => t == infl[i].sourceCategory))
-                    resultInfls.push(infl.slice(i))
+                {
+                    const inflSlice = infl.slice(i)
+
+                    const key = inflSlice
+                        .map(s => `${ s.ruleId };${ s.sourceTerm };${ s.targetTerm }`)
+                        .join(";")
+                    
+                    if (alreadySeen.has(key))
+                        continue
+
+                    alreadySeen.add(key)
+                    resultInfls.push(inflSlice)
+                }
             }
         }
 

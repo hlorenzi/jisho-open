@@ -91,7 +91,7 @@ const Wrapper = styled.div`
     display: inline-block;
     background-color: ${ Framework.themeVar("textStrongBkgColor") };
     border: 2px solid ${ Framework.themeVar("textStrongBkgColor") };
-    padding: 0.1em 0.2em 0 0.2em;
+    padding: 0 0.2em;
     border-radius: 0.25rem;
     margin: 0;
     margin-right: 1em;

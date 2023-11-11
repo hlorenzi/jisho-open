@@ -331,7 +331,7 @@ const HeadingTagsWrapper = styled.sup`
 `
 
 
-const HeadingTags = styled.sup`
+const HeadingTags = styled.span`
     font-size: 0.5em;
 `
 

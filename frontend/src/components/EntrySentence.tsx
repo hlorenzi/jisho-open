@@ -19,32 +19,52 @@ export function EntrySentence(props: {
 })
 {
     return <Entry>
-        <Solid.For each={ props.entry.tokens }>{ (token, index) =>
-            <Token
-                isCurrent={ index() === props.tokenIndex }
-            >
-                <Framework.Link
-                    href={ Pages.Search.urlForQueryToken(props.query.strRaw, index()) }
-                    noReload={ props.tokenIndex !== undefined /* avoid a Solid.Suspense bug? */ }
-                    noUnderline
+        <Sentence>
+            <Solid.For each={ props.entry.tokens }>
+            { (token, index) =>
+                <Token
+                    isCurrent={ index() === props.tokenIndex }
                 >
-                    <FuriganaRuby
-                        encoded={ token.furigana }
-                    />
-                </Framework.Link>
-            </Token>
-        }
-        </Solid.For>
+                    <Framework.Link
+                        href={ Pages.Search.urlForQueryToken(props.query.strRaw, index()) }
+                        noReload={ props.tokenIndex !== undefined /* avoid a Solid.Suspense bug? */ }
+                        noUnderline
+                    >
+                        <FuriganaRuby
+                            encoded={ token.furigana }
+                        />
+                    </Framework.Link>
+                </Token>
+            }
+            </Solid.For>
+        </Sentence>
+
+        <Solid.Show when={ props.tokenIndex === undefined }>
+            <Information>
+                Click one of the sentence fragments above to search.
+            </Information>
+        </Solid.Show>
     </Entry>
 }
 
 
 const Entry = styled.article`
     margin-bottom: 0.5em;
+`
+
+
+const Sentence = styled.article`
+    margin-bottom: 0.5em;
     padding: 0.5em;
     font-size: 1.35em;
     background-color: ${ Framework.themeVar("textStrongBkgColor") };
     border-radius: 0.25rem;
+`
+
+
+const Information = styled.article`
+    color: ${ Framework.themeVar("text3rdColor") };
+    font-style: italic;
 `
 
 

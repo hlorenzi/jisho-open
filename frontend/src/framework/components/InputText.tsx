@@ -45,7 +45,7 @@ export function InputText(props: {
     value?: Solid.Accessor<string>,
     onChange?: (value: string) => void,
     onInput?: (value: string) => void,
-    onEnter?: () => void,
+    onEnter?: (ev: KeyboardEvent) => void,
     placeholder?: string,
     autofocus?: boolean,
     style?: Solid.JSX.CSSProperties,
@@ -58,7 +58,7 @@ export function InputText(props: {
         placeholder={ props.placeholder }
         onChange={ ev => props.onChange?.(ev.target.value) }
         onInput={ ev => props.onInput?.(ev.target.value) }
-        onKeyDown={ ev => { if (ev.key === "Enter") props.onEnter?.() }}
+        onKeyDown={ ev => { if (ev.key === "Enter") props.onEnter?.(ev) }}
         autofocus={ props.autofocus }
         style={ props.style }
     />

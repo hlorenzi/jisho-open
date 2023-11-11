@@ -62,8 +62,9 @@ const Icon = styled.img`
 
 
 const StyledH1 = styled.h1`
-    font-size: 1.6em;
-    font-weight: bold;
+    font-size: 1.7em;
+    font-weight: 600;
+    letter-spacing: -0.04em;
     margin: 0;
     padding: 0;
 `

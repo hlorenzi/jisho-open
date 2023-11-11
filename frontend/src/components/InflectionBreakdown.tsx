@@ -22,6 +22,7 @@ export function InflectionBreakdown(props: {
 
 const InflectionBreakdownSection = styled.ol`
     margin: 0;
+    margin-bottom: 0.25em;
     padding-left: 1.75em;
 
     & li::marker {

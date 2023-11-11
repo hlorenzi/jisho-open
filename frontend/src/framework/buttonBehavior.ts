@@ -2,7 +2,7 @@ import * as Solid from "solid-js"
 import * as Framework from "./index.ts"
 
 
-export type OnClickEvent<T> = {
+export type OnClickEvent<T> = Event & {
     currentTarget: T
     target: Element
 }

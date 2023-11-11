@@ -191,10 +191,12 @@ async function search(
 
     if (bySentence !== undefined &&
         (await bySentence).tokens.length > 1)
-        searchEntries = [
+    {
+        searchEntries.unshift(...[
+            { type: "section", section: "sentence" } satisfies Api.Search.Entry,
             translateToSearchSentenceEntry(await bySentence),
-            { type: "section", section: "end" },
-        ]
+        ])
+    }
 
     // Limit resulting entries, ignoring section headers
     let limitCount = 0

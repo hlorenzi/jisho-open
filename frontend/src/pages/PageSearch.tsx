@@ -32,6 +32,8 @@ export function PageSearch(props: Framework.RouteProps)
             initialText={ query() }
         />
 
+        <SearchboxMarginBottom/>
+
         <SearchResults
             query={ query }
             tokenIndex={ tokenIndex }
@@ -39,6 +41,11 @@ export function PageSearch(props: Framework.RouteProps)
     
     </Framework.Page>
 }
+
+
+const SearchboxMarginBottom = styled.div`
+    margin-bottom: 0.5em;
+`
 
 
 function SearchResults(props: {
@@ -66,7 +73,7 @@ function SearchResults(props: {
         if (tokenIndex === undefined)
             return ""
 
-        const sentence = searchResults.latest?.entries[0]
+        const sentence = searchResults.latest?.entries[1]
         if (!sentence ||
             sentence.type !== "sentence")
             return ""
@@ -87,7 +94,12 @@ function SearchResults(props: {
         </Solid.Show>
 
         <Results inert={ searchResults.loading ? true : undefined }>
-            <Solid.For each={ searchResults.latest?.entries }>{ (result, index) =>
+            <Solid.For
+                each={ queryToken() === "" ?
+                    searchResults.latest?.entries :
+                    searchResults.latest?.entries.slice(0, 2) }
+            >
+            { (result, index) =>
                 <Solid.Switch>
 
                     <Solid.Match when={ result.type === "word" }>
@@ -139,19 +151,9 @@ function SearchResults(props: {
                     <Solid.Match when={
                         result.type === "section" &&
                         result.section === "end" &&
-                        searchResults.latest!.entries[0]?.type === "sentence"
-                    }>
-                        <Solid.Show when={ queryToken() === "" }>
-                            <Framework.HorizontalBar/>
-                            <SectionEnd>
-                                Click one of the sentence fragments above to search.
-                            </SectionEnd>
-                        </Solid.Show>
-                    </Solid.Match>
-
-                    <Solid.Match when={
-                        result.type === "section" &&
-                        result.section === "end"
+                        (searchResults.latest?.entries[0].type !== "section" ||
+                            searchResults.latest?.entries[0].section !== "sentence" ||
+                            searchResults.latest?.entries.length > 3)
                     }>
                         <Framework.HorizontalBar/>
                         <SectionEnd>
@@ -182,7 +184,7 @@ function SearchResults(props: {
 
 const Results = styled.div`
     &[inert] {
-        opacity: 0.5;
+        /* opacity: 0.5; */
     }
 `
 

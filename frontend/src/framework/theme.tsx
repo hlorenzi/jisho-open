@@ -104,8 +104,8 @@ export const themeLight: Theme = {
     linkHoverColor: "#408000",
     linkPressColor: "#224400",
 
-    buttonHoverBkgColor: "#f0f0f0",
-    buttonPressBkgColor: "#dddddd",
+    buttonHoverBkgColor: "#ddd8",
+    buttonPressBkgColor: "#cccc",
     buttonAccentColor: "#77ab00",
     buttonDangerColor: "#ff682f",
     buttonToggledBkgColor: "#9dd128",
