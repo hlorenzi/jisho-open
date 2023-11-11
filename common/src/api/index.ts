@@ -109,3 +109,24 @@ export namespace KanjiWords
         entries: KanjiWordCrossRef.Entry[]
     }
 }
+
+
+export namespace KanjiByComponents
+{
+    export const url = "/api/v1/kanji_by_component"
+
+    export type Request = {
+        components: string
+        onlyCommon: boolean
+    }
+    
+    export type Response = {
+        kanji: Kanji[]
+    }
+
+    export type Kanji = {
+        id: string,
+        strokeCount: number,
+        components: string[],
+    }
+}

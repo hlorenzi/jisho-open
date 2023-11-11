@@ -23691,7 +23691,6 @@
 二;auto;ふつ
 葱;auto;ぎ
 放;auto;ほ;ひ
-北;auto;ぺ
 叭;auto;ぱ
 皮;auto;わだ
 磨;auto;るま;と;とぐ
@@ -23951,6 +23950,8 @@
 東;chinese;とん
 吊;chinese;ディアオ;テイアオ;チャオ
 弔;chinese;ディアオ;テイアオ;チャオ
+北;chinese;ペ;ペー;ペイ
+北;korean;プク
 大人;gikun;おとな
 大和;gikun;やまと
 日本;gikun;やまと
@@ -24254,11 +24255,13 @@
 孑孑;gikun;ぼうふり;ぼうふら
 漆姑;gikun;つめ
 母衣;gikun;ほろ
-蚊帳吊;gikun;しゃ # jmdict mistake?
 浴衣;gikun;ゆかた
 不老;conjug;おいず
 下関;patch;しものせき
 物の;patch;ものの
+都城;patch;みやこのじょう
+宇都宮;patch;うつのみや
+尼崎;patch;あまがさき
 ｗｅｂ;spec;うぇぶ
 Ｗｅｂ;spec;うぇぶ
 ＬＡＮ;spec;らん

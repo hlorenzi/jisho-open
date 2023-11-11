@@ -19,6 +19,23 @@ const styleClass = css`
         --local-borderColor: ${ Framework.themeVar("buttonDangerColor") };
     }
 
+    &.toggled
+    {
+        background-color: ${ Framework.themeVar("buttonToggledBkgColor") };
+        --local-borderColor: ${ Framework.themeVar("buttonAccentColor") };
+    }
+
+    &.unavailable
+    {
+        color: ${ Framework.themeVar("text4thColor") };
+        --local-borderColor: transparent;
+    }
+
+    &.noBorder
+    {
+        --local-borderColor: transparent;
+    }
+
     appearance: button;
     display: inline-block;
     border: 1px solid transparent;
@@ -28,29 +45,39 @@ const styleClass = css`
     cursor: pointer;
     text-decoration: none;
     box-sizing: border-box;
+    user-select: none;
 
     margin: 0.125em;
-    padding: 0.3em;
+    padding: 0.15em;
     border-radius: 0.25rem;
     font-family: inherit;
     font-weight: inherit;
-    font-size: 0.9em;
 
     @media (pointer: coarse)
     {
-        padding: 0.5em 0.5em;
+        padding: 0.4em 0.5em;
     }
 
     &:hover
     {
         box-shadow: inset 0px 0px 0px 1.5px var(--local-borderColor);
         background-color: ${ Framework.themeVar("buttonHoverBkgColor") };
+        
+        &.toggled
+        {
+            background-color: ${ Framework.themeVar("buttonToggledBkgColor") };
+        }
     }
 
     &:active
     {
         box-shadow: inset 0px 0px 0px 1.5px var(--local-borderColor);
         background-color: ${ Framework.themeVar("buttonPressBkgColor") };
+        
+        &.toggled
+        {
+            background-color: ${ Framework.themeVar("buttonAccentColor") };
+        }
     }
 
     &:disabled
@@ -69,20 +96,25 @@ export function Button(props: Framework.ButtonBehaviorProps & {
     icon?: Solid.JSX.Element,
     style?: Solid.JSX.CSSProperties,
     disabled?: boolean,
+    noBorder?: boolean,
     accent?: boolean,
     danger?: boolean,
+    toggled?: boolean,
+    unavailable?: boolean,
     ref?: Solid.Setter<HTMLButtonElement>,
 })
 {
-    const className = 
-        `${ props.accent ? "accent " : ""}` +
-        `${ props.danger ? "danger " : ""}`
-
     if (props.href && !props.disabled)
     {
         return <a
             class={ styleClass }
-            class-name={ className }
+            classList={{
+                noBorder: props.noBorder,
+                accent: props.accent,
+                danger: props.danger,
+                toggled: props.toggled,
+                unavailable: props.unavailable,
+            }}
             href={ props.href }
             title={ props.title }
             onClick={ ev => Framework.onButtonClick(ev, props) }
@@ -96,7 +128,13 @@ export function Button(props: Framework.ButtonBehaviorProps & {
     {
         return <button
             class={ styleClass }
-            class-name={ className }
+            classList={{
+                noBorder: props.noBorder,
+                accent: props.accent,
+                danger: props.danger,
+                toggled: props.toggled,
+                unavailable: props.unavailable,
+            }}
             ref={ props.ref }
             title={ props.title }
             disabled={ !!props.disabled }

@@ -41,6 +41,7 @@ export type Theme = {
     buttonPressBkgColor: string
     buttonAccentColor: string
     buttonDangerColor: string
+    buttonToggledBkgColor: string
     
     loadingBar1stColor: string
     loadingBar2ndColor: string
@@ -107,6 +108,7 @@ export const themeLight: Theme = {
     buttonPressBkgColor: "#dddddd",
     buttonAccentColor: "#77ab00",
     buttonDangerColor: "#ff682f",
+    buttonToggledBkgColor: "#9dd128",
     
     loadingBar1stColor: "#77ab00",
     loadingBar2ndColor: "#dbe19e",

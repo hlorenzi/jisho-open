@@ -12,6 +12,8 @@ export interface Entry
     strokeCount: number
     strokeCounts?: number[]
 
+    components?: string[]
+
     meanings: string[]
 
     kunyomi: Reading[]

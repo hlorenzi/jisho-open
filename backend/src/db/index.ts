@@ -69,6 +69,11 @@ export interface Db
         options: SearchOptions)
         => Promise<Api.Kanji.Entry[]>
 
+    searchKanjiByComponents: (
+        queries: string[],
+        onlyCommon: boolean)
+        => Promise<Api.KanjiByComponents.Kanji[]>
+
     listKanjiWordCrossRefEntries(
         kanjiString: string)
         : Promise<Api.KanjiWordCrossRef.Entry[]>
@@ -99,6 +104,7 @@ export function createDummy(): Db
         searchKanji: async () => [],
         searchKanjiByReading: async () => [],
         searchKanjiByMeaning: async () => [],
+        searchKanjiByComponents: async () => [],
         
         listAllKanji: async () => [],
         listWordsWithChars: async () => [],

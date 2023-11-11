@@ -6,6 +6,7 @@ import * as KanjidicRaw from "./kanjidic_raw.ts"
 import * as Gatherer from "./gatherer.ts"
 import * as Api from "common/api/index.ts"
 import * as KanjiStructCat from "../data/kanji_structural_category.ts"
+import * as KanjiComponents from "../data/kanji_components.ts"
 
 
 export const url = "http://www.edrdg.org/kanjidic/kanjidic2.xml.gz"
@@ -57,20 +58,8 @@ export async function downloadAndImport(
     }
 
     await gatherer.finish()
-    
-    for await (const rawEntry of entryIterator)
-    {
-        try
-        {
-            const apiEntry = normalizeEntry(rawEntry)
-            //console.dir(rawEntry, { depth: null })
-            //console.dir(apiEntry, { depth: null })
-        }
-        catch (e: any)
-        {
-            throw `error normalizing kanji entry ${ rawEntry.literal[0] }: ${ e }`
-        }
-    }
+
+    KanjiComponents.clearCache()
 }
 
 
@@ -93,6 +82,12 @@ function normalizeEntry(
     if (raw.misc[0].stroke_count.length > 1)
         entry.strokeCounts = raw.misc[0].stroke_count.slice(1).map(s => parseInt(s))
 
+
+    // Import components
+    const components = KanjiComponents.get(entry.id)
+    if (components.length !== 0)
+        entry.components = components
+    
 
     // Import jouyou level
     const jouyou = raw.misc[0].grade?.[0]

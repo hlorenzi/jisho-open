@@ -3,6 +3,7 @@ import * as BodyParser from "body-parser"
 import * as MongoDb from "../db/mongodb/index.ts"
 import * as Search from "./search.ts"
 import * as KanjiWords from "./kanji_words.ts"
+import * as KanjiByComponents from "./kanji_by_components.ts"
 
 
 const db = await MongoDb.connect()
@@ -13,6 +14,7 @@ app.use("/api", BodyParser.default.json())
 
 Search.init(app, db)
 KanjiWords.init(app, db)
+KanjiByComponents.init(app, db)
 
 app.use("/", Express.static("../frontend/public"))
 app.use("/.build/", Express.static("../frontend/.build"))

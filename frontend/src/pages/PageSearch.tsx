@@ -50,14 +50,11 @@ function SearchResults(props: {
 
     const [searchResults] = Solid.createResource(
         () => [props.query(), limit()] as const,
-        async (src) => {
+        async (data) => {
             const res = await Api.search({
-                query: src[0],
-                limit: src[1],
+                query: data[0],
+                limit: data[1],
             })
-            console.log(
-                "%cApi.search", "color: white; background-color: magenta;",
-                src[0], res)
             return res
         })
 

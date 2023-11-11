@@ -2,6 +2,7 @@ import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
 import * as Pages from "../pages.ts"
+import { InputKanjiComponents } from "./InputKanjiComponents.tsx"
 
 
 export function Searchbox(props: {
@@ -40,6 +41,8 @@ export function Searchbox(props: {
         })
     })
 
+    const inputPopup = makeInputPopup({})
+
     return <Layout>
         <Framework.InputText
             ref={ setInputRef }
@@ -48,6 +51,16 @@ export function Searchbox(props: {
             value={ searchbox }
             onInput={ setSearchbox }
             onEnter={ onSearch }
+        />
+        <Framework.Button
+            title="Input kanji by components"
+            label={
+                <span style={{ "font-size": "1.25em", "font-weight": "bold" }}>
+                    部
+                </span>
+            }
+            onClick={ inputPopup.open }
+            style={{ width: "3em" }}
         />
         <Framework.Button
             title="Clear"
@@ -61,6 +74,7 @@ export function Searchbox(props: {
             onClick={ onSearch }
             style={{ width: "3em" }}
         />
+        { inputPopup.rendered }
     </Layout>
 }
 
@@ -109,6 +123,45 @@ function windowOnKeyDown(
 
 const Layout = styled.div`
     display: grid;
-    grid-template: auto / 1fr auto auto;
+    grid-template: auto / 1fr auto auto auto;
     margin-bottom: 0.5em;
+`
+
+
+function makeInputPopup(props: {
+
+})
+{
+    let dialog: HTMLDialogElement | undefined = undefined
+
+    const open = () => {
+        dialog?.showModal()
+    }
+
+    const close = () => {
+        dialog?.close()
+    }
+
+    const rendered = <PopupLayout
+            ref={ dialog }
+        >
+            <InputKanjiComponents/>
+        </PopupLayout>
+
+    return {
+        rendered,
+        open,
+        close,
+    }
+}
+
+
+const PopupLayout = styled.dialog`
+    max-width: min(calc(100% - 1em), ${ Framework.pageWidth });
+    max-height: calc(100vh - 4em);
+    padding: 0.5em;
+    border: 1px solid ${ Framework.themeVar("borderColor") };
+    background-color: ${ Framework.themeVar("pageBkgColor") };
+    border-radius: 0.25rem;
+    box-shadow: 0 0.15em 0.15em ${ Framework.themeVar("popupShadowColor") };
 `

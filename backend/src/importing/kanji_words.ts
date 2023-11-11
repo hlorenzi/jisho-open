@@ -185,6 +185,7 @@ export async function crossReferenceKanjiWords(
             readingBuckets.set("", othersBucket)
 
 
+        let hasCommonWord = false
         let dbBuckets: Api.KanjiWordCrossRef.ReadingBucket[] = []
         for (const [reading, wordMap] of readingBuckets)
         {
@@ -204,9 +205,13 @@ export async function crossReferenceKanjiWords(
                 }
 
                 if (w.commonScore >= 1)
+                {
                     entry.commonness =
                         w.commonScore === 2 ? 2 :
                         1
+
+                    hasCommonWord = true
+                }
                 
                 if (w.commonScore === -1)
                     entry.irregular = true
@@ -304,6 +309,13 @@ export async function crossReferenceKanjiWords(
 
         kanjiEntry.exampleWords =
             extractExampleSet(dbBuckets, 5)
+
+        if (hasCommonWord)
+        {
+            if (kanjiEntry.score === undefined ||
+                kanjiEntry.score === 0)
+                kanjiEntry.score = 1
+        }
 
         await db.importKanjiEntries([kanjiEntry])
     })

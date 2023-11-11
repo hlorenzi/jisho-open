@@ -81,9 +81,9 @@ export async function tokenize(
     {
         const basePos = morpho[i].pos
         const baseDetail1 = morpho[i].pos_detail_1
-        const isBaseNoun = basePos == "名詞"
-        const isBaseVerb = basePos == "動詞"
-        const isBaseAdjI = basePos == "形容詞"
+        const isBaseNoun = basePos === "名詞" && baseDetail1 !== "代名詞"
+        const isBaseVerb = basePos === "動詞"
+        const isBaseAdjI = basePos === "形容詞"
 
         let newToken: Api.Search.SentenceToken | null = null
         let joinLen = 0
@@ -100,7 +100,6 @@ export async function tokenize(
 
             let canJoin =
                 isBaseNoun &&
-                baseDetail1 !== "代名詞" &&
                 dictRes.length > 0
             
             let stopJoin = false

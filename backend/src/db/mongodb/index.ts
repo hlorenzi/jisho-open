@@ -90,6 +90,18 @@ export const fieldWordLookUpChars =
 export const fieldKanjiLookUp = "lookUp" satisfies keyof DbKanjiEntry
 
 
+export const fieldKanjiScore =
+    `${"score" satisfies keyof DbKanjiEntry}`
+
+
+export const fieldKanjiComponents =
+    `${"components" satisfies keyof DbKanjiEntry}`
+
+
+export const fieldKanjiStrokeCount =
+    `${"strokeCount" satisfies keyof DbKanjiEntry}`
+
+
 export const fieldKanjiReadingsText =
     `${"readings" satisfies keyof DbKanjiEntry}` +
     `.${"reading" satisfies keyof Api.Kanji.ReadingScore}`
@@ -145,12 +157,18 @@ export async function connect(): Promise<Db.Db>
     await state.collKanji.createIndex({
         [fieldKanjiReadingsText]: 1,
         [fieldKanjiReadingsScore]: -1,
-        ["score" satisfies keyof DbKanjiEntry]: -1,
+        [fieldKanjiScore]: -1,
     })
 
     await state.collKanji.createIndex({
         [fieldKanjiLookUpMeanings]: 1,
-        ["score" satisfies keyof DbKanjiEntry]: -1,
+        [fieldKanjiScore]: -1,
+    })
+
+    await state.collKanji.createIndex({
+        [fieldKanjiComponents]: 1,
+        [fieldKanjiStrokeCount]: 1,
+        [fieldKanjiScore]: -1,
     })
 
     return {
@@ -181,6 +199,8 @@ export async function connect(): Promise<Db.Db>
             MongoDbSearch.searchKanjiByReading(state, queries, options),
         searchKanjiByMeaning: (queries, options) =>
             MongoDbSearch.searchKanjiByMeaning(state, queries, options),
+        searchKanjiByComponents: (queries, onlyCommon) =>
+            MongoDbSearch.searchKanjiByComponents(state, queries, onlyCommon),
 
         listAllKanji: () =>
             MongoDbSearch.listAllKanji(state),

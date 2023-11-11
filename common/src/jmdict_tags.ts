@@ -34,7 +34,8 @@ export function getKanjiCommonness(
         return "veryCommon"
 
     if (entry.rankNews !== undefined ||
-        entry.jlpt !== undefined)
+        entry.jlpt !== undefined ||
+        (entry.score !== undefined && entry.score > 0))
         return "common"
 
     return undefined

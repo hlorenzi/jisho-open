@@ -14,13 +14,10 @@ export function PageKanjiWords(props: Framework.RouteProps)
 
     const [searchResults] = Solid.createResource(
         kanji,
-        async (searched) => {
+        async (kanji) => {
             const res = await Api.getKanjiWords({
-                kanji: kanji(),
+                kanji,
             })
-            console.log(
-                "%cApi.getKanjiWords", "color: white; background-color: magenta;",
-                searched, res)
             return res
         })
     
