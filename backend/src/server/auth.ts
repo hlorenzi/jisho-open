@@ -58,10 +58,18 @@ export function init(
 
 
     app.post(Api.Authenticate.url, async (req, res) => {
-		const blob =
-            req.signedCookies[Auth.loginCookieName] ??
-            req.cookies[Auth.loginCookieName]
-
-        res.send(await auth.authenticate(blob))
+        res.send(await authenticateRequest(auth, req))
     })
+}
+
+
+export async function authenticateRequest(
+    auth: Auth.Interface,
+    req: Express.Request)
+{
+    const blob =
+        req.signedCookies[Auth.loginCookieName] ??
+        req.cookies[Auth.loginCookieName]
+
+    return await auth.authenticate(blob)
 }

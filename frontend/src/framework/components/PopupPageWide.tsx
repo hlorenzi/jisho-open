@@ -4,8 +4,8 @@ import * as Framework from "../index.ts"
 
 
 export type PopupData = {
-    onOpen: (anchorElem?: HTMLElement) => void
-    onClose: () => void
+    open: (anchorElem?: HTMLElement) => void
+    close: () => void
     rendered: Solid.JSX.Element
 }
 
@@ -16,10 +16,10 @@ export function makePopupPageWide(props: {
 {
     let dialog: HTMLDialogElement | undefined = undefined
 
-    const [open, setOpen] = Solid.createSignal(false)
+    const [isOpen, setIsOpen] = Solid.createSignal(false)
     const [anchor, setAnchor] = Solid.createSignal({ x: 0, y: 0 })
 
-    const onOpen = (anchorElem?: HTMLElement) => {
+    const open = (anchorElem?: HTMLElement) => {
         if (anchorElem)
         {
             const rect = anchorElem.getBoundingClientRect()
@@ -29,21 +29,21 @@ export function makePopupPageWide(props: {
             })
         }
 
-        setOpen(true)
+        setIsOpen(true)
         dialog?.showModal()
     }
 
-    const onClose = () => {
-        setOpen(false)
+    const close = () => {
+        setIsOpen(false)
         dialog?.close()
     }
 
     const onClick = (ev: Event) => {
         if (ev.target === dialog)
-            onClose()
+            close()
     }
 
-    const rendered = <Solid.Show when={ open() }>
+    const rendered = <Solid.Show when={ isOpen() }>
         <Dialog
             ref={ dialog }
             onClick={ onClick }
@@ -61,10 +61,10 @@ export function makePopupPageWide(props: {
     </Solid.Show>
 
     return {
-        onOpen,
-        onClose,
+        open,
+        close,
         rendered,
-    }
+    } satisfies PopupData
 }
 
 

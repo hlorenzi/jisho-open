@@ -84,6 +84,24 @@ export interface Interface
     listWordsWithChars: (
         chars: string[])
         => Promise<Api.Word.Entry[]>
+
+    getStudyLists: (
+        authUser: Api.MaybeUser,
+        userId: string,
+        markWordId: string | undefined)
+        => Promise<Api.StudyList.Entry[]>
+
+    studyListWordAdd: (
+        authUser: Api.MaybeUser,
+        studylistId: string,
+        wordId: string)
+        => Promise<void>
+
+    studyListWordRemoveMany: (
+        authUser: Api.MaybeUser,
+        studylistId: string,
+        wordIds: string[])
+        => Promise<void>
 }
 
 
@@ -105,6 +123,10 @@ export function createDummy(): Interface
         searchKanjiByReading: async () => [],
         searchKanjiByMeaning: async () => [],
         searchKanjiByComponents: async () => [],
+
+        getStudyLists: async () => [],
+        studyListWordAdd: async () => {},
+        studyListWordRemoveMany: async () => {},
         
         listAllKanji: async () => [],
         listWordsWithChars: async () => [],

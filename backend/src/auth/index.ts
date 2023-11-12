@@ -18,6 +18,30 @@ export interface Interface
 export const loginCookieName = "lorenzis_account"
 
 
+export function canUserRead(user: Api.MaybeUser)
+{
+    if (!user.id)
+        return false
+
+    if (user.tags.find(tag => tag === "ban"))
+        return false
+
+    return true
+}
+
+
+export function canUserWrite(user: Api.MaybeUser)
+{
+    if (!user.id)
+        return false
+
+    if (user.tags.find(tag => tag === "ban" || tag === "restrict"))
+        return false
+
+    return true
+}
+
+
 export function createDummy(): Interface
 {
     return {

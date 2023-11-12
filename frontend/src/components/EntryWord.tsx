@@ -4,11 +4,11 @@ import * as Framework from "../framework/index.ts"
 import * as Pages from "../pages.ts"
 import * as Api from "common/api/index.ts"
 import * as Kana from "common/kana.ts"
-import * as Inflection from "common/inflection.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import { FuriganaRuby } from "./Furigana.tsx"
 import { InflectionBreakdown } from "./InflectionBreakdown.tsx"
 import { PitchAccentRender } from "./PitchAccentRender.tsx"
+import { StudyListPopup } from "./StudyListPopup.tsx"
 import * as Tags from "./Tags.tsx"
 
 
@@ -27,7 +27,9 @@ export function EntryWord(props: {
             headings={ props.entry.headings }
             query={ props.query }
         />
-        <InflectionBreakdown breakdown={ props.entry.inflections }/>
+        <InflectionBreakdown
+            breakdown={ props.entry.inflections }
+        />
         <Senses
             ignoreUkMiscTag={ ignoreUsageInPlainKanaMiscTag }
             senses={ props.entry.senses }
@@ -71,7 +73,10 @@ function Headings(props: {
 
     const popupBookmark = Framework.makePopupPageWide({
         childrenFn: () =>
-            <div>In construction...</div>,
+            <StudyListPopup
+                wordId={ props.wordId }
+                close={ popupBookmark.close }
+            />,
     })
 
     return <header>
@@ -87,13 +92,13 @@ function Headings(props: {
 
         <Framework.Button
             label={ <Framework.IconEllipsis/> }
-            onClick={ ev => popupEllipsis.onOpen(ev.currentTarget) }
+            onClick={ ev => popupEllipsis.open(ev.currentTarget) }
             style={{ position: "relative", top: "-0.2em" }}
         />
 
         <Framework.Button
             label={ <Framework.IconBookmark color={ Framework.themeVar("iconGreenColor") }/> }
-            onClick={ ev => popupBookmark.onOpen(ev.currentTarget) }
+            onClick={ ev => popupBookmark.open(ev.currentTarget) }
             style={{ position: "relative", top: "-0.2em" }}
         />
 
@@ -186,7 +191,7 @@ function Heading(props: {
             last={ props.last }
             faded={ !!faded }
             queryMatch={ isQueryMatch }
-            onClick={ ev => popup.onOpen(ev.currentTarget) }
+            onClick={ ev => popup.open(ev.currentTarget) }
         >
 
             <HeadingText>
@@ -360,7 +365,7 @@ function HeadingPopup(props: {
             label={ `Copy ${ props.base } to the clipboard` }
             onClick={ () => {
                 Framework.copyToClipboard(props.base)
-                props.popup.onClose()
+                props.popup.close()
             }}
         />
 
@@ -369,7 +374,7 @@ function HeadingPopup(props: {
                 label={ `Copy ${ props.reading } to the clipboard` }
                 onClick={ () => {
                     Framework.copyToClipboard(props.reading!)
-                    props.popup.onClose()
+                    props.popup.close()
                 }}
             />
         </Solid.Show>

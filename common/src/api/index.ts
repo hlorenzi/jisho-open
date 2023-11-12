@@ -1,10 +1,22 @@
 import * as Word from "./word.ts"
 import * as Kanji from "./kanji.ts"
 import * as KanjiWordCrossRef from "./kanji_word_crossref.ts"
+import * as StudyList from "./studylist.ts"
 
 export * as Kanji from "./kanji.ts"
 export * as Word from "./word.ts"
 export * as KanjiWordCrossRef from "./kanji_word_crossref.ts"
+export * as StudyList from "./studylist.ts"
+
+
+export namespace Error
+{
+    export const forbidden =
+        "forbidden"
+    
+    export const studyListCapacity =
+        "study list has reached its maximum capacity"
+}
 
 
 export type User = {
@@ -16,6 +28,23 @@ export type User = {
     activityDate: number
     loginDate: number
 }
+
+
+export type MaybeUser = User | { [key in keyof User]: undefined }
+
+
+export type CommonnessTag =
+    | "veryCommon"
+    | "common"
+
+
+export type CommonnessIndex = 2 | 1
+
+
+export type JlptLevel = 5 | 4 | 3 | 2 | 1
+
+
+export type JouyouGrade = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 
 
 export namespace Login
@@ -51,7 +80,7 @@ export namespace Authenticate
 {
     export const url = "/api/v1/authenticate"
     export type Request = {}
-    export type Response = User | { [key in keyof User]: undefined }
+    export type Response = MaybeUser
 }
 
 
@@ -63,22 +92,8 @@ export namespace GetUser
         userId: string
     }
 
-    export type Response = User | { [key in keyof User]: undefined }
+    export type Response = MaybeUser
 }
-
-
-export type CommonnessTag =
-    | "veryCommon"
-    | "common"
-
-
-export type CommonnessIndex = 2 | 1
-
-
-export type JlptLevel = 5 | 4 | 3 | 2 | 1
-
-
-export type JouyouGrade = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 
 
 export namespace Search
@@ -159,7 +174,7 @@ export namespace Search
 
 export namespace KanjiWords
 {
-    export const url = "/api/v1/kanji_words"
+    export const url = "/api/v1/kanjiWords"
 
     export type Request = {
         kanji: string
@@ -175,7 +190,7 @@ export namespace KanjiWords
 
 export namespace KanjiByComponents
 {
-    export const url = "/api/v1/kanji_by_component"
+    export const url = "/api/v1/kanjiByComponents"
 
     export type Request = {
         components: string
@@ -191,4 +206,57 @@ export namespace KanjiByComponents
         strokeCount: number,
         components: string[],
     }
+}
+
+
+export namespace StudylistGetAll
+{
+    export const url = "/api/v1/studylistGetAll"
+
+    export type Request = {
+        userId: string
+        markWordId?: string
+    }
+    
+    export type Response = {
+        studylists: StudyList.Entry[]
+    }
+}
+
+
+export namespace StudylistCreate
+{
+    export const url = "/api/v1/studylistCreate"
+
+    export type Request = {
+        name: string
+    }
+    
+    export type Response = {}
+}
+
+
+export namespace StudylistWordAdd
+{
+    export const url = "/api/v1/studylistWordAdd"
+
+    export type Request = {
+        studylistId: string
+        wordId: string
+    }
+    
+    export type Response = {}
+}
+
+
+export namespace StudylistWordRemoveMany
+{
+    export const url = "/api/v1/studylistWordRemoveMany"
+
+    export type Request = {
+        studylistId: string
+        wordIds: string[]
+    }
+    
+    export type Response = {}
 }

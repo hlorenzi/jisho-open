@@ -8,6 +8,7 @@ import * as AuthRoutes from "./auth.ts"
 import * as Search from "./search.ts"
 import * as KanjiWords from "./kanji_words.ts"
 import * as KanjiByComponents from "./kanji_by_components.ts"
+import * as StudyList from "./studylist.ts"
 
 const port = process.env.PORT || 80
 
@@ -37,6 +38,7 @@ AuthRoutes.init(app, db, auth)
 Search.init(app, db)
 KanjiWords.init(app, db)
 KanjiByComponents.init(app, db)
+StudyList.init(app, db, auth)
 
 app.use("/", Express.static("../frontend/public"))
 app.use("/.build/", Express.static("../frontend/.build"))

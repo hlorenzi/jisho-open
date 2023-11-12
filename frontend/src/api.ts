@@ -68,3 +68,39 @@ export async function getKanjiByComponents(
         req, res)
     return res
 }
+
+
+export async function studylistGetAll(
+    req: Api.StudylistGetAll.Request)
+    : Promise<Api.StudylistGetAll.Response>
+{
+    const res = await post(Api.StudylistGetAll.url, req)
+    console.log(
+        "%cApi.studylistGetAll", "color: white; background-color: magenta;",
+        req, res)
+    return res
+}
+
+
+export async function studylistWordAdd(
+    req: Api.StudylistWordAdd.Request)
+    : Promise<Api.StudylistWordAdd.Response>
+{
+    const res = await post(Api.StudylistWordAdd.url, req)
+    console.log(
+        "%cApi.studylistWordAdd", "color: white; background-color: magenta;",
+        req, res)
+    return res
+}
+
+
+export async function studylistWordRemoveMany(
+    req: Api.StudylistWordRemoveMany.Request)
+    : Promise<Api.StudylistWordRemoveMany.Response>
+{
+    const res = await post(Api.StudylistWordRemoveMany.url, req)
+    console.log(
+        "%cApi.studylistWordRemoveMany", "color: white; background-color: magenta;",
+        req, res)
+    return res
+}

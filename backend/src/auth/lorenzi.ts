@@ -27,11 +27,11 @@ export function create() : Auth.Interface
                     })
 
                 const json = await res.json()
-                return json as Api.Authenticate.Response
+                return json as Api.MaybeUser
             }
             catch
             {
-                return {} as Api.Authenticate.Response
+                return {} as Api.MaybeUser
             }
         },
 
@@ -45,11 +45,11 @@ export function create() : Auth.Interface
                     })
                 
                 const json = await res.json()
-                return json as Api.GetUser.Response
+                return json as Api.MaybeUser
             }
             catch
             {
-                return {} as Api.GetUser.Response
+                return {} as Api.MaybeUser
             }
         },
     }

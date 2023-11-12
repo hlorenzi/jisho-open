@@ -6,6 +6,7 @@ import * as MongoDbImportWords from "./import_word.ts"
 import * as MongoDbImportKanji from "./import_kanji.ts"
 import * as MongoDbImportKanjiWord from "./import_kanji_word_crossref.ts"
 import * as MongoDbSearch from "./search.ts"
+import * as MongoDbStudyLists from "./studylist.ts"
 
 
 export const dbUrl = "mongodb://localhost:27017"
@@ -14,6 +15,7 @@ export const dbCollectionWords = "words"
 export const dbCollectionDefinitions = "definitions"
 export const dbCollectionKanji = "kanji"
 export const dbCollectionKanjiWords = "kanji_words"
+export const dbCollectionStudyLists = "studylists"
 
 
 export type State = {
@@ -22,6 +24,7 @@ export type State = {
     collDefinitions: MongoDb.Collection<DbDefinitionEntry>
     collKanji: MongoDb.Collection<DbKanjiEntry>
     collKanjiWords: MongoDb.Collection<DbKanjiWordEntry>
+    collStudyLists: MongoDb.Collection<DbStudyListEntry>
 }
 
 
@@ -58,6 +61,11 @@ export type DbKanjiEntry = Omit<Api.Kanji.Entry, "id"> & {
 
 
 export type DbKanjiWordEntry = Omit<Api.KanjiWordCrossRef.Entry, "id"> & {
+    _id: string
+}
+
+
+export type DbStudyListEntry = Omit<Api.StudyList.Entry, "id"> & {
     _id: string
 }
 
@@ -127,6 +135,7 @@ export async function connect(): Promise<Db.Interface>
         collDefinitions: db.collection<DbDefinitionEntry>(dbCollectionDefinitions),
         collKanji: db.collection<DbKanjiEntry>(dbCollectionKanji),
         collKanjiWords: db.collection<DbKanjiWordEntry>(dbCollectionKanjiWords),
+        collStudyLists: db.collection<DbStudyListEntry>(dbCollectionStudyLists),
     }
 
     await state.collWords.createIndex({
@@ -202,6 +211,13 @@ export async function connect(): Promise<Db.Interface>
         searchKanjiByComponents: (queries, onlyCommon) =>
             MongoDbSearch.searchKanjiByComponents(state, queries, onlyCommon),
 
+        getStudyLists: (authUser, userId, markWordId) =>
+            MongoDbStudyLists.getStudyLists(state, authUser, userId, markWordId),
+        studyListWordAdd: (authUser, studylistId, wordId) =>
+            MongoDbStudyLists.studyListWordAdd(state, authUser, studylistId, wordId),
+        studyListWordRemoveMany: (authUser, studylistId, wordIds) =>
+            MongoDbStudyLists.studyListWordRemoveMany(state, authUser, studylistId, wordIds),
+
         listAllKanji: () =>
             MongoDbSearch.listAllKanji(state),
         listWordsWithChars: (chars: string[]) =>
@@ -261,6 +277,23 @@ export function translateDbKanjiToApiKanji(
 export function translateDbKanjiWordToApiKanjiWord(
     dbEntry: DbKanjiWordEntry)
     : Api.KanjiWordCrossRef.Entry
+{
+    // Add and remove fields via destructuring assignment
+    const {
+        _id,
+        ...apiEntry
+    } = {
+        ...dbEntry,
+        id: dbEntry._id,
+    }
+
+    return apiEntry
+}
+
+
+export function translateDbStudyListToApi(
+    dbEntry: DbStudyListEntry)
+    : Api.StudyList.Entry
 {
     // Add and remove fields via destructuring assignment
     const {
