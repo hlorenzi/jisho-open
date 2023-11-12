@@ -217,7 +217,7 @@ async function search(
         limitAt++
         limitCount++
     }
-
+    
     searchEntries = searchEntries.slice(0, limitAt)
 
     // Remove empty section markers.
@@ -237,8 +237,7 @@ async function search(
     // Add a continue section if applicable.
     const lastEntry = searchEntries[searchEntries.length - 1]
     if (lastEntry !== undefined &&
-        lastEntry.type !== "section" ||
-        lastEntry.section !== "end")
+        (lastEntry.type !== "section" || lastEntry.section !== "end"))
         searchEntries.push({ type: "section", section: "continue" })
 
     return {

@@ -9,7 +9,7 @@
     "prod": "ts-node src/server/index.ts",
     "dev": "nodemon src/server/index.ts",
     "dev-dummy": "nodemon src/server/index.ts -- --db-dummy --auth-dummy",
-    "dev-auth-dummy": "nodemon src/server/index.ts -- --auth-dummy",
+    "dev-auth-lorenzi": "nodemon src/server/index.ts -- --auth-lorenzi",
     "test-inflections": "ts-node test_inflections.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

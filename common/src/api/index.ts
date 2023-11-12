@@ -11,10 +11,19 @@ export * as StudyList from "./studylist.ts"
 
 export namespace Error
 {
+    export const internal =
+        "internal server error"
+
+    export const malformed =
+        "invalid request"
+
     export const forbidden =
         "forbidden"
     
-    export const studyListCapacity =
+    export const studylistInvalidName =
+        "invalid name for study list"
+    
+    export const studylistCapacity =
         "study list has reached its maximum capacity"
 }
 
@@ -230,6 +239,36 @@ export namespace StudylistCreate
 
     export type Request = {
         name: string
+    }
+    
+    export type Response = {
+        studylistId: string
+    }
+}
+
+
+export namespace StudylistDelete
+{
+    export const url = "/api/v1/studylistDelete"
+
+    export type Request = {
+        studylistId: string
+    }
+    
+    export type Response = {}
+}
+
+
+export namespace StudylistEdit
+{
+    export const url = "/api/v1/studylistEdit"
+
+    export type Request = {
+        studylistId: string
+        edit:
+            | { type: "name", value: string }
+            | { type: "public", value: boolean }
+            | { type: "editorPassword", value?: string }
     }
     
     export type Response = {}

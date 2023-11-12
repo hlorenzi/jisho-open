@@ -25,11 +25,11 @@ export function StudyListPopup(props: {
         })
 
 
-    const [adding, setAdding] = Solid.createSignal(false)
+    const [working, setWorking] = Solid.createSignal(false)
 
 
-    const onClickList = async (studyListId: string, remove: boolean) => {
-        setAdding(true)
+    const onAddOrRemove = async (studyListId: string, remove: boolean) => {
+        setWorking(true)
         try
         {
             if (remove)
@@ -41,6 +41,7 @@ export function StudyListPopup(props: {
                     studylistId: studyListId,
                     wordIds: [props.wordId],
                 })
+                props.close?.()
             }
             else
             {
@@ -48,11 +49,27 @@ export function StudyListPopup(props: {
                     studylistId: studyListId,
                     wordId: props.wordId,
                 })
+                props.close?.()
             }
         }
         finally
         {
+            setWorking(false)
+        }
+    }
+
+    const onCreateAndAdd = async () => {
+        setWorking(true)
+        try
+        {
+            if (!await Api.studylistCreateAndAddWord(props.wordId))
+                return
+            
             props.close?.()
+        }
+        finally
+        {
+            setWorking(false)
         }
     }
 
@@ -67,14 +84,18 @@ export function StudyListPopup(props: {
 
         <Framework.HorizontalBar/>
 
-        <Solid.Show when={ studyLists().loading || adding() }>
+        <Solid.Show when={ studyLists().loading }>
             <Framework.LoadingBar/>
+        </Solid.Show>
+
+        <Solid.Show when={ working() }>
+            <Framework.LoadingBar ignoreLayout/>
         </Solid.Show>
 
         <Solid.Show when={ studyLists().latest }>
             <Framework.ScrollVerticalPopupPageWide
-                height="10.5em"
-                heightMobile="12em"
+                height="10em"
+                heightMobile="10.5em"
             >
                 <Solid.For each={ studyLists().latest?.studylists }>
                 { (list) =>
@@ -92,12 +113,23 @@ export function StudyListPopup(props: {
                                 />*/
                             }
                         </>}
-                        onClick={ () => onClickList(list.id, !!list.marked) }
-                        disabled={ adding() }
+                        onClick={ () => onAddOrRemove(list.id, !!list.marked) }
+                        disabled={ working() }
                     />
                 }
                 </Solid.For>
             </Framework.ScrollVerticalPopupPageWide>
+
+            <Framework.HorizontalBar/>
+
+            <Framework.ButtonPopupPageWide
+                label={ <>
+                    <Framework.IconPlus/>
+                    Create new list and add
+                </> }
+                disabled={ working() }
+                onClick={ onCreateAndAdd }
+            />
         </Solid.Show>
     </>
 }

@@ -85,19 +85,35 @@ export interface Interface
         chars: string[])
         => Promise<Api.Word.Entry[]>
 
-    getStudyLists: (
+    studylistCreate: (
+        authUser: Api.MaybeUser,
+        name: string)
+        => Promise<string>
+
+    studylistDelete: (
+        authUser: Api.MaybeUser,
+        studylistId: string)
+        => Promise<void>
+
+    studylistEdit: (
+        authUser: Api.MaybeUser,
+        studylistId: string,
+        edit: Api.StudylistEdit.Request["edit"])
+        => Promise<void>
+
+    studylistGetAll: (
         authUser: Api.MaybeUser,
         userId: string,
         markWordId: string | undefined)
         => Promise<Api.StudyList.Entry[]>
 
-    studyListWordAdd: (
+    studylistWordAdd: (
         authUser: Api.MaybeUser,
         studylistId: string,
         wordId: string)
         => Promise<void>
 
-    studyListWordRemoveMany: (
+    studylistWordRemoveMany: (
         authUser: Api.MaybeUser,
         studylistId: string,
         wordIds: string[])
@@ -124,9 +140,12 @@ export function createDummy(): Interface
         searchKanjiByMeaning: async () => [],
         searchKanjiByComponents: async () => [],
 
-        getStudyLists: async () => [],
-        studyListWordAdd: async () => {},
-        studyListWordRemoveMany: async () => {},
+        studylistCreate: async () => "fake",
+        studylistDelete: async () => {},
+        studylistEdit: async () => {},
+        studylistGetAll: async () => [],
+        studylistWordAdd: async () => {},
+        studylistWordRemoveMany: async () => {},
         
         listAllKanji: async () => [],
         listWordsWithChars: async () => [],

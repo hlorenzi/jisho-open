@@ -1,4 +1,5 @@
 import * as MongoDb from "mongodb"
+import * as Crypto from "crypto"
 import * as Db from "../index.ts"
 import * as Api from "common/api/index.ts"
 import * as Furigana from "common/furigana.ts"
@@ -211,20 +212,65 @@ export async function connect(): Promise<Db.Interface>
         searchKanjiByComponents: (queries, onlyCommon) =>
             MongoDbSearch.searchKanjiByComponents(state, queries, onlyCommon),
 
-        getStudyLists: (authUser, userId, markWordId) =>
-            MongoDbStudyLists.getStudyLists(state, authUser, userId, markWordId),
-        studyListWordAdd: (authUser, studylistId, wordId) =>
-            MongoDbStudyLists.studyListWordAdd(state, authUser, studylistId, wordId),
-        studyListWordRemoveMany: (authUser, studylistId, wordIds) =>
-            MongoDbStudyLists.studyListWordRemoveMany(state, authUser, studylistId, wordIds),
-
         listAllKanji: () =>
             MongoDbSearch.listAllKanji(state),
         listWordsWithChars: (chars: string[]) =>
             MongoDbSearch.listWordsWithChars(state, chars),
         listKanjiWordCrossRefEntries: (kanjiString: string) =>
             MongoDbSearch.listKanjiWordCrossRefEntries(state, kanjiString),
+            
+        studylistCreate: (authUser, name) =>
+        MongoDbStudyLists.studylistCreate(state, authUser, name),
+        studylistDelete: (authUser, studylistId) =>
+            MongoDbStudyLists.studylistDelete(state, authUser, studylistId),
+        studylistEdit: (authUser, studylistId, edit) =>
+            MongoDbStudyLists.studylistEdit(state, authUser, studylistId, edit),
+        studylistGetAll: (authUser, userId, markWordId) =>
+            MongoDbStudyLists.studylistGetAll(state, authUser, userId, markWordId),
+        studylistWordAdd: (authUser, studylistId, wordId) =>
+            MongoDbStudyLists.studyListWordAdd(state, authUser, studylistId, wordId),
+        studylistWordRemoveMany: (authUser, studylistId, wordIds) =>
+            MongoDbStudyLists.studyListWordRemoveMany(state, authUser, studylistId, wordIds),
     }
+}
+
+
+export async function insertWithNewId<T extends MongoDb.Document>(
+    collection: MongoDb.Collection<T>,
+    entry: MongoDb.OptionalUnlessRequiredId<T>)
+{
+    let id = null
+    let tries = 0
+    while (true)
+    {
+        tries++
+        if (tries > 10)
+            throw Api.Error.internal
+
+        id = generateRandomId()
+        
+        if (id.startsWith("00"))
+            continue
+        
+        try { await collection.insertOne({ ...entry, _id: id }) }
+        catch { continue }
+        
+        break
+    }
+    
+    return id
+}
+
+
+function generateRandomId(len = 6)
+{
+	return Crypto
+		.randomBytes(len)
+		.toString("base64")
+		.replace(/\+/g, "-")
+		.replace(/\//g, "_")
+		.replace(/\=/g, "")
+		.substring(0, len)
 }
 
 

@@ -20,7 +20,7 @@ const argDb =
 const argAuth =
     process.argv.some(arg => arg === "--auth-lorenzi") ? "lorenzi" :
     process.argv.some(arg => arg === "--auth-dummy") ? "dummy" :
-    "lorenzi"
+    "dummy"
 
 const db =
     argDb === "mongo" ? await DbMongo.connect() :

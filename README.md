@@ -13,8 +13,8 @@ To work on the codebase, execute in parallel:
     * `--db-mongo` Use MongoDB. This is the default.
     * `--db-dummy` Use a dummy interface.
   * For the authentication service:
-    * `--auth-lorenzi` Use Lorenzi's closed-source auth server. This is the default. You probably won't have access to it, so use the dummy service.
-    * `--auth-dummy` Use a dummy service which lets you log in with any user ID.
+    * `--auth-dummy` Use a dummy service which lets you log in with any user ID. This is the default.
+    * `--auth-lorenzi` Use Lorenzi's closed-source auth server. You probably won't have access to it, so use the dummy service.
 
 * In `frontend/`, execute `npm run dev` to build and pack the frontend JavaScript files in watch mode.
 

@@ -23352,7 +23352,6 @@
 響;on;きょう
 頻;on;ひん
 日;uncl;に
-素;uncl;しろ
 人;uncl;うと;うど
 生;uncl;いく;よい
 梯;uncl;はし
@@ -23460,6 +23459,10 @@
 曾;uncl;ひ;ひい
 曽;uncl;ひ;ひい
 帳;uncl;や
+障;uncl;そう
+両;uncl;もろ;りゃん;ダブル
+晴;uncl;はら
+素;auto;しろ;しら;すん
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
 吉;ateji;ぎ
@@ -23654,7 +23657,6 @@
 巨;auto;ごん
 𠮟;auto;しっ;しか
 回;auto;めぐ
-両;auto;もろ;りゃん
 郎;auto;ろ
 替;auto;かわ;がわ
 迷;auto;まい
@@ -23811,7 +23813,6 @@
 焼;auto;たき
 後;auto;しり
 祖;auto;おや
-素;auto;しら
 薑;auto;が
 赭;auto;あか
 尖;auto;とんが;と
@@ -24257,6 +24258,8 @@
 母衣;gikun;ほろ
 浴衣;gikun;ゆかた
 火傷;gikun;やけど
+内障;gikun;そこひ
+障泥;gikun;あおり
 不老;conjug;おいず
 下関;patch;しものせき
 物の;patch;ものの
