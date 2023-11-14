@@ -77,6 +77,7 @@ export function Searchbox(props: {
                     </span>
                 }
                 onClick={ inputPopup!.open }
+                noPadding
                 style={{ width: "3em" }}
             />
         </Solid.Show>
@@ -84,12 +85,14 @@ export function Searchbox(props: {
             title="Clear"
             label={ <Framework.IconX/> }
             onClick={ onClear }
+            noPadding
             style={{ width: "3em" }}
         />
         <Framework.Button
             title="Search"
             label={ <Framework.IconMagnifyingGlass/> }
             onClick={ onSearch }
+            noPadding
             style={{ width: "3em" }}
         />
         { inputPopup?.rendered }

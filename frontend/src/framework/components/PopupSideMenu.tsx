@@ -61,7 +61,8 @@ const backdropKeyframes = keyframes`
 const Dialog = styled.dialog`
     padding: 0;
     border: 0;
-    margin: 0;
+    margin-top: 0;
+    margin-right: 0;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
@@ -109,7 +110,8 @@ const Content = styled.div`
     border-radius: 0.25rem;
     box-shadow: 0 0.15em 0.15em ${ Framework.themeVar("popupShadowColor") };
     
-    margin: 1em;
+    margin-top: 4em;
+    margin-right: 1em;
     --local-pagePadding: 1em;
 	padding-left: var(--local-pagePadding);
 	padding-right: var(--local-pagePadding);

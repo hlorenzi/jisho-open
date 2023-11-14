@@ -69,6 +69,7 @@ function dispatchEventOrSetLocation(
 
 
 export const historyPushStateEvent = "lorenzi_pushstate"
+export const historyPushStateNoReloadEvent = "lorenzi_pushstate_noreload"
 export const historyReloadStateEvent = "lorenzi_reloadstate"
 
 
@@ -84,7 +85,7 @@ export function historyPushNoReload(href: string)
 {
     //historyUpdateScroll()
     window.history.pushState(null, "", href)
-    dispatchEventOrSetLocation(historyPushStateEvent, href, { noReload: true })
+    dispatchEventOrSetLocation(historyPushStateNoReloadEvent, href, { noReload: true })
 }
 
 
@@ -151,14 +152,10 @@ export function createHistorySignal<N extends string, T>(
         setState(newState)
     }
 
-    window.addEventListener("popstate", refreshFromHistory)
-    window.addEventListener(Framework.historyPushStateEvent, refreshFromHistory)
-    window.addEventListener(Framework.historyReloadStateEvent, refreshFromHistory)
+    window.addEventListener(Framework.historyPushStateNoReloadEvent, refreshFromHistory)
     
     Solid.onCleanup(() => {
-        window.removeEventListener("popstate", refreshFromHistory)
-        window.removeEventListener(Framework.historyPushStateEvent, refreshFromHistory)
-        window.removeEventListener(Framework.historyReloadStateEvent, refreshFromHistory)
+        window.removeEventListener(Framework.historyPushStateNoReloadEvent, refreshFromHistory)
     })
 
     return [getState, setState2]

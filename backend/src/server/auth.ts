@@ -57,8 +57,23 @@ export function init(
     })
 
 
+    app.get(Api.Account.url, async (req, res) => {
+        res.redirect(auth.accountUrl)
+    })
+
+
     app.post(Api.Authenticate.url, async (req, res) => {
         res.send(await authenticateRequest(auth, req))
+    })
+
+
+    app.post(Api.GetUser.url, async (req, res) => {
+        const body = req.body as Api.GetUser.Request
+
+        if (typeof body.userId !== "string")
+            throw Api.Error.malformed
+    
+        res.send(await auth.getUser(req.body.userId))
     })
 }
 

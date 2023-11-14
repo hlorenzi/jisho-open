@@ -36,6 +36,13 @@ const styleClass = css`
         --local-borderColor: transparent;
     }
 
+    padding: 0.25em 0.5em;
+
+    &.noPadding
+    {
+        padding: 0;
+    }
+
     appearance: button;
     display: inline-block;
     border: 1px solid transparent;
@@ -48,14 +55,18 @@ const styleClass = css`
     user-select: none;
 
     margin: 0.125em;
-    padding: 0.15em;
     border-radius: 0.25rem;
     font-family: inherit;
     font-weight: inherit;
 
     @media (pointer: coarse)
     {
-        padding: 0.4em 0.5em;
+        padding: 0.6em 0.8em;
+
+        &.noPadding
+        {
+            padding: 0.4em 0.5em;
+        }
     }
 
     &:hover
@@ -97,6 +108,7 @@ export function Button(props: Framework.ButtonBehaviorProps & {
     style?: Solid.JSX.CSSProperties,
     disabled?: boolean,
     noBorder?: boolean,
+    noPadding?: boolean,
     accent?: boolean,
     danger?: boolean,
     toggled?: boolean,
@@ -110,6 +122,7 @@ export function Button(props: Framework.ButtonBehaviorProps & {
             class={ styleClass }
             classList={{
                 noBorder: props.noBorder,
+                noPadding: props.noPadding,
                 accent: props.accent,
                 danger: props.danger,
                 toggled: props.toggled,
@@ -130,6 +143,7 @@ export function Button(props: Framework.ButtonBehaviorProps & {
             class={ styleClass }
             classList={{
                 noBorder: props.noBorder,
+                noPadding: props.noPadding,
                 accent: props.accent,
                 danger: props.danger,
                 toggled: props.toggled,

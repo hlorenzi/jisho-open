@@ -61,6 +61,14 @@ export async function authenticate()
 }
 
 
+export async function getUser(
+    req: Api.GetUser.Request)
+    : Promise<Api.GetUser.Response>
+{
+    return post(Api.GetUser.url, req)
+}
+
+
 export async function search(
     req: Api.Search.Request)
     : Promise<Api.Search.Response>
@@ -120,11 +128,27 @@ export async function studylistCreateAndAddWord(
 }
 
 
+export async function studylistGet(
+    req: Api.StudylistGet.Request)
+    : Promise<Api.StudylistGet.Response>
+{
+    return post(Api.StudylistGet.url, req)
+}
+
+
 export async function studylistGetAll(
     req: Api.StudylistGetAll.Request)
     : Promise<Api.StudylistGetAll.Response>
 {
     return post(Api.StudylistGetAll.url, req)
+}
+
+
+export async function studylistGetAllMarked(
+    req: Api.StudylistGetAllMarked.Request)
+    : Promise<Api.StudylistGetAllMarked.Response>
+{
+    return post(Api.StudylistGetAllMarked.url, req)
 }
 
 

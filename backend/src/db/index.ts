@@ -101,9 +101,18 @@ export interface Interface
         edit: Api.StudylistEdit.Request["edit"])
         => Promise<void>
 
+    studylistGet: (
+        authUser: Api.MaybeUser,
+        studylistId: string)
+        => Promise<Api.StudyList.Entry>
+    
     studylistGetAll: (
         authUser: Api.MaybeUser,
-        userId: string,
+        userId: string)
+        => Promise<Api.StudyList.Entry[]>
+
+    studylistGetAllMarked: (
+        authUser: Api.MaybeUser,
         markWordId: string | undefined)
         => Promise<Api.StudyList.Entry[]>
 
@@ -143,7 +152,9 @@ export function createDummy(): Interface
         studylistCreate: async () => "fake",
         studylistDelete: async () => {},
         studylistEdit: async () => {},
+        studylistGet: async () => { throw Api.Error.forbidden },
         studylistGetAll: async () => [],
+        studylistGetAllMarked: async () => [],
         studylistWordAdd: async () => {},
         studylistWordRemoveMany: async () => {},
         

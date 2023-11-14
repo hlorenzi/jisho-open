@@ -26,6 +26,12 @@ function App()
                 { patterns: [Pages.LoginFake.urlPattern],
                     load: async () => (await import("./pages/PageLoginFake.tsx")).PageLoginFake },
     
+                { patterns: [Pages.User.urlPattern],
+                    load: async () => (await import("./pages/PageUser.tsx")).PageUser },
+    
+                { patterns: [Pages.Studylist.urlPattern],
+                    load: async () => (await import("./pages/PageStudylist.tsx")).PageStudylist },
+    
                 { patterns: ["*"],
                     load: async () => () => <h2>Page not found</h2> },
             ]}

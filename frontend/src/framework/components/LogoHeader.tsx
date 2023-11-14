@@ -11,46 +11,48 @@ export function LogoHeader(props: {
         childrenFn: props.sideMenuFn,
     })
 
-    return <Layout>
-        <Framework.Link
-            href="/"
-            noUnderline
-            style={{ display: "block", width: "fit-content" }}
-        >
-            <LogoLayout>
-                <IconWrapper>
-                    <Icon
-                        src="https://accounts.hlorenzi.com/icon_round_75.png"
-                        srcset="
-                            https://accounts.hlorenzi.com/icon_round_75.png,
-                            https://accounts.hlorenzi.com/icon_round_150.png 2x
-                        "
-                    />
-                </IconWrapper>
-                <StyledH1>
-                    Lorenzi's Jisho
-                    <sup style={{ "font-size": "0.5em" }}>
-                        <Framework.TextTag
-                            label="v2 Beta"
-                            bkgColor={ Framework.themeVar("themeColor") }
+    return <>
+        <Layout>
+            <Framework.Link
+                href="/"
+                noUnderline
+                style={{ display: "block", width: "fit-content" }}
+            >
+                <LogoLayout>
+                    <IconWrapper>
+                        <Icon
+                            src="https://accounts.hlorenzi.com/icon_round_75.png"
+                            srcset="
+                                https://accounts.hlorenzi.com/icon_round_75.png,
+                                https://accounts.hlorenzi.com/icon_round_150.png 2x
+                            "
                         />
-                    </sup>
-                </StyledH1>
-            </LogoLayout>
-        </Framework.Link>
+                    </IconWrapper>
+                    <StyledH1>
+                        Lorenzi's Jisho
+                        <sup style={{ "font-size": "0.5em" }}>
+                            <Framework.TextTag
+                                label="v2 Beta"
+                                bkgColor={ Framework.themeVar("themeColor") }
+                            />
+                        </sup>
+                    </StyledH1>
+                </LogoLayout>
+            </Framework.Link>
 
-        <div/>
+            <div/>
 
-        <Framework.Button
-            label={ <Framework.IconMenu/> }
-            title="Menu"
-            onClick={ popup.open }
-            noBorder
-            style={{ width: "3em", height: "3em"}}
-        />
+            <Framework.Button
+                label={ <Framework.IconMenu/> }
+                title="Menu"
+                onClick={ popup.open }
+                noBorder
+                style={{ width: "3em", height: "3em"}}
+            />
+        </Layout>
 
         { popup.rendered }
-    </Layout>
+    </>
 }
 
 

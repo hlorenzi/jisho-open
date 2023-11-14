@@ -25,7 +25,7 @@ export type State = {
     collDefinitions: MongoDb.Collection<DbDefinitionEntry>
     collKanji: MongoDb.Collection<DbKanjiEntry>
     collKanjiWords: MongoDb.Collection<DbKanjiWordEntry>
-    collStudyLists: MongoDb.Collection<DbStudyListEntry>
+    collStudylists: MongoDb.Collection<DbStudyListEntry>
 }
 
 
@@ -136,7 +136,7 @@ export async function connect(): Promise<Db.Interface>
         collDefinitions: db.collection<DbDefinitionEntry>(dbCollectionDefinitions),
         collKanji: db.collection<DbKanjiEntry>(dbCollectionKanji),
         collKanjiWords: db.collection<DbKanjiWordEntry>(dbCollectionKanjiWords),
-        collStudyLists: db.collection<DbStudyListEntry>(dbCollectionStudyLists),
+        collStudylists: db.collection<DbStudyListEntry>(dbCollectionStudyLists),
     }
 
     await state.collWords.createIndex({
@@ -220,13 +220,17 @@ export async function connect(): Promise<Db.Interface>
             MongoDbSearch.listKanjiWordCrossRefEntries(state, kanjiString),
             
         studylistCreate: (authUser, name) =>
-        MongoDbStudyLists.studylistCreate(state, authUser, name),
+            MongoDbStudyLists.studylistCreate(state, authUser, name),
         studylistDelete: (authUser, studylistId) =>
             MongoDbStudyLists.studylistDelete(state, authUser, studylistId),
         studylistEdit: (authUser, studylistId, edit) =>
             MongoDbStudyLists.studylistEdit(state, authUser, studylistId, edit),
-        studylistGetAll: (authUser, userId, markWordId) =>
-            MongoDbStudyLists.studylistGetAll(state, authUser, userId, markWordId),
+        studylistGet: (authUser, studylistId) =>
+            MongoDbStudyLists.studylistGet(state, authUser, studylistId),
+        studylistGetAll: (authUser, userId) =>
+            MongoDbStudyLists.studylistGetAll(state, authUser, userId),
+        studylistGetAllMarked: (authUser, markWordId) =>
+            MongoDbStudyLists.studylistGetAllMarked(state, authUser, markWordId),
         studylistWordAdd: (authUser, studylistId, wordId) =>
             MongoDbStudyLists.studyListWordAdd(state, authUser, studylistId, wordId),
         studylistWordRemoveMany: (authUser, studylistId, wordIds) =>

@@ -1,4 +1,5 @@
 import * as Express from "express"
+import "express-async-errors"
 import * as BodyParser from "body-parser"
 import * as Auth from "../auth/index.ts"
 import * as AuthLorenzi from "../auth/lorenzi.ts"
@@ -43,6 +44,20 @@ StudyList.init(app, db, auth)
 app.use("/", Express.static("../frontend/public"))
 app.use("/.build/", Express.static("../frontend/.build"))
 app.use("*", Express.static("../frontend/public/index.html"))
+
+app.use((err: any, req: Express.Request, res: Express.Response, next: any) => {
+    if (res.headersSent)
+        return next(err)
+
+    if (err.statusCode && err.statusMessage)
+    {
+        res.status(err.statusCode)
+        res.send(err.statusMessage)
+        return
+    }
+
+    res.status(500).send(err)
+})
 
 app.listen(port, () => {
     console.log("server listening...")

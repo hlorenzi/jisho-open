@@ -42,11 +42,10 @@ export async function studylistCreate(
         words: [],
         createDate: now,
         modifyDate: now,
-        activityDate: now,
     }
 
     const id = await DbMongo.insertWithNewId(
-        state.collStudyLists,
+        state.collStudylists,
         studylist)
     
     return id
@@ -63,12 +62,23 @@ export async function studylistDelete(
         !Auth.canUserWrite(authUser))
         throw Api.Error.forbidden
 
-    const res = await state.collStudyLists
+    const studylist = await state.collStudylists
+        .findOne({ _id: studylistId })
+
+    if (!studylist)
+        throw Api.Error.notFound
+
+    const isAdmin = Auth.isAdmin(authUser)
+    const isCreator = authUser.id === studylist.creatorId
+    if (!isAdmin && !isCreator)
+        throw Api.Error.forbidden
+    
+    const res = await state.collStudylists
         .deleteOne({ _id: studylistId })
     
     if (!res.acknowledged ||
         res.deletedCount !== 1)
-        throw Api.Error.forbidden
+        throw Api.Error.internal
 }
 
 
@@ -85,42 +95,132 @@ export async function studylistEdit(
 }
 
 
+export async function studylistGet(
+    state: DbMongo.State,
+    authUser: Api.MaybeUser,
+    studylistId: string)
+    : Promise<Api.StudyList.Entry>
+{
+    const studylist = await state.collStudylists
+        .findOne({ _id: studylistId })
+
+    if (!studylist)
+        throw Api.Error.notFound
+
+    const isAdmin = Auth.isAdmin(authUser)
+    const isCreator = authUser.id === studylist.creatorId
+    const isEditor = studylist.editorIds.some(id => authUser.id === id)
+
+    if (!isAdmin && !isCreator)
+        studylist.editorPassword = undefined
+
+    if (!studylist.public)
+    {
+        if (!Auth.canUserRead(authUser))
+            throw Api.Error.forbidden
+
+        if (!isAdmin && !isCreator && !isEditor)
+            throw Api.Error.forbidden
+    }
+
+    return DbMongo.translateDbStudyListToApi(studylist)
+}
+
+
 export async function studylistGetAll(
     state: DbMongo.State,
     authUser: Api.MaybeUser,
-    userId: string,
-    markWordId: string | undefined)
+    userId: string)
     : Promise<Api.StudyList.Entry[]>
 {
-    const seePrivate =
-        Auth.canUserRead(authUser) &&
+    type Projected = Omit<
+        DbMongo.DbStudyListEntry,
+        "editorPassword" | "words">
+
+    const canSeePrivate =
+        !!authUser.id &&
         authUser.id === userId
 
-    const findQuery: MongoDriver.Filter<DbMongo.DbStudyListEntry> =
-        seePrivate ?
-        {
-            $or: [
-                { creatorId: userId },
-                { editorIds: authUser.id },
-            ]
-        }
-        :
-        { creatorId: userId, public: true }
-
-    const studylists = await state.collStudyLists
-        .find(findQuery)
+    const studylists = await state.collStudylists
+        .find(canSeePrivate ?
+            {
+                $or: [
+                    { creatorId: authUser.id },
+                    { editorIds: authUser.id },
+                ],
+            }
+            :
+            {
+                creatorId: userId,
+                public: true,
+            })
+        .project<Projected>({ editorPassword: 0, words: 0 })
         .sort({ modifyDate: -1 })
         .toArray()
 
-    if (markWordId !== undefined)
-    {
-        studylists.forEach(list => {
-            if (list.words.some(w => w.id === markWordId))
-                list.marked = true
+    return studylists
+        .map(e => ({ ...e, editorPassword: undefined, words: [] }))
+        .map(e => DbMongo.translateDbStudyListToApi(e))
+}
+
+
+export async function studylistGetAllMarked(
+    state: DbMongo.State,
+    authUser: Api.MaybeUser,
+    markWordId: string | undefined)
+    : Promise<Api.StudyList.Entry[]>
+{
+    if (!authUser.id ||
+        !Auth.canUserRead(authUser))
+        throw Api.Error.forbidden
+
+    type Projected = Omit<
+        DbMongo.DbStudyListEntry,
+        "editorPassword" | "words">
+
+    const queryWithWord: MongoDriver.Filter<DbMongo.DbStudyListEntry> =
+        markWordId ?
+            { "words.id": markWordId } :
+            {}
+
+    const queryWithoutWord: MongoDriver.Filter<DbMongo.DbStudyListEntry> =
+        markWordId ?
+            { "words.id": { $ne: markWordId } } :
+            {}
+
+    const studylistsWithWord = await state.collStudylists
+        .find({
+            $or: [
+                { creatorId: authUser.id },
+                { editorIds: authUser.id },
+            ],
+            ...queryWithWord,
         })
-    }
+        .project<Projected>({ editorPassword: 0, words: 0 })
+        .sort({ modifyDate: -1 })
+        .toArray()
+
+    const studylistsWithoutWord = await state.collStudylists
+        .find({
+            $or: [
+                { creatorId: authUser.id },
+                { editorIds: authUser.id },
+            ],
+            ...queryWithoutWord,
+        })
+        .project<Projected>({ editorPassword: 0, words: 0 })
+        .sort({ modifyDate: -1 })
+        .toArray()
+
+    studylistsWithWord.forEach(list => { list.marked = true })
+
+    const studylists = [
+        ...studylistsWithWord,
+        ...studylistsWithoutWord,
+    ]
 
     return studylists
+        .sort((a, b) => b.modifyDate.getTime() - a.modifyDate.getTime())
         .map(e => ({ ...e, editorPassword: undefined, words: [] }))
         .map(e => DbMongo.translateDbStudyListToApi(e))
 }
@@ -133,7 +233,7 @@ export async function studyListWordAdd(
     wordId: string)
     : Promise<void>
 {
-    const studylist = await state.collStudyLists
+    const studylist = await state.collStudylists
         .findOne({ _id: studylistId })
     
     if (!studylist)
@@ -162,7 +262,7 @@ export async function studyListWordAdd(
         date: now,
     }
 
-    await state.collStudyLists.updateOne(
+    await state.collStudylists.updateOne(
         { _id: studylistId },
         {
             $push: { words: wordEntry },
@@ -182,7 +282,7 @@ export async function studyListWordRemoveMany(
     wordIds: string[])
     : Promise<void>
 {
-    const studylist = await state.collStudyLists
+    const studylist = await state.collStudylists
         .findOne({ _id: studylistId })
     
     if (!studylist)
@@ -207,7 +307,7 @@ export async function studyListWordRemoveMany(
 
     const now = new Date()
 
-    await state.collStudyLists.updateOne(
+    await state.collStudylists.updateOne(
         { _id: studylistId },
         {
             $set: {

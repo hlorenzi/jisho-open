@@ -68,11 +68,13 @@ export function Router(props: {
 
         window.addEventListener("popstate", onNavigation)
         window.addEventListener(Framework.historyPushStateEvent, onNavigation)
+        window.addEventListener(Framework.historyPushStateNoReloadEvent, onNavigation)
         window.addEventListener(Framework.historyReloadStateEvent, onNavigation)
         
         Solid.onCleanup(() => {
             window.removeEventListener("popstate", onNavigation)
             window.removeEventListener(Framework.historyPushStateEvent, onNavigation)
+            window.removeEventListener(Framework.historyPushStateNoReloadEvent, onNavigation)
             window.removeEventListener(Framework.historyReloadStateEvent, onNavigation)
         })
         

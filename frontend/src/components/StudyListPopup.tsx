@@ -9,19 +9,40 @@ export function StudyListPopup(props: {
     close?: () => void,
 })
 {
-    const [studyLists] = Framework.createAsyncSignal(
+    const [data] = Framework.createAsyncSignal(
         () => props.wordId,
         async (wordId) => {
             const authUser = await Api.authenticate()
             if (!authUser.id)
-                return { studylists: [] } satisfies Api.StudylistGetAll.Response
+                return {
+                    authUser,
+                    studylists: [] as Api.StudyList.Entry[],
+                    foldersWithWord: new Set<string>(),
+                }
 
-            const studyLists = await Api.studylistGetAll({
-                userId: authUser.id,
+            const studylistsRes = await Api.studylistGetAllMarked({
                 markWordId: wordId,
             })
 
-            return studyLists
+            const studylists = studylistsRes.studylists
+            studylists.forEach(s =>
+                s.folderName = Api.StudyList.getFolderName(s))
+
+            const foldersWithWord = new Set<string>()
+            for (const studylist of studylists)
+            {
+                if (!studylist.folderName)
+                    continue
+
+                if (studylist.marked)
+                    foldersWithWord.add(studylist.folderName)
+            }
+
+            return {
+                authUser,
+                studylists,
+                foldersWithWord,
+            }
         })
 
 
@@ -84,52 +105,66 @@ export function StudyListPopup(props: {
 
         <Framework.HorizontalBar/>
 
-        <Solid.Show when={ studyLists().loading }>
+        <Solid.Show when={ data().loading }>
             <Framework.LoadingBar/>
         </Solid.Show>
 
-        <Solid.Show when={ working() }>
-            <Framework.LoadingBar ignoreLayout/>
+        <Solid.Show when={ data().latest && !data().latest?.authUser.id }>
+            <Framework.ButtonPopupPageWide
+                label="Log in to create study lists!"
+                href={ Api.Login.urlForRedirect(window.location.href) }
+                native
+            />
         </Solid.Show>
 
-        <Solid.Show when={ studyLists().latest }>
-            <Framework.ScrollVerticalPopupPageWide
-                height="10em"
-                heightMobile="10.5em"
-            >
-                <Solid.For each={ studyLists().latest?.studylists }>
-                { (list) =>
-                    <Framework.ButtonPopupPageWide
-                        label={ <>
-                            { `📚 ${ list.name }` }
-                            <Solid.Show when={ list.marked }>
-                                <Framework.IconCheckmark
-                                    color={ Framework.themeVar("iconGreenColor") }
-                                />
-                            </Solid.Show>
-                            { /*!foldersWithWordSet.has(list.folderName) ? null :
-                                <Framework.IconFolderCheckmark
-                                    color={ theme.iconWarningColor }
-                                />*/
+        <Solid.Show when={ data().latest?.authUser.id }>
+
+            <Solid.Show when={ working() }>
+                <Framework.LoadingBar ignoreLayout/>
+            </Solid.Show>
+
+            <Solid.Show when={ data().latest }>
+                <Framework.ScrollVerticalPopupPageWide
+                    height="9.4em"
+                    heightMobile="10.25em"
+                >
+                    <Solid.For each={ data().latest?.studylists }>
+                    { (list) =>
+                        <Framework.ButtonPopupPageWide
+                            label={ <span
+                                    style={{ color: list.marked ? Framework.themeVar("iconGreenColor") : undefined }}
+                                >
+                                    <Framework.IconBook/>
+                                    { ` ${ list.name }` }
+                                    <Solid.Show when={ list.marked }>
+                                        <Framework.IconCheckmark
+                                            color={ Framework.themeVar("iconGreenColor") }
+                                        />
+                                    </Solid.Show>
+                                    <Solid.Show when={ data().latest!.foldersWithWord.has(list.folderName ?? "") }>
+                                        <Framework.IconFolderCheckmark
+                                            color={ Framework.themeVar("iconYellowColor") }
+                                        />
+                                    </Solid.Show>
+                                </span>
                             }
-                        </>}
-                        onClick={ () => onAddOrRemove(list.id, !!list.marked) }
-                        disabled={ working() }
-                    />
-                }
-                </Solid.For>
-            </Framework.ScrollVerticalPopupPageWide>
+                            onClick={ () => onAddOrRemove(list.id, !!list.marked) }
+                            disabled={ working() }
+                        />
+                    }
+                    </Solid.For>
+                </Framework.ScrollVerticalPopupPageWide>
 
-            <Framework.HorizontalBar/>
+                <Framework.HorizontalBar/>
 
-            <Framework.ButtonPopupPageWide
-                label={ <>
-                    <Framework.IconPlus/>
-                    Create new list and add
-                </> }
-                disabled={ working() }
-                onClick={ onCreateAndAdd }
-            />
+                <Framework.ButtonPopupPageWide
+                    label={ <>
+                        <Framework.IconPlus/> Create new list and add
+                    </> }
+                    disabled={ working() }
+                    onClick={ onCreateAndAdd }
+                />
+            </Solid.Show>
         </Solid.Show>
     </>
 }

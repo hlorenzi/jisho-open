@@ -10,6 +10,7 @@ export function create() : Auth.Interface
 {
     return {
         loginUrl: `${ lorenziAuthUrl }/login`,
+        accountUrl: lorenziAuthUrl,
         
         authenticate: async (sessionBlob: string) => {
             try
@@ -45,11 +46,11 @@ export function create() : Auth.Interface
                     })
                 
                 const json = await res.json()
-                return json as Api.MaybeUser
+                return { user: json as Api.MaybeUser }
             }
             catch
             {
-                return {} as Api.MaybeUser
+                return { user: {} as Api.MaybeUser }
             }
         },
     }

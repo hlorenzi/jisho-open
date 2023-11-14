@@ -2,6 +2,8 @@ import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
 import * as Api from "../api.ts"
+import * as Pages from "../pages.ts"
+import { UserLabel } from "../components/User.tsx"
 
 
 export function Page(props: {
@@ -41,10 +43,8 @@ function SideMenu(props: {
 
         <Solid.Show when={ authUser().latest?.id }>
             <Framework.ButtonPopupPageWide
-                label={ <>
-                    <Framework.IconUser/>
-                    { authUser().latest!.name }
-                </>}
+                label={ <UserLabel user={ authUser().latest }/> }
+                href={ Pages.User.urlForUserId(authUser().latest!.id!) }
             />
             <Framework.ButtonPopupPageWide
                 label="Log out"

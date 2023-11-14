@@ -6,6 +6,9 @@ import * as Framework from "../index.ts"
 const StyledHr = styled.hr`
     border: 0;
     border-bottom: 1px solid ${ Framework.themeVar("borderColor") };
+
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
     
 	padding-left:  var(--local-pagePadding);
 	padding-right: var(--local-pagePadding);

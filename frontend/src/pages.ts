@@ -36,5 +36,26 @@ export namespace KanjiWords
     export const matchKanji = "kanji"
     export const urlPattern = `/words/:${ matchKanji }`
 
-    export const urlForQuery = (query: string) => `/words/${ encodeURIComponent(query) }`
+    export const urlForQuery = (query: string) =>
+        `/words/${ encodeURIComponent(query) }`
+}
+
+
+export namespace User
+{
+    export const matchUserId = "userId"
+    export const urlPattern = `/user/:${ matchUserId }`
+
+    export const urlForUserId = (userId: string) =>
+        `/user/${ encodeURIComponent(userId) }`
+}
+
+
+export namespace Studylist
+{
+    export const matchStudylistId = "studylistId"
+    export const urlPattern = `/list/:${ matchStudylistId }`
+
+    export const urlWith = (studylistId: string) =>
+        `/list/${ encodeURIComponent(studylistId) }`
 }

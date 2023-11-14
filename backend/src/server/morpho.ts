@@ -276,5 +276,5 @@ export async function tokenize(
         token.pronunciation = undefined
     }
 
-    return { tokens: result }
+    return { tokens: result.filter(t => t.surface_form.trim().length !== 0) }
 }

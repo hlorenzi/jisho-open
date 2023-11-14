@@ -11,20 +11,28 @@ export * as StudyList from "./studylist.ts"
 
 export namespace Error
 {
-    export const internal =
-        "internal server error"
-
-    export const malformed =
-        "invalid request"
-
-    export const forbidden =
-        "forbidden"
+    type ErrorType = {
+        statusCode: number
+        statusMessage: string
+    }
     
-    export const studylistInvalidName =
-        "invalid name for study list"
+    export const internal: ErrorType =
+        { statusCode: 500, statusMessage: "internal server error" }
+
+    export const forbidden: ErrorType =
+        { statusCode: 403, statusMessage: "forbidden" }
     
-    export const studylistCapacity =
-        "study list has reached its maximum capacity"
+    export const notFound: ErrorType =
+        { statusCode: 404, statusMessage: "not found" }
+
+    export const malformed: ErrorType =
+        { statusCode: 400, statusMessage: "invalid request" }
+
+    export const studylistInvalidName: ErrorType =
+        { statusCode: 400, statusMessage: "invalid name for study list" }
+    
+    export const studylistCapacity: ErrorType =
+        { statusCode: 400, statusMessage: "study list has reached its maximum capacity" }
 }
 
 
@@ -85,6 +93,12 @@ export namespace Logout
 }
 
 
+export namespace Account
+{
+    export const url = "/account"
+}
+
+
 export namespace Authenticate
 {
     export const url = "/api/v1/authenticate"
@@ -101,7 +115,9 @@ export namespace GetUser
         userId: string
     }
 
-    export type Response = MaybeUser
+    export type Response = {
+        user: MaybeUser
+    }
 }
 
 
@@ -218,12 +234,39 @@ export namespace KanjiByComponents
 }
 
 
+export namespace StudylistGet
+{
+    export const url = "/api/v1/studylistGet"
+
+    export type Request = {
+        studylistId: string
+    }
+    
+    export type Response = {
+        studylist: StudyList.Entry
+    }
+}
+
+
 export namespace StudylistGetAll
 {
     export const url = "/api/v1/studylistGetAll"
 
     export type Request = {
         userId: string
+    }
+    
+    export type Response = {
+        studylists: StudyList.Entry[]
+    }
+}
+
+
+export namespace StudylistGetAllMarked
+{
+    export const url = "/api/v1/studylistGetAllMarked"
+
+    export type Request = {
         markWordId?: string
     }
     
