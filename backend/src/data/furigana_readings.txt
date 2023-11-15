@@ -24038,7 +24038,6 @@
 不知;gikun;しらず;しらぬ
 不識;gikun;しらず
 不味;gikun;まず
-不見;gikun;みず
 不喰;gikun;くわず
 不寝;gikun;ねず
 不生;gikun;うまず
@@ -24261,6 +24260,7 @@
 火傷;gikun;やけど
 内障;gikun;そこひ
 障泥;gikun;あおり
+不見;conjug;みず
 不老;conjug;おいず
 下関;patch;しものせき
 物の;patch;ものの

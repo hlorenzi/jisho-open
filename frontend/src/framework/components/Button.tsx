@@ -43,6 +43,11 @@ const styleClass = css`
         padding: 0;
     }
 
+    &.iconPadding
+    {
+        padding: 0.25em;
+    }
+
     appearance: button;
     display: inline-block;
     border: 1px solid transparent;
@@ -66,6 +71,11 @@ const styleClass = css`
         &.noPadding
         {
             padding: 0.4em 0.5em;
+        }
+
+        &.iconPadding
+        {
+            padding: 0.35em;
         }
     }
 
@@ -109,6 +119,7 @@ export function Button(props: Framework.ButtonBehaviorProps & {
     disabled?: boolean,
     noBorder?: boolean,
     noPadding?: boolean,
+    iconPadding?: boolean,
     accent?: boolean,
     danger?: boolean,
     toggled?: boolean,
@@ -123,6 +134,7 @@ export function Button(props: Framework.ButtonBehaviorProps & {
             classList={{
                 noBorder: props.noBorder,
                 noPadding: props.noPadding,
+                iconPadding: props.iconPadding,
                 accent: props.accent,
                 danger: props.danger,
                 toggled: props.toggled,
@@ -144,6 +156,7 @@ export function Button(props: Framework.ButtonBehaviorProps & {
             classList={{
                 noBorder: props.noBorder,
                 noPadding: props.noPadding,
+                iconPadding: props.iconPadding,
                 accent: props.accent,
                 danger: props.danger,
                 toggled: props.toggled,

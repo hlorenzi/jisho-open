@@ -20,8 +20,9 @@ export type Entry = {
     /// Marks whether the word (specified in certain API requests) is present
     marked?: boolean
 
-    /// Not filled out by the server.
+    /// For use by the client. Not filled out by the server.
     folderName?: string
+    selfName?: string
 }
 
 

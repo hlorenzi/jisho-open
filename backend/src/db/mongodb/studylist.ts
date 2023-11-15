@@ -68,7 +68,7 @@ export async function studylistDelete(
     if (!studylist)
         throw Api.Error.notFound
 
-    const isAdmin = Auth.isAdmin(authUser)
+    const isAdmin = Api.userIsAdmin(authUser)
     const isCreator = authUser.id === studylist.creatorId
     if (!isAdmin && !isCreator)
         throw Api.Error.forbidden
@@ -92,6 +92,45 @@ export async function studylistEdit(
     if (!authUser.id ||
         !Auth.canUserWrite(authUser))
         throw Api.Error.forbidden
+
+    const studylist = await state.collStudylists
+        .findOne({ _id: studylistId })
+
+    if (!studylist)
+        throw Api.Error.notFound
+
+    const isAdmin = Api.userIsAdmin(authUser)
+    const isCreator = authUser.id === studylist.creatorId
+    if (!isAdmin && !isCreator)
+        throw Api.Error.forbidden
+        
+    switch (edit.type)
+    {
+        case "name":
+        {
+            const validatedName = validateName(edit.value)
+            await state.collStudylists.updateOne(
+                { _id: studylistId },
+                { $set: { name: validatedName }})
+            break
+        }
+        case "public":
+        {
+            await state.collStudylists.updateOne(
+                { _id: studylistId },
+                { $set: { public: edit.value }})
+            break
+        }
+        case "editorPassword":
+        {
+            await state.collStudylists.updateOne(
+                { _id: studylistId },
+                { $set: { editorPassword: edit.value }})
+            break
+        }
+        default:
+            throw Api.Error.malformed
+    }
 }
 
 
@@ -107,7 +146,7 @@ export async function studylistGet(
     if (!studylist)
         throw Api.Error.notFound
 
-    const isAdmin = Auth.isAdmin(authUser)
+    const isAdmin = Api.userIsAdmin(authUser)
     const isCreator = authUser.id === studylist.creatorId
     const isEditor = studylist.editorIds.some(id => authUser.id === id)
 
@@ -138,15 +177,15 @@ export async function studylistGetAll(
         "editorPassword" | "words">
 
     const canSeePrivate =
-        !!authUser.id &&
-        authUser.id === userId
+        authUser.id === userId ||
+        Api.userIsAdmin(authUser)
 
     const studylists = await state.collStudylists
         .find(canSeePrivate ?
             {
                 $or: [
-                    { creatorId: authUser.id },
-                    { editorIds: authUser.id },
+                    { creatorId: userId },
+                    { editorIds: userId },
                 ],
             }
             :
@@ -226,7 +265,7 @@ export async function studylistGetAllMarked(
 }
 
 
-export async function studyListWordAdd(
+export async function studylistWordAdd(
     state: DbMongo.State,
     authUser: Api.MaybeUser,
     studylistId: string,
@@ -237,7 +276,7 @@ export async function studyListWordAdd(
         .findOne({ _id: studylistId })
     
     if (!studylist)
-        throw Api.Error.forbidden
+        throw Api.Error.notFound
 
     if (!Auth.canUserWrite(authUser))
         throw Api.Error.forbidden
@@ -275,7 +314,7 @@ export async function studyListWordAdd(
 }
 
 
-export async function studyListWordRemoveMany(
+export async function studylistWordRemoveMany(
     state: DbMongo.State,
     authUser: Api.MaybeUser,
     studylistId: string,
@@ -286,7 +325,7 @@ export async function studyListWordRemoveMany(
         .findOne({ _id: studylistId })
     
     if (!studylist)
-        throw Api.Error.forbidden
+        throw Api.Error.notFound
 
     if (!Auth.canUserWrite(authUser))
         throw Api.Error.forbidden
@@ -317,4 +356,38 @@ export async function studyListWordRemoveMany(
                 activityDate: now,
             },
         })
+}
+
+
+export async function studylistWordsGet(
+    state: DbMongo.State,
+    authUser: Api.MaybeUser,
+    studylistId: string)
+    : Promise<Api.Word.Entry[]>
+{
+    const studylist = await state.collStudylists
+        .findOne({ _id: studylistId })
+    
+    if (!studylist)
+        throw Api.Error.notFound
+
+    if (!Auth.canUserRead(authUser))
+        throw Api.Error.forbidden
+
+    const canSeePrivate =
+        authUser.id === studylist.creatorId ||
+        Api.userIsAdmin(authUser)
+
+    if (!studylist.public &&
+        !canSeePrivate)
+        throw Api.Error.forbidden
+
+    const wordIds = studylist.words.map(w => w.id)
+
+    const wordEntries = await state.collWords
+        .find({ _id: { $in: wordIds } })
+        .toArray()
+
+	return wordEntries
+        .map(e => DbMongo.translateDbWordToApiWord(e))
 }

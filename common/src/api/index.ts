@@ -47,7 +47,31 @@ export type User = {
 }
 
 
-export type MaybeUser = User | { [key in keyof User]: undefined }
+export type MaybeUser = User | Partial<User>
+
+
+export function userIsAdmin(user: MaybeUser)
+{
+    if (!user.id)
+        return false
+
+    if (!user.tags?.some(tag => tag === "admin" || tag === "admin:jisho"))
+        return false
+
+    return true
+}
+
+
+export function userIsVip(user: MaybeUser)
+{
+    if (!user.id)
+        return false
+
+    if (!user.tags?.some(tag => tag === "vip" || tag === "vip:jisho"))
+        return false
+
+    return true
+}
 
 
 export type CommonnessTag =
@@ -341,4 +365,18 @@ export namespace StudylistWordRemoveMany
     }
     
     export type Response = {}
+}
+
+
+export namespace StudylistWordsGet
+{
+    export const url = "/api/v1/studylistWordsGet"
+
+    export type Request = {
+        studylistId: string
+    }
+    
+    export type Response = {
+        entries: Word.Entry[],
+    }
 }

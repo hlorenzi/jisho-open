@@ -19,24 +19,12 @@ export interface Interface
 export const loginCookieName = "lorenzis_account"
 
 
-export function isAdmin(user: Api.MaybeUser)
-{
-    if (!user.id)
-        return false
-
-    if (!user.tags.some(tag => tag === "admin"))
-        return false
-
-    return true
-}
-
-
 export function canUserRead(user: Api.MaybeUser)
 {
     if (!user.id)
         return false
 
-    if (user.tags.some(tag => tag === "ban"))
+    if (user.tags?.some(tag => tag === "ban"))
         return false
 
     return true
@@ -48,7 +36,7 @@ export function canUserWrite(user: Api.MaybeUser)
     if (!user.id)
         return false
 
-    if (user.tags.some(tag => tag === "ban" || tag === "restrict"))
+    if (user.tags?.some(tag => tag === "ban" || tag === "restrict"))
         return false
 
     return true
@@ -65,12 +53,16 @@ export function createDummy(): Interface
             try
             {
                 const json = JSON.parse(sessionBlob)
-                const userId = json.userId
+                const userId = json.userId as string
+
+                const tags = ["fake"]
+                if (userId.startsWith("admin"))
+                    tags.push("admin")
 
                 return {
                     id: userId,
                     name: `fake:${userId}`,
-                    tags: ["fake"],
+                    tags,
                     createDate: 0,
                     modifyDate: 0,
                     activityDate: 0,
@@ -84,11 +76,15 @@ export function createDummy(): Interface
         },
 
         getUser: async (userId) => {
+            const tags = ["fake"]
+            if (userId.startsWith("admin"))
+                tags.push("admin")
+
             return {
                 user: {
                     id: userId,
                     name: `fake:${userId}`,
-                    tags: ["fake"],
+                    tags,
                     createDate: 0,
                     modifyDate: 0,
                     activityDate: 0,

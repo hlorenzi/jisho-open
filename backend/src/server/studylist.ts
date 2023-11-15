@@ -42,6 +42,31 @@ export function init(
         if (typeof body.studylistId !== "string")
             throw Api.Error.malformed
 
+        if (typeof body.edit !== "object")
+            throw Api.Error.malformed
+
+        if (typeof body.edit.type !== "string")
+            throw Api.Error.malformed
+
+        switch (body.edit.type)
+        {
+            case "name":
+                if (typeof body.edit.value !== "string")
+                    throw Api.Error.malformed
+                break
+            case "public":
+                if (typeof body.edit.value !== "boolean")
+                    throw Api.Error.malformed
+                break
+            case "editorPassword":
+                if (typeof body.edit.value !== "string" &&
+                    typeof body.edit.value !== "undefined")
+                    throw Api.Error.malformed
+                break
+            default:
+                throw Api.Error.malformed
+        }
+
         await db.studylistEdit(
             await AuthRoutes.authenticateRequest(auth, req),
             body.studylistId,
@@ -123,5 +148,18 @@ export function init(
             body.wordIds)
 
         res.send({} satisfies Api.StudylistWordRemoveMany.Response)
+    })
+    
+    app.post(Api.StudylistWordsGet.url, async (req, res) => {
+        const body = req.body as Api.StudylistWordsGet.Request
+
+        if (typeof body.studylistId !== "string")
+            throw Api.Error.malformed
+
+        const entries = await db.studylistWordsGet(
+            await AuthRoutes.authenticateRequest(auth, req),
+            body.studylistId)
+
+        res.send({ entries } satisfies Api.StudylistWordsGet.Response)
     })
 }

@@ -71,7 +71,7 @@ export function InputKanjiComponents(props: {
         <div>
             <Framework.Checkbox
                 label="Only common kanji"
-                valueAccessor={ onlyCommon }
+                value={ onlyCommon }
                 onChange={ setOnlyCommon }
             />
         </div>

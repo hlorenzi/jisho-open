@@ -5,23 +5,6 @@ import * as Api from "common/api/index.ts"
 import * as Pages from "../pages.ts"
 
 
-export function UserLabel(props: {
-    user?: Api.MaybeUser,
-})
-{
-    return <>
-        <Framework.IconUser/>
-        { " " }
-        { props.user?.name }
-        <Solid.Show when={ props.user?.tags?.some(tag => tag === "admin") }>
-            <Framework.TextTag
-                label="Admin"
-            />
-        </Solid.Show>
-    </>
-}
-
-
 export function UserLink(props: {
     user?: Api.MaybeUser,
 })
@@ -32,3 +15,43 @@ export function UserLink(props: {
         <UserLabel user={ props.user }/>
     </Framework.Link>
 }
+
+
+export function UserLabel(props: {
+    user?: Api.MaybeUser,
+})
+{
+    const isAdmin = Api.userIsAdmin(props.user ?? {})
+    const isVip = Api.userIsVip(props.user ?? {})
+
+    const color =
+        //isAdmin ? Framework.themeVar("iconBlueColor") :
+        //isVip ? Framework.themeVar("iconGreenColor") :
+        undefined
+
+    return <span style={{ color }}>
+        <Framework.IconUser/>
+        { props.user?.name }
+        <Solid.Show when={ isAdmin }>
+            <UserLabelSup>
+                <Framework.TextTag
+                    label="Admin"
+                    bkgColor={ Framework.themeVar("iconBlueColor") }
+                />
+            </UserLabelSup>
+        </Solid.Show>
+        <Solid.Show when={ isVip }>
+            <UserLabelSup>
+                <Framework.TextTag
+                    label="VIP"
+                    bkgColor={ Framework.themeVar("iconGreenColor") }
+                />
+            </UserLabelSup>
+        </Solid.Show>
+    </span>
+}
+
+
+const UserLabelSup = styled.sup`
+    font-size: 0.8em;
+`

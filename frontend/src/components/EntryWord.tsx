@@ -93,12 +93,14 @@ function Headings(props: {
         <Framework.Button
             label={ <Framework.IconEllipsis/> }
             onClick={ ev => popupEllipsis.open(ev.currentTarget) }
+            iconPadding
             style={{ position: "relative", top: "-0.2em" }}
         />
 
         <Framework.Button
             label={ <Framework.IconBookmark color={ Framework.themeVar("iconGreenColor") }/> }
             onClick={ ev => popupBookmark.open(ev.currentTarget) }
+            iconPadding
             style={{ position: "relative", top: "-0.2em" }}
         />
 

@@ -232,9 +232,11 @@ export async function connect(): Promise<Db.Interface>
         studylistGetAllMarked: (authUser, markWordId) =>
             MongoDbStudyLists.studylistGetAllMarked(state, authUser, markWordId),
         studylistWordAdd: (authUser, studylistId, wordId) =>
-            MongoDbStudyLists.studyListWordAdd(state, authUser, studylistId, wordId),
+            MongoDbStudyLists.studylistWordAdd(state, authUser, studylistId, wordId),
         studylistWordRemoveMany: (authUser, studylistId, wordIds) =>
-            MongoDbStudyLists.studyListWordRemoveMany(state, authUser, studylistId, wordIds),
+            MongoDbStudyLists.studylistWordRemoveMany(state, authUser, studylistId, wordIds),
+        studylistWordsGet: (authUser, studylistId) =>
+            MongoDbStudyLists.studylistWordsGet(state, authUser, studylistId),
     }
 }
 

@@ -85,29 +85,32 @@ const LabelCheckbox = styled.label<{
 
 
 export function Checkbox(props: {
-    value?: boolean,
-    valueAccessor?: Solid.Accessor<boolean>,
+    initialValue?: boolean,
+    value?: Solid.Accessor<boolean>,
     onChange?: (value: boolean) => void,
     label?: Solid.JSX.Element,
     children?: Solid.JSX.Element,
     labelBefore?: boolean,
     disabled?: boolean,
+    style?: Solid.JSX.CSSProperties,
 })
 {
     const labelId = Solid.createUniqueId()
     const label = props.children ?? props.label
 
 
-    const onChange = (ev: { target: HTMLInputElement }) => {
-        const newValue = ev.target.checked
+    const onChange = (ev: { currentTarget: HTMLInputElement }) => {
+        const newValue = ev.currentTarget.checked
         props.onChange?.(newValue)
+        if (props.value)
+            ev.currentTarget.checked = props.value()
     }
 
 
-	return <>
+	return <span style={ props.style }>
         <Solid.Show when={ !!props.labelBefore }>
             <LabelCheckbox
-                html-for={ labelId }
+                for={ labelId }
                 disabled={ !!props.disabled }
             >
                 { label }
@@ -122,7 +125,7 @@ export function Checkbox(props: {
             <DivCheckbox
                 id={ labelId }
                 type="checkbox"
-                checked={ props.valueAccessor?.() ?? props.value }
+                checked={ props.value?.() ?? props.initialValue }
                 onChange={ onChange }
                 disabled={ props.disabled }
             />
@@ -149,11 +152,11 @@ export function Checkbox(props: {
 
         <Solid.Show when={ !props.labelBefore }>
             <LabelCheckbox
-                html-for={ labelId }
+                for={ labelId }
                 disabled={ !!props.disabled }
             >
                 { label }
             </LabelCheckbox>
         </Solid.Show>
-	</>
+	</span>
 }

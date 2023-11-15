@@ -25,8 +25,11 @@ export function StudyListPopup(props: {
             })
 
             const studylists = studylistsRes.studylists
-            studylists.forEach(s =>
-                s.folderName = Api.StudyList.getFolderName(s))
+            studylists.forEach(s => {
+                const [folderName, selfName] = Api.StudyList.getFolderName(s)
+                s.folderName = folderName
+                s.selfName = selfName
+            })
 
             const foldersWithWord = new Set<string>()
             for (const studylist of studylists)
@@ -126,7 +129,7 @@ export function StudyListPopup(props: {
             <Solid.Show when={ data().latest }>
                 <Framework.ScrollVerticalPopupPageWide
                     height="9.4em"
-                    heightMobile="10.25em"
+                    heightMobile="10em"
                 >
                     <Solid.For each={ data().latest?.studylists }>
                     { (list) =>

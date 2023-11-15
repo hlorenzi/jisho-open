@@ -32,12 +32,13 @@ export function PageUser(props: Framework.RouteProps)
                 const [folderName, listName] = Api.StudyList.getFolderName(list)
                 if (!folderName)
                 {
+                    list.selfName = list.name
                     studylistsToplevel.push(list)
                     continue
                 }
 
                 list.folderName = folderName
-                list.name = listName
+                list.selfName = listName
 
                 let toplevelFolder = studylistsToplevel
                     .find(f => f.children && f.name == list.folderName)
@@ -112,69 +113,72 @@ export function PageUser(props: Framework.RouteProps)
         <Searchbox/>
         <br/>
 
-        <h1>
-            <UserLabel user={ data()?.user }/>
-            <Solid.Show when={ data()?.userIsSelf }>
+        <Solid.Show when={ data() }>
+
+            <h1>
+                <UserLabel user={ data()?.user }/>
+                <Solid.Show when={ data()?.userIsSelf }>
+                    { " " }
+                    <Framework.Button
+                        title="User settings"
+                        label={ <Framework.IconPencil/> }
+                        noBorder
+                        href={ Api.Account.url }
+                        native
+                    />
+                </Solid.Show>
+            </h1>
+
+            <Framework.HorizontalBar/>
+            <br/>
+
+            <h2>
+                <Framework.IconBook/>
                 { " " }
-                <Framework.Button
-                    title="User settings"
-                    label={ <Framework.IconPencil/> }
-                    noBorder
-                    href={ Api.Account.url }
-                    native
-                />
-            </Solid.Show>
-        </h1>
+                <Solid.Show when={ data()?.userIsSelf }>
+                    My study lists
+                </Solid.Show>
+                <Solid.Show when={ data()?.userIsSelf === false }>
+                    Public study lists
+                </Solid.Show>
+            </h2>
 
-        <Framework.HorizontalBar/>
-        <br/>
+            <br/>
 
-        <h2>
-            <Framework.IconBook/>
-            { " " }
             <Solid.Show when={ data()?.userIsSelf }>
-                My study lists
+                <Framework.Button
+                    label={ <><Framework.IconPlus/> Create</> }
+                    accent
+                    onClick={ onCreate }
+                />
+                <br/>
+                <br/>
             </Solid.Show>
-            <Solid.Show when={ data()?.userIsSelf === false }>
-                Public study lists
-            </Solid.Show>
-        </h2>
 
-        <br/>
-
-        <Solid.Show when={ data()?.userIsSelf }>
-            <Framework.Button
-                label={ <><Framework.IconPlus/> Create</> }
-                accent
-                onClick={ onCreate }
-            />
-            <br/>
-            <br/>
+            <ListLayout>
+                <Solid.For
+                    each={ data()?.studylistsToplevel }
+                    fallback={ <Framework.Button disabled noBorder>Empty</Framework.Button> }
+                >
+                { (listOrFolder) =>
+                    !listOrFolder.children ?
+                        <Studylist
+                            studylist={ listOrFolder }
+                            userIsSelf={ !!data()?.userIsSelf }
+                            onDelete={ onDelete }
+                        />
+                        :
+                        <Folder
+                            folder={ listOrFolder }
+                            expandedFolders={ expandedFolders() }
+                            onToggleFolder={ onToggleFolder }
+                            userIsSelf={ !!data()?.userIsSelf }
+                            onDelete={ onDelete }
+                        />
+                }
+                </Solid.For>
+            </ListLayout>
         </Solid.Show>
-
-        <ListLayout>
-            <Solid.For
-                each={ data()?.studylistsToplevel }
-                fallback={ <Framework.Button disabled noBorder>Empty</Framework.Button> }
-            >
-            { (listOrFolder) =>
-                !listOrFolder.children ?
-                    <Studylist
-                        studylist={ listOrFolder }
-                        userIsSelf={ !!data()?.userIsSelf }
-                        onDelete={ onDelete }
-                    />
-                    :
-                    <Folder
-                        folder={ listOrFolder }
-                        expandedFolders={ expandedFolders() }
-                        onToggleFolder={ onToggleFolder }
-                        userIsSelf={ !!data()?.userIsSelf }
-                        onDelete={ onDelete }
-                    />
-            }
-            </Solid.For>
-        </ListLayout>
     </Page>
 }
 
@@ -271,7 +275,7 @@ function Studylist(props: {
         >
             <Framework.IconBook/>
             { " " }
-            { props.studylist.name }
+            { props.studylist.selfName }
             <Solid.Show when={ !props.studylist.public }>
                 { " " }
                 <Framework.IconLock color={ Framework.themeVar("iconBlueColor") }/>
