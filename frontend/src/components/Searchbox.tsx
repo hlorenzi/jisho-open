@@ -120,11 +120,10 @@ function windowOnKeyDown(
     }
     
     // Focus on searchbox with the cursor at the end,
-    // if you start typing or if you paste with Ctrl+V
+    // if you start typing letters or if you paste with Ctrl+V
     // anywhere in the page.
     if (key == "backspace" ||
-        (keyCode >= "a".codePointAt(0)! && keyCode <= "z".codePointAt(0)!) ||
-        keyCode == " ".codePointAt(0))
+        (keyCode >= "a".codePointAt(0)! && keyCode <= "z".codePointAt(0)!))
     {
         if (document.activeElement === inputElem)
             return

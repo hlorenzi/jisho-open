@@ -148,7 +148,7 @@ export async function studylistGet(
 
     const isAdmin = Api.userIsAdmin(authUser)
     const isCreator = authUser.id === studylist.creatorId
-    const isEditor = studylist.editorIds.some(id => authUser.id === id)
+    const isEditor = studylist.editorIds.some(id => id === authUser.id)
 
     if (!isAdmin && !isCreator)
         studylist.editorPassword = undefined
@@ -281,7 +281,7 @@ export async function studylistWordAdd(
     if (!Auth.canUserWrite(authUser))
         throw Api.Error.forbidden
 
-    if (authUser.id !== studylist.creatorId &&
+    if (studylist.creatorId !== authUser.id &&
         !studylist.editorIds.some(id => id === authUser.id))
         throw Api.Error.forbidden
 
@@ -304,12 +304,9 @@ export async function studylistWordAdd(
     await state.collStudylists.updateOne(
         { _id: studylistId },
         {
-            $push: { words: wordEntry },
+            $push: { words: { $each: [wordEntry], $slice: Api.StudyList.wordCountMax } },
             $inc: { wordCount: 1 },
-            $set: {
-                modifyDate: now,
-                activityDate: now,
-            },
+            $set: { modifyDate: now },
         })
 }
 
@@ -330,7 +327,7 @@ export async function studylistWordRemoveMany(
     if (!Auth.canUserWrite(authUser))
         throw Api.Error.forbidden
 
-    if (authUser.id !== studylist.creatorId &&
+    if (studylist.creatorId !== authUser.id &&
         !studylist.editorIds.some(id => id === authUser.id))
         throw Api.Error.forbidden
 
@@ -353,7 +350,6 @@ export async function studylistWordRemoveMany(
                 wordCount: newWords.length,
                 words: newWords,
                 modifyDate: now,
-                activityDate: now,
             },
         })
 }
@@ -371,16 +367,17 @@ export async function studylistWordsGet(
     if (!studylist)
         throw Api.Error.notFound
 
-    if (!Auth.canUserRead(authUser))
-        throw Api.Error.forbidden
-
     const canSeePrivate =
-        authUser.id === studylist.creatorId ||
-        Api.userIsAdmin(authUser)
+        Api.userIsAdmin(authUser) ||
+        studylist.creatorId === authUser.id ||
+        studylist.editorIds.some(id => id === authUser.id)
 
-    if (!studylist.public &&
-        !canSeePrivate)
-        throw Api.Error.forbidden
+    if (!studylist.public)
+    {
+        if (!canSeePrivate ||
+            !Auth.canUserRead(authUser))
+            throw Api.Error.forbidden
+    }
 
     const wordIds = studylist.words.map(w => w.id)
 

@@ -46,9 +46,32 @@ export function TagJouyou(props: {
 {
     return <Solid.Show when={ props.jouyou !== undefined }>
         <Framework.TextTag
-            title={ `Jōyō kanji, taught in grade ${ props.jouyou }.` }
-            label={ `Jōyō Grade ${ props.jouyou }` }
+            title={
+                `Jōyō kanji, taught in ${
+                    props.jouyou === 7 ?
+                        `high-school.` :
+                        `grade ${ props.jouyou }.` }`
+            }
+            label={ `Jōyō ${
+                props.jouyou === 7 ?
+                    `High-School` :
+                    `Grade ${ props.jouyou }` }`
+            }
             bkgColor={ Framework.themeVar(`iconJouyou${ props.jouyou!.toString() as `${ Api.JouyouGrade }` }Color`) }
+        />
+    </Solid.Show>
+}
+
+
+export function TagJinmeiyou(props: {
+    jinmeiyou?: boolean,
+})
+{
+    return <Solid.Show when={ props.jinmeiyou }>
+        <Framework.TextTag
+            title={ `Jinmeiyō kanji, approved for use in names and official documents.` }
+            label={ `Jinmeiyō` }
+            bkgColor={ Framework.themeVar("iconJinmeiyouColor") }
         />
     </Solid.Show>
 }

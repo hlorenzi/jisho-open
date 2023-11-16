@@ -89,16 +89,30 @@ function normalizeEntry(
         entry.components = components
     
 
-    // Import jouyou level
-    const jouyou = raw.misc[0].grade?.[0]
-    if (jouyou)
-        entry.jouyou = parseInt(jouyou) as Api.JouyouGrade
+    // Import jouyou level or jinmeiyou status
+    const gradeRaw = raw.misc[0].grade?.[0]
+    if (gradeRaw)
+    {
+        const grade = parseInt(gradeRaw)
+        if (grade <= 6)
+            entry.jouyou = grade as Api.JouyouGrade
+        else if (grade === 8)
+            entry.jouyou = 7 as Api.JouyouGrade
+        else if (grade >= 9)
+            entry.jinmeiyou = true
+    }
 
 
     // Import JLPT level
-    const jlpt = raw.misc[0].jlpt?.[0]
-    if (jlpt)
-        entry.jlpt = parseInt(jlpt) as Api.JlptLevel
+    const oldJlptRaw = raw.misc[0].jlpt?.[0]
+    if (oldJlptRaw)
+    {
+        const oldJlpt = parseInt(oldJlptRaw)
+        if (oldJlpt >= 2)
+            entry.jlpt = (oldJlpt + 1) as Api.JlptLevel
+        else
+            entry.jlpt = 1
+    }
 
 
     // Import frequency in news

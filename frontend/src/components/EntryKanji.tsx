@@ -44,6 +44,7 @@ export function EntryKanji(props: {
                 <TagsWrapper>
                     <Tags.TagJlpt jlpt={ props.entry.jlpt }/>
                     <Tags.TagJouyou jouyou={ props.entry.jouyou }/>
+                    <Tags.TagJinmeiyou jinmeiyou={ props.entry.jinmeiyou }/>
                     <Tags.TagKanjiNews rankNews={ props.entry.rankNews }/>
                 </TagsWrapper>
             </div>

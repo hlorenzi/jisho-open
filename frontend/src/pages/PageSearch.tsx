@@ -193,6 +193,7 @@ const Results = styled.div`
 const SectionContinue = styled.div`
     margin: 1em 0;
     color: ${ Framework.themeVar("text3rdColor") };
+    font-style: italic;
 `
 
 

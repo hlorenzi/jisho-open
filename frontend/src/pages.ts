@@ -17,6 +17,14 @@ export namespace Search
     export const urlForQuery = (query: string) =>
         `/search/${ encodeURIComponent(query) }`
     
+    export const urlForBaseReading = (base: string, reading?: string) => {
+        if (!reading ||
+            reading === base)
+            return `/search/${ encodeURIComponent(base) }`
+        else
+            return `/search/${ encodeURIComponent(base) } ${ encodeURIComponent(reading)}`
+    }
+
     export const urlForQueryToken = (query: string, token: number) =>
         `/search/${ encodeURIComponent(query) }/${ token.toString() }`
 }

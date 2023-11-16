@@ -7,17 +7,22 @@ export function FuriganaRuby(props: {
     encoded?: string,
 })
 {
-    let furigana = Furigana.decode(props.encoded ?? "")
+    const furigana = Furigana.decode(props.encoded ?? "")
+
+    // Doesn't help with the bounding box.
+    //if (Furigana.extractBase(furigana) === Furigana.extractReading(furigana))
+    //    return <span>{ Furigana.extractBase(furigana) }</span>
 
     return <ruby lang="ja">
-        <Solid.For each={ furigana }>{ (segment) => {
+        <Solid.For each={ furigana }>
+        { (segment) => {
             const dotted =
                 segment[1] !== "" &&
                 segment[1] !== segment[0] &&
                 segment[0].length > 1
             
             return <>
-                { segment[0] }
+                { segment[0] || "\u00a0" }
                 <Rt dotted={ dotted }>
                     { segment[1] }
                 </Rt>
@@ -36,8 +41,9 @@ const Rt = styled.rt<{
 
     ${ props => props.dotted ? `
         border-top: 2px dotted var(--theme-text3rdColor);
-        border-top-left-radius: 0.5em;
-        border-top-right-radius: 0.5em;
+        border-top-left-radius: 0.75em;
+        border-top-right-radius: 0.75em;
+        ruby-align: center;
     ` : `` }
 `
 

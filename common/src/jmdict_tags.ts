@@ -42,6 +42,14 @@ export function getKanjiCommonness(
 }
 
 
+export function extractPitchReading(
+    pitch: string)
+    : string
+{
+    return pitch.replace(/\ꜛ|\ꜜ|\*|\~/g, "")
+}
+
+
 /// From: https://www.edrdg.org/jmwsgi/edhelp.py?svc=jmdict&sid=#kw_pos
 type PartOfSpeechDict = {
     [tag in Api.Word.PartOfSpeechTag]: string

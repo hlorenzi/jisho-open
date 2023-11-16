@@ -36,7 +36,7 @@ const styleClass = css`
         --local-borderColor: transparent;
     }
 
-    padding: 0.25em 0.5em;
+    padding: 0.35em 0.5em;
 
     &.noPadding
     {

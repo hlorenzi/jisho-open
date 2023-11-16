@@ -3,6 +3,32 @@ import { styled } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
+export function InputText(props: {
+    ref?: Solid.Ref<HTMLInputElement>,
+    initialValue?: string,
+    value?: Solid.Accessor<string>,
+    onChange?: (value: string) => void,
+    onInput?: (value: string) => void,
+    onEnter?: (ev: KeyboardEvent) => void,
+    placeholder?: string,
+    autofocus?: boolean,
+    style?: Solid.JSX.CSSProperties,
+})
+{
+    return <StyledInput
+        ref={ props.ref }
+        type="text"
+        value={ props.value?.() ?? props.initialValue ?? "" }
+        placeholder={ props.placeholder }
+        onChange={ ev => props.onChange?.(ev.target.value) }
+        onInput={ ev => props.onInput?.(ev.target.value) }
+        onKeyDown={ ev => { if (ev.key === "Enter") props.onEnter?.(ev) }}
+        autofocus={ props.autofocus }
+        style={ props.style }
+    />
+}
+
+
 const StyledInput = styled.input`
     min-width: 0;
 
@@ -37,29 +63,3 @@ const StyledInput = styled.input`
         color: ${ Framework.themeVar("text4thColor") };
     }
 `
-
-
-export function InputText(props: {
-    ref?: Solid.Ref<HTMLInputElement>,
-    initialValue?: string,
-    value?: Solid.Accessor<string>,
-    onChange?: (value: string) => void,
-    onInput?: (value: string) => void,
-    onEnter?: (ev: KeyboardEvent) => void,
-    placeholder?: string,
-    autofocus?: boolean,
-    style?: Solid.JSX.CSSProperties,
-})
-{
-    return <StyledInput
-        ref={ props.ref }
-        type="text"
-        value={ props.value?.() ?? props.initialValue ?? "" }
-        placeholder={ props.placeholder }
-        onChange={ ev => props.onChange?.(ev.target.value) }
-        onInput={ ev => props.onInput?.(ev.target.value) }
-        onKeyDown={ ev => { if (ev.key === "Enter") props.onEnter?.(ev) }}
-        autofocus={ props.autofocus }
-        style={ props.style }
-    />
-}

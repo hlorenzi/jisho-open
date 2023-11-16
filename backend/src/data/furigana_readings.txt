@@ -23463,6 +23463,7 @@
 両;uncl;もろ;りゃん;ダブル
 晴;uncl;はら
 拇;uncl;おや
+鉢;uncl;わち
 素;auto;しろ;しら;すん
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
@@ -24260,6 +24261,7 @@
 火傷;gikun;やけど
 内障;gikun;そこひ
 障泥;gikun;あおり
+豊受;fused;とゆけ
 不見;conjug;みず
 不老;conjug;おいず
 下関;patch;しものせき

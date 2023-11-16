@@ -157,9 +157,6 @@ function Heading(props: {
         props.heading.searchOnlyKanji ||
         props.heading.searchOnlyKana
 
-    const commonness =
-        JmdictTags.getCommonness(props.heading)
-
     const kanjiWithDuplicates = [...props.heading.base]
         .filter(c => Kana.isKanji(c))
     
@@ -195,92 +192,7 @@ function Heading(props: {
             queryMatch={ isQueryMatch }
             onClick={ ev => popup.open(ev.currentTarget) }
         >
-
-            <HeadingText>
-                <FuriganaRuby encoded={ props.heading.furigana }/>
-            </HeadingText>
-
-            <HeadingTagsWrapper>
-                <HeadingTags>
-                    <Tags.TagCommonness commonness={ commonness }/>
-                    <Tags.TagJlpt jlpt={ props.heading.jlpt }/>
-                    
-                    <Solid.Show when={ props.heading.ateji }>
-                        <Framework.TextTag
-                            title="ateji reading"
-                            label="A"
-                            bkgColor={ Framework.themeVar("iconAtejiColor") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.gikunOrJukujikun }>
-                        <Framework.TextTag
-                            title="gikun reading"
-                            label="G"
-                            bkgColor={ Framework.themeVar("iconGikunColor") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.rareKanji }>
-                        <Framework.IconArrowDownHollow
-                            title="rare kanji"
-                            color={ Framework.themeVar("iconBlueColor") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.outdatedKanji }>
-                        <Framework.IconArrowDown
-                            title="outdated kanji"
-                            color={ Framework.themeVar("iconBlueColor") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.outdatedKana }>
-                        <Framework.IconArrowDown
-                            title="outdated kana"
-                            color={ Framework.themeVar("iconBlueColor") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.irregularKanji }>
-                        <Framework.IconIrregular
-                            title="irregular kanji"
-                            color={ Framework.themeVar("iconRedColor") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.irregularKana }>
-                        <Framework.IconIrregular
-                            title="irregular kana"
-                            color={ Framework.themeVar("iconRedColor") }
-                        />
-                    </Solid.Show>
-
-                    <Solid.Show when={ props.heading.irregularOkurigana }>
-                        <Framework.IconIrregular
-                            title="irregular okurigana"
-                            color={ Framework.themeVar("iconRedColor") }
-                        />
-                    </Solid.Show>
-
-                    <Solid.Show when={ props.heading.searchOnlyKanji }>
-                        <Framework.TextTag
-                            title="search-only kanji"
-                            label="Ø"
-                            bkgColor={ Framework.themeVar("iconRedColor") }
-                        />
-                    </Solid.Show>
-                    
-                    <Solid.Show when={ props.heading.searchOnlyKana }>
-                        <Framework.TextTag
-                            title="search-only kana"
-                            label="Ø"
-                            bkgColor={ Framework.themeVar("iconRedColor") }
-                        />
-                    </Solid.Show>
-
-                </HeadingTags>
-            </HeadingTagsWrapper>
+            <HeadingLabel heading={ props.heading }/>            
         </HeadingBlock>
 
         { popup.rendered }
@@ -327,6 +239,103 @@ const HeadingBlock = styled.button<{
         background-color: ${ Framework.themeVar("buttonPressBkgColor") };
     }
 `
+
+
+export function HeadingLabel(props: {
+    heading: Api.Word.Heading,
+})
+{
+    const commonness =
+        JmdictTags.getCommonness(props.heading)
+
+    return <>
+        <HeadingText>
+            <FuriganaRuby encoded={ props.heading.furigana }/>
+        </HeadingText>
+
+        <HeadingTagsWrapper>
+            <HeadingTags>
+                <Tags.TagCommonness commonness={ commonness }/>
+                <Tags.TagJlpt jlpt={ props.heading.jlpt }/>
+                
+                <Solid.Show when={ props.heading.ateji }>
+                    <Framework.TextTag
+                        title="ateji reading"
+                        label="A"
+                        bkgColor={ Framework.themeVar("iconAtejiColor") }
+                    />
+                </Solid.Show>
+                
+                <Solid.Show when={ props.heading.gikunOrJukujikun }>
+                    <Framework.TextTag
+                        title="gikun reading"
+                        label="G"
+                        bkgColor={ Framework.themeVar("iconGikunColor") }
+                    />
+                </Solid.Show>
+                
+                <Solid.Show when={ props.heading.rareKanji }>
+                    <Framework.IconArrowDownHollow
+                        title="rare kanji"
+                        color={ Framework.themeVar("iconBlueColor") }
+                    />
+                </Solid.Show>
+                
+                <Solid.Show when={ props.heading.outdatedKanji }>
+                    <Framework.IconArrowDown
+                        title="outdated kanji"
+                        color={ Framework.themeVar("iconBlueColor") }
+                    />
+                </Solid.Show>
+                
+                <Solid.Show when={ props.heading.outdatedKana }>
+                    <Framework.IconArrowDown
+                        title="outdated kana"
+                        color={ Framework.themeVar("iconBlueColor") }
+                    />
+                </Solid.Show>
+                
+                <Solid.Show when={ props.heading.irregularKanji }>
+                    <Framework.IconIrregular
+                        title="irregular kanji"
+                        color={ Framework.themeVar("iconRedColor") }
+                    />
+                </Solid.Show>
+                
+                <Solid.Show when={ props.heading.irregularKana }>
+                    <Framework.IconIrregular
+                        title="irregular kana"
+                        color={ Framework.themeVar("iconRedColor") }
+                    />
+                </Solid.Show>
+
+                <Solid.Show when={ props.heading.irregularOkurigana }>
+                    <Framework.IconIrregular
+                        title="irregular okurigana"
+                        color={ Framework.themeVar("iconRedColor") }
+                    />
+                </Solid.Show>
+
+                <Solid.Show when={ props.heading.searchOnlyKanji }>
+                    <Framework.TextTag
+                        title="search-only kanji"
+                        label="Ø"
+                        bkgColor={ Framework.themeVar("iconRedColor") }
+                    />
+                </Solid.Show>
+                
+                <Solid.Show when={ props.heading.searchOnlyKana }>
+                    <Framework.TextTag
+                        title="search-only kana"
+                        label="Ø"
+                        bkgColor={ Framework.themeVar("iconRedColor") }
+                    />
+                </Solid.Show>
+
+            </HeadingTags>
+        </HeadingTagsWrapper>
+    </>
+}
 
 
 const HeadingText = styled.span`
@@ -406,8 +415,8 @@ function Senses(props: {
     for (const sense of props.senses)
     {
         // Check whether the part-of-speech tags have changed between senses
-        if (!sense.pos.every(pos => currentPos.some(curr => curr === pos)) ||
-            !currentPos.every(pos => sense.pos.some(curr => curr === pos)))
+        if (!sense.pos.every(pos => currentPos.some(pos2 => pos2 === pos)) ||
+            !currentPos.every(pos => sense.pos.some(pos2 => pos2 === pos)))
         {
             const partsOfSpeech = sense.pos
                 .map(pos => JmdictTags.nameForPartOfSpeechTag(pos))

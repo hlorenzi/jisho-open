@@ -70,7 +70,7 @@ function InflectionPath(props: {
                 <InflectionRule>
                     <Framework.Link
                         label={ <>{ ruleDisplay } 🡆</> }
-                        onClick={ ev => popupRefs.onOpen(ev.currentTarget) }
+                        onClick={ ev => popupRefs.open(ev.currentTarget) }
                         noUnderline
                     />
                 </InflectionRule>

@@ -6,6 +6,7 @@ export interface Entry
     id: string
 
     jouyou?: Api.JouyouGrade
+    jinmeiyou?: boolean
     jlpt?: Api.JlptLevel
     rankNews?: number
 

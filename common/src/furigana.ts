@@ -7,8 +7,14 @@ function debug(fn: () => void)
 }
 
 
+const ignorableRegex =
+    /[\・\、\。\．\＝\?\？\-\−]/g
+
+
 const isIgnorable = (c: string) =>
     c == "・" || c == "、" || c == "。" || c == "．" || c == "＝" ||
+    c == "?" || // ascii question mark
+    c == "？" || // full-width question mark
     c == "-" || // ascii minus
     c == "−" // U+2212 MINUS SIGN
 
@@ -101,20 +107,21 @@ export function decodeFromParts(
 ///      (黄色.い.声, きいろ.い.こえ) and
 ///      (黄色.い.声, き.い.ろいこえ)
 export function match(
-    base: string,
-    reading: string)
+    baseRaw: string,
+    readingRaw: string)
     : Furigana[]
 {
-    if (reading.length === 0)
-        return [[[base, ""]]]
+    if (readingRaw.length === 0)
+        return [[[baseRaw, ""]]]
 
-    if (base.length === 0)
-        return [[["", reading]]]
+    if (baseRaw.length === 0)
+        return [[["", readingRaw]]]
 
-    if (base === reading)
-        return [[[base, ""]]]
+    if (baseRaw === readingRaw)
+        return [[[baseRaw, ""]]]
 
-    reading = reading.replace("・", "")
+    const base = baseRaw//.replace(ignorableRegex, "")
+    const reading = readingRaw.replace(ignorableRegex, "")
 
     const withAddedPart = (result: Furigana, part: FuriganaSegment): Furigana =>
     {
@@ -299,13 +306,41 @@ export function match(
 
     const result = attempts.map(att => att.result)
     if (result.length == 0)
-        return [[[base, reading]]]
+        return [[[baseRaw, readingRaw]]]
+
+    // Reinsert ignored characters
+    /*if (base !== baseRaw)
+    {
+        for (const res of result)
+        {
+            let segment = 0
+            let segmentChar = 0
+            for (let c = 0; c < baseRaw.length; c++)
+            {
+                const segmentBase = res[segment][0]
+
+                if (segmentBase[segmentChar] === baseRaw[c])
+                    continue
+
+                if (segmentChar === segmentBase.length - 1)
+                {
+                    res.splice(segment + 1, 0, [baseRaw[c], ""])
+                    continue
+                }
+
+                res[segment][0] =
+                    segmentBase.slice(0, segmentChar) +
+                    baseRaw[c] +
+                    segmentBase.slice(segmentChar)
+            }
+        }
+    }*/
 
     return result
 }
 
 
-/// Choose the best one of a list of possible furigana segmentations
+/// Choose the best one out of a list of possible furigana segmentations
 /// (as returned by `match`) using a table of individual
 /// kanji readings, in order to split up strings of adjacent kanji.
 export function revise(
