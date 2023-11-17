@@ -2,7 +2,17 @@ import * as Kana from "./kana.ts"
 import { raw } from "./inflection.raw.ts"
 
 
-export const table = compile(raw)
+let tableCache: Table | null = null
+
+
+export function getTable(): Table
+{
+    if (tableCache)
+        return tableCache
+
+    tableCache = compile(raw)
+    return tableCache
+}
 
 
 export type Table = {
@@ -190,6 +200,7 @@ export function breakdown(
     : Breakdown
 {
     const steps: BreakdownStep[] = []
+    const table = getTable()
 
     for (const rule of table.rules)
     {
@@ -220,7 +231,7 @@ export function breakdown(
             {
                 const charBeforeLast = sourceTerm[sourceTerm.length - 2]
                 const vowel = Kana.vowelOf(charBeforeLast)
-                if (vowel !== "i" && vowel !== "e")
+                if (vowel !== "i" && vowel !== "e" && vowel !== null)
                     acceptable = false
             }
 
@@ -264,6 +275,7 @@ export function getRuleGroup(
     id: string)
     : Group | undefined
 {
+    const table = getTable()
     return table.groups.get(id)
 }
 
@@ -272,12 +284,14 @@ export function getRules(
     id: string)
     : Rule[]
 {
+    const table = getTable()
     return table.rules.filter(r => r.id === id)
 }
 
 
 export function test()
 {
+    const table = getTable()
     console.dir(table)
     console.dir(breakdown("たべまして"))
     console.dir(breakdown("たべません"))

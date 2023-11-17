@@ -55,6 +55,7 @@ const Layout = styled.span`
     transition: box-shadow 0.05s;
     cursor: pointer;
     user-select: none;
+    background-color: ${ Framework.themeVar("pageBkgColor") };
 
     @media (pointer: coarse)
     {
@@ -64,7 +65,6 @@ const Layout = styled.span`
     &:hover
     {
         box-shadow: inset 0px 0px 0px 0.5px ${ Framework.themeVar("borderColor") };
-        background-color: transparent;
     }
 
     &:disabled
@@ -90,7 +90,7 @@ const StyledSelect = styled.select`
     font-size: 1em;
     font-family: inherit;
     color: inherit;
-    background-color: transparent;
+    background-color: ${ Framework.themeVar("pageBkgColor") };
     transition: background-color 0.05s;
     cursor: pointer;
 

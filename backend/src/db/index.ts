@@ -11,8 +11,13 @@ export type SearchOptions = {
 
 export interface Interface
 {
-    importWordEntries:
-        (entries: Api.Word.Entry[]) => Promise<void>
+    importWordEntries: (
+        importStartDate: Date,
+        entries: Api.Word.Entry[])
+        => Promise<void>
+
+    importWordEntriesFinish:
+        (importStartDate: Date) => Promise<void>
 
     importKanjiEntries:
         (entries: Api.Kanji.Entry[]) => Promise<void>
@@ -139,6 +144,7 @@ export function createDummy(): Interface
 {
     return {
         importWordEntries: async () => {},
+        importWordEntriesFinish: async () => {},
         importKanjiEntries: async () => {},
         importKanjiWordCrossRefEntries: async () => {},
 

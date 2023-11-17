@@ -52,7 +52,7 @@ function InflectionPath(props: {
     for (let i = 0; i < props.path.length; i++)
     {
         const step = props.path[i]
-        const ruleDisplay = Inflection.table.groups.get(step.ruleId)!.display
+        const ruleDisplay = Inflection.getTable().groups.get(step.ruleId)!.display
 
         const [termStart, termMid, termEnd] = splitAtChangedChars(
             step.sourceTerm,
@@ -159,10 +159,9 @@ function InflectionRulePopup(props: {
 
     return <InflectionPopupWrapper>
         <Solid.Show when={ rules.length !== 0 }>
-            <span style={{ "font-weight": "bold" }}>
-                Derivation for <CategoryName>{ ruleGroup!.display }</CategoryName>:
-            </span>
-            <br/>
+            <h2>
+                Derivation for <CategoryName>{ ruleGroup!.display }</CategoryName>
+            </h2>
             <InflectionTableSection>
                 <InflectionTable expanded={ rulesExpanded() }>
                     <Solid.For each={ rulesExpanded() ? rules : rulesForCategory }>{ (rule) =>
@@ -205,10 +204,9 @@ function InflectionRulePopup(props: {
         </Solid.Show>
         
         <Solid.Show when={ ruleGroup?.refs.length !== 0 }>
-            <span style={{ "font-weight": "bold" }}>
-                Resources:
-            </span>
-            <br/>
+            <h2>
+                Resources
+            </h2>
             <ResourcesList>
                 <Solid.For each={ ruleGroup!.refs }>{ (ref) =>
                     <li>

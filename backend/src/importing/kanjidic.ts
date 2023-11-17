@@ -3,7 +3,7 @@ import * as Logging from "./logging.ts"
 import * as File from "./file.ts"
 import * as Xml from "./xml.ts"
 import * as KanjidicRaw from "./kanjidic_raw.ts"
-import * as Gatherer from "./gatherer.ts"
+import * as BatchDispatcher from "./batch_dispatcher.ts"
 import * as Api from "common/api/index.ts"
 import * as KanjiStructCat from "../data/kanji_structural_category.ts"
 import * as KanjiComponents from "../data/kanji_components.ts"
@@ -39,7 +39,7 @@ export async function downloadAndImport(
 
     logger.writeLn("importing kanji entries...")
 
-    const gatherer = new Gatherer.Gatherer(
+    const dispatcher = new BatchDispatcher.BatchDispatcher(
         25,
         (items: Api.Kanji.Entry[]) => db.importKanjiEntries(items))
     
@@ -48,7 +48,7 @@ export async function downloadAndImport(
         try
         {
             const apiEntry = normalizeEntry(rawEntry)
-            await gatherer.push(apiEntry)
+            await dispatcher.push(apiEntry)
         }
         catch (e: any)
         {
@@ -57,7 +57,7 @@ export async function downloadAndImport(
         }
     }
 
-    await gatherer.finish()
+    await dispatcher.finish()
 
     KanjiComponents.clearCache()
 }

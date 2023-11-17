@@ -1,8 +1,7 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-import * as Api from "../api.ts"
-import * as Pages from "../pages.ts"
+import * as App from "../app.ts"
 import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
 import { EntryWord } from "../components/EntryWord.tsx"
@@ -17,10 +16,10 @@ const limitIncrease = 20
 export function PageSearch(props: Framework.RouteProps)
 {
     const query = Solid.createMemo(
-        () => props.routeMatch()?.matches[Pages.Search.matchQuery] ?? "")
+        () => props.routeMatch()?.matches[App.Pages.Search.matchQuery] ?? "")
 
     const tokenIndex = Solid.createMemo(() => {
-        const tokenStr = props.routeMatch()?.matches[Pages.Search.matchToken]
+        const tokenStr = props.routeMatch()?.matches[App.Pages.Search.matchToken]
         if (!tokenStr)
             return undefined
 
@@ -59,7 +58,7 @@ function SearchResults(props: {
     const [searchResults] = Solid.createResource(
         () => [props.query(), limit()] as const,
         async (data) => {
-            const res = await Api.search({
+            const res = await App.Api.search({
                 query: data[0],
                 limit: data[1],
             })
@@ -105,18 +104,18 @@ function SearchResults(props: {
 
                     <Solid.Match when={ result.type === "word" }>
                         <EntryWord
-                            entry={ result as Api.Word.Entry }
+                            entry={ result as App.Api.Word.Entry }
                             query={ searchResults.latest!.query }
                         />
                     </Solid.Match>
 
                     <Solid.Match when={ result.type === "kanji" }>
-                        <EntryKanji entry={ result as Api.Kanji.Entry }/>
+                        <EntryKanji entry={ result as App.Api.Kanji.Entry }/>
                     </Solid.Match>
 
                     <Solid.Match when={ result.type === "sentence" }>
                         <EntrySentence
-                            entry={ result as Api.Search.SentenceAnalysis }
+                            entry={ result as App.Api.Search.SentenceAnalysis }
                             query={ searchResults.latest!.query }
                             tokenIndex={ props.tokenIndex?.() }
                         />

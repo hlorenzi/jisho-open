@@ -5,6 +5,7 @@ import * as Jmdict from "../../importing/jmdict.ts"
 
 export async function importWordEntries(
     state: MongoDb.State,
+    importStartDate: Date,
     apiWords: Api.Word.Entry[])
     : Promise<void>
 {
@@ -34,6 +35,16 @@ export async function importWordEntries(
 
     if (resDefs.insertedCount !== dbDefs.length)
         throw `MongoDb.importWords failed`
+}
+
+
+export async function importWordEntriesFinish(
+    state: MongoDb.State,
+    importStartDate: Date)
+    : Promise<void>
+{
+    await state.collWords.deleteMany(
+        { date: { $lt: importStartDate }})
 }
 
 
@@ -77,6 +88,7 @@ function translateApiWordToDbWord(
         ...apiWord,
         _id: apiWord.id,
         headings: apiWord.headings.map(translateHeading),
+        date: new Date(),
         lookUp,
     }
 

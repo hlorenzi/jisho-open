@@ -1,35 +1,34 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-import * as Api from "../api.ts"
-import * as Pages from "../pages.ts"
+import * as App from "../app.ts"
 import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
 import { UserLabel } from "../components/User.tsx"
 
 
-type StudyListOrFolder = Api.StudyList.Entry & {
-    children?: Api.StudyList.Entry[]
+type StudyListOrFolder = App.Api.StudyList.Entry & {
+    children?: App.Api.StudyList.Entry[]
 }
 
 
 export function PageUser(props: Framework.RouteProps)
 {
     const userId = Solid.createMemo(
-        () => props.routeMatch()?.matches[Pages.User.matchUserId] ?? "")
+        () => props.routeMatch()?.matches[App.Pages.User.matchUserId] ?? "")
 
     const [data] = Solid.createResource(
         userId,
         async (userId) => {
-            const authUser = await Api.authenticate()
-            const { user } = await Api.getUser({ userId })
+            const authUser = await App.Api.authenticate()
+            const { user } = await App.Api.getUser({ userId })
             const userIsSelf = authUser.id === userId
-            const { studylists } = await Api.studylistGetAll({ userId })
+            const { studylists } = await App.Api.studylistGetAll({ userId })
 
             const studylistsToplevel: StudyListOrFolder[] = []
             for (const list of studylists)
             {
-                const [folderName, listName] = Api.StudyList.getFolderName(list)
+                const [folderName, listName] = App.Api.StudyList.getFolderName(list)
                 if (!folderName)
                 {
                     list.selfName = list.name
@@ -60,16 +59,6 @@ export function PageUser(props: Framework.RouteProps)
                 toplevelFolder.children!.push(list)
             }
 
-            /*if (app.prefs.listOrdering == "name")
-            {
-                toplevel.sort((a, b) => a.name.localeCompare(b.name))
-                for (const folder of toplevel)
-                {
-                    if (folder.isFolder)
-                        folder.children.sort((a, b) => a.name.localeCompare(b.name))
-                }
-            }*/
-
             return {
                 authUser,
                 user,
@@ -77,6 +66,29 @@ export function PageUser(props: Framework.RouteProps)
                 studylistsToplevel,
             }
         })
+
+    const listsOrdered = Solid.createMemo(() => {
+        let lists = data()?.studylistsToplevel
+        if (!lists)
+            return undefined
+
+        if (App.usePrefs().studylistOrdering === "name")
+        {
+            lists = [...lists.map(l => ({ ...l }))]
+                .sort((a, b) => a.name.localeCompare(b.name))
+            
+            for (const list of lists)
+            {
+                if (list.children === undefined)
+                    continue
+
+                list.children = [...list.children]
+                    .sort((a, b) => a.name.localeCompare(b.name))
+            }
+        }
+
+        return lists
+    })
 
     const [expandedFolders, setExpandedFolders] =
         Framework.createHistorySignal("expandedFolders", new Set<string>())
@@ -97,14 +109,14 @@ export function PageUser(props: Framework.RouteProps)
     }
 
     const onCreate = async () => {
-        const res = await Api.studylistCreate()
+        const res = await App.Api.studylistCreate()
         if (!res)
             return
 
-        Framework.historyPush(Pages.Studylist.urlWith(res.studylistId))
+        Framework.historyPush(App.Pages.Studylist.urlWith(res.studylistId))
     }
 
-    const onDelete = async (studylist: StudyListOrFolder) => {
+    const onDelete = async () => {
 
     }
 
@@ -123,7 +135,7 @@ export function PageUser(props: Framework.RouteProps)
                         title="User settings"
                         label={ <Framework.IconPencil/> }
                         noBorder
-                        href={ Api.Account.url }
+                        href={ App.Api.Account.url }
                         native
                     />
                 </Solid.Show>
@@ -145,19 +157,30 @@ export function PageUser(props: Framework.RouteProps)
 
             <br/>
 
-            <Solid.Show when={ data()?.userIsSelf }>
-                <Framework.Button
-                    label={ <><Framework.IconPlus/> Create</> }
-                    accent
-                    onClick={ onCreate }
+            <div>
+                <Framework.Select
+                    label="Order"
+                    value={ () => App.usePrefs().studylistOrdering }
+                    onChange={ (value) => App.mergePrefs({ studylistOrdering: value }) }
+                    options={ [
+                        { label: "By recent activity", value: "activity" },
+                        { label: "By name", value: "name" },
+                    ]}
                 />
-                <br/>
-                <br/>
-            </Solid.Show>
+                <Solid.Show when={ data()?.userIsSelf }>
+                    <Framework.Button
+                        label={ <><Framework.IconPlus/> Create</> }
+                        accent
+                        onClick={ onCreate }
+                    />
+                </Solid.Show>
+            </div>
+
+            <br/>
 
             <ListLayout>
                 <Solid.For
-                    each={ data()?.studylistsToplevel }
+                    each={ listsOrdered() }
                     fallback={ <Framework.Button disabled noBorder>Empty</Framework.Button> }
                 >
                 { (listOrFolder) =>
@@ -271,7 +294,7 @@ function Studylist(props: {
 
         <Framework.Button
             noBorder
-            href={ Pages.Studylist.urlWith(props.studylist.id) }
+            href={ App.Pages.Studylist.urlWith(props.studylist.id) }
         >
             <Framework.IconBook/>
             { " " }

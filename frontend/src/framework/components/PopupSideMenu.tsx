@@ -3,6 +3,13 @@ import { styled, keyframes } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
+export type PopupData = {
+    open: (anchorElem?: HTMLElement) => void
+    close: () => void
+    rendered: Solid.JSX.Element
+}
+
+
 export function makePopupSideMenu(props: {
     childrenFn?: () => Solid.JSX.Element,
 })
@@ -11,7 +18,7 @@ export function makePopupSideMenu(props: {
 
     const [isOpen, setIsOpen] = Solid.createSignal(false)
 
-    const open = () => {
+    const open = (anchorElem?: HTMLElement) => {
         setIsOpen(true)
         dialog?.showModal()
     }
@@ -30,20 +37,23 @@ export function makePopupSideMenu(props: {
         <Dialog
             ref={ dialog }
             onClick={ onClick }
+            class="PopupPageSideMenu"
         >
-            <Wrapper>
-                <Content>
-                    { props.childrenFn?.() }
-                </Content>
-            </Wrapper>
+            <DivPageLayout>
+                <DivPageContent>
+                    <DivPageContent2>
+                        { props.childrenFn?.() }
+                    </DivPageContent2>
+                </DivPageContent>
+            </DivPageLayout>
         </Dialog>
     </Solid.Show>
 
     return {
-        rendered,
         open,
         close,
-    }
+        rendered,
+    } satisfies PopupData
 }
 
 
@@ -59,14 +69,16 @@ const backdropKeyframes = keyframes`
 
 
 const Dialog = styled.dialog`
+    margin: 0;
     padding: 0;
     border: 0;
-    margin-top: 0;
-    margin-right: 0;
+    position: fixed;
     width: 100vw;
-    height: 100vh;
-    overflow: hidden;
+    min-width: 100vw;
+    min-height: 100vh;
+    overflow-x: hidden;
     background-color: transparent;
+    outline: 0;
 
     &::backdrop {
         animation-name: ${ backdropKeyframes };
@@ -75,15 +87,15 @@ const Dialog = styled.dialog`
 `
 
 
-const Wrapper = styled.div`
-    width: 100%;
-    height: 100%;
+const DivPageLayout = styled.div`
+    width: 100vw;
+    min-height: 100vh;
 
     display: grid;
-    grid-template: auto / 1fr ${ Framework.pageWidth } 1fr;
+    grid-template: auto / 1fr auto 1fr;
     background-color: transparent;
 
-    overflow: hidden;
+    overflow-x: hidden;
     pointer-events: none;
     
 	@media (max-width: ${ Framework.pageSmallWidthThreshold })
@@ -93,26 +105,51 @@ const Wrapper = styled.div`
 `
 
 
-const Content = styled.div`
+const DivPageContent = styled.div`
     grid-column: 2;
-    justify-self: end;
 
-	width: min(60vw, calc(${ Framework.pageWidth } / 3));
-    max-height: calc(100vh - 2em);
+    display: grid;
+    grid-template: auto / auto;
+
+	width: ${ Framework.pageWidth };
+	max-width: 100vw;
 	overflow-x: hidden;
-    pointer-events: all;
+    pointer-events: none;
 
 	text-align: left;
 	color: ${ Framework.themeVar("textColor") };
-	background-color: ${ Framework.themeVar("pageBkgColor") };
 
-    border: 1px solid ${ Framework.themeVar("borderColor") };
-    border-radius: 0.25rem;
-    box-shadow: 0 0.15em 0.15em ${ Framework.themeVar("popupShadowColor") };
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
     
-    margin-top: 4em;
-    margin-right: 1em;
-    --local-pagePadding: 1em;
+	padding: 0;
+    --local-pagePadding: 1.5em;
+    
+	@media (max-width: ${ Framework.pageSmallWidthThreshold })
+	{
+        width: 100%;
+		border-right: 0;
+	}
+
+    @media (pointer: coarse)
+    {
+        width: 100%;
+    }
+`
+
+
+const DivPageContent2 = styled.div`
+    width: 16em;
+    max-width: 75vw;
+
+    background-color: ${ Framework.themeVar("pageBkgColor") };
+    justify-self: end;
+    pointer-events: all;
+
+    border-left: 1px solid ${ Framework.themeVar("borderColor") };
+    box-shadow: -0.15em 0 0.15em ${ Framework.themeVar("popupShadowColor") };
+    
+    padding-top: 4em;
 	padding-left: var(--local-pagePadding);
 	padding-right: var(--local-pagePadding);
 `

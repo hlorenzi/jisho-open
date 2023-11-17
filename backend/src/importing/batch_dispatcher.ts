@@ -1,4 +1,4 @@
-export class Gatherer<T, FnReturn>
+export class BatchDispatcher<T, FnReturn>
 {
     items: T[]
     maxCount: number

@@ -32,6 +32,7 @@ export type State = {
 export type DbWordEntry = Omit<Api.Word.Entry, "id" | "headings"> & {
     _id: string
     headings: DbWordHeading[]
+    date: Date
     lookUp: {
         /// Length in characters of the longest heading
         len: number
@@ -182,8 +183,10 @@ export async function connect(): Promise<Db.Interface>
     })
 
     return {
-        importWordEntries: (entries) =>
-            MongoDbImportWords.importWordEntries(state, entries),
+        importWordEntries: (date, entries) =>
+            MongoDbImportWords.importWordEntries(state, date, entries),
+        importWordEntriesFinish: (date) =>
+            MongoDbImportWords.importWordEntriesFinish(state, date),
         importKanjiEntries: (entries) =>
             MongoDbImportKanji.importKanjiEntries(state, entries),
         importKanjiWordCrossRefEntries: (entries) =>
@@ -297,6 +300,7 @@ export function translateDbWordToApiWord(
     const {
         _id,
         lookUp,
+        date,
         ...apiWord
     } = {
         ...dbWord,

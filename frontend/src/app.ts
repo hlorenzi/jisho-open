@@ -1,8 +1,12 @@
 import * as Framework from "./framework/index.ts"
 
+export * as Api from "./api.ts"
+export * as Pages from "./pages.ts"
+
 
 export type Prefs = {
     debugMode: boolean
+    theme: string
 
     studylistOrdering: "activity" | "name"
     studylistWordOrdering: "date-added" | "kana"
@@ -15,6 +19,7 @@ export type Prefs = {
 
 export const prefsDefault: Prefs = {
     debugMode: false,
+    theme: "auto",
 
     studylistOrdering: "activity",
     studylistWordOrdering: "date-added",

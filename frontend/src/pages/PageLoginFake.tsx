@@ -1,6 +1,6 @@
 import * as Solid from "solid-js"
 import * as Framework from "../framework/index.ts"
-import * as Api from "common/api/index.ts"
+import * as App from "../app.ts"
 
 
 export function PageLoginFake(props: Framework.RouteProps)
@@ -18,7 +18,7 @@ export function PageLoginFake(props: Framework.RouteProps)
     }
 
     window.location.assign(
-        Api.Login.urlFakeForUserId(fakeUserId, redirectUrl))
+        App.Api.Login.urlFakeForUserId(fakeUserId, redirectUrl))
     
     return <></>
 }

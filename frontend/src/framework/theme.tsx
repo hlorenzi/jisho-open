@@ -1,4 +1,7 @@
+import * as Solid from "solid-js"
+import * as SolidWeb from "solid-js/web"
 import * as Styled from "solid-styled-components"
+import * as Framework from "./index.ts"
 
 
 export function themeVar<T extends keyof Theme>(
@@ -10,6 +13,7 @@ export function themeVar<T extends keyof Theme>(
 
 
 export type Theme = {
+    id: string
     name: string
 
     pageBigMinWidth: string
@@ -75,6 +79,7 @@ export type Theme = {
 
 
 export const themeLight: Theme = {
+    id: "light",
     name: "Light",
     
     pageBigMinWidth: "900px",
@@ -141,7 +146,7 @@ export const themeLight: Theme = {
 
 export const themeDarkGray: Theme = {
     ...themeLight,
-
+    id: "dark",
     name: "Dark Gray",
 
     themeColor: "#202122",
@@ -155,7 +160,7 @@ export const themeDarkGray: Theme = {
 
     textColor: "#dcddde",
     text2ndColor: "#72767d",
-    text3rdColor: "#444548",
+    text3rdColor: "#64666d",
     text4thColor: "#444548",
     textDisabledColor: "#72767d",
     textHighlightBkgColor: "#35363a",
@@ -180,9 +185,179 @@ export const themeDarkGray: Theme = {
 }
 
 
+const themeDarkBlue: Theme = {
+    ...themeLight,
+    id: "dark-blue",
+    name: "Dark Blue",
+
+    themeColor: "#020029",
+    voidBkgColor: "#0e0f15",
+    pageBkgColor: "#020029",
+
+    borderColor: "#304579",
+    focusOutlineColor: "#557db9",
+    popupOverlayColor: "#00000040",
+    popupShadowColor: "#00000060",
+
+    textColor: "#9db6dc",
+    text2ndColor: "#4761ab",
+    text3rdColor: "#2e459a",
+    text4thColor: "#233473",
+    textDisabledColor: "#2e459a",
+    textHighlightBkgColor: "#1c2438",
+    textStrongBkgColor: "#1c2438",
+
+    linkHoverColor: "#daecff",
+    linkPressColor: "#4f6680",
+
+    buttonHoverBkgColor: "#293044",
+    buttonPressBkgColor: "#161d3c",
+    buttonAccentColor: "#5ebf3e",
+    buttonDangerColor: "#ec4226",
+    
+    loadingBar1stColor: "#9db6dc",
+    loadingBar2ndColor: "#4761ab",
+    loadingBarBkgColor: "#2e459a",
+
+    iconGreenColor: "#3a9c6a",
+    iconRedColor: "#c14733",
+    iconBlueColor: "#00aaff",
+    iconDetailColor: "#020029",
+}
+
+
+const themeDarkRed: Theme = {
+    ...themeLight,
+    id: "dark-red",
+    name: "Dark Red",
+
+    themeColor: "#332222",
+    voidBkgColor: "#2a1b1b",
+    pageBkgColor: "#332222",
+
+    borderColor: "#863b2f",
+    focusOutlineColor: "#f16532",
+    popupOverlayColor: "#00000040",
+    popupShadowColor: "#00000060",
+
+    textColor: "#ecb268",
+    text2ndColor: "#bd8149",
+    text3rdColor: "#82553b",
+    text4thColor: "#6b4935",
+    textDisabledColor: "#82553b",
+    textHighlightBkgColor: "#562d26",
+    textStrongBkgColor: "#562d26",
+
+    linkHoverColor: "#f5deb3",
+    linkPressColor: "#a95600",
+
+    buttonHoverBkgColor: "#562d26",
+    buttonPressBkgColor: "#290505",
+    buttonAccentColor: "#5ebf3e",
+    buttonDangerColor: "#ec4226",
+    
+    loadingBar1stColor: "#926a45",
+    loadingBar2ndColor: "#863b2f",
+    loadingBarBkgColor: "#bd8149",
+
+    iconGreenColor: "#5ebf3e",
+    iconRedColor: "#ec4226",
+    iconBlueColor: "#00aaff",
+    iconDetailColor: "#332222",
+}
+
+
+const themeHighContrast: Theme = {
+    ...themeLight,
+    id: "high-contrast",
+    name: "High Contrast",
+
+    themeColor: "#000000",
+    voidBkgColor: "#000",
+    pageBkgColor: "#000",
+
+    borderColor: "#ccc",
+    focusOutlineColor: "#0f0",
+    popupOverlayColor: "#0000",
+    popupShadowColor: "#0000",
+
+    textColor: "#fff",
+    text2ndColor: "#ccc",
+    text3rdColor: "#aaa",
+    text4thColor: "#888",
+    textDisabledColor: "#ccc",
+    textHighlightBkgColor: "#222",
+    textStrongBkgColor: "#222",
+
+    linkHoverColor: "#fff",
+    linkPressColor: "#ddd",
+
+    buttonHoverBkgColor: "#000",
+    buttonPressBkgColor: "#222",
+    buttonAccentColor: "#0f0",
+    buttonDangerColor: "#f00",
+    
+    loadingBar1stColor: "#ddd",
+    loadingBar2ndColor: "#666",
+    loadingBarBkgColor: "#222",
+
+    iconGreenColor: "#0f0",
+    iconYellowColor: "#ff0",
+    iconRedColor: "#f00",
+    iconBlueColor: "#0af",
+    iconDetailColor: "#000",
+}
+
+
+const themeChromaKey: Theme = {
+    ...themeLight,
+    id: "chroma-key",
+    name: "Chroma-Key",
+
+    themeColor: "#000000",
+    voidBkgColor: "#00f",
+    pageBkgColor: "#00f",
+
+    borderColor: "#fff",
+    focusOutlineColor: "#9d0",
+    popupOverlayColor: "#0000",
+    popupShadowColor: "#0000",
+
+    textColor: "#fff",
+    text2ndColor: "#ccc",
+    text3rdColor: "#aaa",
+    text4thColor: "#888",
+    textDisabledColor: "#ccc",
+    textStrongBkgColor: "#00d",
+    textHighlightBkgColor: "#00d",
+
+    linkHoverColor: "#fff",
+    linkPressColor: "#ddd",
+
+    buttonHoverBkgColor: "#00d",
+    buttonPressBkgColor: "#008",
+    buttonAccentColor: "#0f0",
+    buttonDangerColor: "#f00",
+    
+    loadingBar1stColor: "#77ab00",
+    loadingBar2ndColor: "#dbe19e",
+    loadingBarBkgColor: "#eeeeee",
+
+    iconGreenColor: "#00ff00",
+    iconYellowColor: "#ffaa00",
+    iconRedColor: "#f00",
+    iconBlueColor: "#6bf",
+    iconDetailColor: "#000",
+}
+
+
 export const themes: Theme[] = [
     themeLight,
     themeDarkGray,
+    themeDarkBlue,
+    themeDarkRed,
+    themeHighContrast,
+    themeChromaKey,
 ]
 
 
@@ -206,17 +381,29 @@ export function makeCssForTheme(
 
 export function Theme()
 {
-    const prefersDark =
-        window.matchMedia("(prefers-color-scheme: dark)").matches
+    const data = Solid.createMemo(() => {
+        const prefs = Framework.usePrefs({ theme: "auto" })
+    
+        const prefersDark =
+            window.matchMedia("(prefers-color-scheme: dark)").matches
 
-    const theme = prefersDark ? themeDarkGray : themeLight
+        const theme =
+            themes.find(th => th.id === prefs.theme) ??
+            (prefersDark ? themeDarkGray : themeLight)
+            
+        const metaThemeColor = document.querySelector("meta[name=theme-color]")
+        if (metaThemeColor)
+            metaThemeColor.setAttribute(
+                "content",
+                theme.themeColor ?? "#ffffff")
 
-    const metaThemeColor = document.querySelector("meta[name=theme-color]")
-    if (metaThemeColor)
-        metaThemeColor.setAttribute("content", theme.themeColor || "#ffffff")
+        return {
+            theme,
+            globalStyle: Styled.createGlobalStyles`
+                ${ makeCssForTheme(theme) }
+            `
+        }
+    })
 
-    const GlobalStyles = Styled.createGlobalStyles`
-        ${ makeCssForTheme(theme) }
-    `
-    return <GlobalStyles/>
+    return <SolidWeb.Dynamic component={ data().globalStyle }/>
 }

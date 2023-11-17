@@ -68,6 +68,7 @@ function Headings(props: {
                 entry={ props.entry }
                 wordId={ props.wordId }
                 allKanji={ allKanji }
+                popup={ popupEllipsis }
             />,
     })
 
@@ -75,7 +76,7 @@ function Headings(props: {
         childrenFn: () =>
             <StudyListPopup
                 wordId={ props.wordId }
-                close={ popupBookmark.close }
+                popup={ popupBookmark }
             />,
     })
 
@@ -115,6 +116,7 @@ function HeadingEllipsisPopup(props: {
     entry: Api.Word.Entry,
     wordId: string,
     allKanji: string,
+    popup: Framework.PopupData,
 })
 {
     return <>
@@ -134,7 +136,10 @@ function HeadingEllipsisPopup(props: {
         />
         <Framework.ButtonPopupPageWide
             label="Log entry to console"
-            onClick={ () => console.log(props.entry) }
+            onClick={ () => {
+                console.log(props.entry)
+                props.popup.close()
+            }}
         />
     </>
 }

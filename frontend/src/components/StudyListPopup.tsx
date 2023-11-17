@@ -6,7 +6,7 @@ import * as Api from "../api.ts"
 
 export function StudyListPopup(props: {
     wordId: string,
-    close?: () => void,
+    popup: Framework.PopupData,
 })
 {
     const [data] = Framework.createAsyncSignal(
@@ -65,7 +65,7 @@ export function StudyListPopup(props: {
                     studylistId: studyListId,
                     wordIds: [props.wordId],
                 })
-                props.close?.()
+                props.popup.close()
             }
             else
             {
@@ -73,7 +73,7 @@ export function StudyListPopup(props: {
                     studylistId: studyListId,
                     wordId: props.wordId,
                 })
-                props.close?.()
+                props.popup.close()
             }
         }
         finally
@@ -89,7 +89,7 @@ export function StudyListPopup(props: {
             if (!await Api.studylistCreateAndAddWord(props.wordId))
                 return
             
-            props.close?.()
+            props.popup.close()
         }
         finally
         {

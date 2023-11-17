@@ -172,6 +172,7 @@ const Layout = styled.div`
     grid-row-gap: 0.5em;
     overflow: hidden;
     text-align: left;
+    color: ${ Framework.themeVar("textColor") };
 `
 
 

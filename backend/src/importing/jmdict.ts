@@ -3,7 +3,7 @@ import * as Logging from "./logging.ts"
 import * as File from "./file.ts"
 import * as Xml from "./xml.ts"
 import * as JmdictRaw from "./jmdict_raw.ts"
-import * as Gatherer from "./gatherer.ts"
+import * as BatchDispatcher from "./batch_dispatcher.ts"
 import * as Api from "common/api/index.ts"
 import * as Kana from "common/kana.ts"
 import * as Furigana from "common/furigana.ts"
@@ -44,23 +44,18 @@ export async function downloadAndImport(
 
     logger.writeLn("importing word entries...")
 
-    const gatherer = new Gatherer.Gatherer(
+    const startDate = new Date()
+
+    const dispatcher = new BatchDispatcher.BatchDispatcher(
         25,
-        (items: Api.Word.Entry[]) => db.importWordEntries(items))
+        (items: Api.Word.Entry[]) => db.importWordEntries(startDate, items))
     
     for await (const rawEntry of entryIterator)
     {
-        //if ((raw as any).k_ele)
-        //    console.dir(raw, { depth: null })
-
         try
         {
             const apiEntry = normalizeEntry(rawEntry)
-
-            //if ((raw as any).k_ele)
-            //    console.dir(entry, { depth: null })
-
-            await gatherer.push(apiEntry)
+            await dispatcher.push(apiEntry)
         }
         catch (e: any)
         {
@@ -69,7 +64,8 @@ export async function downloadAndImport(
         }
     }
 
-    await gatherer.finish()
+    await dispatcher.finish()
+    await db.importWordEntriesFinish(startDate)
 
     JlptWords.clearCache()
     FuriganaHelpers.clearCache()

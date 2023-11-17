@@ -269,6 +269,8 @@ vk;      *来る -> v1; *来られる
 @ display: potential (irregular)
 v1;   *る -> v1; *れる
 v1-s; *る -> v1; *れる
+vk;   *くる -> v1; *これる
+vk;   *来る -> v1; *来れる
 
 @ id: causative
 v1;    *る -> v1; *させる

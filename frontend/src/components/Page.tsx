@@ -1,8 +1,7 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-import * as Api from "../api.ts"
-import * as Pages from "../pages.ts"
+import * as App from "../app.ts"
 import { UserLabel } from "../components/User.tsx"
 
 
@@ -27,16 +26,28 @@ function SideMenu(props: {
     const [authUser] = Framework.createAsyncSignal(
         Solid.createSignal(null)[0],
         async () => {
-            return await Api.authenticate()
+            return await App.Api.authenticate()
         })
 
     const redirectUrl = window.location.href
         
     return <>
+        <Framework.ButtonPopupPageWide
+            label="Home"
+            href={ "/" }
+        />
+
+        <Framework.ButtonPopupPageWide
+            label="Community"
+            href={ "/" }
+        />
+
+        <Framework.HorizontalBar/>
+        
         <Solid.Show when={ !authUser().latest?.id }>
             <Framework.ButtonPopupPageWide
                 label="Log in"
-                href={ Api.Login.urlForRedirect(redirectUrl) }
+                href={ App.Api.Login.urlForRedirect(redirectUrl) }
                 native
             />
         </Solid.Show>
@@ -44,13 +55,28 @@ function SideMenu(props: {
         <Solid.Show when={ authUser().latest?.id }>
             <Framework.ButtonPopupPageWide
                 label={ <UserLabel user={ authUser().latest }/> }
-                href={ Pages.User.urlForUserId(authUser().latest!.id!) }
+                href={ App.Pages.User.urlForUserId(authUser().latest!.id!) }
             />
             <Framework.ButtonPopupPageWide
                 label="Log out"
-                href={ Api.Logout.urlForRedirect(redirectUrl) }
+                href={ App.Api.Logout.urlForRedirect(redirectUrl) }
                 native
             />
         </Solid.Show>
+
+        <Framework.HorizontalBar/>
+        
+        <Framework.Select
+            label="Theme"
+            value={ () => App.usePrefs().theme }
+            onChange={ (value) => App.mergePrefs({ theme: value }) }
+            options={ [
+                { label: "Auto Light/Dark", value: "auto" },
+                ...Framework.themes.map(th => ({
+                    label: th.name,
+                    value: th.id,
+                })),
+            ]}
+        />
     </>
 }

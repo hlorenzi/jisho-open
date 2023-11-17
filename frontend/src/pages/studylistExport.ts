@@ -1,23 +1,22 @@
 import * as Framework from "../framework/index.ts"
-import * as Api from "../api.ts"
-import * as Prefs from "../prefs.ts"
+import * as App from "../app.ts"
 import * as Kana from "common/kana.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import * as Furigana from "common/furigana.ts"
 
 
 export function writeStudylistTsv(
-    studylist: Api.StudyList.Entry,
-    words: (Api.StudyList.WordEntry & { entry: Api.Word.Entry })[])
+    studylist: App.Api.StudyList.Entry,
+    words: (App.Api.StudyList.WordEntry & { entry: App.Api.Word.Entry })[])
 {
-    const prefs = Prefs.usePrefs()
+    const prefs = App.usePrefs()
 
     let result = ""
 
     for (const word of words)
     {
-        let headingRare: Api.Word.Heading | undefined = undefined
-        let headingUncommon: Api.Word.Heading | undefined = undefined
+        let headingRare: App.Api.Word.Heading | undefined = undefined
+        let headingUncommon: App.Api.Word.Heading | undefined = undefined
         if (prefs.studylistExportKanjiLevel !== "common")
         {
             for (let i = word.entry.headings.length - 1; i >= 0; i--)
@@ -87,7 +86,7 @@ export function writeStudylistTsv(
         }
 
         const senseTexts: string[] = []
-        let currentPartOfSpeech: Api.Word.PartOfSpeechTag[] = []
+        let currentPartOfSpeech: App.Api.Word.PartOfSpeechTag[] = []
         for (const sense of word.entry.senses)
         {
             const isNewPartOfSpeech =
@@ -225,7 +224,7 @@ function renderPitchGuideToHtmlString(str: string)
 
 
 function renderSenseToHtmlString(
-    sense: Api.Word.Sense,
+    sense: App.Api.Word.Sense,
     showPartOfSpeech: boolean)
 {
     let result = ""

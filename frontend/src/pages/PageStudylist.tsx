@@ -1,9 +1,7 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-import * as Api from "../api.ts"
-import * as Pages from "../pages.ts"
-import * as Prefs from "../prefs.ts"
+import * as App from "../app.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
@@ -16,26 +14,26 @@ const collapsedLength = 20
 
 
 export type StudyListWordEntry =
-    Api.StudyList.WordEntry & { entry: Api.Word.Entry }
+    App.Api.StudyList.WordEntry & { entry: App.Api.Word.Entry }
 
 
 export function PageStudylist(props: Framework.RouteProps)
 {
     const studylistId = Solid.createMemo(
-        () => props.routeMatch()?.matches[Pages.Studylist.matchStudylistId] ?? "")
+        () => props.routeMatch()?.matches[App.Pages.Studylist.matchStudylistId] ?? "")
 
     const [data] = Solid.createResource(
         studylistId,
         async (studylistId) => {
-            const authUser = await Api.authenticate()
-            const { studylist } = await Api.studylistGet({ studylistId })
-            const { entries } = await Api.studylistWordsGet({ studylistId })
-            const { user } = await Api.getUser({ userId: studylist.creatorId })
+            const authUser = await App.Api.authenticate()
+            const { studylist } = await App.Api.studylistGet({ studylistId })
+            const { entries } = await App.Api.studylistWordsGet({ studylistId })
+            const { user } = await App.Api.getUser({ userId: studylist.creatorId })
             const userIsCreator =
                 authUser.id === user.id ||
                 authUser.tags?.some(tag => tag === "admin")
 
-            const wordEntriesById = new Map<string, Api.Word.Entry>()
+            const wordEntriesById = new Map<string, App.Api.Word.Entry>()
             entries.forEach(e => wordEntriesById.set(e.id, e))
 
             const words = studylist.words
@@ -51,6 +49,22 @@ export function PageStudylist(props: Framework.RouteProps)
             }
         })
 
+    const wordsOrdered = Solid.createMemo(() => {
+        let words = data()?.words
+        if (!words)
+            return undefined
+
+        if (App.usePrefs().studylistWordOrdering === "kana")
+        {
+            words = [...words]
+            words.sort((a, b) =>
+                (a.entry.headings[0].reading ?? a.entry.headings[0].base)
+                    ?.localeCompare(b.entry.headings[0].reading ?? b.entry.headings[0].base))
+        }
+
+        return words
+    })
+
     const [expanded, setExpanded] =
         Framework.createHistorySignal("expanded", false)
 
@@ -58,21 +72,21 @@ export function PageStudylist(props: Framework.RouteProps)
         Framework.createHistorySignal("selected", new Set<string>())
 
     const onRename = async () => {
-        if (!await Api.studylistEditName(data()!.studylist))
+        if (!await App.Api.studylistEditName(data()!.studylist))
             return
             
         Framework.historyReload()
     }
 
     const onDelete = async () => {
-        if (!await Api.studylistDelete(data()!.studylist))
+        if (!await App.Api.studylistDelete(data()!.studylist))
             return
             
-        Framework.historyPush(Pages.User.urlForUserId(data()!.user.id ?? ""))
+        Framework.historyPush(App.Pages.User.urlForUserId(data()!.user.id ?? ""))
     }
 
     const onTogglePublic = async () => {
-        if (!await Api.studylistEditPublic(data()!.studylist))
+        if (!await App.Api.studylistEditPublic(data()!.studylist))
             return
             
         Framework.historyReload()
@@ -102,7 +116,7 @@ export function PageStudylist(props: Framework.RouteProps)
             answer !== selected().size.toString())
             return
 
-        await Api.studylistWordRemoveMany({
+        await App.Api.studylistWordRemoveMany({
             studylistId: data()!.studylist.id,
             wordIds: [...selected()],
         })
@@ -206,6 +220,15 @@ export function PageStudylist(props: Framework.RouteProps)
             <Framework.HorizontalBar/>
 
             <div>
+                <Framework.Select
+                    label="Order"
+                    value={ () => App.usePrefs().studylistWordOrdering }
+                    onChange={ (value) => App.mergePrefs({ studylistWordOrdering: value }) }
+                    options={ [
+                        { label: "By date added", value: "date-added" },
+                        { label: "By kana order", value: "kana" },
+                    ]}
+                />
                 <Solid.Show when={ data()!.userIsCreator }>
                     <Framework.Button
                         icon={ <Framework.IconTrash/> }
@@ -219,7 +242,10 @@ export function PageStudylist(props: Framework.RouteProps)
             <br/>
 
             <WordTable>
-                <Solid.For each={ !expanded() ? data()!.words.slice(0, collapsedLength) : data()!.words }>
+                <Solid.For each={ !expanded() ?
+                    wordsOrdered()?.slice(0, collapsedLength) :
+                    wordsOrdered() }
+                >
                 { (word) =>
                     <>
                     <div>
@@ -231,7 +257,7 @@ export function PageStudylist(props: Framework.RouteProps)
                     </Solid.Show>
                     </div>
                     <Framework.Button
-                        href={ Pages.Search.urlForBaseReading(
+                        href={ App.Pages.Search.urlForBaseReading(
                             word.entry!.headings[0].base,
                             word.entry!.headings[0].reading) }
                         noBorder
@@ -334,11 +360,11 @@ const ExpandSection = styled.div`
 
 
 export function ExportPopup(props: {
-    studylist: Api.StudyList.Entry,
+    studylist: App.Api.StudyList.Entry,
     words: StudyListWordEntry[],
 })
 {
-    const prefs = Prefs.usePrefs()
+    const prefs = App.usePrefs()
 
     const onExport = () => {
         const tsvText = StudylistExport.writeStudylistTsv(
@@ -360,24 +386,24 @@ export function ExportPopup(props: {
     return <ExportPopupLayout>
         <Framework.Checkbox
             label="Decorate with HTML/CSS"
-            value={ () => Prefs.usePrefs().studylistExportHtmlCss }
-            onChange={ (value) => Prefs.mergePrefs({ studylistExportHtmlCss: value }) }
+            value={ () => App.usePrefs().studylistExportHtmlCss }
+            onChange={ (value) => App.mergePrefs({ studylistExportHtmlCss: value }) }
         />
 
         <br/>
 
         <Framework.Checkbox
             label="Skip katakana-only words"
-            value={ () => Prefs.usePrefs().studylistExportSkipKatakana }
-            onChange={ (value) => Prefs.mergePrefs({ studylistExportSkipKatakana: value }) }
+            value={ () => App.usePrefs().studylistExportSkipKatakana }
+            onChange={ (value) => App.mergePrefs({ studylistExportSkipKatakana: value }) }
         />
 
         <br/>
 
         <Framework.Select
             label="Kanji spelling"
-            value={ () => Prefs.usePrefs().studylistExportKanjiLevel }
-            onChange={ (value) => Prefs.mergePrefs({ studylistExportKanjiLevel: value }) }
+            value={ () => App.usePrefs().studylistExportKanjiLevel }
+            onChange={ (value) => App.mergePrefs({ studylistExportKanjiLevel: value }) }
             options={ [
                 { label: "Use common spelling, allow plain kana", value: "common" },
                 //{ label: "Force kanji, allow up to jōyō", value: "jouyou" },

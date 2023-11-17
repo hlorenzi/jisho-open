@@ -125,6 +125,7 @@ export async function searchByInflections(
     for (const dbResult of dbResults)
     {
         const apiResult = MongoDb.translateDbWordToApiWord(dbResult)
+        const categories = apiResult.senses.flatMap(s => s.pos)
 
         const resultInfls = []
         const alreadySeen = new Set<string>()
@@ -132,8 +133,8 @@ export async function searchByInflections(
         {
             for (let i = 0; i < infl.length; i++)
             {
-                if (dbResult.lookUp.headings.find(h => h.text == infl[i].sourceTerm) &&
-                    dbResult.lookUp.tags.find(t => t == infl[i].sourceCategory))
+                if (dbResult.lookUp.headings.find(h => h.text === infl[i].sourceTerm) &&
+                    categories.find(t => t === infl[i].sourceCategory))
                 {
                     const inflSlice = infl.slice(i)
 
