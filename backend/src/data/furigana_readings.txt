@@ -23464,6 +23464,8 @@
 晴;uncl;はら
 拇;uncl;おや
 鉢;uncl;わち
+尖;uncl;と;とんが;とんがり
+咫;uncl;あた
 素;auto;しろ;しら;すん
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
@@ -23554,7 +23556,6 @@
 掛;auto;かか;がか
 愛;auto;わい
 心;auto;ごこ;ここ
-刀;auto;ち
 語;auto;がたり
 染;auto;ぞめ
 言;auto;ゆ
@@ -23817,7 +23818,6 @@
 祖;auto;おや
 薑;auto;が
 赭;auto;あか
-尖;auto;とんが;と
 根;auto;こ
 短;auto;みじ
 耽;auto;ふ
@@ -24261,6 +24261,14 @@
 火傷;gikun;やけど
 内障;gikun;そこひ
 障泥;gikun;あおり
+半銭;gikun;きなか
+草鞋;gikun;わらじ
+石鹸;gikun;サボン
+石鹼;gikun;サボン
+髪挿;gikun;かんざし
+長刀;gikun;なぎなた
+太刀;gikun;たち
+忘八;gikun;くつわ
 豊受;fused;とゆけ
 不見;conjug;みず
 不老;conjug;おいず
@@ -24330,6 +24338,7 @@
 Ｍａｃ;spec;まっく
 ＭＯＸ;spec;もっくす
 Ｂａｓｅ;spec;べーす
+ＳＩＭ;spec;シム
 Ａ;spec;えー;えい
 A;spec;えー
 Ｂ;spec;びー;べー
@@ -24437,6 +24446,7 @@ R;spec;あーる
 ９５;spec;きゅうじゅうご
 一〇〇;spec;ひゃく
 一一〇;spec;ひゃくとお
+一一八;spec;ひゃくじゅうはち
 一一九;spec;ひゃくじゅうきゅう
 １２５;spec;ひゃくにじゅうご
 一二五;spec;ひゃくにじゅうご

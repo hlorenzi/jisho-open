@@ -305,7 +305,7 @@ function normalizeHeading(
 
 
     if (r_ele.re_inf?.some(tag => tag === "gikun"))
-        heading.gikunOrJukujikun = true
+        heading.gikun = true
 
     if (r_ele.re_inf?.some(tag => tag === "ik"))
         heading.irregularKana = true
@@ -668,6 +668,21 @@ export function gatherLookUpTags(
         .map(h => JmdictTags.getCommonness(h))
         .filter(t => t !== null) as Api.CommonnessTag[]
 
+    let lowestJlptLevel: Api.JlptLevel | undefined = undefined
+    for (const heading of apiWord.headings)
+    {
+        if (heading.jlpt === undefined)
+            continue
+
+        if (lowestJlptLevel === undefined ||
+            heading.jlpt > lowestJlptLevel)
+            lowestJlptLevel = heading.jlpt
+    }
+
+    const jlptTag: Api.JlptTag[] = ["jlpt"]
+    if (lowestJlptLevel !== undefined)
+        jlptTag.push(`n${ lowestJlptLevel }`)
+
     return JmdictTags.expandFilterTags([...new Set<Api.Word.FilterTag>([
         ...partsOfSpeech,
         ...glossTypes,
@@ -676,5 +691,6 @@ export function gatherLookUpTags(
         ...langTags,
         ...dialectTags,
         ...commonness,
+        ...jlptTag,
     ])])
 }

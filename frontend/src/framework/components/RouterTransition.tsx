@@ -9,7 +9,7 @@ const DivWrapper = styled("div")`
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #fff8;
+    background-color: ${ Framework.themeVar("pageTransitionOverlayColor") };
     z-index: 1;
 `
 

@@ -3,8 +3,8 @@ import { styled, keyframes } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
-export type PopupData = {
-    open: (anchorElem?: HTMLElement) => void
+export type PopupSideMenuData = {
+    open: () => void
     close: () => void
     rendered: Solid.JSX.Element
 }
@@ -12,13 +12,13 @@ export type PopupData = {
 
 export function makePopupSideMenu(props: {
     childrenFn?: () => Solid.JSX.Element,
-})
+}) : PopupSideMenuData
 {
     let dialog: HTMLDialogElement | undefined = undefined
 
     const [isOpen, setIsOpen] = Solid.createSignal(false)
 
-    const open = (anchorElem?: HTMLElement) => {
+    const open = () => {
         setIsOpen(true)
         dialog?.showModal()
     }
@@ -53,7 +53,7 @@ export function makePopupSideMenu(props: {
         open,
         close,
         rendered,
-    } satisfies PopupData
+    } satisfies PopupSideMenuData
 }
 
 
@@ -63,7 +63,7 @@ const backdropKeyframes = keyframes`
     }
 
     100% {
-	    background-color: #00000018;
+	    background-color: ${ Framework.themeVar("popupOverlayColor") };
     }
 `
 
@@ -83,6 +83,7 @@ const Dialog = styled.dialog`
     &::backdrop {
         animation-name: ${ backdropKeyframes };
         animation-duration: 0.1s;
+        animation-fill-mode: forwards;
     }
 `
 
@@ -119,16 +120,12 @@ const DivPageContent = styled.div`
 	text-align: left;
 	color: ${ Framework.themeVar("textColor") };
 
-    border-left: 1px solid transparent;
-    border-right: 1px solid transparent;
-    
 	padding: 0;
     --local-pagePadding: 1.5em;
     
 	@media (max-width: ${ Framework.pageSmallWidthThreshold })
 	{
         width: 100%;
-		border-right: 0;
 	}
 
     @media (pointer: coarse)
@@ -146,10 +143,16 @@ const DivPageContent2 = styled.div`
     justify-self: end;
     pointer-events: all;
 
+    border-right: 1px solid ${ Framework.themeVar("borderColor") };
     border-left: 1px solid ${ Framework.themeVar("borderColor") };
     box-shadow: -0.15em 0 0.15em ${ Framework.themeVar("popupShadowColor") };
     
     padding-top: 4em;
 	padding-left: var(--local-pagePadding);
 	padding-right: var(--local-pagePadding);
+    
+	@media (max-width: ${ Framework.pageSmallWidthThreshold })
+	{
+		border-right: 0;
+	}
 `

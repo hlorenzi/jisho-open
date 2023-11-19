@@ -21,17 +21,21 @@ export function UserLabel(props: {
     user?: Api.MaybeUser,
 })
 {
+    const isSystem = Api.userIsSystem(props.user ?? {})
     const isAdmin = Api.userIsAdmin(props.user ?? {})
     const isVip = Api.userIsVip(props.user ?? {})
 
-    const color =
-        //isAdmin ? Framework.themeVar("iconBlueColor") :
-        //isVip ? Framework.themeVar("iconGreenColor") :
-        undefined
-
-    return <span style={{ color }}>
+    return <span>
         <Framework.IconUser/>
         { props.user?.name }
+        <Solid.Show when={ isSystem }>
+            <UserLabelSup>
+                <Framework.TextTag
+                    label="System"
+                    bkgColor={ Framework.themeVar("focusOutlineColor") }
+                />
+            </UserLabelSup>
+        </Solid.Show>
         <Solid.Show when={ isAdmin }>
             <UserLabelSup>
                 <Framework.TextTag

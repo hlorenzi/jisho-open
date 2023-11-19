@@ -191,6 +191,8 @@ export async function connect(): Promise<Db.Interface>
             MongoDbImportKanji.importKanjiEntries(state, entries),
         importKanjiWordCrossRefEntries: (entries) =>
             MongoDbImportKanjiWord.importKanjiWordCrossRefEntry(state, entries),
+        importStandardStudylist: (studylistId, studylistName, wordIds) =>
+            MongoDbStudyLists.importStandardStudylist(state, studylistId, studylistName, wordIds),
 
         searchByHeading: (queries, options) =>
             MongoDbSearch.searchByHeading(state, queries, options),

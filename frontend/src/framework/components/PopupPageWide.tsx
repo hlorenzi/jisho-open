@@ -3,7 +3,7 @@ import { styled, keyframes } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
-export type PopupData = {
+export type PopupPageWideData = {
     open: (anchorElem?: HTMLElement) => void
     close: () => void
     rendered: Solid.JSX.Element
@@ -12,7 +12,7 @@ export type PopupData = {
 
 export function makePopupPageWide(props: {
     childrenFn?: () => Solid.JSX.Element,
-})
+}) : PopupPageWideData
 {
     let dialog: HTMLDialogElement | undefined = undefined
 
@@ -24,8 +24,8 @@ export function makePopupPageWide(props: {
         {
             const rect = anchorElem.getBoundingClientRect()
             setAnchor({
-                x: rect.x + rect.width / 2 + window.scrollX,
-                y: rect.bottom + window.scrollY,
+                x: Math.round(rect.x + rect.width / 2 + window.scrollX),
+                y: Math.round(rect.bottom + window.scrollY),
             })
         }
 
@@ -64,7 +64,7 @@ export function makePopupPageWide(props: {
         open,
         close,
         rendered,
-    } satisfies PopupData
+    } satisfies PopupPageWideData
 }
 
 
@@ -74,7 +74,7 @@ const backdropKeyframes = keyframes`
     }
 
     100% {
-	    background-color: #00000018;
+	    background-color: ${ Framework.themeVar("popupOverlayColor") };
     }
 `
 
@@ -96,6 +96,7 @@ const Dialog = styled.dialog<{
     &::backdrop {
         animation-name: ${ backdropKeyframes };
         animation-duration: 0.1s;
+        animation-fill-mode: forwards;
     }
 `
 
@@ -111,10 +112,10 @@ const ArrowTipShadow = styled.div<{
     z-index: -1;
     contain: layout;
     position: relative;
-    left: ${ props => props.x - arrowTipSize - 0.5 }px;
+    left: ${ props => props.x - arrowTipSize - 1 }px;
     top: ${ (-arrowTipSize - 1).toString() }px;
     border-color: #0000 #0000 ${ Framework.themeVar("borderColor") } #0000;
-    border-width: ${ (arrowTipSize + 1.5).toString() }px;
+    border-width: ${ (arrowTipSize + 2).toString() }px;
     border-style: solid;
     margin-bottom: ${ (-arrowTipSize * 2 - 2).toString() }px;
 	pointer-events: none;

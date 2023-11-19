@@ -37,6 +37,21 @@ export function create() : Auth.Interface
         },
 
         getUser: async (userId: string) => {
+            if (userId === Auth.systemUserId)
+            {
+                return {
+                    user: {
+                        id: Auth.systemUserId,
+                        name: Auth.systemUserName,
+                        tags: Auth.systemUserTags,
+                        createDate: 0,
+                        modifyDate: 0,
+                        activityDate: 0,
+                        loginDate: 0,
+                    }
+                }
+            }
+
             try
             {
                 const res = await fetch(

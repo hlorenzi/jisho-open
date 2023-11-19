@@ -17,6 +17,9 @@ export interface Interface
 
 
 export const loginCookieName = "lorenzis_account"
+export const systemUserId = "000000"
+export const systemUserName = "Kenshiro"
+export const systemUserTags = ["system"]
 
 
 export function canUserRead(user: Api.MaybeUser)
@@ -76,6 +79,21 @@ export function createDummy(): Interface
         },
 
         getUser: async (userId) => {
+            if (userId === systemUserId)
+            {
+                return {
+                    user: {
+                        id: systemUserId,
+                        name: systemUserName,
+                        tags: systemUserTags,
+                        createDate: 0,
+                        modifyDate: 0,
+                        activityDate: 0,
+                        loginDate: 0,
+                    }
+                }
+            }
+            
             const tags = ["fake"]
             if (userId.startsWith("admin"))
                 tags.push("admin")

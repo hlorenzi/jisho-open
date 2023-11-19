@@ -1,5 +1,5 @@
 import * as Framework from "../framework/index.ts"
-import * as App from "../app.ts"
+import * as App from "../app.tsx"
 import * as Kana from "common/kana.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import * as Furigana from "common/furigana.ts"

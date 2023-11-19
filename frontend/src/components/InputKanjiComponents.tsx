@@ -1,8 +1,7 @@
 import * as Solid from "solid-js"
 import { styled, css } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-import * as Pages from "../pages.ts"
-import * as Api from "../api.ts"
+import * as App from "../app.tsx"
 import * as KanjiComponents from "common/kanji_components.ts"
 import { Searchbox } from "./Searchbox.tsx"
 
@@ -18,13 +17,13 @@ export function InputKanjiComponents(props: {
     const [onlyCommon, setOnlyCommon] =
         Solid.createSignal(true)
 
-    const [response] = Framework.createAsyncSignal(
+    const response = Framework.createAsyncSignal(
         () => [selected(), onlyCommon()] as const,
         async (data) => {
             if (data[0].size === 0)
                 return undefined
 
-            const res = await Api.getKanjiByComponents({
+            const res = await App.Api.getKanjiByComponents({
                 components: [...data[0]].join(""),
                 onlyCommon: data[1],
             })
@@ -197,7 +196,7 @@ const LayoutComponents = styled.div`
 
 const KanjiLabel = styled.span`
     font-size: 1.4em;
-    font-weight: bold;
+    font-weight: ${ App.cssVarJapaneseFontWeight };
 `
 
 

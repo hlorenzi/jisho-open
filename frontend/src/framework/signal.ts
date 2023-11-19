@@ -1,24 +1,41 @@
 import * as Solid from "solid-js"
 
 
+export type AsyncSignalResult<U> = {
+    latest: U | undefined,
+    loading: boolean,
+}
+
+
 export function createAsyncSignal<T, U>(
     accessor: Solid.Accessor<T>,
     fetcher: (data: T) => Promise<U>)
-{
-    type Result<U> = {
-        latest: U | undefined,
-        loading: boolean,
-    }
+    : Solid.Accessor<AsyncSignalResult<U>>;
 
-    const [result, setResult] = Solid.createSignal<Result<U>>({
+
+export function createAsyncSignal<T, U>(
+    accessor: null,
+    fetcher: (data: null) => Promise<U>)
+    : Solid.Accessor<AsyncSignalResult<U>>;
+
+
+export function createAsyncSignal<T, U>(
+    accessor: Solid.Accessor<T> | null,
+    fetcher: (data: T | null) => Promise<U>)
+    : Solid.Accessor<AsyncSignalResult<U>>
+{
+
+    const [result, setResult] = Solid.createSignal<AsyncSignalResult<U>>({
         latest: undefined,
         loading: false,
     })
 
+    let accessorInternal = accessor || Solid.createSignal(null)[0]
+
     let token = 0
 
     Solid.createComputed(() => {
-        const source = accessor()
+        const source = accessorInternal()
 
         token++
         const myToken = token
@@ -43,5 +60,5 @@ export function createAsyncSignal<T, U>(
         return source
     })
 
-    return [result]
+    return result
 }

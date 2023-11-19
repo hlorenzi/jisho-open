@@ -1,6 +1,6 @@
 import * as Solid from "solid-js"
 import * as Framework from "../framework/index.ts"
-import * as App from "../app.ts"
+import * as App from "../app.tsx"
 import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
 import { EntryKanji } from "../components/EntryKanji.tsx"

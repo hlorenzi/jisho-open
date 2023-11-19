@@ -1,7 +1,7 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-import * as App from "../app.ts"
+import * as App from "../app.tsx"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
@@ -204,7 +204,7 @@ export function PageStudylist(props: Framework.RouteProps)
             </Solid.Show>
 
             <Framework.Button
-                label="Export"
+                label="Export..."
                 icon={ <Framework.IconDownload/> }
                 onClick={ ev => exportPopup.open(ev.currentTarget) }
             />

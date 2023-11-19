@@ -22,10 +22,11 @@ export function LogoHeader(props: {
                     <IconWrapper>
                         <Icon
                             src="https://accounts.hlorenzi.com/icon_round_75.png"
-                            srcset="
-                                https://accounts.hlorenzi.com/icon_round_75.png,
-                                https://accounts.hlorenzi.com/icon_round_150.png 2x
-                            "
+                            srcset={
+                                `https://accounts.hlorenzi.com/icon_round_75.png, ` +
+                                `https://accounts.hlorenzi.com/icon_round_150.png 2x, ` +
+                                `https://accounts.hlorenzi.com/icon_round_256.png 4x`
+                            }
                         />
                     </IconWrapper>
                     <StyledH1>
@@ -33,7 +34,7 @@ export function LogoHeader(props: {
                         <sup style={{ "font-size": "0.5em" }}>
                             <Framework.TextTag
                                 label="v2 Beta"
-                                bkgColor={ Framework.themeVar("themeColor") }
+                                bkgColor={ Framework.themeVar("focusOutlineColor") }
                             />
                         </sup>
                     </StyledH1>

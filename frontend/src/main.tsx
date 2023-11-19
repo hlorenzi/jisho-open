@@ -1,19 +1,19 @@
 import * as Solid from "solid-js"
 import * as SolidWeb from "solid-js/web"
 import * as Framework from "./framework/index.ts"
-import * as Api from "./api.ts"
+import * as App from "./app.tsx"
 import * as Pages from "./pages.ts"
 
 
 SolidWeb.render(
-    App,
+    Root,
     document.getElementById("app")!)
 
 
-function App()
+function Root()
 {
     return <>
-        <Framework.Theme/>
+        <Framework.GlobalCss extraCss={ [App.usePrefsCss()] }/>
         <Framework.Router
             routes={[
                 { patterns: ["/", Pages.Search.urlPattern, Pages.Search.urlPatternToken],

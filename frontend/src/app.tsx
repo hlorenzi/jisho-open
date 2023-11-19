@@ -1,3 +1,6 @@
+import * as Solid from "solid-js"
+import * as SolidWeb from "solid-js/web"
+import * as Styled from "solid-styled-components"
 import * as Framework from "./framework/index.ts"
 
 export * as Api from "./api.ts"
@@ -7,6 +10,8 @@ export * as Pages from "./pages.ts"
 export type Prefs = {
     debugMode: boolean
     theme: string
+
+    japaneseFontStyle: "regular" | "bold"
 
     studylistOrdering: "activity" | "name"
     studylistWordOrdering: "date-added" | "kana"
@@ -20,6 +25,8 @@ export type Prefs = {
 export const prefsDefault: Prefs = {
     debugMode: false,
     theme: "auto",
+
+    japaneseFontStyle: "bold",
 
     studylistOrdering: "activity",
     studylistWordOrdering: "date-added",
@@ -39,4 +46,23 @@ export function usePrefs(): Prefs
 export function mergePrefs(merge: Partial<Prefs>)
 {
     Framework.mergePrefs<Prefs>(merge)
+}
+
+
+const cssJapaneseFontWeight = "--pref-japaneseFontWeight"
+export const cssVarJapaneseFontWeight = `var(${ cssJapaneseFontWeight })`
+
+
+export function usePrefsCss(): Solid.Accessor<string>
+{
+    return Solid.createMemo(() => {
+        const prefs = usePrefs()
+
+        return `
+            ${ cssJapaneseFontWeight }: ${
+                prefs.japaneseFontStyle === "regular" ? "regular" :
+                "bold"
+            };
+        `
+    })
 }

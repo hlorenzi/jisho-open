@@ -6,6 +6,36 @@ import * as Api from "common/api/index.ts"
 import * as Inflection from "common/inflection.ts"
 
 
+export async function importStandardStudylist(
+    state: DbMongo.State,
+    studylistId: string,
+    studylistName: string,
+    wordIds: string[])
+    : Promise<void>
+{
+    const now = new Date()
+
+    const studylist: DbMongo.DbStudyListEntry = {
+        _id: studylistId,
+        creatorId: Auth.systemUserId,
+        name: studylistName,
+        public: true,
+        editorIds: [],
+        editorPassword: undefined,
+        wordCount: wordIds.length,
+        words: wordIds.reverse().map((w, i) => ({
+            id: w,
+            date: new Date(now.getTime() + i),
+        })),
+        createDate: now,
+        modifyDate: now,
+    }
+
+    await state.collStudylists.deleteOne({ _id: studylistId })
+    await state.collStudylists.insertOne(studylist)
+}
+
+
 function validateName(name: string): string
 {
     name = name.trim()

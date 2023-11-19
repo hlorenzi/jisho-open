@@ -50,6 +50,18 @@ export type User = {
 export type MaybeUser = User | Partial<User>
 
 
+export function userIsSystem(user: MaybeUser)
+{
+    if (!user.id)
+        return false
+
+    if (!user.tags?.some(tag => tag === "system"))
+        return false
+
+    return true
+}
+
+
 export function userIsAdmin(user: MaybeUser)
 {
     if (!user.id)
@@ -80,6 +92,15 @@ export type CommonnessTag =
 
 
 export type CommonnessIndex = 2 | 1
+
+
+export type JlptTag =
+    | "jlpt"
+    | "n5"
+    | "n4"
+    | "n3"
+    | "n2"
+    | "n1"
 
 
 export type JlptLevel = 5 | 4 | 3 | 2 | 1

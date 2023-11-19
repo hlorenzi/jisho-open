@@ -28,7 +28,7 @@ export type Heading = {
     furigana: string
 
     ateji?: boolean
-    gikunOrJukujikun?: boolean
+    gikun?: boolean
     irregularKanji?: boolean
     irregularKana?: boolean
     irregularOkurigana?: boolean
@@ -478,6 +478,7 @@ export type GlossTypeTag =
 
 export type FilterTag =
     Api.CommonnessTag |
+    Api.JlptTag |
     PartOfSpeechTag |
     MiscTag |
     FieldDomainTag |

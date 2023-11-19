@@ -1,6 +1,6 @@
 import * as Solid from "solid-js"
 import * as Framework from "../framework/index.ts"
-import * as App from "../app.ts"
+import * as App from "../app.tsx"
 
 
 export function PageLoginFake(props: Framework.RouteProps)

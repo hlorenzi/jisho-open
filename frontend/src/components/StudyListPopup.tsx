@@ -6,10 +6,10 @@ import * as Api from "../api.ts"
 
 export function StudyListPopup(props: {
     wordId: string,
-    popup: Framework.PopupData,
+    popup: Framework.PopupPageWideData,
 })
 {
-    const [data] = Framework.createAsyncSignal(
+    const data = Framework.createAsyncSignal(
         () => props.wordId,
         async (wordId) => {
             const authUser = await Api.authenticate()

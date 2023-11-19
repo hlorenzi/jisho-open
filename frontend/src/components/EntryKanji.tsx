@@ -1,8 +1,7 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-import * as Pages from "../pages.ts"
-import * as Api from "common/api/index.ts"
+import * as App from "../app.tsx"
 import * as Kana from "common/kana.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import * as Furigana from "common/furigana.ts"
@@ -11,7 +10,7 @@ import * as Tags from "./Tags.tsx"
 
 
 export function EntryKanji(props: {
-    entry: Api.Kanji.Entry,
+    entry: App.Api.Kanji.Entry,
     noExampleWords?: boolean,
 })
 {
@@ -110,7 +109,7 @@ export function EntryKanji(props: {
                 color: Framework.themeVar("text3rdColor"),
             }}>
                 <Framework.Link
-                    href={ Pages.KanjiWords.urlForQuery(props.entry.id) }
+                    href={ App.Pages.KanjiWords.urlForQuery(props.entry.id) }
                     label={ <>
                         <Framework.IconVerticalEllipsis/>
                         View all { props.entry.wordCount ?? 0 } words
@@ -143,7 +142,7 @@ const Header = styled.div`
 
 const KanjiCharacter = styled.div`
     font-size: 6em;
-    font-weight: bold;
+    font-weight: ${ App.cssVarJapaneseFontWeight };
 `
 
 
@@ -179,7 +178,7 @@ const ReadingsLabel = styled.div`
 
 const StrokeCount = styled.div`
     display: inline-block;
-    font-weight: bold;
+    font-weight: ${ App.cssVarJapaneseFontWeight };
 `
 
 
@@ -190,7 +189,7 @@ const KanjiDiagramWrapper = styled.article`
 
 
 export function Reading(props: {
-    reading: Api.Kanji.Reading
+    reading: App.Api.Kanji.Reading
 })
 {
     return <ReadingEntry
@@ -211,7 +210,7 @@ const ReadingEntry = styled.div<{
 }>`
     display: inline-block;
     margin-inline-end: 1em;
-    font-weight: bold;
+    font-weight: ${ App.cssVarJapaneseFontWeight };
 
     color: ${ props => props.faded ?
         Framework.themeVar("text3rdColor") :
@@ -227,7 +226,7 @@ const ReadingTagsWrapper = styled.sup`
 
 function ExampleWords(props: {
     kanji: string,
-    exampleWords: Api.KanjiWordCrossRef.Word[],
+    exampleWords: App.Api.KanjiWordCrossRef.Word[],
 })
 {
     return <ExampleWordLayout>
@@ -236,7 +235,7 @@ function ExampleWords(props: {
 
             return <ExampleWordEntry>
                 <Framework.Link
-                    href={ Pages.Search.urlForQuery(`${ Furigana.extractBase(furigana) } ${ Furigana.extractReading(furigana) }`) }
+                    href={ App.Pages.Search.urlForQuery(`${ Furigana.extractBase(furigana) } ${ Furigana.extractReading(furigana) }`) }
                     noUnderline
                 >
                     <ExampleWordHeading>
@@ -300,7 +299,7 @@ const ExampleWordEntry = styled.div`
 
 
 const ExampleWordHeading = styled.span`
-    font-weight: bold;
+    font-weight: ${ App.cssVarJapaneseFontWeight };
 `
 
 

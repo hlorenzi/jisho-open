@@ -1,8 +1,7 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-import * as Pages from "../pages.ts"
-import * as Api from "common/api/index.ts"
+import * as App from "../app.tsx"
 import * as Kana from "common/kana.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import { FuriganaRuby } from "./Furigana.tsx"
@@ -13,8 +12,8 @@ import * as Tags from "./Tags.tsx"
 
 
 export function EntryWord(props: {
-    entry: Api.Word.Entry,
-    query: Api.Search.Query,
+    entry: App.Api.Word.Entry,
+    query: App.Api.Search.Query,
 })
 {
     const ignoreUsageInPlainKanaMiscTag =
@@ -47,10 +46,10 @@ const Entry = styled.article`
 
 
 function Headings(props: {
-    entry: Api.Word.Entry,
+    entry: App.Api.Word.Entry,
     wordId: string,
-    headings: Api.Word.Heading[],
-    query: Api.Search.Query,
+    headings: App.Api.Word.Heading[],
+    query: App.Api.Search.Query,
 })
 {
     const headings = props.headings
@@ -113,10 +112,10 @@ function Headings(props: {
 
 
 function HeadingEllipsisPopup(props: {
-    entry: Api.Word.Entry,
+    entry: App.Api.Word.Entry,
     wordId: string,
     allKanji: string,
-    popup: Framework.PopupData,
+    popup: Framework.PopupPageWideData,
 })
 {
     return <>
@@ -126,13 +125,13 @@ function HeadingEllipsisPopup(props: {
                     <Framework.IconMagnifyingGlass/>
                     { ` Inspect all kanji: ${ props.allKanji }` }
                 </> }
-                href={ Pages.Search.urlForQuery(`${ props.allKanji } #k`) }
+                href={ App.Pages.Search.urlForQuery(`${ props.allKanji } #k`) }
             />
         </Solid.Show>
         <Framework.HorizontalBar/>
         <Framework.ButtonPopupPageWide
             label={ <>View JMdict entry <Framework.IconExternal/></> }
-            href={ Pages.Jmdict.urlForWordId(props.wordId) }
+            href={ App.Pages.Jmdict.urlForWordId(props.wordId) }
         />
         <Framework.ButtonPopupPageWide
             label="Log entry to console"
@@ -148,8 +147,8 @@ function HeadingEllipsisPopup(props: {
 function Heading(props: {
     first: boolean,
     last: boolean,
-    heading: Api.Word.Heading,
-    query: Api.Search.Query,
+    heading: App.Api.Word.Heading,
+    query: App.Api.Search.Query,
 })
 {
     const faded =
@@ -247,7 +246,7 @@ const HeadingBlock = styled.button<{
 
 
 export function HeadingLabel(props: {
-    heading: Api.Word.Heading,
+    heading: App.Api.Word.Heading,
 })
 {
     const commonness =
@@ -271,7 +270,7 @@ export function HeadingLabel(props: {
                     />
                 </Solid.Show>
                 
-                <Solid.Show when={ props.heading.gikunOrJukujikun }>
+                <Solid.Show when={ props.heading.gikun }>
                     <Framework.TextTag
                         title="gikun reading"
                         label="G"
@@ -344,7 +343,7 @@ export function HeadingLabel(props: {
 
 
 const HeadingText = styled.span`
-    font-weight: bold;
+    font-weight: ${ App.cssVarJapaneseFontWeight };
 `
 
 
@@ -358,7 +357,7 @@ const HeadingTags = styled.span`
 
 
 function HeadingPopup(props: {
-    popup: Framework.PopupData,
+    popup: Framework.PopupPageWideData,
     kanji: string,
     base: string,
     reading?: string,
@@ -371,7 +370,7 @@ function HeadingPopup(props: {
                     <Framework.IconMagnifyingGlass/>
                     { ` Inspect kanji: ${ props.kanji }` }
                 </> }
-                href={ Pages.Search.urlForQuery(`${ props.kanji } #k`) }
+                href={ App.Pages.Search.urlForQuery(`${ props.kanji } #k`) }
             />
         </Solid.Show>
 
@@ -410,7 +409,7 @@ function HeadingPopup(props: {
 
 function Senses(props: {
     ignoreUkMiscTag: boolean,
-    senses: Api.Word.Sense[],
+    senses: App.Api.Word.Sense[],
 })
 {
     let currentPos: string[] = []
@@ -561,7 +560,7 @@ function Senses(props: {
 
             const link =
                 <Framework.Link
-                    href={ Pages.Search.urlForQuery(query) }
+                    href={ App.Pages.Search.urlForQuery(query) }
                 >
                     { xref.base }
                     { xref.reading ?
@@ -620,7 +619,7 @@ const SenseInfo = styled.span`
 
 
 function PitchAccentEntries(props: {
-    pitches?: Api.Word.PitchAccent[],
+    pitches?: App.Api.Word.PitchAccent[],
 })
 {
     return <Solid.Show when={ props.pitches }>

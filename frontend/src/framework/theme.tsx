@@ -24,6 +24,7 @@ export type Theme = {
     voidBkgColor: string
     pageBkgColor: string
 
+    pageTransitionOverlayColor: string
     borderColor: string
     focusOutlineColor: string
     focusOutlineWidth: string
@@ -90,10 +91,11 @@ export const themeLight: Theme = {
     voidBkgColor: "#f8f8f8",
     pageBkgColor: "#ffffff",
 
+    pageTransitionOverlayColor: "#fff8",
     borderColor: "#cccccc",
     focusOutlineColor: "#77ab00",
     focusOutlineWidth: "2px",
-    popupOverlayColor: "#00000018",
+    popupOverlayColor: "#00000028",
     popupShadowColor: "#00000020",
 
     textColor: "#454545",
@@ -153,10 +155,11 @@ export const themeDarkGray: Theme = {
     voidBkgColor: "#202122",
     pageBkgColor: "#2c2e31",
 
+    pageTransitionOverlayColor: "#20212288",
     borderColor: "#616671",
     focusOutlineColor: "#77ab00",
-    popupOverlayColor: "#00000040",
-    popupShadowColor: "#00000060",
+    popupOverlayColor: "#00000060",
+    popupShadowColor: "#00000080",
 
     textColor: "#dcddde",
     text2ndColor: "#72767d",
@@ -194,23 +197,24 @@ const themeDarkBlue: Theme = {
     voidBkgColor: "#0e0f15",
     pageBkgColor: "#020029",
 
+    pageTransitionOverlayColor: "#0e0f1588",
     borderColor: "#304579",
     focusOutlineColor: "#557db9",
-    popupOverlayColor: "#00000040",
-    popupShadowColor: "#00000060",
+    popupOverlayColor: "#00000060",
+    popupShadowColor: "#00000080",
 
     textColor: "#9db6dc",
     text2ndColor: "#4761ab",
     text3rdColor: "#2e459a",
     text4thColor: "#233473",
     textDisabledColor: "#2e459a",
-    textHighlightBkgColor: "#1c2438",
-    textStrongBkgColor: "#1c2438",
+    textHighlightBkgColor: "#142245",
+    textStrongBkgColor: "#061d38",
 
     linkHoverColor: "#daecff",
     linkPressColor: "#4f6680",
 
-    buttonHoverBkgColor: "#293044",
+    buttonHoverBkgColor: "#203562",
     buttonPressBkgColor: "#161d3c",
     buttonAccentColor: "#5ebf3e",
     buttonDangerColor: "#ec4226",
@@ -235,10 +239,11 @@ const themeDarkRed: Theme = {
     voidBkgColor: "#2a1b1b",
     pageBkgColor: "#332222",
 
+    pageTransitionOverlayColor: "#2a1b1b88",
     borderColor: "#863b2f",
     focusOutlineColor: "#f16532",
-    popupOverlayColor: "#00000040",
-    popupShadowColor: "#00000060",
+    popupOverlayColor: "#00000060",
+    popupShadowColor: "#00000080",
 
     textColor: "#ecb268",
     text2ndColor: "#bd8149",
@@ -246,7 +251,7 @@ const themeDarkRed: Theme = {
     text4thColor: "#6b4935",
     textDisabledColor: "#82553b",
     textHighlightBkgColor: "#562d26",
-    textStrongBkgColor: "#562d26",
+    textStrongBkgColor: "#25110d",
 
     linkHoverColor: "#f5deb3",
     linkPressColor: "#a95600",
@@ -276,9 +281,10 @@ const themeHighContrast: Theme = {
     voidBkgColor: "#000",
     pageBkgColor: "#000",
 
+    pageTransitionOverlayColor: "#00000088",
     borderColor: "#ccc",
     focusOutlineColor: "#0f0",
-    popupOverlayColor: "#0000",
+    popupOverlayColor: "#000c",
     popupShadowColor: "#0000",
 
     textColor: "#fff",
@@ -318,9 +324,10 @@ const themeChromaKey: Theme = {
     voidBkgColor: "#00f",
     pageBkgColor: "#00f",
 
+    pageTransitionOverlayColor: "#0000ff88",
     borderColor: "#fff",
     focusOutlineColor: "#9d0",
-    popupOverlayColor: "#0000",
+    popupOverlayColor: "#00f4",
     popupShadowColor: "#0000",
 
     textColor: "#fff",
@@ -351,6 +358,9 @@ const themeChromaKey: Theme = {
 }
 
 
+export const systemThemeId = "system"
+
+
 export const themes: Theme[] = [
     themeLight,
     themeDarkGray,
@@ -361,46 +371,63 @@ export const themes: Theme[] = [
 ]
 
 
+export const cssGlobalSelector = `:root, dialog::backdrop`
+
+
 export function makeCssForTheme(
     theme: Theme)
     : string
 {
-    let globalCssStr = ":root {\n"
-    for (const entry of Object.entries(theme))
+    let result = ""
+    for (const [key, value] of Object.entries(theme))
     {
-        if (entry[0] == "name")
+        if (key === "name" ||
+            key === "id")
             continue
         
-        globalCssStr += "--theme-" + entry[0] + ": " + entry[1] + ";\n"
+        result += "--theme-" + key + ": " + value + ";\n"
     }
-    globalCssStr += "}"
 
-    return globalCssStr
+    return result
 }
 
 
-export function Theme()
+export function getCurrentTheme(): Theme
+{
+    const prefs = Framework.usePrefs({ theme: systemThemeId })
+
+    const prefersDark =
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+
+    const theme =
+        themes.find(th => th.id === prefs.theme) ??
+        (prefersDark ? themeDarkGray : themeLight)
+
+    return theme
+}
+
+
+export function GlobalCss(props: {
+    extraCss: Solid.Accessor<string>[],
+})
 {
     const data = Solid.createMemo(() => {
-        const prefs = Framework.usePrefs({ theme: "auto" })
-    
-        const prefersDark =
-            window.matchMedia("(prefers-color-scheme: dark)").matches
-
-        const theme =
-            themes.find(th => th.id === prefs.theme) ??
-            (prefersDark ? themeDarkGray : themeLight)
+        const theme = getCurrentTheme()
+        const extraCss = props.extraCss.map(c => c())
             
         const metaThemeColor = document.querySelector("meta[name=theme-color]")
         if (metaThemeColor)
             metaThemeColor.setAttribute(
                 "content",
-                theme.themeColor ?? "#ffffff")
+                theme.themeColor)
 
         return {
             theme,
             globalStyle: Styled.createGlobalStyles`
-                ${ makeCssForTheme(theme) }
+                :root, dialog::backdrop {
+                    ${ makeCssForTheme(theme) }
+                    ${ extraCss.join("\n") }
+                }
             `
         }
     })

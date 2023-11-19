@@ -25,6 +25,12 @@ export interface Interface
     importKanjiWordCrossRefEntries:
         (entries: Api.KanjiWordCrossRef.Entry[]) => Promise<void>
 
+    importStandardStudylist: (
+        studylistId: string,
+        studylistName: string,
+        wordIds: string[])
+        => Promise<void>
+
     searchByHeading: (
         queries: string[],
         options: SearchOptions)
@@ -147,6 +153,7 @@ export function createDummy(): Interface
         importWordEntriesFinish: async () => {},
         importKanjiEntries: async () => {},
         importKanjiWordCrossRefEntries: async () => {},
+        importStandardStudylist: async () => {},
 
         searchByHeading: async () => [],
         searchByHeadingAll: async () => [],

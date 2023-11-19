@@ -1,8 +1,7 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-import * as Pages from "../pages.ts"
-import * as Api from "common/api/index.ts"
+import * as App from "../app.tsx"
 import * as Kana from "common/kana.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import * as Furigana from "common/furigana.ts"
@@ -11,7 +10,7 @@ import * as Tags from "./Tags.tsx"
 
 
 export function EntryKanjiWords(props: {
-    entry: Api.KanjiWordCrossRef.Entry
+    entry: App.Api.KanjiWordCrossRef.Entry
 })
 {
     return <Entry>
@@ -31,7 +30,7 @@ const Entry = styled.article`
 
 function WordBuckets(props: {
     kanji: string,
-    wordBuckets: Api.KanjiWordCrossRef.ReadingBucket[],
+    wordBuckets: App.Api.KanjiWordCrossRef.ReadingBucket[],
 })
 {
     const bucketExpandedSignal = (bucket: string) =>
@@ -68,7 +67,7 @@ function WordBuckets(props: {
 
                         return <WordEntry>
                             <Framework.Link
-                                href={ Pages.Search.urlForBaseReading(Furigana.extractBase(furigana), Furigana.extractReading(furigana)) }
+                                href={ App.Pages.Search.urlForBaseReading(Furigana.extractBase(furigana), Furigana.extractReading(furigana)) }
                                 noUnderline
                             >
                                 <WordHeading>
@@ -156,7 +155,7 @@ const Reading = styled.div`
     border-right: 1px solid ${ Framework.themeVar("borderColor") };
     color: ${ Framework.themeVar("text2ndColor") };
     font-size: 0.8em;
-    font-weight: bold;
+    font-weight: ${ App.cssVarJapaneseFontWeight };
     writing-mode: vertical-lr;
     display: inline-block;
     justify-content: stretch;
@@ -181,7 +180,7 @@ const WordEntry = styled.div`
 
 
 const WordHeading = styled.span`
-    font-weight: bold;
+    font-weight: ${ App.cssVarJapaneseFontWeight };
 `
 
 
