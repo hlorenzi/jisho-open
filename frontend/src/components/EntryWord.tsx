@@ -211,14 +211,13 @@ const HeadingBlock = styled.button<{
     queryMatch: boolean,
 }>`
     margin: 0;
-    margin-inline-start: -0.2em;
     margin-inline-end: ${ props => props.last ? `0.25em` : `1em` };
     padding: 0.1em 0.2em 0 0.2em;
     border: 0;
     display: inline-block;
     font-family: inherit;
     font-size: ${ props => props.first ? `1.6em` : `1.2em` };
-    border-radius: 0.25rem;
+    border-radius: ${ Framework.themeVar("borderRadius") };
     transition: color 0.05s, background-color 0.05s;
     cursor: pointer;
 

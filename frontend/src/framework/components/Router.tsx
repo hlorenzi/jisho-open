@@ -20,13 +20,25 @@ export function Router(props: {
     const [routeProps, setRouteProps] =
         Solid.createSignal<Framework.RouteMatch | null>(null)
 
+    const [hasErrored, setHasErrored] =
+        Solid.createSignal(false)
+
 
     Solid.onMount(() => {
         console.log("Router.onMount")
 
         async function onNavigation(ev: Framework.HistoryEvent)
         {
-            console.log("%cRouter.onNavigation", "color: white; background-color: blue;", window.location.pathname)
+            console.log(
+                "%cRouter.onNavigation",
+                "color: white; background-color: orange;",
+                window.location.pathname)
+
+            if (hasErrored())
+            {
+                window.location.reload()
+                return
+            }
 
             const match = Framework.getMatchForPath(
                 props.routes,
@@ -105,14 +117,26 @@ export function Router(props: {
             <Framework.RouterTransition/>
         </Solid.Show>
 
-        <Solid.Suspense>
-            <div inert={ pending() ? true : undefined }>
-                <RouterInner
-                    routeProps={ routeProps }
-                    routeMatch={ routeMatch }
-                />
-            </div>
-        </Solid.Suspense>
+        <Solid.ErrorBoundary fallback={ (err: Error) => {
+            setHasErrored(true)
+            const cause = (err.cause as any) ?? {}
+            return <Framework.Error
+                message={ cause.statusCode && cause.statusMessage ?
+                    `HTTP ${ cause.statusCode.toString() } — ${ cause.statusMessage }` :
+                    `${ err }`
+                }
+            />
+        }}>
+
+            <Solid.Suspense>
+                <div inert={ pending() ? true : undefined }>
+                    <RouterInner
+                        routeProps={ routeProps }
+                        routeMatch={ routeMatch }
+                    />
+                </div>
+            </Solid.Suspense>
+        </Solid.ErrorBoundary>
     </>
 }
 
@@ -154,7 +178,10 @@ export function RouterInner(props: {
 
         if (PageFn !== undefined)
         {
-            console.log(`%c${ PageFn.name }`, "color: white; background-color: red;", "rendered", props.routeMatch())
+            console.log(
+                `%c${ PageFn.name }`,
+                "color: white; background-color: blue;",
+                "rendered", props.routeMatch())
             setPage(<PageFn routeMatch={ props.routeProps }/>)
         }
 

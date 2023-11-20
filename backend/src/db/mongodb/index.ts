@@ -242,6 +242,8 @@ export async function connect(): Promise<Db.Interface>
             MongoDbStudyLists.studylistWordRemoveMany(state, authUser, studylistId, wordIds),
         studylistWordsGet: (authUser, studylistId) =>
             MongoDbStudyLists.studylistWordsGet(state, authUser, studylistId),
+        studylistCommunityGetRecent: (authUser, limit) =>
+            MongoDbStudyLists.studylistCommunityGetRecent(state, authUser, limit),
     }
 }
 
@@ -285,7 +287,7 @@ function generateRandomId(len = 6)
 }
 
 
-export function translateDbWordToApiWord(
+export function translateWordDbToApi(
     dbWord: DbWordEntry)
     : Api.Word.Entry
 {
@@ -314,7 +316,7 @@ export function translateDbWordToApiWord(
 }
 
 
-export function translateDbKanjiToApiKanji(
+export function translateKanjiDbToApi(
     dbKanji: DbKanjiEntry)
     : Api.Kanji.Entry
 {
@@ -332,7 +334,7 @@ export function translateDbKanjiToApiKanji(
 }
 
 
-export function translateDbKanjiWordToApiKanjiWord(
+export function translateKanjiWordDbToApi(
     dbEntry: DbKanjiWordEntry)
     : Api.KanjiWordCrossRef.Entry
 {
@@ -349,7 +351,7 @@ export function translateDbKanjiWordToApiKanjiWord(
 }
 
 
-export function translateDbStudyListToApi(
+export function translateStudyListDbToApi(
     dbEntry: DbStudyListEntry)
     : Api.StudyList.Entry
 {

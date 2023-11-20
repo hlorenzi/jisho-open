@@ -1,5 +1,6 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
+import * as Framework from "../index.ts"
 
 
 const Styled = styled.div<{
@@ -29,8 +30,8 @@ export function TextTag(props: {
     return <Styled
         lang="en"
         title={ props.title }
-        textColor={ props.textColor ?? "white" }
-        bkgColor={ props.bkgColor ?? "gray" }
+        textColor={ props.textColor ?? Framework.themeVar("iconDetailColor") }
+        bkgColor={ props.bkgColor ?? Framework.themeVar("textStrongBkgColor") }
     >
         { props.label }
     </Styled>

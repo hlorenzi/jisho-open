@@ -124,21 +124,22 @@ export function compile(raw: string): Table
         const sides = line.split("->").map(s => s.trim())
         const source = sides[0].split(";").map(s => s.trim())
         const target = sides[1].split(";").map(s => s.trim())
+        const invalid = sides[1].trim() === "!"
 
-        if (!source[1].startsWith("*") &&
-            source[1] !== "!")
+        if (!source[1].startsWith("*"))
             throw `invalid source pattern: ${source[1]}`
 
-        if (!target[1].startsWith("*"))
+        if (!invalid &&
+            !target[1].startsWith("*"))
             throw `invalid target pattern: ${source[1]}`
 
-        const invalid = source[1] === "!"
         const removeFromEnd = source[1].substring("*".length)
-        const addToEnd = target[1].substring("*".length)
+        const addToEnd = (target[1] ?? "").substring("*".length)
 
         const targetCategory = target[0]
-
         const sourceCategory = source[0]
+
+        // Extend a previous rule, but remove the intermediate step
         if (sourceCategory.startsWith("%"))
         {
             const sourceGroupId = sourceCategory.substring("%".length).trim()
@@ -154,6 +155,29 @@ export function compile(raw: string): Table
                     sourceCategory: sourceRule.sourceCategory,
                     removeFromEnd: sourceRule.removeFromEnd + removeFromEnd,
                     addToEnd: sourceRule.addToEnd + addToEnd,
+                    targetCategory,
+                })
+            
+            rules.set(currentGroupId, ruleList)
+            continue
+        }
+
+        // Extend a previous rule, but keep the intermediate step
+        if (sourceCategory.startsWith("~"))
+        {
+            const sourceGroupId = sourceCategory.substring("~".length).trim()
+            const sourceGroup = rules.get(sourceGroupId)
+            if (sourceGroup === undefined)
+                throw `unknown inflections source group id: ${sourceGroupId}`
+            
+            const ruleList = rules.get(currentGroupId) ?? []
+            for (const sourceRule of sourceGroup)
+                ruleList.push({
+                    id: currentGroupId,
+                    invalid,
+                    sourceCategory: sourceRule.targetCategory,
+                    removeFromEnd: removeFromEnd,
+                    addToEnd: addToEnd,
                     targetCategory,
                 })
             
@@ -194,11 +218,61 @@ export function compile(raw: string): Table
 }
 
 
+export function endsWith(
+    term: string,
+    ending: string)
+    : boolean
+{
+    if (term.length < ending.length)
+        return false
+
+    for (let i = 0; i < ending.length; i++)
+    {
+        const cEnding = ending[ending.length - 1 - i]
+        const cTerm = term[term.length - 1 - i]
+
+        if (cTerm === cEnding)
+            continue
+
+        else if (cTerm === "為")
+        {
+            if (cEnding === "さ" ||
+                cEnding === "し" ||
+                cEnding === "す" ||
+                cEnding === "せ")
+                continue
+        }
+        else if (cTerm === "来")
+        {
+            if (cEnding === "き" ||
+                cEnding === "く" ||
+                cEnding === "こ")
+                continue
+        }
+        else if (cTerm === "良")
+        {
+            if (cEnding === "い" ||
+                cEnding === "よ")
+                continue
+        }
+        else if (Kana.toHiragana(cTerm) === cEnding)
+            continue
+        
+        return false
+    }
+
+    return true
+}
+
+
 export function breakdown(
     targetTerm: string,
     category?: string)
     : Breakdown
 {
+    if (targetTerm.length > 25)
+        return []
+
     const steps: BreakdownStep[] = []
     const table = getTable()
 
@@ -209,7 +283,7 @@ export function breakdown(
             category !== rule.targetCategory)
             continue
 
-        if (!targetTerm.endsWith(rule.addToEnd))
+        if (!endsWith(targetTerm, rule.addToEnd))
             continue
 
         if (table.groups.get(rule.id)!.hidden)

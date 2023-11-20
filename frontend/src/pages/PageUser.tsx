@@ -208,7 +208,7 @@ export function PageUser(props: Framework.RouteProps)
 
 const ListLayout = styled.div`
     background-color: ${ Framework.themeVar("textStrongBkgColor") };
-    border-radius: 0.25rem;
+    border-radius: ${ Framework.themeVar("borderRadius") };
     display: grid;
     grid-template: auto / auto;
     width: 100%;

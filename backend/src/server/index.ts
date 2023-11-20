@@ -46,6 +46,9 @@ app.use("/.build/", Express.static("../frontend/.build"))
 app.use("*", Express.static("../frontend/public/index.html"))
 
 app.use((err: any, req: Express.Request, res: Express.Response, next: any) => {
+    if (!err.statusCode || !err.statusMessage)
+        console.error(err)
+
     if (res.headersSent)
         return next(err)
 

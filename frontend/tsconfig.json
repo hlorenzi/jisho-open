@@ -5,7 +5,7 @@
         "jsxImportSource": "solid-js",
         "module": "esnext",
         "moduleResolution": "bundler",
-        "target": "es2017",
+        "target": "es2022",
         "allowImportingTsExtensions": true,
         "noEmit": true,
         "strictNullChecks": true,

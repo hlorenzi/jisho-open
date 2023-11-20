@@ -8,6 +8,8 @@ export function KanjiStrokeDiagram(props: {
     style?: Solid.JSX.CSSProperties,
 })
 {
+    const owner = Solid.getOwner()
+
     const [svgPanels] = Solid.createResource(
         props.kanji,
         async (kanji) => {
@@ -19,26 +21,21 @@ export function KanjiStrokeDiagram(props: {
             const kanjiVgUrl =
                 `https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji/${ kanjiUnicode }.svg`
         
-            try
-            {
-                const res = await fetch(kanjiVgUrl)
-                if (!res.ok)
-                    throw `not available`
+            const res = await fetch(kanjiVgUrl)
+            if (!res.ok)
+                return [<div>(No stroke diagram available.)</div>]
 
-                const svgText = await res.text()
-                const parser = new DOMParser()
-                const svg = parser.parseFromString(svgText, "image/svg+xml")
-                
-                const strokeCount = countStrokesRecursively(svg.documentElement)
+            const svgText = await res.text()
+            const parser = new DOMParser()
+            const svg = parser.parseFromString(svgText, "image/svg+xml")
+            
+            const strokeCount = countStrokesRecursively(svg.documentElement)
+            return Solid.runWithOwner(owner, () => {
                 const svgPanels: Solid.JSX.Element[] = []
                 for (let panel = 0; panel < strokeCount; panel++)
                     svgPanels.push(buildSvg(svg, panel))
                 return svgPanels
-            }
-            catch
-            {
-                return [<div>(No stroke diagram available.)</div>]
-            }
+            })
         })
 
     return <Solid.Suspense fallback={ <Framework.LoadingBar/> }>

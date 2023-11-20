@@ -7,6 +7,9 @@ export * as Api from "./api.ts"
 export * as Pages from "./pages.ts"
 
 
+export const githubUrl = "https://github.com/hlorenzi/jisho-open"
+
+
 export type Prefs = {
     debugMode: boolean
     theme: string

@@ -3,12 +3,57 @@ import * as Api from "common/api/index.ts"
 export * from "common/api/index.ts"
 
 
-async function post(
+type CachedResponse = Promise<object>
+
+
+type EndpointCache = Map<string, CachedResponse>
+
+
+const cache = new Map<string, EndpointCache>()
+
+
+async function postCached(
+    endpoint: string,
+    payload: any)
+    : Promise<any>
+{
+    const cacheForEndpoint: EndpointCache = cache.get(endpoint) ?? new Map()
+    const payloadKey = JSON.stringify(payload)
+    const cachedResponsePromise = cacheForEndpoint.get(payloadKey)
+    if (cachedResponsePromise)
+    {
+        const cachedResponse = await cachedResponsePromise
+
+        console.log(
+            `%c${ endpoint } [cached]`,
+            "color: white; background-color: limegreen;",
+            payload,
+            cachedResponse)
+
+        return cachedResponse
+    }
+
+    const response = post(endpoint, payload)
+    cacheForEndpoint.set(payloadKey, response)
+    cache.set(endpoint, cacheForEndpoint)
+    return response
+}
+
+
+async function post<T>(
     endpoint: string,
     payload: any)
     : Promise<any>
 {
     let res: Response
+
+    const logError = () => {
+        console.error(
+            `%c${ endpoint }`,
+            "color: white; background-color: green;",
+            payload,
+            "[error]")
+    }
 
     try
     {
@@ -24,6 +69,7 @@ async function post(
     }
     catch (err)
     {
+        logError()
         window.alert(`A network error occurred, or the server is unavailable.`)
         throw err
     }
@@ -31,8 +77,13 @@ async function post(
     if (!res.ok)
     {
         const err = await res.text()
+        logError()
+
         window.alert(`An error occurred! (HTTP status: ${ res.status })\n\n${ err }`)
-        throw err
+        
+        throw new Error(
+            err,
+            { cause: { statusCode: res.status, statusMessage: err } })
     }
     
     try
@@ -49,6 +100,7 @@ async function post(
     }
     catch (err)
     {
+        logError()
         window.alert(`An error occurred!\n\n${ err }`)
         throw err
     }
@@ -66,7 +118,7 @@ export async function getUser(
     req: Api.GetUser.Request)
     : Promise<Api.GetUser.Response>
 {
-    return post(Api.GetUser.url, req)
+    return postCached(Api.GetUser.url, req)
 }
 
 
@@ -74,7 +126,7 @@ export async function search(
     req: Api.Search.Request)
     : Promise<Api.Search.Response>
 {
-    return post(Api.Search.url, req)
+    return postCached(Api.Search.url, req)
 }
 
 
@@ -82,7 +134,7 @@ export async function getKanjiWords(
     req: Api.KanjiWords.Request)
     : Promise<Api.KanjiWords.Response>
 {
-    return post(Api.KanjiWords.url, req)
+    return postCached(Api.KanjiWords.url, req)
 }
 
 
@@ -253,4 +305,20 @@ export async function studylistWordsGet(
     : Promise<Api.StudylistWordsGet.Response>
 {
     return post(Api.StudylistWordsGet.url, req)
+}
+
+
+export async function studylistStandardGetAll(
+    req: Api.StudylistStandardGetAll.Request)
+    : Promise<Api.StudylistStandardGetAll.Response>
+{
+    return post(Api.StudylistStandardGetAll.url, req)
+}
+
+
+export async function studylistCommunityGetRecent(
+    req: Api.StudylistCommunityGetRecent.Request)
+    : Promise<Api.StudylistCommunityGetRecent.Response>
+{
+    return post(Api.StudylistCommunityGetRecent.url, req)
 }

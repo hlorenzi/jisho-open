@@ -3,7 +3,7 @@ export const raw =
 # @ group-identifier
 # source-category; source-pattern -> target-category; target-pattern
 
-@ id: identity
+@ id: verb-identity
 @ hidden
 v1;    *る -> unc; *る
 v1-s;  *る -> unc; *る
@@ -22,10 +22,8 @@ v5n;   *ぬ -> unc; *ぬ
 v5b;   *ぶ -> unc; *ぶ
 v5m;   *む -> unc; *む
 vs-i;  *する -> unc; *する
-vs-i;  *為る -> unc; *為る
 vs-s;  *する -> unc; *する
 vk;    *くる -> unc; *くる
-vk;    *来る -> unc; *来る
 
 @ id: continuative
 v1;      *る -> n; *
@@ -45,10 +43,8 @@ v5n;     *ぬ -> n; *に
 v5b;     *ぶ -> n; *び
 v5m;     *む -> n; *み
 vs-i;    *する -> n; *し
-vs-i;    *為る -> n; *為
 vs-s;    *する -> n; *し
 vk;      *くる -> n; *き
-vk;      *来る -> n; *来
 
 @ id: verb-form
 @ display: verb form
@@ -71,10 +67,8 @@ v5k;     *く -> unc; *い
 v5k-s;   *く -> unc; *っ
 v5s;     *す -> unc; *し
 vs-i;    *する -> unc; *し
-vs-i;    *為る -> unc; *為
 vs-s;    *する -> unc; *し
 vk;      *くる -> unc; *き
-vk;      *来る -> unc; *来
 vmasu;   *ます -> unc; *まし
 
 @ id: conjunctive-stem-voiced
@@ -111,19 +105,16 @@ v5n;   *ぬ -> unc; *な
 v5b;   *ぶ -> unc; *ば
 v5m;   *む -> unc; *ま
 vs-i;  *する -> unc; *し
-vs-i;  *為る -> unc; *為
 vs-s;  *する -> unc; *し
 vk;    *くる -> unc; *こ
-vk;    *来る -> unc; *来
 
 @ id: negative-classical-stem
 @ hidden
 %negative-stem; * -> unc; *
-vz;   ! -> unc; *
+vz;   *する -> !
 vz;   *ずる -> unc; *ぜ
-vs-i; ! -> unc; *
+vs-i; *する -> !
 vs-i; *する -> unc; *せ
-vs-i; *為る -> unc; *為
 
 @ id: negative
 %negative-stem; * -> adj-i; *ない
@@ -180,10 +171,8 @@ v5n;   *ぬ -> unc; *ね
 v5b;   *ぶ -> unc; *べ
 v5m;   *む -> unc; *め
 vs-i;  *する -> unc; *しろ
-vs-i;  *為る -> unc; *為ろ
 vs-s;  *する -> unc; *しろ
 vk;    *くる -> unc; *こい
-vk;    *来る -> unc; *来い
 
 @ id: imperative-formal
 @ display: imperative (formal)
@@ -204,14 +193,12 @@ v5n;   *ぬ -> v5aru; *になさる
 v5b;   *ぶ -> v5aru; *びなさる
 v5m;   *む -> v5aru; *みなさる
 vs-i;  *する -> v5aru; *しなさる
-vs-i;  *為る -> v5aru; *為なさる
 vs-s;  *する -> v5aru; *しなさる
 vk;    *くる -> v5aru; *こなさる
-vk;    *来る -> v5aru; *来なさる
 
 @ id: negative-imperative
 @ display: negative imperative
-%identity; * -> unc; *な
+~verb-identity; * -> unc; *な
 
 @ id: request
 vmasu; *ます -> unc; *ませ
@@ -234,10 +221,8 @@ v5n;   *ぬ -> unc; *のう
 v5b;   *ぶ -> unc; *ぼう
 v5m;   *む -> unc; *もう
 vs-i;  *する -> unc; *しよう
-vs-i;  *為る -> unc; *為よう
 vs-s;  *する -> unc; *しよう
 vk;    *くる -> unc; *こよう
-vk;    *来る -> unc; *来よう
 vmasu; *ます -> unc; *ましょう
 
 @ id: potential
@@ -259,18 +244,15 @@ v5n;     *ぬ -> v1; *ねる
 v5b;     *ぶ -> v1; *べる
 v5m;     *む -> v1; *める
 vs-i;    *する -> v1; *できる
-vs-i;    *為る -> v1; *できる
 vs-s;    *する -> v1; *しえる
 vs-s;    *する -> v-unspec; *しうる
 vk;      *くる -> v1; *こられる
-vk;      *来る -> v1; *来られる
 
 @ id: potential-irregular
 @ display: potential (irregular)
 v1;   *る -> v1; *れる
 v1-s; *る -> v1; *れる
 vk;   *くる -> v1; *これる
-vk;   *来る -> v1; *来れる
 
 @ id: causative
 v1;    *る -> v1; *させる
@@ -290,10 +272,8 @@ v5n;   *ぬ -> v1; *なせる
 v5b;   *ぶ -> v1; *ばせる
 v5m;   *む -> v1; *ませる
 vs-i;  *する -> v1; *させる
-vs-i;  *為る -> v1; *為せる
 vs-s;  *する -> v1; *すせる
 vk;    *くる -> v1; *こさせる
-vk;    *来る -> v1; *来させる
 
 @ id: causative-contracted
 @ display: causative (contracted)
@@ -314,10 +294,8 @@ v5n;   *ぬ -> v5s; *なす
 v5b;   *ぶ -> v5s; *ばす
 v5m;   *む -> v5s; *ます
 vs-i;  *する -> v5s; *さす
-vs-i;  *為る -> v5s; *為す
 vs-s;  *する -> v5s; *すす
 vk;    *くる -> v5s; *こさす
-vk;    *来る -> v5s; *来さす
 
 @ id: passive
 v1;    *る -> v1; *られる
@@ -338,10 +316,8 @@ v5n;   *ぬ -> v1; *なれる
 v5b;   *ぶ -> v1; *ばれる
 v5m;   *む -> v1; *まれる
 vs-i;  *する -> v1; *される
-vs-i;  *為る -> v1; *為れる
 vs-s;  *する -> v1; *すれる
 vk;    *くる -> v1; *こられる
-vk;    *来る -> v1; *来られる
 
 @ id: causative-passive-contracted
 @ display: causative-passive (contracted)
@@ -382,26 +358,235 @@ v5n;   *ぬ -> unc; *ねば
 v5b;   *ぶ -> unc; *べば
 v5m;   *む -> unc; *めば
 vs-i;  *する -> unc; *すれば
-vs-i;  *為る -> unc; *為れば
 vs-s;  *する -> unc; *すれば
 vk;    *くる -> unc; *くれば
-vk;    *来る -> unc; *来れば
 
 @ id: want-to-do
 %continuative; * -> adj-i; *たい
 
+@ id: attributive-archaic-ru
+@ display: attributive form (archaic)
+@ ref: https://japanese.stackexchange.com/a/2480
+@ ref: https://japanese.stackexchange.com/a/5004
+v4k; *く -> unc; *くる
+v4g; *ぐ -> unc; *ぐる
+v4s; *す -> unc; *する
+v4t; *つ -> unc; *つる
+v4n; *ぬ -> unc; *ぬる
+v4b; *ぶ -> unc; *ぶる
+v4m; *む -> unc; *むる
+v4h; *ふ -> unc; *ふる
+v4r; *る -> unc; *るる
+vn; *ぬ -> unc; *ぬる
+
+@ id: past-archaic-ki
+@ display: past (archaic)
+@ ref: https://en.wiktionary.org/wiki/き#Suffix
+%continuative; * -> unc; *き
+vs-i; *する -> !
+vs-i; *する -> unc; *しき
+vs-s; *する -> !
+vs-s; *する -> unc; *しき
+vk;   *くる -> !
+
+@ id: past-archaic-ki-attributive
+@ display: past attributive form (archaic)
+@ ref: https://en.wiktionary.org/wiki/き#Suffix
+%continuative; * -> unc; *し
+adj-i; *い -> unc; *し
+vs-i; *する -> !
+vs-i; *する -> vki; *せし
+vs-s; *する -> !
+vs-s; *する -> vki; *せし
+vk;   *くる -> !
+vk;   *くる -> unc; *こし
+
+@ id: past-archaic-keri
+@ display: past (archaic)
+@ ref: https://en.wiktionary.org/wiki/けり#Japanese
+%continuative; * -> unc; *けり
+
 @ id: aux-iru
 @ display: aux. いる
-vte; *て -> v1; *ている
-vte; *で -> v1; *でいる
+~conjunctive; * -> v1; *いる
 
 @ id: aux-iru-contracted
 @ display: aux. いる (contracted)
-vte; *て -> v1contr; *てる
-vte; *で -> v1contr; *でる
+~conjunctive; * -> v1contr; *る
 
-@ id: classical-attributive
-@ display: classical attributive
-@ ref: https://japanese.stackexchange.com/a/5004
-vn; *ぬ -> unc; *ぬる
+@ id: aux-iru-contracted-n
+@ display: aux. いる (contracted)
+~conjunctive; * -> unc; *ん
+
+@ id: aux-aru
+@ display: aux. ある
+~conjunctive; * -> v5r; *ある
+
+@ id: aux-iku
+@ display: aux. いく
+~conjunctive; * -> v5k-s; *いく
+
+@ id: aux-kuru
+@ display: aux. くる
+~conjunctive; * -> vk; *くる
+
+@ id: aux-oku
+@ display: aux. おく
+~conjunctive; * -> v5k; *おく
+
+@ id: aux-oru
+@ display: aux. おる
+~conjunctive; * -> v5r; *おる
+
+@ id: aux-miru
+@ display: aux. みる
+~conjunctive; * -> v1; *みる
+
+@ id: aux-kureru
+@ display: aux. くれる
+~conjunctive; * -> v1-s; *くれる
+
+@ id: aux-ageru
+@ display: aux. あげる
+~conjunctive; * -> v1; *あげる
+
+@ id: aux-morau
+@ display: aux. もらう
+~conjunctive; * -> v5u; *もらう
+
+@ id: aux-itadaku
+@ display: aux. いただく
+~conjunctive; * -> v5k; *いただく
+
+@ id: aux-yaru
+@ display: aux. やる
+~conjunctive; * -> v5r; *やる
+
+@ id: aux-kudasaru
+@ display: aux. くださる
+~conjunctive; * -> v5aru; *くださる
+~conjunctive; * -> v5aru; *下さる
+
+@ id: aux-hoshii
+@ display: aux. ほしい
+~conjunctive; * -> adj-i; *ほしい
+~conjunctive; * -> adj-i; *欲しい
+
+@ id: aux-oku-contracted
+@ display: aux. おく (contracted)
+~conjunctive; *て -> v5k; *とく
+~conjunctive; *で -> v5k; *どく
+
+@ id: aux-oru-contracted
+@ display: aux. おる (contracted)
+~conjunctive; *て -> v5r; *とる
+~conjunctive; *で -> v5r; *どる
+
+@ id: aux-shimau
+@ display: aux. しまう
+~conjunctive; * -> v5u; *しまう
+
+@ id: aux-shimau-contracted
+@ display: aux. しまう (contracted)
+~conjunctive; *て -> v5u; *ちゃう
+~conjunctive; *で -> v5u; *じゃう
+~conjunctive; *て -> v5u; *ちまう
+~conjunctive; *で -> v5u; *じまう
+
+@ id: aux-wa-particle
+@ display: は particle (contracted)
+~conjunctive; *て -> unc; *ちゃ
+~conjunctive; *で -> unc; *じゃ
+
+
+
+@ id: adj-i-adverbial
+@ display: adverbial form
+adj-i; *い -> adv; *く
+adj-ix; *いい -> adv; *よく
+
+@ id: adj-i-conjunctive
+@ display: conjunctive form
+adj-i; *い -> vte; *くて
+adj-ix; *いい -> vte; *よくて
+
+@ id: adj-i-nominal
+@ display: nominal form
+adj-i; *い -> n; *さ
+adj-ix; *いい -> n; *よさ
+
+@ id: adj-i-negative
+@ display: negative
+adj-i; *い -> adj-i; *くない
+adj-ix; *いい -> adj-i; *よくない
+
+@ id: adj-i-past
+@ display: past
+adj-i; *い -> unc; *かった
+adj-ix; *いい -> unc; *よかった
+
+@ id: adj-i-conditional
+@ display: conditional
+adj-i; *い -> unc; *かったら
+adj-ix; *いい -> unc; *よかったら
+
+@ id: adj-i-provisional
+@ display: provisional
+adj-i; *い -> unc; *ければ
+adj-ix; *いい -> unc; *よければ
+
+@ id: adj-i-aux-sou
+@ display: aux. そう
+adj-i; *い -> adj-na; *そう
+adj-i; *よい -> adj-na; *よさそう
+adj-ix; *いい -> adj-na; *よさそう
+
+@ id: adj-i-aux-negative-sou
+@ display: negative aux. そう
+adj-i; *い -> adj-na; *くなさそう
+
+@ id: adj-i-aux-sugiru
+@ display: aux. すぎる
+adj-i; *い -> v1; *すぎる
+adj-ix; *いい -> v1; *よすぎる
+
+@ id: adj-i-aux-garu
+@ display: aux. がる
+adj-i; *い -> v5r; *がる
+adj-ix; *いい -> v5r; *よがる
+
+@ id: adj-i-attributive-archaic
+@ display: attributive form (archaic)
+adj-i; *い -> adj-f; *き
+adj-ix; *いい -> adj-f; *よき
+
+
+
+@ id: adj-na-attributive
+@ display: attributive form
+adj-na; * -> unc; *な
+
+@ id: adj-na-adverbial
+@ display: adverbial form
+adj-na; * -> adv; *に
+
+@ id: adj-na-nominal
+@ display: nominal form
+adj-na; * -> n; *さ
+
+@ id: adj-na-aux-sou
+@ display: aux. そう
+adj-na; * -> adj-na; *そう
+
+@ id: adj-na-aux-sugiru
+@ display: aux. すぎる
+adj-na; * -> v1; *すぎる
+
+@ id: adj-na-aux-garu
+@ display: aux. がる
+adj-na; * -> v5r; *がる
+
+@ id: aux-naru
+@ display: to become
+adv; * -> v5r; *なる
 `

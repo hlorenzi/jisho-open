@@ -16,7 +16,10 @@ function Root()
         <Framework.GlobalCss extraCss={ [App.usePrefsCss()] }/>
         <Framework.Router
             routes={[
-                { patterns: ["/", Pages.Search.urlPattern, Pages.Search.urlPatternToken],
+                { patterns: ["/"],
+                    load: async () => (await import("./pages/PageHome.tsx")).PageHome },
+
+                { patterns: [Pages.Search.urlPattern, Pages.Search.urlPatternToken],
                     acceptsNoReload: true,
                     load: async () => (await import("./pages/PageSearch.tsx")).PageSearch },
 
@@ -32,8 +35,11 @@ function Root()
                 { patterns: [Pages.Studylist.urlPattern],
                     load: async () => (await import("./pages/PageStudylist.tsx")).PageStudylist },
     
+                { patterns: [Pages.Community.url],
+                    load: async () => (await import("./pages/PageCommunity.tsx")).PageCommunity },
+    
                 { patterns: ["*"],
-                    load: async () => () => <h2>Page not found</h2> },
+                    load: async () => () => <Framework.Error message="Page not found"/> },
             ]}
         />
     </>

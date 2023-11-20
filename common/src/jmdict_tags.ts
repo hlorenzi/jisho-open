@@ -30,10 +30,12 @@ export function getKanjiCommonness(
     entry: Api.Kanji.Entry)
     : Api.CommonnessTag | undefined
 {
-    if (entry.jouyou !== undefined)
+    if (entry.jouyou !== undefined &&
+        entry.rankNews !== undefined)
         return "veryCommon"
 
-    if (entry.rankNews !== undefined ||
+    if (entry.jouyou !== undefined ||
+        entry.rankNews !== undefined ||
         entry.jlpt !== undefined ||
         (entry.score !== undefined && entry.score > 0))
         return "common"

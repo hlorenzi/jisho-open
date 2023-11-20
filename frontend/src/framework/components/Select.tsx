@@ -51,7 +51,7 @@ const Layout = styled.span`
     margin: 0.125em;
     padding: 0 0 0 0.5em;
     border: 1px solid ${ Framework.themeVar("borderColor") };
-    border-radius: 0.25rem;
+    border-radius: ${ Framework.themeVar("borderRadius") };
     transition: box-shadow 0.05s;
     cursor: pointer;
     user-select: none;
@@ -95,7 +95,7 @@ const StyledSelect = styled.select`
     cursor: pointer;
 
     border: 0;
-    border-radius: 0.25rem;
+    border-radius: ${ Framework.themeVar("borderRadius") };
 
     padding: 0.25em;
 

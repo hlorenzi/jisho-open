@@ -192,7 +192,7 @@ export async function studylistGet(
             throw Api.Error.forbidden
     }
 
-    return DbMongo.translateDbStudyListToApi(studylist)
+    return DbMongo.translateStudyListDbToApi(studylist)
 }
 
 
@@ -229,7 +229,7 @@ export async function studylistGetAll(
 
     return studylists
         .map(e => ({ ...e, editorPassword: undefined, words: [] }))
-        .map(e => DbMongo.translateDbStudyListToApi(e))
+        .map(e => DbMongo.translateStudyListDbToApi(e))
 }
 
 
@@ -291,7 +291,7 @@ export async function studylistGetAllMarked(
     return studylists
         .sort((a, b) => b.modifyDate.getTime() - a.modifyDate.getTime())
         .map(e => ({ ...e, editorPassword: undefined, words: [] }))
-        .map(e => DbMongo.translateDbStudyListToApi(e))
+        .map(e => DbMongo.translateStudyListDbToApi(e))
 }
 
 
@@ -416,5 +416,28 @@ export async function studylistWordsGet(
         .toArray()
 
 	return wordEntries
-        .map(e => DbMongo.translateDbWordToApiWord(e))
+        .map(e => DbMongo.translateWordDbToApi(e))
+}
+
+
+export async function studylistCommunityGetRecent(
+    state: DbMongo.State,
+    authUser: Api.MaybeUser,
+    limit: number)
+    : Promise<Api.StudyList.Entry[]>
+{
+    type Projected = Omit<
+        DbMongo.DbStudyListEntry,
+        "editorPassword" | "words">
+
+    const studylists = await state.collStudylists
+        .find({ public: true, creatorId: { $ne: Auth.systemUserId } })
+        .project<Projected>({ editorPassword: 0, words: 0 })
+        .sort({ modifyDate: -1 })
+        .limit(Math.min(limit, 100))
+        .toArray()
+
+    return studylists
+        .map(e => ({ ...e, editorPassword: undefined, words: [] }))
+        .map(e => DbMongo.translateStudyListDbToApi(e))
 }

@@ -111,7 +111,7 @@ const DivCheckbox = styled.input`
 
     box-shadow:inset 0px 0px 0px 1px ${ Framework.themeVar("borderColor") };
 
-    border-radius: 0.25rem;
+    border-radius: ${ Framework.themeVar("borderRadius") };
     margin: 0em 0.25em 0.25em 0.25em;
 
     transition: box-shadow 0.05s, background-color 0.05s;

@@ -42,7 +42,7 @@ function SideMenu(props: {
 
             <Framework.ButtonPopupPageWide
                 label="Community"
-                href={ "/" }
+                href={ App.Pages.Community.url }
             />
 
             <Framework.HorizontalBar/>
@@ -68,10 +68,6 @@ function SideMenu(props: {
                         label="Log in"
                         href={ App.Api.Login.urlForRedirect(redirectUrl) }
                         native
-                    />
-                    <Framework.ButtonPopupPageWide
-                        label=""
-                        disabled
                     />
                 </Solid.Show>
 

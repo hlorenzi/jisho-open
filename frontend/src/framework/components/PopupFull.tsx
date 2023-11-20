@@ -84,6 +84,6 @@ const PopupWrapper = styled.div`
     padding: 0.5em;
     border: 1px solid ${ Framework.themeVar("borderColor") };
     background-color: ${ Framework.themeVar("pageBkgColor") };
-    border-radius: 0.25rem;
+    border-radius: ${ Framework.themeVar("borderRadius") };
     box-shadow: 0 0.15em 0.15em ${ Framework.themeVar("popupShadowColor") };
 `

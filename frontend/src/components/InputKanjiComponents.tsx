@@ -182,7 +182,7 @@ const LayoutResults = styled.div`
     overflow-x: hidden;
     overflow-y: auto;
     background-color: ${ Framework.themeVar("textStrongBkgColor") };
-    border-radius: 0.25rem;
+    border-radius: ${ Framework.themeVar("borderRadius") };
 `
 
 
@@ -207,7 +207,7 @@ const StrokeCountSlot = styled.div`
     line-height: 1em;
     color: ${ Framework.themeVar("pageBkgColor") };
     background-color: ${ Framework.themeVar("text2ndColor") };
-    border-radius: 0.25rem;
+    border-radius: ${ Framework.themeVar("borderRadius") };
     user-select: none;
 `
 

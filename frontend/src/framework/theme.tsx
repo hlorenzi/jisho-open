@@ -26,6 +26,7 @@ export type Theme = {
 
     pageTransitionOverlayColor: string
     borderColor: string
+    borderRadius: string
     focusOutlineColor: string
     focusOutlineWidth: string
     popupOverlayColor: string
@@ -93,6 +94,7 @@ export const themeLight: Theme = {
 
     pageTransitionOverlayColor: "#fff8",
     borderColor: "#cccccc",
+    borderRadius: "0.25rem",
     focusOutlineColor: "#77ab00",
     focusOutlineWidth: "2px",
     popupOverlayColor: "#00000028",
@@ -169,7 +171,7 @@ export const themeDarkGray: Theme = {
     textHighlightBkgColor: "#35363a",
     textStrongBkgColor: "#212225",
 
-    linkHoverColor: "#ffffff",
+    linkHoverColor: "#80be43",
     linkPressColor: "#5c5d61",
 
     buttonHoverBkgColor: "#3b3d44",

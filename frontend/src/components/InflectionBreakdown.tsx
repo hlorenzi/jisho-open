@@ -62,6 +62,8 @@ function InflectionPath(props: {
             childrenFn: () => <InflectionRulePopup
                 ruleId={ step.ruleId }
                 sourceCategory={ step.sourceCategory }
+                sourceTerm={ step.sourceTerm }
+                targetTerm={ step.targetTerm }
             />
         })
 
@@ -123,13 +125,20 @@ const InflectionTerm = styled.span<{
     first: boolean,
 }>`
     padding: 0.1em 0.4em;
-    background-color ${ Framework.themeVar("textStrongBkgColor") };
-    border-radius: 0.25rem;
-    ${ props => props.first ? `font-weight: bold;` : `` };
+    border-radius: ${ Framework.themeVar("borderRadius") };
+
+    ${ props => props.first ? `
+        color: ${ Framework.themeVar("textColor") };
+        background-color: ${ Framework.themeVar("textStrongBkgColor") };
+    ` : `
+        color: ${ Framework.themeVar("text3rdColor") };
+        border: 2px solid ${ Framework.themeVar("textStrongBkgColor") };
+    ` }
 `
 
 
 const InflectionTermChanged = styled.span`
+    color: ${ Framework.themeVar("textColor") };
     font-weight: bold;
 `
 
@@ -137,6 +146,7 @@ const InflectionTermChanged = styled.span`
 const InflectionRule = styled.span`
     position: relative;
     top: -0.5em;
+    color: ${ Framework.themeVar("text2ndColor") };
     border-bottom: 2px dotted ${ Framework.themeVar("text3rdColor") };
     font-size: 0.75em;
     padding: 0 0.25em;
@@ -147,24 +157,41 @@ const InflectionRule = styled.span`
 function InflectionRulePopup(props: {
     ruleId: string,
     sourceCategory: string,
+    sourceTerm: string,
+    targetTerm: string,
 })
 {
     const ruleGroup = Inflection.getRuleGroup(props.ruleId)
     const rules = Inflection.getRules(props.ruleId)
-    const rulesForCategory = rules
-        .filter(r => r.sourceCategory === props.sourceCategory)
+
+    const rulesSeen = new Set<string>()
+    const rulesDedup: Inflection.Rule[] = []
+    for (const rule of rules)
+    {
+        const key = `${ rule.sourceCategory };${ rule.removeFromEnd };${ rule.addToEnd }`
+        if (rulesSeen.has(key))
+            continue
+
+        rulesSeen.add(key)
+        rulesDedup.push(rule)
+    }
+
+    const rulesForCategory = rulesDedup.filter(r =>
+        r.sourceCategory === props.sourceCategory &&
+        Inflection.endsWith(props.sourceTerm, r.removeFromEnd) &&
+        Inflection.endsWith(props.targetTerm, r.addToEnd))
 
     const [rulesExpanded, setRulesExpanded] = Solid.createSignal(false)
 
 
     return <InflectionPopupWrapper>
-        <Solid.Show when={ rules.length !== 0 }>
+        <Solid.Show when={ rulesDedup.length !== 0 }>
             <h2>
                 Derivation for <CategoryName>{ ruleGroup!.display }</CategoryName>
             </h2>
             <InflectionTableSection>
                 <InflectionTable expanded={ rulesExpanded() }>
-                    <Solid.For each={ rulesExpanded() ? rules : rulesForCategory }>{ (rule) =>
+                    <Solid.For each={ rulesExpanded() ? rulesDedup : rulesForCategory }>{ (rule) =>
                         <>
                         <InflectionTablePartOfSpeech>
                             { JmdictTags.nameForPartOfSpeechTag(rule.sourceCategory as any) }
@@ -253,7 +280,6 @@ const InflectionTable = styled.div<{
     align-content: start;
     align-items: baseline;
     grid-column-gap: 0.5em;
-    font-size: ${ props => props.expanded ? `0.8em` : `1em` };
 `
 
 

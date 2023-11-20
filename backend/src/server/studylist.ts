@@ -162,4 +162,27 @@ export function init(
 
         res.send({ entries } satisfies Api.StudylistWordsGet.Response)
     })
+    
+    app.post(Api.StudylistStandardGetAll.url, async (req, res) => {
+        const body = req.body as Api.StudylistStandardGetAll.Request
+
+        const studylists = await db.studylistGetAll(
+            await AuthRoutes.authenticateRequest(auth, req),
+            Auth.systemUserId)
+
+        res.send({ studylists } satisfies Api.StudylistStandardGetAll.Response)
+    })
+    
+    app.post(Api.StudylistCommunityGetRecent.url, async (req, res) => {
+        const body = req.body as Api.StudylistCommunityGetRecent.Request
+
+        if (typeof body.limit !== "number")
+            throw Api.Error.malformed
+
+        const studylists = await db.studylistCommunityGetRecent(
+            await AuthRoutes.authenticateRequest(auth, req),
+            body.limit)
+
+        res.send({ studylists } satisfies Api.StudylistCommunityGetRecent.Response)
+    })
 }

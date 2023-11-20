@@ -25,7 +25,7 @@ export async function searchByHeading(
         .toArray()
 
     return results
-        .map(MongoDb.translateDbWordToApiWord)
+        .map(MongoDb.translateWordDbToApi)
 }
 
 
@@ -50,7 +50,7 @@ export async function searchByHeadingAll(
         .toArray()
 
     return results
-        .map(MongoDb.translateDbWordToApiWord)
+        .map(MongoDb.translateWordDbToApi)
 }
 
 
@@ -86,7 +86,7 @@ export async function searchByHeadingPrefix(
         .toArray()
         
     return results
-        .map(MongoDb.translateDbWordToApiWord)
+        .map(MongoDb.translateWordDbToApi)
 }
 
 
@@ -124,10 +124,10 @@ export async function searchByInflections(
     // respecting the part-of-speech categories.
     for (const dbResult of dbResults)
     {
-        const apiResult = MongoDb.translateDbWordToApiWord(dbResult)
+        const apiResult = MongoDb.translateWordDbToApi(dbResult)
         const categories = apiResult.senses.flatMap(s => s.pos)
 
-        const resultInfls = []
+        const resultInfls: Inflection.Breakdown = []
         const alreadySeen = new Set<string>()
         for (const infl of inflections)
         {
@@ -151,7 +151,11 @@ export async function searchByInflections(
             }
         }
 
-        apiResult.inflections = resultInfls
+        apiResult.inflections = resultInfls.sort((a, b) => {
+            const aKey = a.map(step => step.ruleId).join(";")
+            const bKey = b.map(step => step.ruleId).join(";")
+            return aKey.localeCompare(bKey)
+        })
 
         apiResults.push(apiResult)
     }
@@ -201,7 +205,7 @@ export async function searchByDefinition(
 
     return wordEntriesDedup
         .slice(0, Math.min(options.limit, 1000))
-        .map(MongoDb.translateDbWordToApiWord)
+        .map(MongoDb.translateWordDbToApi)
 }
 
 
@@ -223,7 +227,7 @@ export async function searchByTags(
         .toArray()
 
     return results
-        .map(MongoDb.translateDbWordToApiWord)
+        .map(MongoDb.translateWordDbToApi)
 }
 
 
@@ -266,7 +270,7 @@ export async function searchByWildcards(
     ]).toArray()
 
     return results
-        .map(MongoDb.translateDbWordToApiWord)
+        .map(MongoDb.translateWordDbToApi)
 }
 
 
@@ -296,7 +300,7 @@ export async function searchKanji(
     kanjiChars.forEach((c, i) => kanjiOrdering.set(c, i))
     
     return results
-        .map(MongoDb.translateDbKanjiToApiKanji)
+        .map(MongoDb.translateKanjiDbToApi)
         .sort((a, b) => kanjiOrdering.get(a.id)! - kanjiOrdering.get(b.id)!)
 }
 
@@ -322,7 +326,7 @@ export async function searchKanjiByReading(
         .toArray()
 
     return results
-        .map(MongoDb.translateDbKanjiToApiKanji)
+        .map(MongoDb.translateKanjiDbToApi)
 }
 
 
@@ -347,7 +351,7 @@ export async function searchKanjiByMeaning(
         .toArray()
 
     return results
-        .map(MongoDb.translateDbKanjiToApiKanji)
+        .map(MongoDb.translateKanjiDbToApi)
 }
 
 
@@ -406,7 +410,7 @@ export async function listKanjiWordCrossRefEntries(
     kanjiChars.forEach((c, i) => kanjiOrdering.set(c, i))
     
     return results
-        .map(MongoDb.translateDbKanjiWordToApiKanjiWord)
+        .map(MongoDb.translateKanjiWordDbToApi)
         .sort((a, b) => kanjiOrdering.get(a.id)! - kanjiOrdering.get(b.id)!)
 }
 
@@ -420,7 +424,7 @@ export async function listAllKanji(
         .toArray()
 
     return dbKanji
-        .map(MongoDb.translateDbKanjiToApiKanji)
+        .map(MongoDb.translateKanjiDbToApi)
 }
 
 
@@ -434,7 +438,7 @@ export async function listWordsWithChars(
         .toArray()
 
     return dbWord
-        .map(MongoDb.translateDbWordToApiWord)
+        .map(MongoDb.translateWordDbToApi)
 }
 
 

@@ -58,7 +58,7 @@ const Sentence = styled.article`
     padding: 0.5em;
     font-size: 1.35em;
     background-color: ${ Framework.themeVar("textStrongBkgColor") };
-    border-radius: 0.25rem;
+    border-radius: ${ Framework.themeVar("borderRadius") };
 `
 
 

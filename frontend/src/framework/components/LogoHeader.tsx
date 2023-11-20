@@ -20,13 +20,14 @@ export function LogoHeader(props: {
             >
                 <LogoLayout>
                     <IconWrapper>
-                        <Icon
+                        <Framework.Image
                             src="https://accounts.hlorenzi.com/icon_round_75.png"
                             srcset={
                                 `https://accounts.hlorenzi.com/icon_round_75.png, ` +
                                 `https://accounts.hlorenzi.com/icon_round_150.png 2x, ` +
                                 `https://accounts.hlorenzi.com/icon_round_256.png 4x`
                             }
+                            style={{ height : "100%" }}
                         />
                     </IconWrapper>
                     <StyledH1>
@@ -48,7 +49,7 @@ export function LogoHeader(props: {
                 title="Menu"
                 onClick={ popup.open }
                 noBorder
-                style={{ width: "3em", height: "3em"}}
+                style={{ width: "3em", height: "3em" }}
             />
         </Layout>
 
@@ -85,11 +86,6 @@ const LogoLayout = styled.div`
 const IconWrapper = styled.div`
     width: 4em;
     height: 4em;
-`
-
-
-const Icon = styled.img`
-    height: 100%;
 `
 
 

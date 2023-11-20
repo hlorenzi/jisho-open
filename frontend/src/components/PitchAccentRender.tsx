@@ -90,8 +90,8 @@ export function PitchAccentRender(props: {
 const Wrapper = styled.div`
     display: inline-block;
     background-color: ${ Framework.themeVar("textStrongBkgColor") };
-    padding: 0.05em 0.2em;
-    border-radius: 0.25rem;
+    padding: 0.1em 0.25em;
+    border-radius: ${ Framework.themeVar("borderRadius") };
     margin: 0;
     margin-right: 1em;
 `

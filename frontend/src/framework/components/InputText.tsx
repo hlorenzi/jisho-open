@@ -39,7 +39,7 @@ const StyledInput = styled.input`
 
     box-sizing: border-box;
     border: 1px solid ${ Framework.themeVar("borderColor") };
-    border-radius: 0.25rem;
+    border-radius: ${ Framework.themeVar("borderRadius") };
 
     margin: 0.125em;
     padding: 0.4em 0.5em;

@@ -272,9 +272,9 @@ export namespace KanjiByComponents
     }
 
     export type Kanji = {
-        id: string,
-        strokeCount: number,
-        components: string[],
+        id: string
+        strokeCount: number
+        components: string[]
     }
 }
 
@@ -398,6 +398,33 @@ export namespace StudylistWordsGet
     }
     
     export type Response = {
-        entries: Word.Entry[],
+        entries: Word.Entry[]
+    }
+}
+
+
+export namespace StudylistStandardGetAll
+{
+    export const url = "/api/v1/studylistStandardGetAll"
+
+    export type Request = {
+    }
+    
+    export type Response = {
+        studylists: StudyList.Entry[]
+    }
+}
+
+
+export namespace StudylistCommunityGetRecent
+{
+    export const url = "/api/v1/studylistCommunityGetRecent"
+
+    export type Request = {
+        limit: number
+    }
+    
+    export type Response = {
+        studylists: StudyList.Entry[]
     }
 }

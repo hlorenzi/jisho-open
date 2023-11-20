@@ -67,3 +67,9 @@ export namespace Studylist
     export const urlWith = (studylistId: string) =>
         `/list/${ encodeURIComponent(studylistId) }`
 }
+
+
+export namespace Community
+{
+    export const url = `/community`
+}
