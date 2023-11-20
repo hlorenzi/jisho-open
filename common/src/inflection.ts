@@ -1,3 +1,4 @@
+import * as Api from "./api/index.ts"
 import * as Kana from "./kana.ts"
 import { raw } from "./inflection.raw.ts"
 
@@ -31,7 +32,6 @@ export type Group = {
 
 export type Rule = {
     id: string
-    invalid: boolean
     sourceCategory: string
     removeFromEnd: string
     targetCategory: string
@@ -151,7 +151,6 @@ export function compile(raw: string): Table
             for (const sourceRule of sourceGroup)
                 ruleList.push({
                     id: currentGroupId,
-                    invalid,
                     sourceCategory: sourceRule.sourceCategory,
                     removeFromEnd: sourceRule.removeFromEnd + removeFromEnd,
                     addToEnd: sourceRule.addToEnd + addToEnd,
@@ -174,7 +173,6 @@ export function compile(raw: string): Table
             for (const sourceRule of sourceGroup)
                 ruleList.push({
                     id: currentGroupId,
-                    invalid,
                     sourceCategory: sourceRule.targetCategory,
                     removeFromEnd: removeFromEnd,
                     addToEnd: addToEnd,
@@ -187,7 +185,6 @@ export function compile(raw: string): Table
 
         const rule: Rule = {
             id: currentGroupId,
-            invalid,
             sourceCategory,
             removeFromEnd,
             targetCategory,
@@ -195,6 +192,7 @@ export function compile(raw: string): Table
         }
 
         let ruleList = rules.get(currentGroupId) ?? []
+
         if (invalid)
         {
             ruleList = ruleList.filter(r =>
@@ -202,7 +200,9 @@ export function compile(raw: string): Table
                 r.sourceCategory !== sourceCategory ||
                 r.removeFromEnd !== removeFromEnd)
         }
-        ruleList.push(rule)
+        else
+            ruleList.push(rule)
+
         rules.set(currentGroupId, ruleList)
 
         const endingsSet = endings.get(sourceCategory) ?? new Set()
@@ -213,8 +213,17 @@ export function compile(raw: string): Table
     return {
         endingsByCategory: endings,
         groups,
-        rules: [...rules.values()].flat().filter(r => !r.invalid),
+        rules: [...rules.values()].flat(),
     }
+}
+
+
+const inflectionalKanjiReadings: { [k: string]: string[] } = {
+    "為": ["さ", "し", "す", "せ"],
+    "来": ["き", "く", "こ"],
+    "有": ["あ"],
+    "在": ["あ"],
+    "良": ["い", "よ"],
 }
 
 
@@ -234,34 +243,92 @@ export function endsWith(
         if (cTerm === cEnding)
             continue
 
-        else if (cTerm === "為")
-        {
-            if (cEnding === "さ" ||
-                cEnding === "し" ||
-                cEnding === "す" ||
-                cEnding === "せ")
-                continue
-        }
-        else if (cTerm === "来")
-        {
-            if (cEnding === "き" ||
-                cEnding === "く" ||
-                cEnding === "こ")
-                continue
-        }
-        else if (cTerm === "良")
-        {
-            if (cEnding === "い" ||
-                cEnding === "よ")
-                continue
-        }
-        else if (Kana.toHiragana(cTerm) === cEnding)
+        const readings = inflectionalKanjiReadings[cTerm]
+        if (readings !== undefined &&
+            readings.some(r => r === cEnding))
+            continue
+
+        if (Kana.toHiragana(cTerm) === cEnding)
             continue
         
         return false
     }
 
     return true
+}
+
+
+export function canInflect(
+    category: Api.Word.PartOfSpeechTag)
+{
+    if (category === "n")
+        return true
+
+    const table = getTable()
+
+    for (const rule of table.rules)
+    {
+        if (rule.sourceCategory === category)
+            return true
+    }
+
+    return false
+}
+
+
+export type Inflected = {
+    term: string
+    category: string
+}
+
+
+export function inflect(
+    sourceTerm: string,
+    category: Api.Word.PartOfSpeechTag,
+    applyRuleIds: string[])
+    : Inflected[]
+{
+    const table = getTable()
+
+    let inflected: Inflected[] = [{
+        term: sourceTerm,
+        category: category,
+    }]
+
+    for (const ruleId of applyRuleIds)
+    {
+        const prevInflected = inflected
+        inflected = []
+
+        for (const infl of prevInflected)
+        {
+            for (const rule of table.rules)
+            {
+                if (rule.id !== ruleId)
+                    continue
+
+                if (rule.sourceCategory !== infl.category)
+                    continue
+
+                if (!endsWith(infl.term, rule.removeFromEnd))
+                    continue
+
+                const targetTerm =
+                    infl.term.slice(0, infl.term.length - rule.removeFromEnd.length) +
+                    rule.addToEnd
+
+                if (inflected.some(i => i.term === targetTerm))
+                    continue
+
+                inflected.push({
+                    term: targetTerm,
+                    category: rule.targetCategory,
+                })
+            }
+        }
+    }
+
+    return inflected
 }
 
 

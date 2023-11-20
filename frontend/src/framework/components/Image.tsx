@@ -10,6 +10,7 @@ export function Image(props: {
     alt?: string,
     src?: string,
     srcset?: string,
+    size?: string,
     style?: Solid.JSX.CSSProperties,
 })
 {
@@ -56,13 +57,19 @@ export function Image(props: {
         src={ visible() ? props.src : "" }
         srcSet={ visible() ? props.srcset : "" }
         opacity={ opacity() }
+        size={ props.size }
         style={ props.style }/>
 }
 
 
 const StyledImage = styled.img<{
+    size?: string,
     opacity: string,
 }>`
     opacity: ${ props => props.opacity };
     transition: opacity 0.1s;
+    ${ props => props.size ? `
+        width: ${ props.size };
+        height: ${ props.size };
+    ` : `` }
 `

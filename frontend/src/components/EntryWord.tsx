@@ -6,6 +6,7 @@ import * as Kana from "common/kana.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import { FuriganaRuby } from "./Furigana.tsx"
 import { InflectionBreakdown } from "./InflectionBreakdown.tsx"
+import { InflectionTable, hasTable } from "./InflectionTable.tsx"
 import { PitchAccentRender } from "./PitchAccentRender.tsx"
 import { StudyListPopup } from "./StudyListPopup.tsx"
 import * as Tags from "./Tags.tsx"
@@ -82,6 +83,7 @@ function Headings(props: {
     return <header>
         <Solid.For each={ headings }>{ (heading, index) =>
             <Heading
+                entry={ props.entry }
                 heading={ heading }
                 first={ index() === 0 }
                 last={ index() === headings.length - 1 }
@@ -147,6 +149,7 @@ function HeadingEllipsisPopup(props: {
 function Heading(props: {
     first: boolean,
     last: boolean,
+    entry: App.Api.Word.Entry,
     heading: App.Api.Word.Heading,
     query: App.Api.Search.Query,
 })
@@ -170,6 +173,8 @@ function Heading(props: {
     const baseNormalized = Kana.normalizeWidthForms(props.heading.base)
     const readingNormalized = Kana.normalizeWidthForms(props.heading.reading ?? "")
 
+    const partOfSpeechTags = props.entry.senses.flatMap(s => s.pos)
+
     let isQueryMatch = false
     if (props.query.strJapaneseSplit.some(s =>
             s === baseNormalized ||
@@ -178,13 +183,23 @@ function Heading(props: {
             s === Kana.toHiragana(readingNormalized)))
         isQueryMatch = true
 
+    const popupInflectionTable = Framework.makePopupFull({
+        childrenFn: () =>
+            <InflectionTable
+                term={ props.heading.base }
+                partOfSpeechTags={ partOfSpeechTags }
+            />,
+    })
+    
     const popup = Framework.makePopupPageWide({
         childrenFn: () =>
             <HeadingPopup
                 popup={ popup }
                 base={ props.heading.base }
                 reading={ props.heading.reading }
+                partOfSpeechTags={ partOfSpeechTags }
                 kanji={ kanji }
+                openInflectionTable={ popupInflectionTable.open }
             />,
     })
     
@@ -200,6 +215,8 @@ function Heading(props: {
         </HeadingBlock>
 
         { popup.rendered }
+
+        { popupInflectionTable.rendered }
     </>
 }
 
@@ -357,9 +374,11 @@ const HeadingTags = styled.span`
 
 function HeadingPopup(props: {
     popup: Framework.PopupPageWideData,
+    partOfSpeechTags: App.Api.Word.PartOfSpeechTag[],
     kanji: string,
     base: string,
     reading?: string,
+    openInflectionTable: () => void,
 })
 {
     return <>
@@ -370,6 +389,16 @@ function HeadingPopup(props: {
                     { ` Inspect kanji: ${ props.kanji }` }
                 </> }
                 href={ App.Pages.Search.urlForQuery(`${ props.kanji } #k`) }
+            />
+        </Solid.Show>
+
+        <Solid.Show when={ hasTable(props.partOfSpeechTags) }>
+            <Framework.ButtonPopupPageWide
+                label="View conjugation/inflections"
+                onClick={ () => {
+                    props.popup.close()
+                    props.openInflectionTable()
+                }}
             />
         </Solid.Show>
 

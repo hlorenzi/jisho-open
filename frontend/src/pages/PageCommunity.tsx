@@ -10,7 +10,7 @@ import { UserIdLink } from "../components/User.tsx"
 export function PageCommunity(props: Framework.RouteProps)
 {
     const [data] = Solid.createResource(
-        props.routeMatch,
+        props.routeMatch, // FIXME: Why is this needed?
         async () => {
             const authUser = await App.Api.authenticate()
             const standard = await App.Api.studylistStandardGetAll({})

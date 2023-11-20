@@ -4,7 +4,6 @@ import * as Framework from "../framework/index.ts"
 import * as App from "../app.tsx"
 import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
-import { UserIdLink } from "../components/User.tsx"
 
 
 export function PageHome(props: Framework.RouteProps)
@@ -66,6 +65,19 @@ export function PageHome(props: Framework.RouteProps)
                     }
                     </Solid.For>
                 </ul>
+            </CardSlot>
+            <CardSlot>
+                <Framework.IconBookmark/>
+                { " " }
+                Check out the
+                <Highlight>
+                    <Framework.Link
+                        href={ App.Pages.Community.url }
+                        label="study lists"
+                        addSpaces
+                    />
+                </Highlight>
+                created by the community!
             </CardSlot>
             <CardSlot>
                 <Framework.IconSparkles/>

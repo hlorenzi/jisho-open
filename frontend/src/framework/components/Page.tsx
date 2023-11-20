@@ -59,8 +59,6 @@ const DivContent = styled.div`
 	max-width: 100vw;
 	overflow-x: hidden;
 
-	padding-bottom: 10rem;
-    
 	text-align: left;
 	color: ${ Framework.themeVar("textColor") };
 	background-color: ${ Framework.themeVar("pageBkgColor") };
