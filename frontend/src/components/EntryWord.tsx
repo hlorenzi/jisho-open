@@ -53,21 +53,32 @@ function Headings(props: {
     query: App.Api.Search.Query,
 })
 {
-    const headings = props.headings
-        .filter(h => !h.searchOnlyKanji && !h.searchOnlyKana)
+    const data = Solid.createMemo(() => {
+        const prefs = App.usePrefs()
 
-    const allKanjiWithDuplicates = headings
-        .flatMap(h => [...h.base].filter(c => Kana.isKanji(c)))
-    
-    const allKanji =
-        [...new Set<string>(allKanjiWithDuplicates)].join("")
+        const headings = prefs.resultsShowSearchOnlyHeadings ?
+            props.headings :
+            props.headings
+                .filter(h => !h.searchOnlyKanji && !h.searchOnlyKana)
+
+        const allKanjiWithDuplicates = headings
+            .flatMap(h => [...h.base].filter(c => Kana.isKanji(c)))
+        
+        const allKanji =
+            [...new Set<string>(allKanjiWithDuplicates)].join("")
+
+        return {
+            headings,
+            allKanji,
+        }
+    })
 
     const popupEllipsis = Framework.makePopupPageWide({
         childrenFn: () =>
             <HeadingEllipsisPopup
                 entry={ props.entry }
                 wordId={ props.wordId }
-                allKanji={ allKanji }
+                allKanji={ data().allKanji }
                 popup={ popupEllipsis }
             />,
     })
@@ -81,12 +92,12 @@ function Headings(props: {
     })
 
     return <header>
-        <Solid.For each={ headings }>{ (heading, index) =>
+        <Solid.For each={ data().headings }>{ (heading, index) =>
             <Heading
                 entry={ props.entry }
                 heading={ heading }
                 first={ index() === 0 }
-                last={ index() === headings.length - 1 }
+                last={ index() === data().headings.length - 1 }
                 query={ props.query }
             />
         }

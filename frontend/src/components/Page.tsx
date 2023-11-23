@@ -2,7 +2,8 @@ import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
 import * as App from "../app.tsx"
-import { UserLabel } from "../components/User.tsx"
+import { UserLabel } from "./User.tsx"
+import { SearchboxBottomOverlay } from "./Searchbox.tsx"
 
 
 export function Page(props: {
@@ -10,14 +11,25 @@ export function Page(props: {
     children?: Solid.JSX.Element,
 })
 {
-    return <Framework.Page
-        siteTitle="Lorenzi's Jisho Open"
-        title={ props.title }
-        sideMenu={ () => <SideMenu/> }
-    >
-        { props.children }
-        <Footer/>
-    </Framework.Page>
+    return <>
+        <Framework.Page
+            siteTitle="Lorenzi's Jisho"
+            title={ props.title }
+            sideMenu={ () => <SideMenu/> }
+        >
+            { props.children }
+            <Footer/>
+        </Framework.Page>
+        
+        <Framework.PageOverlay
+            childrenBottom={
+                <>
+                <Framework.NavigationButtons/>
+                <SearchboxBottomOverlay/>
+                </>
+            }
+        />
+    </>
 }
 
 
@@ -43,6 +55,12 @@ function SideMenu()
             <Framework.ButtonPopupPageWide
                 label="Community"
                 href={ App.Pages.Community.url }
+            />
+
+            <Framework.ButtonPopupPageWide
+                icon={ <Framework.IconDownload/> }
+                label="Install App"
+                onClick={ Framework.pwaInstall }
             />
 
             <Framework.HorizontalBar/>
@@ -121,6 +139,16 @@ function SettingsPanel(props: {
         />
         
         <Framework.Select
+            label="Searchbox Position"
+            value={ () => App.usePrefs().searchboxPosition }
+            onChange={ (value) => App.mergePrefs({ searchboxPosition: value }) }
+            options={ [
+                { label: "Top of Page", value: "inline" },
+                { label: "Bottom of Page", value: "bottom" },
+            ]}
+        />
+        
+        <Framework.Select
             label="Japanese Font Style"
             value={ () => App.usePrefs().japaneseFontStyle }
             onChange={ (value) => App.mergePrefs({ japaneseFontStyle: value }) }
@@ -139,6 +167,16 @@ function SettingsPanel(props: {
             options={ [
                 { label: "Off", value: "off" },
                 { label: "On", value: "on" },
+            ]}
+        />
+        
+        <Framework.Select
+            label="Search-Only Headings"
+            value={ () => App.usePrefs().resultsShowSearchOnlyHeadings ? "on" : "off" }
+            onChange={ (value) => App.mergePrefs({ resultsShowSearchOnlyHeadings: value === "on" }) }
+            options={ [
+                { label: "Hide", value: "off" },
+                { label: "Show", value: "on" },
             ]}
         />
 
@@ -222,7 +260,7 @@ function Footer()
 const StyledFooter = styled.footer`
     display: block;
     margin-top: 50vh;
-    margin-bottom: 2em;
+    margin-bottom: 6em;
 `
 
 const FooterLinks = styled.div`

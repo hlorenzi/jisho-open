@@ -10,6 +10,7 @@ export function InputText(props: {
     onChange?: (value: string) => void,
     onInput?: (value: string) => void,
     onEnter?: (ev: KeyboardEvent) => void,
+    search?: boolean,
     placeholder?: string,
     autofocus?: boolean,
     style?: Solid.JSX.CSSProperties,
@@ -17,13 +18,17 @@ export function InputText(props: {
 {
     return <StyledInput
         ref={ props.ref }
-        type="text"
+        //type={ props.search ? "search" : "text" }
         value={ props.value?.() ?? props.initialValue ?? "" }
         placeholder={ props.placeholder }
         onChange={ ev => props.onChange?.(ev.target.value) }
         onInput={ ev => props.onInput?.(ev.target.value) }
         onKeyDown={ ev => { if (ev.key === "Enter") props.onEnter?.(ev) }}
         autofocus={ props.autofocus }
+        spellcheck={ false }
+        autocorrect="off"
+        autocomplete="off"
+        autocapitalize="off"
         style={ props.style }
     />
 }

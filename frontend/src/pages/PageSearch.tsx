@@ -30,6 +30,7 @@ export function PageSearch(props: Framework.RouteProps)
 
         <Searchbox
             initialText={ query() }
+            position="inline"
         />
 
         <SearchboxMarginBottom/>

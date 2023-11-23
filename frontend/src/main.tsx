@@ -5,6 +5,9 @@ import * as App from "./app.tsx"
 import * as Pages from "./pages.ts"
 
 
+Framework.pwaEnable()
+
+
 SolidWeb.render(
     Root,
     document.getElementById("app")!)

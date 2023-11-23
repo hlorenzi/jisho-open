@@ -1,3 +1,16 @@
+export function isDev()
+{
+    return window.location.href.startsWith("127.0.0.1") ||
+        window.location.href.startsWith("localhost")
+}
+
+
+export function isMobile()
+{
+	return window.matchMedia("(pointer: coarse)").matches
+}
+
+
 export async function copyToClipboard(str: string): Promise<boolean>
 {
 	if (!navigator.clipboard)

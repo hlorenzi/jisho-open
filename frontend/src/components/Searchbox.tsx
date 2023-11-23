@@ -1,7 +1,7 @@
 import * as Solid from "solid-js"
-import { styled, keyframes } from "solid-styled-components"
+import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-import * as Pages from "../pages.ts"
+import * as App from "../app.tsx"
 import { InputKanjiComponents } from "./InputKanjiComponents.tsx"
 
 
@@ -10,6 +10,7 @@ export function Searchbox(props: {
     textSignal?: Solid.Signal<string>,
     noInputButton?: boolean,
     onSearch?: () => void,
+    position?: App.Prefs["searchboxPosition"],
 })
 {
     const [searchbox, setSearchbox] =
@@ -32,8 +33,13 @@ export function Searchbox(props: {
         
         ev.preventDefault()
         ev.stopPropagation()
+
+        if (Framework.isMobile())
+            inputRef()?.blur()
+
         props.onSearch?.()
-        Framework.historyPushNoReload(Pages.Search.urlForQuery(text))
+        Framework.historyPushNoReload(App.Pages.Search.urlForQuery(text))
+        window.scrollTo(0, 0)
     }
 
     Solid.onMount(() => {
@@ -59,48 +65,78 @@ export function Searchbox(props: {
                     />
             })
 
-    return <Layout>
-        <Framework.InputText
-            ref={ setInputRef }
-            autofocus
-            placeholder={
-                document.body.getBoundingClientRect().width < 800 ?
-                    "Eng., Jap., rōmaji..." :
-                    "Search in English, Japanese, rōmaji..."
-            }
-            value={ searchbox }
-            onInput={ setSearchbox }
-            onEnter={ onSearch }
-        />
-        <Solid.Show when={ !props.noInputButton }>
-            <Framework.Button
-                title="Input kanji by components"
-                label={
-                    <span style={{ "font-size": "1.25em", "font-weight": "bold" }}>
-                        部
-                    </span>
+    return <Solid.Show when={
+        props.position === undefined ||
+        App.usePrefs().searchboxPosition === props.position
+    }>
+        <Layout>
+            <Solid.Show
+                when={ props.position === "bottom" && !props.noInputButton }
+                fallback={ <div/> }
+            >
+                <Framework.Button
+                    title="Input kanji by components"
+                    label={
+                        <span style={{ "font-size": "1.25em", "font-weight": "bold" }}>
+                            部
+                        </span>
+                    }
+                    onClick={ inputPopup!.open }
+                    noPadding
+                    style={{ width: "3em" }}
+                />
+            </Solid.Show>
+            <Framework.InputText
+                ref={ setInputRef }
+                autofocus={ !props.noInputButton }
+                search
+                placeholder={
+                    document.body.getBoundingClientRect().width < 800 ?
+                        "Eng., Jap., rōmaji..." :
+                        "Search in English, Japanese, rōmaji..."
                 }
-                onClick={ inputPopup!.open }
+                value={ searchbox }
+                onInput={ setSearchbox }
+                onEnter={ onSearch }
+            />
+            <Solid.Show
+                when={ props.position !== "bottom" && !props.noInputButton }
+                fallback={ <div/> }
+            >
+                <Framework.Button
+                    title="Input kanji by components"
+                    label={
+                        <span style={{ "font-size": "1.25em", "font-weight": "bold" }}>
+                            部
+                        </span>
+                    }
+                    onClick={ inputPopup!.open }
+                    noPadding
+                    style={{ width: "3em" }}
+                />
+            </Solid.Show>
+            <Framework.Button
+                title="Clear"
+                label={ <Framework.IconX/> }
+                onClick={ onClear }
                 noPadding
                 style={{ width: "3em" }}
             />
-        </Solid.Show>
-        <Framework.Button
-            title="Clear"
-            label={ <Framework.IconX/> }
-            onClick={ onClear }
-            noPadding
-            style={{ width: "3em" }}
-        />
-        <Framework.Button
-            title="Search"
-            label={ <Framework.IconMagnifyingGlass/> }
-            onClick={ onSearch }
-            noPadding
-            style={{ width: "3em" }}
-        />
-        { inputPopup?.rendered }
-    </Layout>
+            <Solid.Show
+                when={ props.position !== "bottom" }
+                fallback={ <div/> }
+            >
+                <Framework.Button
+                    title="Search"
+                    label={ <Framework.IconMagnifyingGlass/> }
+                    onClick={ onSearch }
+                    noPadding
+                    style={{ width: "3em" }}
+                />
+            </Solid.Show>
+            { inputPopup?.rendered }
+        </Layout>
+    </Solid.Show>
 }
 
 
@@ -147,5 +183,39 @@ function windowOnKeyDown(
 
 const Layout = styled.div`
     display: grid;
-    grid-template: auto / 1fr auto auto auto;
+    grid-template: auto / auto 1fr auto auto auto;
+`
+
+
+export function SearchboxBottomOverlay(props: {
+
+})
+{
+    return <Solid.Show when={ App.usePrefs().searchboxPosition === "bottom" }>
+        <LayoutBottomOverlay>
+            <Searchbox
+                position="bottom"
+            />
+        </LayoutBottomOverlay>
+    </Solid.Show>
+}
+
+
+const LayoutBottomOverlay = styled.div`
+    background-color: ${ Framework.themeVar("pageBkgColor") };
+    border-top: 1px solid ${ Framework.themeVar("borderColor") };
+    border-left: 1px solid ${ Framework.themeVar("borderColor") };
+    border-right: 1px solid ${ Framework.themeVar("borderColor") };
+    pointer-events: auto;
+
+    width: calc(100% + var(--local-pagePadding) * 2);
+    margin: 0;
+    margin-left: calc(0px - var(--local-pagePadding));
+    margin-right: calc(0px - var(--local-pagePadding));
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+    padding-left: var(--local-pagePadding);
+    padding-right: var(--local-pagePadding);
+
+    box-shadow: 0 -0.15em 0.15em ${ Framework.themeVar("popupShadowColor") };
 `

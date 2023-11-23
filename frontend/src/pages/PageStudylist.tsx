@@ -135,7 +135,7 @@ export function PageStudylist(props: Framework.RouteProps)
         
     return <Page title={ data()?.studylist.name }>
 
-        <Searchbox/>
+        <Searchbox position="inline"/>
         <br/>
 
         <Solid.Show when={ data() }>

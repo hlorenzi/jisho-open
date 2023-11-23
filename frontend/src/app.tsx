@@ -14,7 +14,10 @@ export type Prefs = {
     debugMode: boolean
     theme: string
 
+    searchboxPosition: "inline" | "bottom"
+
     japaneseFontStyle: "regular" | "bold"
+    resultsShowSearchOnlyHeadings: boolean
 
     studylistOrdering: "activity" | "name"
     studylistWordOrdering: "date-added" | "kana"
@@ -29,7 +32,10 @@ export const prefsDefault: Prefs = {
     debugMode: false,
     theme: "auto",
 
+    searchboxPosition: "inline",
+
     japaneseFontStyle: "bold",
+    resultsShowSearchOnlyHeadings: false,
 
     studylistOrdering: "activity",
     studylistWordOrdering: "date-added",

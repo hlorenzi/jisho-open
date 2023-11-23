@@ -122,7 +122,7 @@ export function PageUser(props: Framework.RouteProps)
 
     return <Page title={ data()?.user.name }>
 
-        <Searchbox/>
+        <Searchbox position="inline"/>
         <br/>
 
         <Solid.Show when={ data() }>

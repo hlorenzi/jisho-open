@@ -9,15 +9,15 @@ export function IconPrev(props: Framework.IconBaseProps)
             <path
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="15"
-                strokeLinecap="round"
+                stroke-width="15"
+                stroke-linecap="round"
                 d="
-                M 15,50
-                L 90,50
+                    M 15,50
+                    L 90,50
 
-                M 50,10
-                L 10,50
-                L 50,90
+                    M 50,10
+                    L 10,50
+                    L 50,90
             "/>
         </Framework.IconBase>
 	)

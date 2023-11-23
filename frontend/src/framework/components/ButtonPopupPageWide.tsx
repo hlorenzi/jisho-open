@@ -3,6 +3,53 @@ import { css } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
+export function ButtonPopupPageWide(props: Framework.ButtonBehaviorProps & {
+    children?: Solid.JSX.Element,
+    label?: Solid.JSX.Element,
+    icon?: Solid.JSX.Element,
+    style?: Solid.JSX.CSSProperties,
+    disabled?: boolean,
+    accent?: boolean,
+    danger?: boolean,
+    ref?: Solid.Setter<HTMLButtonElement>,
+})
+{
+    const className = 
+        `${ props.accent ? "accent " : ""}` +
+        `${ props.danger ? "danger " : ""}`
+
+    if (props.href && !props.disabled)
+    {
+        return <a
+            class={ styleClass }
+            class-name={ className }
+            href={ props.href }
+            title={ props.title }
+            onClick={ ev => Framework.onButtonClick(ev, props) }
+            style={ props.style }>
+                { props.icon }
+                { props.icon ? " " : null }
+                { props.children || props.label }
+        </a>
+    }
+    else
+    {
+        return <button
+            class={ styleClass }
+            class-name={ className }
+            ref={ props.ref }
+            title={ props.title }
+            disabled={ !!props.disabled }
+            onClick={ ev => Framework.onButtonClick(ev, props) }
+            style={ props.style }>
+                { props.icon }
+                { props.icon ? " " : null }
+                { props.children || props.label }
+        </button>
+    }
+}
+
+
 const styleClass = css`
     color: ${ Framework.themeVar("textColor") };
     --local-borderColor: ${ Framework.themeVar("borderColor") };
@@ -51,50 +98,3 @@ const styleClass = css`
         color: ${ Framework.themeVar("textDisabledColor") };
     }
 `
-
-
-export function ButtonPopupPageWide(props: Framework.ButtonBehaviorProps & {
-    children?: Solid.JSX.Element,
-    label?: Solid.JSX.Element,
-    icon?: Solid.JSX.Element,
-    style?: Solid.JSX.CSSProperties,
-    disabled?: boolean,
-    accent?: boolean,
-    danger?: boolean,
-    ref?: Solid.Setter<HTMLButtonElement>,
-})
-{
-    const className = 
-        `${ props.accent ? "accent " : ""}` +
-        `${ props.danger ? "danger " : ""}`
-
-    if (props.href && !props.disabled)
-    {
-        return <a
-            class={ styleClass }
-            class-name={ className }
-            href={ props.href }
-            title={ props.title }
-            onClick={ ev => Framework.onButtonClick(ev, props) }
-            style={ props.style }>
-                { props.icon }
-                { props.icon ? " " : null }
-                { props.children || props.label }
-        </a>
-    }
-    else
-    {
-        return <button
-            class={ styleClass }
-            class-name={ className }
-            ref={ props.ref }
-            title={ props.title }
-            disabled={ !!props.disabled }
-            onClick={ ev => Framework.onButtonClick(ev, props) }
-            style={ props.style }>
-                { props.icon }
-                { props.icon ? " " : null }
-                { props.children || props.label }
-        </button>
-    }
-}

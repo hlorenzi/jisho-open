@@ -23,7 +23,7 @@ export function PageHome(props: Framework.RouteProps)
 
     return <Page>
 
-        <Searchbox/>
+        <Searchbox position="inline"/>
         <br/>
         
         <CardList>
@@ -69,7 +69,7 @@ export function PageHome(props: Framework.RouteProps)
             <CardSlot>
                 <Framework.IconBookmark/>
                 { " " }
-                Check out the
+                Browse the
                 <Highlight>
                     <Framework.Link
                         href={ App.Pages.Community.url }

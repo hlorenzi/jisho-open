@@ -5,14 +5,23 @@
 
 	<head>
 		<meta charset="utf-8"/>
-		<title>Lorenzi's Jisho Open</title>
+		<title>Lorenzi's Jisho</title>
+
+		<meta
+			name="description"
+			content="Japanese-English dictionary featuring custom vocabulary study lists!"/>
+
 		<meta
 			name="viewport"
 			content="initial-scale=1, width=device-width, shrink-to-fit=yes">
+		
 		<link
 			rel="shortcut icon"
 			type="image/png"
 			href="https://accounts.hlorenzi.com/icon_round_150.png">
+		<link
+			rel="manifest"
+			href="/pwa_manifest.json">
 
 		<link
 			rel="preconnect"
@@ -21,6 +30,32 @@
 			rel="preconnect"
 			href="https://fonts.gstatic.com"
 			crossorigin>
+
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "Organization",
+			"url": "https://jisho.hlorenzi.com/",
+			"logo": "https://hlorenzi.com/assets/icon_round_256.png"
+		}
+		</script>
+	
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "WebSite",
+			"url": "https://jisho.hlorenzi.com/",
+			"potentialAction": {
+				"@type": "SearchAction",
+				"target": {
+					"@type": "EntryPoint",
+					"urlTemplate": "https://jisho.hlorenzi.com/search/{search_term_string}"
+				},
+				"query-input": "required name=search_term_string"
+			}
+		}
+		</script>
+
 	</head>
 	
 	

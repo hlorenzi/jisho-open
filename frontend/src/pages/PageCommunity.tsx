@@ -26,7 +26,7 @@ export function PageCommunity(props: Framework.RouteProps)
         
     return <Page title="Community">
 
-        <Searchbox/>
+        <Searchbox position="inline"/>
         <br/>
 
         <Solid.Show when={ data() }>

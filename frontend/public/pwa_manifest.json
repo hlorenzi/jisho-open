@@ -1,0 +1,24 @@
+{
+	"id": "lorenzis_jisho",
+	"name": "Lorenzi's Jisho",
+	"short_name": "Jisho",
+	"icons":
+	[
+		{
+			"src": "https://accounts.hlorenzi.com/icon_round_192.png",
+			"type": "image/png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "https://accounts.hlorenzi.com/icon_round_512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		}
+	],
+	
+	"start_url": "/",
+	"background_color": "#202122",
+	"display": "standalone",
+	"scope": "/",
+	"theme_color": "#77ab00"
+}

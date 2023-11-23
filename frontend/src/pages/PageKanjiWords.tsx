@@ -24,6 +24,7 @@ export function PageKanjiWords(props: Framework.RouteProps)
     return <Page title={ `Words for ${ kanji() }` }>
         <Searchbox
             initialText={ kanji() }
+            position="inline"
         />
     
         <Solid.Show when={ searchResults() }>
