@@ -81,8 +81,8 @@ v5m; *む -> unc; *ん
 %v-conjunctive-stem-unvoiced; * -> vte; *て
 %v-conjunctive-stem-voiced;   * -> vte; *で
 adj-na;                       * -> unc; *で
-adj-i;                        *い -> vte; *くて
-adj-ix;                       *いい -> vte; *よくて
+adj-i;                        *い -> unc; *くて
+adj-ix;                       *いい -> unc; *よくて
 
 @ id: past
 %v-conjunctive-stem-unvoiced; * -> unc; *た
@@ -125,9 +125,11 @@ vs-s; *する -> !
 vs-s; *する -> unc; *せ
 
 @ id: negative
+@ ref: https://www.edrdg.org/wwwjdic/wwwverbinf.html#suru_tag
 %negative-stem; * -> adj-i; *ない
 v1contr;        *る -> adj-i; *ない
 vmasu;          *ます -> unc; *ません
+vs-s;           *する -> adj-i; *さない
 n;              * -> adj-i; *じゃない
 adj-na;         * -> adj-i; *じゃない
 adj-i;          *い -> adj-i; *くない
@@ -242,6 +244,7 @@ vk;    *くる -> unc; *こよう
 vmasu; *ます -> unc; *ましょう
 
 @ id: potential
+@ ref: https://www.edrdg.org/wwwjdic/wwwverbinf.html#suru_tag
 v1;      *る -> v1; *られる
 v1-s;    *る -> v1; *られる
 vz;      *ずる -> v1; *じられる
@@ -260,6 +263,7 @@ v5n;     *ぬ -> v1; *ねる
 v5b;     *ぶ -> v1; *べる
 v5m;     *む -> v1; *める
 vs-i;    *する -> v1; *できる
+vs-s;    *する -> v1; *できる
 vs-s;    *する -> v1; *しえる
 vs-s;    *する -> v-unspec; *しうる
 vk;      *くる -> v1; *こられる

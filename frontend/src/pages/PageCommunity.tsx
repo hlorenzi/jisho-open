@@ -138,6 +138,7 @@ const SmallInfo = styled.span`
 
 const UserInfo = styled.div`
     justify-self: end;
+    text-align: right;
     color: ${ Framework.themeVar("text3rdColor") };
     font-size: 0.8em;
 `

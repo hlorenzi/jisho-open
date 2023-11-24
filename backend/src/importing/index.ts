@@ -6,27 +6,54 @@ import * as StandardLists from "./standard_lists.ts"
 import * as Logging from "./logging.ts"
 
 
+let building = false
+
+
 export async function buildDatabase(
     db: Db.Interface,
     useCachedFiles: boolean)
 {
     const logger: Logging.Logger = {
-        write: (str) => process.stdout.write(str),
-        writeLn: (str) => console.log(str),
+        write: async (str) => {
+            process.stdout.write(str)
+            await db.log(str)
+        },
+
+        writeLn: async (str) => {
+            console.log(str)
+            await db.log(str)
+        }
     }
+
+    if (building)
+        return
 
     try
     {
-        logger.writeLn("building database...")
-        //await Jmdict.downloadAndImport(logger, db, useCachedFiles)
-        //await Kanjidic.downloadAndImport(logger, db, useCachedFiles)
-        //await KanjiWords.crossReferenceKanjiWords(logger, db)
+        building = true
+        await logger.writeLn("building database...")
+        await Jmdict.downloadAndImport(logger, db, useCachedFiles)
+        await Kanjidic.downloadAndImport(logger, db, useCachedFiles)
+        await KanjiWords.crossReferenceKanjiWords(logger, db)
         await StandardLists.buildStandardLists(logger, db)
-        logger.writeLn("finished building database")
+        await logger.writeLn("finished building database")
     }
     catch (e)
     {
-        logger.writeLn(`error building database: ${ e }`)
+        await logger.writeLn(`error building database: ${ e }`)
         throw e
     }
+    finally
+    {
+        building = false
+    }
+}
+
+
+export function setupScheduledDatabaseBuild(
+    db: Db.Interface)
+{
+    setInterval(
+        () => buildDatabase(db, false),
+        1000 * 60 * 60 * 24)
 }

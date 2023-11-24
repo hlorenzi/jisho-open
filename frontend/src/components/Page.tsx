@@ -99,6 +99,12 @@ function SideMenu()
                         href={ App.Api.Logout.urlForRedirect(redirectUrl) }
                         native
                     />
+                    <Solid.Show when={ App.Api.userIsAdmin(authUser().latest!) }>
+                        <Framework.ButtonPopupPageWide
+                            label="Server Log"
+                            href={ App.Pages.Log.url }
+                        />
+                    </Solid.Show>
                 </Solid.Show>
             </Solid.Show>
         </Solid.Show>
@@ -154,6 +160,7 @@ function SettingsPanel(props: {
             onChange={ (value) => App.mergePrefs({ japaneseFontStyle: value }) }
             options={ [
                 { label: "Regular", value: "regular" },
+                { label: "Half-Bold", value: "half-bold" },
                 { label: "Bold", value: "bold" },
             ]}
         />

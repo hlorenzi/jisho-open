@@ -166,6 +166,24 @@ export namespace GetUser
 }
 
 
+export namespace Log
+{
+    export const url = "/api/v1/log"
+
+    export type Entry = {
+        date: Date
+        text: string
+    }
+
+    export type Request = {
+    }
+
+    export type Response = {
+        entries: Entry[]
+    }
+}
+
+
 export namespace Search
 {
     export const url = "/api/v1/search"

@@ -36,8 +36,9 @@ export function PageStudylist(props: Framework.RouteProps)
             const wordEntriesById = new Map<string, App.Api.Word.Entry>()
             entries.forEach(e => wordEntriesById.set(e.id, e))
 
-            const words = studylist.words
+            const words: StudyListWordEntry[] = studylist.words
                 .map(w => ({ ...w, entry: wordEntriesById.get(w.id)! }))
+                .filter(w => !!w.entry)
                 .reverse()
 
             return {

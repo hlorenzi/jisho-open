@@ -37,7 +37,7 @@ export async function downloadAndImport(
         "kanjidic2",
         "character")
 
-    logger.writeLn("importing kanji entries...")
+    await logger.writeLn("importing kanji entries...")
 
     const dispatcher = new BatchDispatcher.BatchDispatcher(
         25,
@@ -52,7 +52,7 @@ export async function downloadAndImport(
         }
         catch (e: any)
         {
-            logger.writeLn(`error normalizing kanji entry ${ rawEntry.literal[0] }: ${ e }`)
+            await logger.writeLn(`error normalizing kanji entry ${ rawEntry.literal[0] }: ${ e }`)
             throw e
         }
     }

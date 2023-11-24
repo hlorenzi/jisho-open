@@ -53,7 +53,8 @@ export function pwaInstall()
     {
         window.alert(
             "Could not start the installation, or the app is already installed!\n\n" +
-            "If you're using Safari on iOS, please install via:\n\n" +
+            "Check if your browser supports the installation of Progressive Web Apps (PWA).\n\n" +
+            "If you're using Safari on iOS, please install via:\n" +
             "    Share > Add to Home Screen"
         )
         return

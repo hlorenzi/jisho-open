@@ -11,6 +11,10 @@ export type SearchOptions = {
 
 export interface Interface
 {
+    log: (text: string) => Promise<void>
+
+    logGet: () => Promise<Api.Log.Entry[]>
+        
     importWordEntries: (
         importStartDate: Date,
         entries: Api.Word.Entry[])
@@ -154,6 +158,9 @@ export interface Interface
 export function createDummy(): Interface
 {
     return {
+        log: async () => {},
+        logGet: async () => [],
+
         importWordEntries: async () => {},
         importWordEntriesFinish: async () => {},
         importKanjiEntries: async () => {},

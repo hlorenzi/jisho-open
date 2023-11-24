@@ -67,6 +67,12 @@ export function dateToStr(date: DateOrString)
 }
 
 
+export function dateToIsoStr(date: DateOrString)
+{
+	return dateNew(date).toISOString()
+}
+
+
 export function dateAndElapsedToStr(date: DateOrString)
 {
 	return `${ dateToStr(date) } (${ dateElapsedToStr(date) } ago)`

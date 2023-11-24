@@ -17,15 +17,18 @@ export async function download(
 {
     if (useCachedFile &&
         fs.existsSync(toFilename))
+    {
+        await logger.writeLn(`using cached file "${toFilename}"`)
         return
+    }
 
     if (!fs.existsSync(downloadFolder))
     {
-        logger.writeLn(`creating folder ${downloadFolder}...`)
+        await logger.writeLn(`creating folder ${downloadFolder}...`)
         fs.mkdirSync(downloadFolder)
     }
 
-    logger.writeLn(`downloading ${toFilename}...`)
+    await logger.writeLn(`downloading ${toFilename}...`)
     
     await new Promise<void>((resolve, reject) => {
         const writeStream = fs.createWriteStream(toFilename)
@@ -39,9 +42,9 @@ export async function download(
                 })
             })
         
-        request.on("error", (err) => {
+        request.on("error", async (err) => {
             fs.unlinkSync(downloadFolder + toFilename)
-            logger.writeLn(`error downloading ${toFilename}`)
+            await logger.writeLn(`error downloading ${toFilename}`)
             reject(err.message)
         })
     })
@@ -57,9 +60,12 @@ export async function extractGzip(
 {
     if (useCachedFile &&
         fs.existsSync(extractedFilename))
+    {
+        await logger.writeLn(`using cached file "${extractedFilename}"`)
         return
+    }
 
-    logger.writeLn(`extracting ${gzipFilename}...`)
+    await logger.writeLn(`extracting ${gzipFilename}...`)
 
     await new Promise<void>((resolve, _) => {
         gunzip(

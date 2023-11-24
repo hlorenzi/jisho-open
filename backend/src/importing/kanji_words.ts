@@ -10,7 +10,7 @@ export async function crossReferenceKanjiWords(
     logger: Logging.Logger,
     db: Db.Interface)
 {
-    logger.writeLn("cross-referencing kanji and word entries...")
+    await logger.writeLn("cross-referencing kanji and word entries...")
 
     const kanjiEntries = await db.listAllKanji()
 

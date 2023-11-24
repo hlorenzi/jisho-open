@@ -7,7 +7,7 @@ export async function buildStandardLists(
     logger: Logging.Logger,
     db: Db.Interface)
 {
-    logger.writeLn("building standard study lists...")
+    await logger.writeLn("building standard study lists...")
 
     await buildListByFilter(
         db,

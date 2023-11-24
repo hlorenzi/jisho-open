@@ -12,20 +12,29 @@ import * as MongoDbStudyLists from "./studylist.ts"
 
 export const dbUrl = "mongodb://localhost:27017"
 export const dbDatabase = "jisho2"
+export const dbCollectionLog = "log"
 export const dbCollectionWords = "words"
 export const dbCollectionDefinitions = "definitions"
 export const dbCollectionKanji = "kanji"
 export const dbCollectionKanjiWords = "kanji_words"
 export const dbCollectionStudyLists = "studylists"
+export const logEntriesMax = 10000
 
 
 export type State = {
     db: MongoDb.Db
+    collLog: MongoDb.Collection<DbLogFile>
     collWords: MongoDb.Collection<DbWordEntry>
     collDefinitions: MongoDb.Collection<DbDefinitionEntry>
     collKanji: MongoDb.Collection<DbKanjiEntry>
     collKanjiWords: MongoDb.Collection<DbKanjiWordEntry>
     collStudylists: MongoDb.Collection<DbStudyListEntry>
+}
+
+
+export type DbLogFile = {
+    _id: string
+    entries: Api.Log.Entry[]
 }
 
 
@@ -127,12 +136,20 @@ export const fieldKanjiLookUpMeanings =
     `.${"meanings" satisfies keyof DbKanjiEntry["lookUp"]}`
 
 
-export async function connect(): Promise<Db.Interface>
+export interface Interface extends Db.Interface
+{
+    client: MongoDb.MongoClient
+    state: State
+}
+
+
+export async function connect(): Promise<Interface>
 {
     const client = await MongoDb.MongoClient.connect(dbUrl)
     const db = client.db(dbDatabase)
     const state: State = {
         db,
+        collLog: db.collection<DbLogFile>(dbCollectionLog),
         collWords: db.collection<DbWordEntry>(dbCollectionWords),
         collDefinitions: db.collection<DbDefinitionEntry>(dbCollectionDefinitions),
         collKanji: db.collection<DbKanjiEntry>(dbCollectionKanji),
@@ -183,6 +200,14 @@ export async function connect(): Promise<Db.Interface>
     })
 
     return {
+        client,
+        state,
+
+        log: (text) =>
+            log(state, text),
+        logGet: () =>
+            logGet(state),
+
         importWordEntries: (date, entries) =>
             MongoDbImportWords.importWordEntries(state, date, entries),
         importWordEntriesFinish: (date) =>
@@ -245,6 +270,34 @@ export async function connect(): Promise<Db.Interface>
         studylistCommunityGetRecent: (authUser, limit) =>
             MongoDbStudyLists.studylistCommunityGetRecent(state, authUser, limit),
     }
+}
+
+
+export async function log(
+    state: State,
+    text: string)
+{
+    const entry = {
+        date: new Date(),
+        text: text,
+    }
+
+    await state.collLog.updateOne(
+        { _id: "log" },
+        { $push: { entries: { $each: [entry], $slice: -logEntriesMax } } },
+        { upsert: true })
+}
+
+
+export async function logGet(
+    state: State)
+    : Promise<Api.Log.Entry[]>
+{
+    const file = await state.collLog.findOne({ _id: "log" })
+    if (!file)
+        return []
+
+    return file.entries
 }
 
 

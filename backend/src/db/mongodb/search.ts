@@ -247,27 +247,34 @@ export async function searchByWildcards(
     if (queriesFiltered.length === 0)
         return []
     
+    const makeRegex = (q: string) => q
+        .replace(/\?/g, "(.)")
+        .replace(/\*/g, "(.*?)")
+    
+    const clearWildcards = (q: string) => q
+        .replace(/\?/g, "")
+        .replace(/\*/g, "")
 
-    const regexes = queriesFiltered.map(q =>
-        "^" +
-        q
-            .replace(/\?/g, "(.)")
-            .replace(/\*/g, "(.*?)") +
-        "$")
+    const queriesData = queriesFiltered.map(q => ({
+        chars: [...new Set<string>(...clearWildcards(q))],        
+        regex: `^${ makeRegex(q) }$`,
+    }))
 
-    const dbFind: any[] = []
-    for (const regex of regexes)
-        dbFind.push({ [MongoDb.fieldWordLookUpHeadingsText]: { $regex: regex } })
-        
     const tagFilter = makeTagFilter(options)
 
-    const results = await state.collWords.aggregate([
-        //{ $match: { chars: { $all: regexCharsFilter } } },
-        { $match: { $or: dbFind } },
-        { $match: tagFilter },
-        { $sort: { score: -1, _id: 1 } },
-        { $limit: Math.min(options.limit, 1000) },
-    ]).toArray()
+    const dbFind: any[] = []
+    for (const queryData of queriesData)
+        dbFind.push({
+            [MongoDb.fieldWordLookUpChars]: { $all: queryData.chars },
+            [MongoDb.fieldWordLookUpHeadingsText]: { $regex: queryData.regex },
+            ...tagFilter, 
+        })
+        
+    const results = await state.collWords
+        .find({ $or: dbFind })
+        .sort({ score: -1, _id: 1 })
+        .limit(Math.min(options.limit, 1000))
+        .toArray()
 
     return results
         .map(MongoDb.translateWordDbToApi)

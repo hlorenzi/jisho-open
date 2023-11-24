@@ -1,11 +1,13 @@
 import * as Express from "express"
 import "express-async-errors"
 import * as BodyParser from "body-parser"
+import * as Importing from "./src/importing/index.ts"
 import * as Auth from "./src/auth/index.ts"
 import * as AuthLorenzi from "./src/auth/lorenzi.ts"
 import * as Db from "./src/db/index.ts"
 import * as DbMongo from "./src/db/mongodb/index.ts"
 import * as AuthRoutes from "./src/server/auth.ts"
+import * as AdminRoutes from "./src/server/admin.ts"
 import * as Search from "./src/server/search.ts"
 import * as KanjiWords from "./src/server/kanji_words.ts"
 import * as KanjiByComponents from "./src/server/kanji_by_components.ts"
@@ -36,10 +38,12 @@ const app = Express.default()
 app.use("/api", BodyParser.default.json())
 
 AuthRoutes.init(app, db, auth)
+AdminRoutes.init(app, db, auth)
 Search.init(app, db)
 KanjiWords.init(app, db)
 KanjiByComponents.init(app, db)
 StudyList.init(app, db, auth)
+Importing.setupScheduledDatabaseBuild(db)
 
 app.use("/", Express.static("../frontend/public"))
 app.use("/.build/", Express.static("../frontend/.build"))

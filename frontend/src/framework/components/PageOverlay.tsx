@@ -28,6 +28,7 @@ const DivOverlay = styled.div`
     top: 0;
     width: 100vw;
     height: 100%;
+    height: 100dvh;
     overflow: hidden;
     pointer-events: none;
     z-index: 1000;
@@ -36,7 +37,6 @@ const DivOverlay = styled.div`
 
 const DivLayout = styled.div`
     width: 100vw;
-    min-height: 100vh;
     height: 100%;
 
     display: grid;

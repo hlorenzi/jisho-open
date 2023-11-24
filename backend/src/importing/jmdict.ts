@@ -42,7 +42,7 @@ export async function downloadAndImport(
         "JMdict",
         "entry")
 
-    logger.writeLn("importing word entries...")
+    await logger.writeLn("importing word entries...")
 
     const startDate = new Date()
 
@@ -59,7 +59,7 @@ export async function downloadAndImport(
         }
         catch (e: any)
         {
-            logger.writeLn(`error normalizing word entry ${ rawEntry.ent_seq[0] }: ${ e }`)
+            await logger.writeLn(`error normalizing word entry ${ rawEntry.ent_seq[0] }: ${ e }`)
             throw e
         }
     }

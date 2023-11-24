@@ -7,6 +7,12 @@ export namespace LoginFake
 }
 
 
+export namespace Log
+{
+    export const url = `/log`
+}
+
+
 export namespace Search
 {
     export const matchQuery = "query"

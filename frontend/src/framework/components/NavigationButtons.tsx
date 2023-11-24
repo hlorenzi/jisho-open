@@ -28,8 +28,8 @@ const Layout = styled.div`
     grid-template: auto / auto 1fr auto auto;
     pointer-events: none;
 
-    /*@media (display-mode: browser)
+    @media (display-mode: browser)
     {
         display: none;
-    }*/
+    }
 `

@@ -122,6 +122,13 @@ export async function getUser(
 }
 
 
+export async function logGet()
+    : Promise<Api.Log.Response>
+{
+    return post(Api.Log.url, undefined)
+}
+
+
 export async function search(
     req: Api.Search.Request)
     : Promise<Api.Search.Response>

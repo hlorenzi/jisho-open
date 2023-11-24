@@ -41,6 +41,9 @@ function Root()
                 { patterns: [Pages.Community.url],
                     load: async () => (await import("./pages/PageCommunity.tsx")).PageCommunity },
     
+                { patterns: [Pages.Log.url],
+                    load: async () => (await import("./pages/PageLog.tsx")).PageLog },
+    
                 { patterns: ["*"],
                     load: async () => () => <Framework.Error message="Page not found"/> },
             ]}

@@ -34,16 +34,17 @@ const StyledButton = styled.button`
     transition: background-color 0.05s, opacity 0.05s;
     pointer-events: auto;
 
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 3rem;
+    height: 3rem;
 
     margin: 0.5rem;
-    padding: 0.75rem;
+    margin-bottom: 1rem;
+    padding: 0;
     border: 0;
     border-radius: 50%;
 
     font-family: inherit;
-    font-size: 1.1em;
+    font-size: 1em;
     color: ${ Framework.themeVar("textColor") };
 
     @media (pointer: coarse)

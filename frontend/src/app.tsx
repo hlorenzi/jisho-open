@@ -16,7 +16,7 @@ export type Prefs = {
 
     searchboxPosition: "inline" | "bottom"
 
-    japaneseFontStyle: "regular" | "bold"
+    japaneseFontStyle: "regular" | "half-bold" | "bold"
     resultsShowSearchOnlyHeadings: boolean
 
     studylistOrdering: "activity" | "name"
@@ -70,6 +70,7 @@ export function usePrefsCss(): Solid.Accessor<string>
         return `
             ${ cssJapaneseFontWeight }: ${
                 prefs.japaneseFontStyle === "regular" ? "regular" :
+                prefs.japaneseFontStyle === "half-bold" ? "500" :
                 "bold"
             };
         `

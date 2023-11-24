@@ -171,6 +171,10 @@ export function compile(raw: string): Table
             
             const ruleList = rules.get(currentGroupId) ?? []
             for (const sourceRule of sourceGroup)
+            {
+                if (sourceRule.targetCategory === "unc")
+                    continue
+
                 ruleList.push({
                     id: currentGroupId,
                     sourceCategory: sourceRule.targetCategory,
@@ -178,6 +182,7 @@ export function compile(raw: string): Table
                     addToEnd: addToEnd,
                     targetCategory,
                 })
+            }
             
             rules.set(currentGroupId, ruleList)
             continue

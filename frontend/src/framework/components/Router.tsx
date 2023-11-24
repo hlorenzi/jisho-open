@@ -158,7 +158,7 @@ export function RouterInner(props: {
             await Framework.waitMs(debugFetchDelayMs)
 
             const pageFn = await load()
-            console.log("%cRouter.fetchPage ended", "color:orange;", pageFn)
+            console.log("%cRouter.fetchPage ended", "color:orange;")
 
             // Return it wrapped in a closure to ensure
             // reference-inequality.
