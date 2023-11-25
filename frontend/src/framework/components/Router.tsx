@@ -119,6 +119,10 @@ export function Router(props: {
             />
         </Solid.Show>
 
+        <Solid.Show when={ !pending() }>
+            <Framework.RouterTransitionEnd/>
+        </Solid.Show>
+
         <Solid.ErrorBoundary fallback={ (err: Error) => {
             setHasErrored(true)
             const cause = (err.cause as any) ?? {}
