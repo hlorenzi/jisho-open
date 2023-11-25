@@ -21,6 +21,7 @@ export function Searchbox(props: {
         Solid.createSignal<HTMLInputElement | undefined>(undefined)
     
     const onClear = () => {
+        App.analyticsEvent("searchClear")
         setSearchbox("")
         inputRef()?.select()
         inputRef()?.focus()
@@ -97,7 +98,10 @@ export function Searchbox(props: {
                 }
                 value={ searchbox }
                 onInput={ setSearchbox }
-                onEnter={ onSearch }
+                onEnter={ (ev) => {
+                    App.analyticsEvent("searchByEnter")
+                    onSearch(ev)
+                }}
             />
             <Solid.Show
                 when={ props.position !== "bottom" && !props.noInputButton }
@@ -129,7 +133,10 @@ export function Searchbox(props: {
                 <Framework.Button
                     title="Search"
                     label={ <Framework.IconMagnifyingGlass/> }
-                    onClick={ onSearch }
+                    onClick={ (ev) => {
+                        App.analyticsEvent("searchByButton")
+                        onSearch(ev)
+                    }}
                     noPadding
                     style={{ width: "3em" }}
                 />
@@ -153,6 +160,7 @@ function windowOnKeyDown(
     // Focus on searchbox with Esc, highlighting everything
     if (key == "escape")
     {
+        App.analyticsEvent("searchFocusByEsc")
         window.scrollTo(0, 0)
         inputElem.select()
         inputElem.focus()
@@ -171,6 +179,7 @@ function windowOnKeyDown(
         if (ev.ctrlKey && key === "c")
             return
         
+        App.analyticsEvent("searchFocusByTyping")
         window.scrollTo(0, 0)
         inputElem.select()
         inputElem.focus()

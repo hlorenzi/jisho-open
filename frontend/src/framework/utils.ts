@@ -1,7 +1,7 @@
 export function isDev()
 {
-    return window.location.href.startsWith("127.0.0.1") ||
-        window.location.href.startsWith("localhost")
+    return window.location.href.startsWith("http://127.0.0.1") ||
+        window.location.href.startsWith("http://localhost")
 }
 
 

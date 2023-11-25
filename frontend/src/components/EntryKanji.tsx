@@ -25,7 +25,9 @@ export function EntryKanji(props: {
 
     return <Entry>
         <Header>
-            <KanjiCharacter>
+            <KanjiCharacter
+                lang="ja"
+            >
                 { props.entry.id }
                 
                 <KanjiTagsWrapper>

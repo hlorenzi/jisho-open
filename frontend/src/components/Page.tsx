@@ -72,10 +72,10 @@ function SideMenu()
                 onClick={ () => setSettingsOpen(true) }
             />
 
-            <Framework.ButtonPopupPageWide
+            {/*<Framework.ButtonPopupPageWide
                 icon={ <Framework.IconHelp/> }
                 label="Help"
-            />
+            />*/}
 
             <Framework.HorizontalBar/>
 
@@ -129,8 +129,6 @@ function SettingsPanel(props: {
             label="Back"
             onClick={ props.back }
         />
-
-        <Framework.HorizontalBar/>
         
         <Framework.Select
             label="Theme"
@@ -144,6 +142,8 @@ function SettingsPanel(props: {
                 })),
             ]}
         />
+
+        <Framework.HorizontalBar/>
         
         <Framework.Select
             label="Searchbox Position"

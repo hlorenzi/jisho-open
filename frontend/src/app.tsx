@@ -81,8 +81,24 @@ export function usePrefsCss(): Solid.Accessor<string>
 
 
 export type AnalyticsEvent =
+    | "searchByButton"
+    | "searchByEnter"
+    | "searchClear"
+    | "searchInsertKanji"
+    | "searchFocusByEsc"
+    | "searchFocusByTyping"
+    | "studylistPopupAdd"
+    | "studylistPopupAddSpelling"
+    | "studylistPopupRemove"
+    | "studylistPopupCreateAndAdd"
+    | "studylistCreate"
+    | "studylistRename"
+    | "studylistDelete"
+    | "studylistTogglePublic"
+    | "studylistRemoveWords"
     | "studylistImportPreview"
     | "studylistImport"
+    | "studylistExport"
 
 
 export function analyticsEvent(event: AnalyticsEvent)

@@ -104,6 +104,8 @@ export function PageStudylist(props: Framework.RouteProps)
     const popupBusy = Framework.makePopupBusy()
 
     const onRename = () => popupBusy.run(async () => {
+        App.analyticsEvent("studylistRename")
+
         if (!await App.Api.studylistEditName(data()!.studylist))
             return
             
@@ -111,6 +113,8 @@ export function PageStudylist(props: Framework.RouteProps)
     })
 
     const onDelete = () => popupBusy.run(async () => {
+        App.analyticsEvent("studylistDelete")
+
         if (!await App.Api.studylistDelete(data()!.studylist))
             return
             
@@ -118,6 +122,8 @@ export function PageStudylist(props: Framework.RouteProps)
     })
 
     const onTogglePublic = () => popupBusy.run(async () => {
+        App.analyticsEvent("studylistTogglePublic")
+
         if (!await App.Api.studylistEditPublic(data()!.studylist))
             return
             
@@ -147,6 +153,8 @@ export function PageStudylist(props: Framework.RouteProps)
         if (!answer ||
             answer !== selected().size.toString())
             return
+            
+        App.analyticsEvent("studylistRemoveWords")
 
         await App.Api.studylistWordRemoveMany({
             studylistId: data()!.studylist.id,
@@ -421,6 +429,8 @@ export function ExportPopup(props: {
 })
 {
     const onExport = () => {
+        App.analyticsEvent("studylistExport")
+
         const tsvText = StudylistExport.writeStudylistTsv(
             props.studylist,
             props.words)

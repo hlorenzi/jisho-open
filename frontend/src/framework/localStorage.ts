@@ -7,8 +7,8 @@ export function readStr(key: string, def: string = "")
 	{
 		const str = localStorage.getItem(key)
 
-		if (Framework.isDev())
-			console.log("read storage", key, str)
+		//if (Framework.isDev())
+		//	console.log("read storage", key, str)
 
 		if (typeof str === "string")
 			return str
@@ -26,8 +26,8 @@ export function readJson<T>(key: string, def: Partial<T> = {}): Partial<T>
 {
 	const str = readStr(key, "")
 
-    if (Framework.isDev())
-		console.log("read storage json", key, str)
+    //if (Framework.isDev())
+	//	console.log("read storage json", key, str)
 	
 	if (typeof str !== "string" ||
         str === "")
@@ -50,8 +50,8 @@ export function writeStr(key: string, str: string)
 {
 	try
 	{
-		if (Framework.isDev())
-			console.log("write storage", key, str)
+		//if (Framework.isDev())
+		//	console.log("write storage", key, str)
 		
 		localStorage.setItem(key, str)
 	}
@@ -66,8 +66,8 @@ export function writeJson<T>(key: string, obj: T)
 {
 	try
 	{
-		if (Framework.isDev())
-			console.log("write storage json", key, obj)
+		//if (Framework.isDev())
+		//	console.log("write storage json", key, obj)
 
 		localStorage.setItem(key, JSON.stringify(obj))
 	}
@@ -84,8 +84,8 @@ export function remove(key: string)
 	{
 		localStorage.removeItem(key)
 
-		if (Framework.isDev())
-			console.log("delete storage", key)
+		//if (Framework.isDev())
+		//	console.log("delete storage", key)
 	}
 	catch (e)
 	{

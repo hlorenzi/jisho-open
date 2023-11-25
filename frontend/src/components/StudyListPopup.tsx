@@ -1,7 +1,7 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
-import * as Api from "../api.ts"
+import * as App from "../app.tsx"
 
 
 export function StudyListPopup(props: {
@@ -12,21 +12,21 @@ export function StudyListPopup(props: {
     const data = Framework.createAsyncSignal(
         () => props.wordId,
         async (wordId) => {
-            const authUser = await Api.authenticate()
+            const authUser = await App.Api.authenticate()
             if (!authUser.id)
                 return {
                     authUser,
-                    studylists: [] as Api.StudyList.Entry[],
+                    studylists: [] as App.Api.StudyList.Entry[],
                     foldersWithWord: new Set<string>(),
                 }
 
-            const studylistsRes = await Api.studylistGetAllMarked({
+            const studylistsRes = await App.Api.studylistGetAllMarked({
                 markWordId: wordId,
             })
 
             const studylists = studylistsRes.studylists
             studylists.forEach(s => {
-                const [folderName, selfName] = Api.StudyList.getFolderName(s)
+                const [folderName, selfName] = App.Api.StudyList.getFolderName(s)
                 s.folderName = folderName
                 s.selfName = selfName
             })
@@ -61,7 +61,9 @@ export function StudyListPopup(props: {
                 if (!window.confirm("Remove this word from the list?"))
                     return
 
-                await Api.studylistWordRemoveMany({
+                App.analyticsEvent("studylistPopupRemove")
+
+                await App.Api.studylistWordRemoveMany({
                     studylistId: studyListId,
                     wordIds: [props.wordId],
                 })
@@ -69,7 +71,12 @@ export function StudyListPopup(props: {
             }
             else
             {
-                await Api.studylistWordAdd({
+                App.analyticsEvent(
+                    props.wordId.includes(";") ?
+                        "studylistPopupAddSpelling" :
+                        "studylistPopupAdd")
+
+                await App.Api.studylistWordAdd({
                     studylistId: studyListId,
                     wordId: props.wordId,
                 })
@@ -86,7 +93,9 @@ export function StudyListPopup(props: {
         setWorking(true)
         try
         {
-            if (!await Api.studylistCreateAndAddWord(props.wordId))
+            App.analyticsEvent("studylistPopupCreateAndAdd")
+            
+            if (!await App.Api.studylistCreateAndAddWord(props.wordId))
                 return
             
             props.onFinished?.()
@@ -115,7 +124,7 @@ export function StudyListPopup(props: {
         <Solid.Show when={ data().latest && !data().latest?.authUser.id }>
             <Framework.ButtonPopupPageWide
                 label="Log in to create study lists!"
-                href={ Api.Login.urlForRedirect(window.location.href) }
+                href={ App.Api.Login.urlForRedirect(window.location.href) }
                 native
             />
         </Solid.Show>

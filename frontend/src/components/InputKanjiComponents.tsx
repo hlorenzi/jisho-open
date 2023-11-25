@@ -56,6 +56,7 @@ export function InputKanjiComponents(props: {
     }
 
 	const onInsert = (kanji: string) => {
+		App.analyticsEvent("searchInsertKanji")
 		props.textSignal[1](t => t + kanji)
 	}
 

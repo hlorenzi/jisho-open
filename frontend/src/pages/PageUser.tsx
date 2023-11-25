@@ -109,6 +109,8 @@ export function PageUser(props: Framework.RouteProps)
     }
 
     const onCreate = async () => {
+        App.analyticsEvent("studylistCreate")
+        
         const res = await App.Api.studylistCreate()
         if (!res)
             return

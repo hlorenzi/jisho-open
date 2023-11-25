@@ -17,6 +17,9 @@ async function postCached(
     payload: any)
     : Promise<any>
 {
+    Framework.Analytics.event(
+        endpoint.substring(1).replace(/\//g, "_"))
+
     const cacheForEndpoint: EndpointCache = cache.get(endpoint) ?? new Map()
     const payloadKey = JSON.stringify(payload)
     const cachedResponsePromise = cacheForEndpoint.get(payloadKey)
@@ -40,7 +43,7 @@ async function postCached(
 }
 
 
-async function post<T>(
+async function post(
     endpoint: string,
     payload: any)
     : Promise<any>
@@ -54,6 +57,9 @@ async function post<T>(
             payload,
             "[error]")
     }
+
+    Framework.Analytics.event(
+        endpoint.substring(1).replace(/\//g, "_"))
 
     try
     {

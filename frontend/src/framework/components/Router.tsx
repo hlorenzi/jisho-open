@@ -40,6 +40,8 @@ export function Router(props: {
                 return
             }
 
+            Framework.Analytics.navigate(window.location.pathname)
+
             const match = Framework.getMatchForPath(
                 props.routes,
                 window.location.pathname,
@@ -125,13 +127,16 @@ export function Router(props: {
 
         <Solid.ErrorBoundary fallback={ (err: Error) => {
             setHasErrored(true)
+
             const cause = (err.cause as any) ?? {}
-            return <Framework.Error
-                message={ cause.statusCode && cause.statusMessage ?
+            const message =
+                cause.statusCode && cause.statusMessage ?
                     `HTTP ${ cause.statusCode.toString() } — ${ cause.statusMessage }` :
                     `${ err }`
-                }
-            />
+
+            Framework.Analytics.exception(message)
+            
+            return <Framework.Error message={ message }/>
         }}>
 
             <Solid.Suspense>

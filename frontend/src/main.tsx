@@ -15,6 +15,8 @@ SolidWeb.render(
 
 function Root()
 {
+    Framework.Analytics.init("")
+
     return <>
         <Framework.GlobalCss extraCss={ [App.usePrefsCss()] }/>
         <Framework.Router
