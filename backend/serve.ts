@@ -6,12 +6,12 @@ import * as Auth from "./src/auth/index.ts"
 import * as AuthLorenzi from "./src/auth/lorenzi.ts"
 import * as Db from "./src/db/index.ts"
 import * as DbMongo from "./src/db/mongodb/index.ts"
-import * as AuthRoutes from "./src/server/auth.ts"
-import * as AdminRoutes from "./src/server/admin.ts"
-import * as Search from "./src/server/search.ts"
-import * as KanjiWords from "./src/server/kanji_words.ts"
-import * as KanjiByComponents from "./src/server/kanji_by_components.ts"
-import * as StudyList from "./src/server/studylist.ts"
+import * as ServerAuth from "./src/server/auth.ts"
+import * as ServerAdmin from "./src/server/admin.ts"
+import * as ServerSearch from "./src/server/search.ts"
+import * as ServerKanjiWords from "./src/server/kanji_words.ts"
+import * as ServerKanjiByComponents from "./src/server/kanji_by_components.ts"
+import * as ServerStudylist from "./src/server/studylist.ts"
 
 const port = process.env.PORT || 80
 
@@ -37,12 +37,12 @@ const app = Express.default()
 
 app.use("/api", BodyParser.default.json())
 
-AuthRoutes.init(app, db, auth)
-AdminRoutes.init(app, db, auth)
-Search.init(app, db)
-KanjiWords.init(app, db)
-KanjiByComponents.init(app, db)
-StudyList.init(app, db, auth)
+ServerAuth.init(app, db, auth)
+ServerAdmin.init(app, db, auth)
+ServerSearch.init(app, db)
+ServerKanjiWords.init(app, db)
+ServerKanjiByComponents.init(app, db)
+ServerStudylist.init(app, db, auth)
 Importing.setupScheduledDatabaseBuild(db)
 
 app.use("/", Express.static("../frontend/public"))

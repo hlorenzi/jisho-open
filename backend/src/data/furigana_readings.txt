@@ -23466,6 +23466,7 @@
 鉢;uncl;わち
 尖;uncl;と;とんが;とんがり
 咫;uncl;あた
+鋒;uncl;ほ;ほこ
 素;auto;しろ;しら;すん
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
@@ -24035,13 +24036,6 @@
 烏賊;gikun;いか
 海月;gikun;くらげ
 水母;gikun;くらげ
-不足;gikun;たらず
-不知;gikun;しらず;しらぬ
-不識;gikun;しらず
-不味;gikun;まず
-不喰;gikun;くわず
-不寝;gikun;ねず
-不生;gikun;うまず
 柳葉魚;gikun;ししゃも
 茱萸;gikun;ぐみ
 胡頽子;gikun;ぐみ
@@ -24162,7 +24156,7 @@
 祖父;gikun;じい
 祖母;gikun;ばあ
 蟋蟀;gikun;こおろぎ
-襁褓;gikun;むつ
+襁褓;gikun;むつ;むつき
 強請;gikun;ねだ
 内儀;gikun;かみ
 吉丁;gikun;たま
@@ -24270,6 +24264,13 @@
 太刀;gikun;たち
 忘八;gikun;くつわ
 豊受;fused;とゆけ
+不足;conjug;たらず
+不知;conjug;しらず;しらぬ
+不識;conjug;しらず
+不味;conjug;まず
+不喰;conjug;くわず
+不寝;conjug;ねず
+不生;conjug;うまず
 不見;conjug;みず
 不老;conjug;おいず
 下関;patch;しものせき
@@ -24339,6 +24340,7 @@
 ＭＯＸ;spec;もっくす
 Ｂａｓｅ;spec;べーす
 ＳＩＭ;spec;シム
+ｔｏ;spec;ツー
 Ａ;spec;えー;えい
 A;spec;えー
 Ｂ;spec;びー;べー

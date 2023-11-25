@@ -59,8 +59,7 @@ export async function downloadAndImport(
         }
         catch (e: any)
         {
-            await logger.writeLn(`error normalizing word entry ${ rawEntry.ent_seq[0] }: ${ e }`)
-            throw e
+            throw `error normalizing word entry ${ rawEntry.ent_seq[0] }: ${ e }`
         }
     }
 
@@ -173,6 +172,8 @@ function normalizeHeadings(
     // and usually-only-kana entries to the front.
     const score = (h: Api.Word.Heading) => {
         return (
+            (h.searchOnlyKanji ? -1000 : 0) +
+            (h.searchOnlyKana ? -1000 : 0) +
             (h.outdatedKanji ? -100 : 0) +
             (h.outdatedKana ? -100 : 0) +
             (h.rareKanji ? -10 : 0) +

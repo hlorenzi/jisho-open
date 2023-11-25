@@ -3,6 +3,16 @@ import { styled } from "solid-styled-components"
 import * as Framework from "../index.ts"
 
 
+export function RouterTransition(props: {
+    height?: number,
+})
+{
+    return <DivWrapper inert>
+        <Framework.LoadingBar/>
+    </DivWrapper>
+}
+
+
 const DivWrapper = styled("div")`
     position: fixed;
     top: 0;
@@ -12,13 +22,3 @@ const DivWrapper = styled("div")`
     background-color: ${ Framework.themeVar("pageTransitionOverlayColor") };
     z-index: 1;
 `
-
-
-export function RouterTransition(props: {
-    height?: number,
-})
-{
-    return <DivWrapper inert>
-        <Framework.LoadingBar/>
-    </DivWrapper>
-}

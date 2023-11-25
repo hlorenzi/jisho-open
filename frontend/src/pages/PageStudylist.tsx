@@ -72,26 +72,28 @@ export function PageStudylist(props: Framework.RouteProps)
     const [selected, setSelected] =
         Framework.createHistorySignal("selected", new Set<string>())
 
-    const onRename = async () => {
+    const popupBusy = Framework.makePopupBusy()
+
+    const onRename = () => popupBusy.run(async () => {
         if (!await App.Api.studylistEditName(data()!.studylist))
             return
             
         Framework.historyReload()
-    }
+    })
 
-    const onDelete = async () => {
+    const onDelete = () => popupBusy.run(async () => {
         if (!await App.Api.studylistDelete(data()!.studylist))
             return
             
         Framework.historyPush(App.Pages.User.urlForUserId(data()!.user.id ?? ""))
-    }
+    })
 
-    const onTogglePublic = async () => {
+    const onTogglePublic = () => popupBusy.run(async () => {
         if (!await App.Api.studylistEditPublic(data()!.studylist))
             return
             
         Framework.historyReload()
-    }
+    })
 
     const onSelectWord = async (wordId: string, wordSelected: boolean) => {
         const newSet = new Set<string>([...selected()])
@@ -104,7 +106,7 @@ export function PageStudylist(props: Framework.RouteProps)
         setSelected(newSet)
     }
 
-    const onRemoveSelected = async () => {
+    const onRemoveSelected = () => popupBusy.run(async () => {
         const message =
             `Remove the ${ selected().size } selected ` +
             Framework.formPlural(selected().size, "word", "s") +
@@ -124,7 +126,7 @@ export function PageStudylist(props: Framework.RouteProps)
 
         setSelected(new Set<string>())
         Framework.historyReload()
-    }
+    })
 
     const exportPopup = Framework.makePopupPageWide({
         childrenFn: () => <ExportPopup
@@ -138,6 +140,8 @@ export function PageStudylist(props: Framework.RouteProps)
 
         <Searchbox position="inline"/>
         <br/>
+
+        { popupBusy.rendered }
 
         <Solid.Show when={ data() }>
 

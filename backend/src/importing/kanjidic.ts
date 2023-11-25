@@ -52,8 +52,7 @@ export async function downloadAndImport(
         }
         catch (e: any)
         {
-            await logger.writeLn(`error normalizing kanji entry ${ rawEntry.literal[0] }: ${ e }`)
-            throw e
+            throw `error normalizing kanji entry ${ rawEntry.literal[0] }: ${ e }`
         }
     }
 

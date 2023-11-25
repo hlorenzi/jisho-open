@@ -2,7 +2,7 @@ import * as Express from "express"
 import * as Db from "../db/index.ts"
 import * as Auth from "../auth/index.ts"
 import * as Api from "common/api/index.ts"
-import * as AuthRoutes from "./auth.ts"
+import * as ServerAuth from "./auth.ts"
 
 
 export function init(
@@ -17,7 +17,7 @@ export function init(
             throw Api.Error.malformed
 
         const studylistId = await db.studylistCreate(
-            await AuthRoutes.authenticateRequest(auth, req),
+            await ServerAuth.authenticateRequest(auth, req),
             body.name)
         
         res.send({ studylistId } satisfies Api.StudylistCreate.Response)
@@ -30,7 +30,7 @@ export function init(
             throw Api.Error.malformed
 
         await db.studylistDelete(
-            await AuthRoutes.authenticateRequest(auth, req),
+            await ServerAuth.authenticateRequest(auth, req),
             body.studylistId)
         
         res.send({} satisfies Api.StudylistDelete.Response)
@@ -68,7 +68,7 @@ export function init(
         }
 
         await db.studylistEdit(
-            await AuthRoutes.authenticateRequest(auth, req),
+            await ServerAuth.authenticateRequest(auth, req),
             body.studylistId,
             body.edit)
         
@@ -82,7 +82,7 @@ export function init(
             throw Api.Error.malformed
 
         const studylist = await db.studylistGet(
-            await AuthRoutes.authenticateRequest(auth, req),
+            await ServerAuth.authenticateRequest(auth, req),
             body.studylistId)
         
         res.send({ studylist } satisfies Api.StudylistGet.Response)
@@ -95,7 +95,7 @@ export function init(
             throw Api.Error.malformed
 
         const studylists = await db.studylistGetAll(
-            await AuthRoutes.authenticateRequest(auth, req),
+            await ServerAuth.authenticateRequest(auth, req),
             body.userId)
         
         res.send({ studylists } satisfies Api.StudylistGetAll.Response)
@@ -109,7 +109,7 @@ export function init(
             throw Api.Error.malformed
 
         const studylists = await db.studylistGetAllMarked(
-            await AuthRoutes.authenticateRequest(auth, req),
+            await ServerAuth.authenticateRequest(auth, req),
             body.markWordId)
         
         res.send({ studylists } satisfies Api.StudylistGetAllMarked.Response)
@@ -125,7 +125,7 @@ export function init(
             throw Api.Error.malformed
 
         await db.studylistWordAdd(
-            await AuthRoutes.authenticateRequest(auth, req),
+            await ServerAuth.authenticateRequest(auth, req),
             body.studylistId,
             body.wordId)
 
@@ -143,7 +143,7 @@ export function init(
             throw Api.Error.malformed
 
         await db.studylistWordRemoveMany(
-            await AuthRoutes.authenticateRequest(auth, req),
+            await ServerAuth.authenticateRequest(auth, req),
             body.studylistId,
             body.wordIds)
 
@@ -157,7 +157,7 @@ export function init(
             throw Api.Error.malformed
 
         const entries = await db.studylistWordsGet(
-            await AuthRoutes.authenticateRequest(auth, req),
+            await ServerAuth.authenticateRequest(auth, req),
             body.studylistId)
 
         res.send({ entries } satisfies Api.StudylistWordsGet.Response)
@@ -167,7 +167,7 @@ export function init(
         const body = req.body as Api.StudylistStandardGetAll.Request
 
         const studylists = await db.studylistGetAll(
-            await AuthRoutes.authenticateRequest(auth, req),
+            await ServerAuth.authenticateRequest(auth, req),
             Auth.systemUserId)
 
         res.send({ studylists } satisfies Api.StudylistStandardGetAll.Response)
@@ -180,7 +180,7 @@ export function init(
             throw Api.Error.malformed
 
         const studylists = await db.studylistCommunityGetRecent(
-            await AuthRoutes.authenticateRequest(auth, req),
+            await ServerAuth.authenticateRequest(auth, req),
             body.limit)
 
         res.send({ studylists } satisfies Api.StudylistCommunityGetRecent.Response)
