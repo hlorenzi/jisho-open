@@ -18,6 +18,7 @@ export type Prefs = {
 
     japaneseFontStyle: "regular" | "half-bold" | "bold"
     resultsShowSearchOnlyHeadings: boolean
+    resultsShowWordRankings: boolean
 
     studylistOrdering: "activity" | "name"
     studylistWordOrdering: "date-added" | "kana"
@@ -36,6 +37,7 @@ export const prefsDefault: Prefs = {
 
     japaneseFontStyle: "bold",
     resultsShowSearchOnlyHeadings: false,
+    resultsShowWordRankings: true,
 
     studylistOrdering: "activity",
     studylistWordOrdering: "date-added",

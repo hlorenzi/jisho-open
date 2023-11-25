@@ -12,6 +12,7 @@ import * as JmdictTags from "common/jmdict_tags.ts"
 import * as JlptWords from "../data/jlpt_words.ts"
 import * as PitchAccent from "../data/pitch_accent.ts"
 import * as FuriganaHelpers from "../data/furigana_helpers.ts"
+import * as AnimeDramaRanking from "../data/animedrama_ranking.ts"
 
 
 export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"
@@ -69,6 +70,7 @@ export async function downloadAndImport(
     JlptWords.clearCache()
     FuriganaHelpers.clearCache()
     PitchAccent.clearCache()
+    AnimeDramaRanking.clearCache()
 }
 
 
@@ -318,6 +320,11 @@ function normalizeHeading(
         heading.searchOnlyKana = true
 
 
+    const rankAnimeDrama = AnimeDramaRanking.get(heading.base)
+    if (rankAnimeDrama !== undefined)
+        heading.rankAnimeDrama = rankAnimeDrama
+
+
     type RankField = {
         tagPrefix: string
         field: Api.Word.HeadingRankField
@@ -424,6 +431,9 @@ function scoreHeading(
             heading.rankGai === 2 ? 50 :
             heading.rankGai === 1 ? 10 :
             0
+        
+    if (heading.rankAnimeDrama !== undefined)
+        score += Math.max(0, 150 * (1 - (heading.rankAnimeDrama / 100_000)))
 
     if (heading.irregularKanji)
         score -= 20000

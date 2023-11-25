@@ -51,6 +51,9 @@ export type Heading = {
     /// Ranking of commonness in a loanwords list. (1 to 2)
     rankGai?: number
 
+    /// Ranking of commonness in the anime/drama list. (1 to 100_000)
+    rankAnimeDrama?: number
+
     /// Commonness score for this heading, for sorting search results.
     /// Higher is more common. If undefined, the value is 0.
     score?: number

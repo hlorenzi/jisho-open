@@ -32,6 +32,9 @@ export function EntryWord(props: {
                 [score: { props.entry.score }]
             </DebugInfo>
         </Solid.Show>
+        <EntryTags
+            entry={ props.entry }
+        />
         <InflectionBreakdown
             breakdown={ props.entry.inflections }
         />
@@ -478,6 +481,52 @@ function HeadingPopup(props: {
         { popupBookmark.rendered }
     </>
 }
+
+
+export function EntryTags(props: {
+    entry: App.Api.Word.Entry,
+})
+{
+    let animeDramaRank: number | undefined = undefined
+
+    for (const h of props.entry.headings)
+    {
+        if (h.rankAnimeDrama === undefined)
+            continue
+
+        if (animeDramaRank === undefined ||
+            h.rankAnimeDrama < animeDramaRank)
+            animeDramaRank = h.rankAnimeDrama
+    }
+
+    let animeDramaTopStr = ""
+    if (animeDramaRank !== undefined)
+    {
+        const n = Math.ceil(animeDramaRank! / 500) * 0.5
+        animeDramaTopStr =
+            n === 0.5 ? "500" :
+            `${ n.toString() }k`
+    }
+
+    return <Solid.Show when={ App.usePrefs().resultsShowWordRankings }>
+        <EntryTagsSection>
+            <Solid.Show when={ animeDramaRank !== undefined }>
+                <Framework.TextTag
+                    label={ `Anime/Drama Top ${ animeDramaTopStr }` }
+                    title={ `Ranks #${ animeDramaRank } on the list of most common words occurring in anime and drama.`}
+                    bkgColor={ Framework.themeVar("iconAnimeDramaColor") }
+                />
+            </Solid.Show>
+        </EntryTagsSection>
+    </Solid.Show>
+}
+
+
+const EntryTagsSection = styled.section`
+    margin: 0;
+    padding-left: 1.75em;
+    font-size: 0.8em;
+`
 
 
 function Senses(props: {

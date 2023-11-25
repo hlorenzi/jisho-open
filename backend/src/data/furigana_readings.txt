@@ -24272,6 +24272,7 @@
 比目魚;gikun;ひらめ
 翻筋斗;gikun;もんどり;もどり
 黄泉;gikun;よもつ
+蚰蜒;gikun;げじ;げじげじ
 豊受;fused;とゆけ
 不足;conjug;たらず
 不知;conjug;しらず;しらぬ

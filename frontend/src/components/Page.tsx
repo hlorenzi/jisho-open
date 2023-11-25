@@ -165,6 +165,16 @@ function SettingsPanel(props: {
                 { label: "Bold", value: "bold" },
             ]}
         />
+        
+        <Framework.Select
+            label="Word Ranking Tags"
+            value={ () => App.usePrefs().resultsShowWordRankings ? "on" : "off" }
+            onChange={ (value) => App.mergePrefs({ resultsShowWordRankings: value === "on" }) }
+            options={ [
+                { label: "Hide", value: "off" },
+                { label: "Show", value: "on" },
+            ]}
+        />
 
         <Framework.HorizontalBar/>
         
