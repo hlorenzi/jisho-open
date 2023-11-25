@@ -186,7 +186,7 @@ export const themeDarkGray: Theme = {
     iconGreenColor: "#3a9c6a",
     iconRedColor: "#c14733",
     iconBlueColor: "#00aaff",
-    iconDetailColor: "#020029",
+    iconDetailColor: "#2c2e31",
 }
 
 

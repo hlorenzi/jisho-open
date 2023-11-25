@@ -87,7 +87,7 @@ function Headings(props: {
         childrenFn: () =>
             <StudyListPopup
                 wordId={ props.wordId }
-                popup={ popupBookmark }
+                onFinished={ popupBookmark.close }
             />,
     })
 
@@ -206,10 +206,12 @@ function Heading(props: {
         childrenFn: () =>
             <HeadingPopup
                 popup={ popup }
+                wordId={ props.entry.id }
+                kanji={ kanji }
                 base={ props.heading.base }
                 reading={ props.heading.reading }
+                furigana={ props.heading.furigana }
                 partOfSpeechTags={ partOfSpeechTags }
-                kanji={ kanji }
                 openInflectionTable={ popupInflectionTable.open }
             />,
     })
@@ -386,12 +388,25 @@ const HeadingTags = styled.span`
 function HeadingPopup(props: {
     popup: Framework.PopupPageWideData,
     partOfSpeechTags: App.Api.Word.PartOfSpeechTag[],
+    wordId: string,
     kanji: string,
+    furigana: string,
     base: string,
     reading?: string,
     openInflectionTable: () => void,
 })
 {
+    const popupBookmark = Framework.makePopupPageWide({
+        childrenFn: () =>
+            <StudyListPopup
+                wordId={ App.Api.StudyList.encodeWordEntry(props.wordId, props.furigana) }
+                onFinished={ () => {
+                    popupBookmark.close()
+                    props.popup.close()
+                }}
+            />,
+    })
+
     return <>
         <Solid.Show when={ props.kanji.length !== 0 }>
             <Framework.ButtonPopupPageWide
@@ -440,8 +455,10 @@ function HeadingPopup(props: {
                 <Framework.IconBookmark color={ Framework.themeVar("iconGreenColor") }/>
                 { ` Add this specific spelling to a study list...` }
             </> }
-            onClick={ () => {} }
+            onClick={ ev => popupBookmark.open(ev.currentTarget) }
         />
+
+        { popupBookmark.rendered }
     </>
 }
 

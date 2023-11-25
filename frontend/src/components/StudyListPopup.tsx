@@ -6,7 +6,7 @@ import * as Api from "../api.ts"
 
 export function StudyListPopup(props: {
     wordId: string,
-    popup: Framework.PopupPageWideData,
+    onFinished?: () => void,
 })
 {
     const data = Framework.createAsyncSignal(
@@ -65,7 +65,7 @@ export function StudyListPopup(props: {
                     studylistId: studyListId,
                     wordIds: [props.wordId],
                 })
-                props.popup.close()
+                props.onFinished?.()
             }
             else
             {
@@ -73,7 +73,7 @@ export function StudyListPopup(props: {
                     studylistId: studyListId,
                     wordId: props.wordId,
                 })
-                props.popup.close()
+                props.onFinished?.()
             }
         }
         finally
@@ -89,7 +89,7 @@ export function StudyListPopup(props: {
             if (!await Api.studylistCreateAndAddWord(props.wordId))
                 return
             
-            props.popup.close()
+            props.onFinished?.()
         }
         finally
         {
@@ -135,23 +135,31 @@ export function StudyListPopup(props: {
                     { (list) =>
                         <Framework.ButtonPopupPageWide
                             label={ <span
-                                    style={{ color: list.marked ? Framework.themeVar("iconGreenColor") : undefined }}
+                                    style={{ color: list.marked === "exact" ? Framework.themeVar("iconGreenColor") : undefined }}
                                 >
                                     <Framework.IconBook/>
                                     { ` ${ list.name }` }
-                                    <Solid.Show when={ list.marked }>
+                                    <Solid.Show when={ list.marked === "exact" }>
                                         <Framework.IconCheckmark
+                                            title="Already present in this list."
                                             color={ Framework.themeVar("iconGreenColor") }
+                                        />
+                                    </Solid.Show>
+                                    <Solid.Show when={ list.marked === "spelling" }>
+                                        <Framework.IconPin
+                                            title="Already present in this list with another spelling."
+                                            color={ Framework.themeVar("iconYellowColor") }
                                         />
                                     </Solid.Show>
                                     <Solid.Show when={ data().latest!.foldersWithWord.has(list.folderName ?? "") }>
                                         <Framework.IconFolderCheckmark
+                                            title="Already present in another list in the same folder."
                                             color={ Framework.themeVar("iconYellowColor") }
                                         />
                                     </Solid.Show>
                                 </span>
                             }
-                            onClick={ () => onAddOrRemove(list.id, !!list.marked) }
+                            onClick={ () => onAddOrRemove(list.id, list.marked === "exact") }
                             disabled={ working() }
                         />
                     }

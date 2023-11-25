@@ -3,6 +3,7 @@ import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
 import * as App from "../app.tsx"
 import * as JmdictTags from "common/jmdict_tags.ts"
+import * as Furigana from "common/furigana.ts"
 import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
 import { UserLink } from "../components/User.tsx"
@@ -13,8 +14,10 @@ import * as StudylistExport from "./studylistExport.ts"
 const collapsedLength = 20
 
 
-export type StudyListWordEntry =
-    App.Api.StudyList.WordEntry & { entry: App.Api.Word.Entry }
+export type StudyListWordEntry = App.Api.StudyList.WordEntry & {
+    entry: App.Api.Word.Entry
+    headingIndex?: number
+}
 
 
 export function PageStudylist(props: Framework.RouteProps)
@@ -37,7 +40,33 @@ export function PageStudylist(props: Framework.RouteProps)
             entries.forEach(e => wordEntriesById.set(e.id, e))
 
             const words: StudyListWordEntry[] = studylist.words
-                .map(w => ({ ...w, entry: wordEntriesById.get(w.id)! }))
+                .map(w => {
+                    const [wordId, wordSpelling] =
+                        App.Api.StudyList.decodeWordEntry(w.id)
+
+                    const entry = wordEntriesById.get(wordId)
+                    let headingIndex: number | undefined = undefined
+
+                    if (entry !== undefined &&
+                        wordSpelling !== undefined)
+                    {
+                        const furigana = Furigana.decode(wordSpelling)
+                        const base = Furigana.extractBase(furigana)
+                        const reading = Furigana.extractReading(furigana)
+
+                        headingIndex = entry.headings
+                            .findIndex(h => h.base === base && h.reading === reading)
+                    
+                        if (headingIndex < 0)
+                            headingIndex = undefined
+                    }
+                    
+                    return {
+                        ...w,
+                        entry: wordEntriesById.get(wordId)!,
+                        headingIndex,
+                    }
+                })
                 .filter(w => !!w.entry)
                 .reverse()
 
@@ -279,8 +308,8 @@ export function PageStudylist(props: Framework.RouteProps)
                     </div>
                     <Framework.Button
                         href={ App.Pages.Search.urlForBaseReading(
-                            word.entry!.headings[0].base,
-                            word.entry!.headings[0].reading) }
+                            word.entry!.headings[word.headingIndex ?? 0].base,
+                            word.entry!.headings[word.headingIndex ?? 0].reading) }
                         noBorder
                         noPadding
                         style={{
@@ -293,8 +322,14 @@ export function PageStudylist(props: Framework.RouteProps)
                         }}
                     >
                         <HeadingLabel
-                            heading={ word.entry!.headings[0] }
+                            heading={ word.entry!.headings[word.headingIndex ?? 0] }
                         />
+                        <Solid.Show when={ word.headingIndex !== undefined }>
+                            <Framework.IconPin
+                                title="The exact spelling was manually chosen."
+                                color={ Framework.themeVar("iconYellowColor") }
+                            />
+                        </Solid.Show>
                     </Framework.Button>
                     <WordSense>
                         <WordPartOfSpeech>

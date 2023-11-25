@@ -3,11 +3,12 @@ import * as App from "../app.tsx"
 import * as Kana from "common/kana.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import * as Furigana from "common/furigana.ts"
+import { StudyListWordEntry } from "./PageStudylist.tsx"
 
 
 export function writeStudylistTsv(
     studylist: App.Api.StudyList.Entry,
-    words: (App.Api.StudyList.WordEntry & { entry: App.Api.Word.Entry })[])
+    words: StudyListWordEntry[])
 {
     const prefs = App.usePrefs()
 
@@ -50,6 +51,9 @@ export function writeStudylistTsv(
         else if (prefs.studylistExportKanjiLevel === "uncommon" ||
             prefs.studylistExportKanjiLevel === "jouyou")
             chosenHeading = headingUncommon ?? chosenHeading
+
+        if (word.headingIndex !== undefined)
+            chosenHeading = word.entry.headings[word.headingIndex]
 
         if (prefs.studylistExportSkipKatakana &&
             Kana.isPureKatakana(chosenHeading.base))

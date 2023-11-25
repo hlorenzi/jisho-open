@@ -18,7 +18,7 @@ export type Entry = {
     words: WordEntry[]
 
     /// Marks whether the word (specified in certain API requests) is present
-    marked?: boolean
+    marked?: "exact" | "spelling"
 
     /// For use by the client. Not filled out by the server.
     folderName?: string
@@ -29,9 +29,29 @@ export type Entry = {
 export type WordEntry = {
     id: string
     date: Date
+}
 
-    /// Encoded furigana of a particular spelling of the word
-    spelling?: string
+
+export function encodeWordEntry(wordId: string, furigana?: string)
+{
+    if (furigana === undefined ||
+        furigana.length === 0)
+        return wordId
+
+    return `${ wordId };${ furigana }`
+}
+
+
+export function decodeWordEntry(encoded: string): [string, string | undefined]
+{
+    const colonIndex = encoded.indexOf(";")
+    if (colonIndex < 0)
+        return [encoded, undefined]
+
+    return [
+        encoded.slice(0, colonIndex),
+        encoded.slice(colonIndex + 1)
+    ]
 }
 
 

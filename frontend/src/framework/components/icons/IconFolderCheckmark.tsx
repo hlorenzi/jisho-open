@@ -22,18 +22,20 @@ export function IconFolderCheckmark(props: Framework.IconBaseProps)
                     L 50,15
                     Z
             "/>
-            <path
-                fill="var(--theme-iconDetailColor)"
-                stroke="none"
-                d="
-                    M 30,50
-                    L 40,60
-                    L 70,32
-                    L 80,45
-                    L 40,80
-                    L 20,60
-                    Z
-            "/>
+            <g style={{ color: Framework.themeVar("iconDetailColor") }}>
+                <path
+                    fill="currentColor"
+                    stroke="none"
+                    d="
+                        M 30,50
+                        L 40,60
+                        L 70,32
+                        L 80,45
+                        L 40,80
+                        L 20,60
+                        Z
+                "/>
+            </g>
         </Framework.IconBase>
 	)
 }

@@ -243,19 +243,43 @@ export async function studylistGetAllMarked(
         !Auth.canUserRead(authUser))
         throw Api.Error.forbidden
 
+    const [wordId, wordSpelling] =
+        markWordId ?
+            Api.StudyList.decodeWordEntry(markWordId) :
+            [undefined, undefined]
+
     type Projected = Omit<
         DbMongo.DbStudyListEntry,
         "editorPassword" | "words">
 
-    const queryWithWord: MongoDriver.Filter<DbMongo.DbStudyListEntry> =
-        markWordId ?
+    const dbRegex = `^${ wordId }`
+
+    const queryWithWordSpelling: MongoDriver.Filter<DbMongo.DbStudyListEntry> =
+        wordId ?
             { "words.id": markWordId } :
             {}
 
-    const queryWithoutWord: MongoDriver.Filter<DbMongo.DbStudyListEntry> =
-        markWordId ?
-            { "words.id": { $ne: markWordId } } :
+    const queryWithWord: MongoDriver.Filter<DbMongo.DbStudyListEntry> =
+        wordId ?
+            { "words.id": { $ne: markWordId, $regex: dbRegex } } :
             {}
+
+    const queryWithoutWord: MongoDriver.Filter<DbMongo.DbStudyListEntry> =
+        wordId ?
+            { "words.id": { $not: { $regex: dbRegex } } } :
+            {}
+
+    const studylistsWithWordSpelling = await state.collStudylists
+        .find({
+            $or: [
+                { creatorId: authUser.id },
+                { editorIds: authUser.id },
+            ],
+            ...queryWithWordSpelling,
+        })
+        .project<Projected>({ editorPassword: 0, words: 0 })
+        .sort({ modifyDate: -1 })
+        .toArray()
 
     const studylistsWithWord = await state.collStudylists
         .find({
@@ -281,9 +305,11 @@ export async function studylistGetAllMarked(
         .sort({ modifyDate: -1 })
         .toArray()
 
-    studylistsWithWord.forEach(list => { list.marked = true })
+    studylistsWithWord.forEach(list => { list.marked = "spelling" })
+    studylistsWithWordSpelling.forEach(list => { list.marked = "exact" })
 
     const studylists = [
+        ...studylistsWithWordSpelling,
         ...studylistsWithWord,
         ...studylistsWithoutWord,
     ]
@@ -319,10 +345,12 @@ export async function studylistWordAdd(
     if (studylist.words.some(w => w.id === wordId))
         return
 
-    if (studylist.words.length >= Api.StudyList.maxWordCount)
+    if (studylist.words.length + 1 > Api.StudyList.maxWordCount)
         throw Api.Error.studylistCapacity
 
-    const word = await state.collWords.findOne({ _id: wordId })
+    const [decodedWordId, wordSpelling] = Api.StudyList.decodeWordEntry(wordId)
+
+    const word = await state.collWords.findOne({ _id: decodedWordId })
     if (!word)
         throw Api.Error.forbidden
     
@@ -411,7 +439,7 @@ export async function studylistWordImport(
         !studylist.editorIds.some(id => id === authUser.id))
         throw Api.Error.forbidden
 
-    if (studylist.words.length + 1 >= Api.StudyList.maxWordCount)
+    if (studylist.words.length + 1 > Api.StudyList.maxWordCount)
         throw Api.Error.studylistCapacity
 
     const now = new Date()
@@ -432,10 +460,11 @@ export async function studylistWordImport(
                 [DbMongo.fieldWordLookUpTags]: { $nin: ["name"] },
             })
             .sort({ score: -1, _id: 1 })
+            .limit(1)
             .toArray()
 
         if (dbWords.length < 1 ||
-            studylist.words.length + importedWords.length >= Api.StudyList.maxWordCount)
+            studylist.words.length + importedWords.length + 1 > Api.StudyList.maxWordCount)
         {
             failedWordIndices.push(w)
             continue
@@ -491,7 +520,8 @@ export async function studylistWordsGet(
             throw Api.Error.forbidden
     }
 
-    const wordIds = studylist.words.map(w => w.id)
+    const wordIds = studylist.words
+        .map(w => Api.StudyList.decodeWordEntry(w.id)[0])
 
     const wordEntries = await state.collWords
         .find({ _id: { $in: wordIds } })
