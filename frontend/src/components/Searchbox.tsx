@@ -188,13 +188,14 @@ const Layout = styled.div`
 
 
 export function SearchboxBottomOverlay(props: {
-
+    searchQuery?: string,
 })
 {
     return <Solid.Show when={ App.usePrefs().searchboxPosition === "bottom" }>
         <LayoutBottomOverlay>
             <Searchbox
                 position="bottom"
+                initialText={ props.searchQuery ?? "" }
             />
         </LayoutBottomOverlay>
     </Solid.Show>

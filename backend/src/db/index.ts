@@ -143,6 +143,12 @@ export interface Interface
         wordIds: string[])
         => Promise<void>
 
+    studylistWordImport: (
+        authUser: Api.MaybeUser,
+        studylistId: string,
+        words: Api.StudylistWordImport.ImportWord[])
+        => Promise<number[]>
+
     studylistWordsGet: (
         authUser: Api.MaybeUser,
         studylistId: string)
@@ -187,6 +193,7 @@ export function createDummy(): Interface
         studylistGetAllMarked: async () => [],
         studylistWordAdd: async () => {},
         studylistWordRemoveMany: async () => {},
+        studylistWordImport: async () => [],
         studylistWordsGet: async () => [],
         studylistCommunityGetRecent: async () => [],
         

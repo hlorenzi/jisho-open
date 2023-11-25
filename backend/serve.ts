@@ -49,9 +49,12 @@ app.use("/", Express.static("../frontend/public"))
 app.use("/.build/", Express.static("../frontend/.build"))
 app.use("*", Express.static("../frontend/public/index.html"))
 
-app.use((err: any, req: Express.Request, res: Express.Response, next: any) => {
+app.use(async (err: any, req: Express.Request, res: Express.Response, next: any) => {
     if (!err.statusCode || !err.statusMessage)
+    {
+        await db.log("internal error: " + err)
         console.error(err)
+    }
 
     if (res.headersSent)
         return next(err)
@@ -67,5 +70,6 @@ app.use((err: any, req: Express.Request, res: Express.Response, next: any) => {
 })
 
 app.listen(port, () => {
-    console.log("server listening...")
+    db.log(`server started on port ${ port }!`)
+    console.log(`server listening on port ${ port }...`)
 })

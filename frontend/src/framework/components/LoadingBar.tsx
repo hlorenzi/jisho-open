@@ -4,18 +4,21 @@ import * as Framework from "../index.ts"
 
 
 export function LoadingBar(props: {
-    height?: number,
     ignoreLayout?: boolean,
+    progress0to100?: number,
 })
 {
     return <Wrapper ignoreLayout={ !!props.ignoreLayout }>
-        <DivLoadingBar
-            height={ props.height ?? 10 }
-        />
+        <DivClip
+            progress0to100={ props.progress0to100 }
+        >
+            <DivLoadingBar/>
+        </DivClip>
     </Wrapper>
 }
 
 
+const height = "10px"
 const stripeWidth = 20
 
 
@@ -35,19 +38,43 @@ const Wrapper = styled.div<{
 }>`
     position: relative;
     z-index: 1;
+    height: ${ height };
+
+    background-color: ${ Framework.themeVar("textStrongBkgColor") };
+    border-radius: ${ Framework.themeVar("borderRadius") };
+
+    overflow-x: hidden;
     
     ${ props => props.ignoreLayout ? `
         height: 0;
+        overflow-x: visible;
         overflow-y: visible;
+        background-color: transparent;
+        border-radius: 0;
     ` : `` }
 `
 
 
-const DivLoadingBar = styled.div<{
-    height: number,
+const DivClip = styled.div<{
+    progress0to100?: number,
 }>`
+    position: absolute;
+    width: 100%;
+    height: ${ height };
+
+    transition: clip-path 0.3s;
+
+    clip-path: polygon(
+        ${ props => props.progress0to100 === undefined ? -1000 : 0 }% 0%,
+        ${ props => props.progress0to100 ?? 1000 }% 0%, 
+        ${ props => props.progress0to100 ?? 1000 }% 100%, 
+        ${ props => props.progress0to100 === undefined ? -1000 : 0 }% 100%);
+`
+
+
+const DivLoadingBar = styled.div`
     width: 200%;
-    height: ${ props => props.height }px;
+    height: ${ height };
     outline: none;
     background-color: transparent;
     background-size: calc(100% + 640px) 100%;

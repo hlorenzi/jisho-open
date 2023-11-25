@@ -1,4 +1,4 @@
-export const wordCountMax = 10000
+export const maxWordCount = 10000
 
 
 export type Entry = {

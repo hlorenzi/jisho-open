@@ -265,6 +265,8 @@ export async function connect(): Promise<Interface>
             MongoDbStudyLists.studylistWordAdd(state, authUser, studylistId, wordId),
         studylistWordRemoveMany: (authUser, studylistId, wordIds) =>
             MongoDbStudyLists.studylistWordRemoveMany(state, authUser, studylistId, wordIds),
+        studylistWordImport: (authUser, studylistId, words) =>
+            MongoDbStudyLists.studylistWordImport(state, authUser, studylistId, words),
         studylistWordsGet: (authUser, studylistId) =>
             MongoDbStudyLists.studylistWordsGet(state, authUser, studylistId),
         studylistCommunityGetRecent: (authUser, limit) =>

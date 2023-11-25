@@ -311,14 +311,15 @@ export async function studylistWordAdd(
     if (!Auth.canUserWrite(authUser))
         throw Api.Error.forbidden
 
-    if (studylist.creatorId !== authUser.id &&
+    if (!Api.userIsAdmin(authUser) &&
+        studylist.creatorId !== authUser.id &&
         !studylist.editorIds.some(id => id === authUser.id))
         throw Api.Error.forbidden
 
     if (studylist.words.some(w => w.id === wordId))
         return
 
-    if (studylist.words.length >= Api.StudyList.wordCountMax)
+    if (studylist.words.length >= Api.StudyList.maxWordCount)
         throw Api.Error.studylistCapacity
 
     const word = await state.collWords.findOne({ _id: wordId })
@@ -334,7 +335,7 @@ export async function studylistWordAdd(
     await state.collStudylists.updateOne(
         { _id: studylistId },
         {
-            $push: { words: { $each: [wordEntry], $slice: Api.StudyList.wordCountMax } },
+            $push: { words: { $each: [wordEntry], $slice: Api.StudyList.maxWordCount } },
             $inc: { wordCount: 1 },
             $set: { modifyDate: now },
         })
@@ -357,7 +358,8 @@ export async function studylistWordRemoveMany(
     if (!Auth.canUserWrite(authUser))
         throw Api.Error.forbidden
 
-    if (studylist.creatorId !== authUser.id &&
+    if (!Api.userIsAdmin(authUser) &&
+        studylist.creatorId !== authUser.id &&
         !studylist.editorIds.some(id => id === authUser.id))
         throw Api.Error.forbidden
 
@@ -382,6 +384,86 @@ export async function studylistWordRemoveMany(
                 modifyDate: now,
             },
         })
+}
+
+
+export async function studylistWordImport(
+    state: DbMongo.State,
+    authUser: Api.MaybeUser,
+    studylistId: string,
+    words: Api.StudylistWordImport.ImportWord[])
+    : Promise<number[]>
+{
+    if (words.length > Api.StudylistWordImport.maxWords)
+        throw Api.Error.malformed
+
+    const studylist = await state.collStudylists
+        .findOne({ _id: studylistId })
+    
+    if (!studylist)
+        throw Api.Error.notFound
+
+    if (!Auth.canUserWrite(authUser))
+        throw Api.Error.forbidden
+
+    if (!Api.userIsAdmin(authUser) &&
+        studylist.creatorId !== authUser.id &&
+        !studylist.editorIds.some(id => id === authUser.id))
+        throw Api.Error.forbidden
+
+    if (studylist.words.length + 1 >= Api.StudyList.maxWordCount)
+        throw Api.Error.studylistCapacity
+
+    const now = new Date()
+
+    const importedWords: Api.StudyList.WordEntry[] = []
+    const failedWordIndices: number[] = []
+    for (let w = 0; w < words.length; w++)
+    {
+        const word = words[w]
+
+        const dbFind = word.reading ?
+            { $all: [word.base, word.reading] } :
+            word.base
+
+        const dbWords = await state.collWords
+            .find({
+                [DbMongo.fieldWordLookUpHeadingsText]: dbFind,
+                [DbMongo.fieldWordLookUpTags]: { $nin: ["name"] },
+            })
+            .sort({ score: -1, _id: 1 })
+            .toArray()
+
+        if (dbWords.length < 1 ||
+            studylist.words.length + importedWords.length >= Api.StudyList.maxWordCount)
+        {
+            failedWordIndices.push(w)
+            continue
+        }
+
+        const wordId = dbWords[0]._id
+
+        if (studylist.words.find(w => w.id === wordId))
+            continue
+
+        if (importedWords.find(w => w.id === wordId))
+            continue
+
+        importedWords.push({
+            id: wordId,
+            date: now,
+        })
+    }
+    
+    await state.collStudylists.updateOne(
+        { _id: studylistId },
+        {
+            $push: { words: { $each: importedWords, $slice: Api.StudyList.maxWordCount } },
+            $inc: { wordCount: importedWords.length },
+            $set: { modifyDate: now },
+        })
+
+    return failedWordIndices
 }
 
 
@@ -430,8 +512,13 @@ export async function studylistCommunityGetRecent(
         DbMongo.DbStudyListEntry,
         "editorPassword" | "words">
 
+    let dbFind: any = { creatorId: { $ne: Auth.systemUserId } }
+
+    if (!Api.userIsAdmin(authUser))
+        dbFind = { ...dbFind, public: true }
+
     const studylists = await state.collStudylists
-        .find({ public: true, creatorId: { $ne: Auth.systemUserId } })
+        .find(dbFind)
         .project<Projected>({ editorPassword: 0, words: 0 })
         .sort({ modifyDate: -1 })
         .limit(Math.min(limit, 100))

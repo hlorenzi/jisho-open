@@ -150,6 +150,26 @@ export function init(
         res.send({} satisfies Api.StudylistWordRemoveMany.Response)
     })
     
+    app.post(Api.StudylistWordImport.url, async (req, res) => {
+        const body = req.body as Api.StudylistWordImport.Request
+
+        if (typeof body.studylistId !== "string")
+            throw Api.Error.malformed
+
+        if (!Array.isArray(body.words) ||
+            !body.words.every(w =>
+                typeof w.base === "string" &&
+                (typeof w.reading === "string" || w.reading === undefined)))
+            throw Api.Error.malformed
+
+        const failedWordIndices = await db.studylistWordImport(
+            await ServerAuth.authenticateRequest(auth, req),
+            body.studylistId,
+            body.words)
+
+        res.send({ failedWordIndices } satisfies Api.StudylistWordImport.Response)
+    })
+    
     app.post(Api.StudylistWordsGet.url, async (req, res) => {
         const body = req.body as Api.StudylistWordsGet.Request
 

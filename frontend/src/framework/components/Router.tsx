@@ -114,7 +114,9 @@ export function Router(props: {
 
     return <>
         <Solid.Show when={ pending() }>
-            <Framework.RouterTransition/>
+            <Framework.RouterTransition
+                firstLoad={ routeProps() === null }
+            />
         </Solid.Show>
 
         <Solid.ErrorBoundary fallback={ (err: Error) => {

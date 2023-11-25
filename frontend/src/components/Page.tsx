@@ -9,6 +9,7 @@ import { SearchboxBottomOverlay } from "./Searchbox.tsx"
 export function Page(props: {
     title?: string,
     children?: Solid.JSX.Element,
+    searchQuery?: string,
 })
 {
     return <>
@@ -25,7 +26,7 @@ export function Page(props: {
             childrenBottom={
                 <>
                 <Framework.NavigationButtons/>
-                <SearchboxBottomOverlay/>
+                <SearchboxBottomOverlay searchQuery={ props.searchQuery }/>
                 </>
             }
         />

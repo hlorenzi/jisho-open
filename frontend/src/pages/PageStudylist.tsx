@@ -135,6 +135,13 @@ export function PageStudylist(props: Framework.RouteProps)
         />,
     })
 
+    const importPopup = Framework.makePopupPageWide({
+        childrenFn: () => <ImportPopup
+            studylist={ data()!.studylist }
+            popup={ importPopup }
+        />,
+    })
+
         
     return <Page title={ data()?.studylist.name }>
 
@@ -208,13 +215,22 @@ export function PageStudylist(props: Framework.RouteProps)
                 <br/>
             </Solid.Show>
 
+            <Solid.Show when={ data()?.userIsCreator }>
+                <Framework.Button
+                    icon={ <Framework.IconUpload/> }
+                    label="Import..."
+                    onClick={ ev => importPopup.open(ev.currentTarget) }
+                />
+            </Solid.Show>
+
             <Framework.Button
-                label="Export..."
                 icon={ <Framework.IconDownload/> }
+                label="Export..."
                 onClick={ ev => exportPopup.open(ev.currentTarget) }
             />
 
             { exportPopup.rendered }
+            { importPopup.rendered }
 
             <br/>
             <br/>
@@ -369,8 +385,6 @@ export function ExportPopup(props: {
     words: StudyListWordEntry[],
 })
 {
-    const prefs = App.usePrefs()
-
     const onExport = () => {
         const tsvText = StudylistExport.writeStudylistTsv(
             props.studylist,
@@ -378,7 +392,7 @@ export function ExportPopup(props: {
 
         var element = document.createElement("a")
         element.style.display = "none"
-        element.setAttribute("download", props.studylist.name + ".tsv")
+        element.setAttribute("download", `${ props.studylist.name }.tsv`)
         element.setAttribute(
             "href",
             `data:text/plain;charset=utf-8,${ encodeURIComponent(tsvText) }`)
@@ -432,4 +446,301 @@ export function ExportPopup(props: {
 
 const ExportPopupLayout = styled.div`
     padding: 1em 0;
+`
+
+
+function ImportPopup(props: {
+    studylist: App.Api.StudyList.Entry,
+    popup: Framework.PopupPageWideData,
+})
+{
+    type ImportFormat =
+        | "txt"
+        | "txt2"
+        | "tsv1w"
+        | "tsv1w2r"
+        | "tsv2w"
+        | "tsv2w3r"
+        | "csv1w"
+        | "csv1w2r"
+    
+
+    const [importText, setImportText] =
+        Solid.createSignal("")
+    
+    const [importFormat, setImportFormat] =
+        Solid.createSignal<ImportFormat>("txt")
+    
+
+    const loadFile = (
+        elem: HTMLInputElement,
+        callback: (filename: string, contents: string) => void) =>
+    {
+        if (elem.files?.length !== 1)
+            return
+        
+        let reader = new FileReader()
+        reader.readAsText(elem.files[0])
+        reader.onload = () => 
+        {
+            callback(elem.value, reader.result as string)
+        }
+    }
+
+
+    const handleInputFile = (filename: string, contents: string) =>
+    {
+        App.analyticsEvent("studylistImportPreview")
+        setImportText(contents)
+
+        if (filename.endsWith(".txt"))
+            setImportFormat("txt")
+        else if (filename.endsWith(".tsv"))
+            setImportFormat("tsv1w")
+        else if (filename.endsWith(".csv"))
+            setImportFormat("csv1w")
+    }
+
+
+    type ImportEntry = {
+        base: string
+        reading?: string
+    }
+
+
+    const importWords = Solid.createMemo<ImportEntry[]>(() =>
+    {
+        if (importText() === "")
+            return []
+
+        const lines = importText()
+            .split("\n")
+            .map(l => l.trim())
+            .filter(l => !!l)
+
+        try
+        {
+            if (importFormat() === "txt")
+                return lines.map(l => ({ base: l.trim() }))
+
+            else if (importFormat() === "txt2")
+            {
+                return lines.map(l => ({ base: l
+                    .split(".")[0]
+                    .split(",")[0]
+                    .split(":")[0]
+                    .split(";")[0]
+                    .split("(")[0]
+                    .split("[")[0]
+                    .split("{")[0]
+                    .split("．")[0]
+                    .split("，")[0]
+                    .split("（")[0]
+                    .split("「")[0]
+                    .split("『")[0]
+                    .split("【")[0]
+                    .split("〖")[0]
+                    .split(" ")[0]
+                    .split("\u3000")[0]
+                    .split("\t")[0]
+                    .trim()
+                }))
+            }
+
+            else if (importFormat().startsWith("tsv"))
+            {
+                const rows = lines.map(l => l.split("\t").map(r => r.trim()))
+                if (importFormat() === "tsv1w")
+                    return rows.map(r => ({ base: r[0] || "" }))
+                else if (importFormat() === "tsv2w")
+                    return rows.map(r => ({ base: r[1] || "" }))
+                else if (importFormat() === "tsv1w2r")
+                    return rows.map(r => ({ base: r[0] || "", reading: r[1] || "" }))
+                else if (importFormat() === "tsv2w3r")
+                    return rows.map(r => ({ base: r[1] || "", reading: r[2] || "" }))
+            }
+
+            else if (importFormat().startsWith("csv"))
+            {
+                const rows = lines.map(l => l.split(",").map(r => r.trim()))
+                if (importFormat() === "csv1w")
+                    return rows.map(r => ({ base: r[0] || "" }))
+                else if (importFormat() === "csv1w2r")
+                    return rows.map(r => ({ base: r[0] || "", reading: r[1] || "" }))
+            }
+        }
+        catch
+        {
+
+        }
+
+        return []
+    })
+
+
+    const popupLongOper = Framework.makePopupLongOperation({
+        title: "Importing words..."
+    })
+
+
+    const doImport = () => {
+        popupLongOper.run(async (setProgress) =>
+        {
+            const words = importWords()
+
+			try
+			{
+                await Framework.waitMs(500)
+                App.analyticsEvent("studylistImport")
+
+                const packLen = App.Api.StudylistWordImport.maxWords
+                const failedWords = []
+                for (let i = 0; i < words.length; i += packLen)
+                {
+                    const res = await App.Api.studylistWordImport({
+                        studylistId: props.studylist.id,
+                        words: words.slice(i, i + packLen),
+                    })
+
+                    for (const failedIndex of res.failedWordIndices)
+                        failedWords.push(i + failedIndex)
+
+                    setProgress(i / words.length * 100)
+                }
+
+                setProgress(100)
+                await Framework.waitMs(500)
+
+                if (failedWords.length > 0)
+                {
+                    let text =
+                        "" + failedWords.length + " word(s) (out of " + words.length + ") failed to be imported:\n"
+
+                    for (const w of failedWords)
+                    {
+                        text += "#" + (w + 1) + ": " +
+                            words[w].base +
+                            (words[w].reading ? " 【" + words[w].reading + "】" : "") +
+                            "\n"
+                    }
+
+                    alert(text)
+                }
+                else
+                {
+                    alert("Successfully imported " + words.length + " word(s).")
+                }
+                
+                props.popup.close()
+                Framework.historyReload()
+			}
+			catch (e)
+			{
+                alert("There was an unexpected error while importing!")
+                throw e
+			}
+        })
+    }
+
+
+    return <ImportPopupLayout>
+
+            <input
+                type="file"
+                onChange={ (ev) => loadFile(ev.target, handleInputFile) }
+            />
+
+            <Solid.Show when={ importText() !== "" }>
+                <br/>
+                <br/>
+                <Framework.Select<ImportFormat>
+                    label="File format"
+                    value={ importFormat }
+                    onChange={ setImportFormat }
+                    options={[
+                        { value: "txt", label: ".txt (one word per line, full line match)" },
+                        { value: "txt2", label: ".txt (one word per line, ignore after space/punctuation)" },
+                        { value: "tsv1w", label: ".tsv (1st column word)" },
+                        { value: "tsv1w2r", label: ".tsv (1st column word, 2nd column reading)" },
+                        { value: "tsv2w", label: ".tsv (2nd column word)" },
+                        { value: "tsv2w3r", label: ".tsv (2nd column word, 3rd column reading)" },
+                        { value: "csv1w", label: ".csv (1st column word)" },
+                        { value: "csv1w2r", label: ".csv (1st column word, 2nd column reading)" },
+                ]}/>
+            <br/>
+            <br/>
+
+            <h2>
+                Import preview
+                { " — " }
+                { `${ importWords().length } word(s) found in total` }
+            </h2>
+            <div>
+                Check that your words appear correctly:
+            </div>
+            <br/>
+
+            <ImportWordGrid>
+                <Solid.For each={ importWords().slice(0, 5) }>
+                { (word) =>
+                    <>
+                        <ImportWordBase>
+                            { word.base }
+                        </ImportWordBase>
+                        <ImportWordReading>
+                            { !word.reading ? null :
+                                "【" + word.reading + "】"
+                            }
+                        </ImportWordReading>
+                    </>
+                }
+                </Solid.For>
+            </ImportWordGrid>
+
+            <br/>
+            <Framework.Button
+                icon={ <Framework.IconUpload/> }
+                label="Import"
+                onClick={ doImport }
+                disabled={ importText() === "" }
+            />
+        </Solid.Show>
+
+        { popupLongOper.rendered }
+
+    </ImportPopupLayout>
+}
+
+
+const ImportPopupLayout = styled.div`
+    padding: 1em 0;
+`
+
+
+const ImportWordGrid = styled.div`
+    display: grid;
+    grid-template: auto / auto 1fr;
+    grid-column-gap: 0.5em;
+    grid-row-gap: 0.25em;
+    justify-items: start;
+    align-items: baseline;
+    background-color: ${ Framework.themeVar("textStrongBkgColor") };
+    border-radius: ${ Framework.themeVar("borderRadius") };
+    padding: 0.5em;
+    overflow-x: hidden;
+`
+
+
+const ImportWordBase = styled.div`
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 50%;
+`
+
+
+const ImportWordReading = styled.div`
+    color: ${ Framework.themeVar("text2ndColor") };
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 50%;
 `

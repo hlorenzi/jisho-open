@@ -407,6 +407,28 @@ export namespace StudylistWordRemoveMany
 }
 
 
+export namespace StudylistWordImport
+{
+    export const url = "/api/v1/studylistWordImport"
+
+    export type ImportWord = {
+        base: string
+        reading?: string
+    }
+
+    export const maxWords = 50
+
+    export type Request = {
+        studylistId: string
+        words: ImportWord[]
+    }
+    
+    export type Response = {
+        failedWordIndices: number[]
+    }
+}
+
+
 export namespace StudylistWordsGet
 {
     export const url = "/api/v1/studylistWordsGet"

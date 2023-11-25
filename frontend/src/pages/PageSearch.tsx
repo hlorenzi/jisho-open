@@ -26,7 +26,7 @@ export function PageSearch(props: Framework.RouteProps)
         return parseInt(tokenStr)
     })
     
-    return <Page title={ query() }>
+    return <Page title={ query() } searchQuery={ query() }>
 
         <Searchbox
             initialText={ query() }
@@ -88,6 +88,11 @@ function SearchResults(props: {
 
         return token.surface_form + " #!sentence"
     })
+
+    const onIncreaseLimit = () => {
+        (document.activeElement as any)?.blur()
+        setLimit(limit() + limitIncrease)
+    }
     
     return <>
         <Solid.Show when={ searchResults.loading }>
@@ -142,7 +147,7 @@ function SearchResults(props: {
                                     <Framework.IconVerticalEllipsis/>
                                     Load more results
                                 </> }
-                                onClick={ () => setLimit(limit() + limitIncrease) }
+                                onClick={ onIncreaseLimit }
                                 disabled={ searchResults.loading }
                                 noUnderline
                             />

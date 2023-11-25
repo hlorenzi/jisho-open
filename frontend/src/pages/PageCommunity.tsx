@@ -81,6 +81,11 @@ function StudylistCard(props: {
                     <Framework.IconBook/>
                     { " " }
                     { props.studylist.name }
+                    <Solid.Show when={ !props.studylist.public }>
+                        <Framework.IconLock
+                            color={ Framework.themeVar("iconBlueColor") }
+                        />
+                    </Solid.Show>
                     <br/>
                     <SmallInfo>
                         { props.studylist.wordCount }
@@ -114,9 +119,17 @@ const CardList = styled.div`
 
 const CardSlot = styled.div`
     display: inline-block;
-    flex-grow: 1;
-    flex-basis: 15em;
+    flex-grow: 0;
+    flex-basis: 32%;
     margin: 0.25em;
+    max-width: 32%;
+    
+	@media (max-width: ${ Framework.pageSmallWidthThreshold })
+	{
+        flex-grow: 1;
+        flex-basis: 100%;
+        max-width: none;
+    }
 `
 
 
@@ -125,6 +138,7 @@ const CardLayoutInner = styled.div`
     grid-template: auto / auto 1fr;
     align-items: baseline;
     justify-items: start;
+    overflow: hidden;
 `
 
 

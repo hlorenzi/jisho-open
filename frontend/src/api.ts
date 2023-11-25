@@ -307,6 +307,14 @@ export async function studylistWordRemoveMany(
 }
 
 
+export async function studylistWordImport(
+    req: Api.StudylistWordImport.Request)
+    : Promise<Api.StudylistWordImport.Response>
+{
+    return post(Api.StudylistWordImport.url, req)
+}
+
+
 export async function studylistWordsGet(
     req: Api.StudylistWordsGet.Request)
     : Promise<Api.StudylistWordsGet.Response>

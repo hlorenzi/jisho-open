@@ -4,11 +4,15 @@ import * as Framework from "../index.ts"
 
 
 export function RouterTransition(props: {
-    height?: number,
+    firstLoad: boolean,
 })
 {
     return <DivWrapper inert>
-        <Framework.LoadingBar/>
+        <Framework.LoadingBar ignoreLayout/>
+
+        <Solid.Show when={ props.firstLoad }>
+            <Framework.Welcome/>
+        </Solid.Show>
     </DivWrapper>
 }
 

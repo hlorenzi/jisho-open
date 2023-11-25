@@ -76,3 +76,14 @@ export function usePrefsCss(): Solid.Accessor<string>
         `
     })
 }
+
+
+export type AnalyticsEvent =
+    | "studylistImportPreview"
+    | "studylistImport"
+
+
+export function analyticsEvent(event: AnalyticsEvent)
+{
+    Framework.Analytics.event(event)
+}
