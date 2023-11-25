@@ -159,7 +159,7 @@ const Reading = styled.div`
     writing-mode: vertical-lr;
     display: inline-block;
     justify-content: stretch;
-    height: 100%;
+    width: fit-content;
     text-align: center;
 `
 

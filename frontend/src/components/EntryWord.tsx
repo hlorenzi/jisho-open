@@ -442,6 +442,7 @@ function HeadingPopup(props: {
             <Framework.ButtonPopupPageWide
                 label="View conjugation/inflections"
                 onClick={ () => {
+                    App.analyticsEvent("resultsViewInflections")
                     props.popup.close()
                     props.openInflectionTable()
                 }}
@@ -453,6 +454,7 @@ function HeadingPopup(props: {
         <Framework.ButtonPopupPageWide
             label={ `Copy ${ props.base } to the clipboard` }
             onClick={ () => {
+                App.analyticsEvent("resultsCopyHeadingBase")
                 Framework.copyToClipboard(props.base)
                 props.popup.close()
             }}
@@ -462,6 +464,7 @@ function HeadingPopup(props: {
             <Framework.ButtonPopupPageWide
                 label={ `Copy ${ props.reading } to the clipboard` }
                 onClick={ () => {
+                    App.analyticsEvent("resultsCopyHeadingReading")
                     Framework.copyToClipboard(props.reading!)
                     props.popup.close()
                 }}

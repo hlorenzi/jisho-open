@@ -1,4 +1,6 @@
 const path = require("path")
+const CompressionPlugin = require("compression-webpack-plugin")
+
 
 module.exports = {
     mode: "production",
@@ -11,7 +13,7 @@ module.exports = {
 	output: {
 		filename: "[name].js",
 		path: path.resolve(__dirname, ".build"),
-		publicPath: "/.build/"
+		publicPath: "/.build/",
 	},
 	
 	module: {
@@ -25,11 +27,15 @@ module.exports = {
 					options: {
 						presets: [
 							"@babel/preset-typescript",
-                            "babel-preset-solid"
+                            "babel-preset-solid",
                         ]
 					}
 				}
 			}
 		]
-	}
+	},
+
+	plugins: [
+		new CompressionPlugin(),
+	],
 }

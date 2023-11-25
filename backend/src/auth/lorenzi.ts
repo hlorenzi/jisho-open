@@ -3,14 +3,22 @@ import * as Api from "common/api/index.ts"
 import fetch from "node-fetch"
 
 
-const lorenziAuthUrl = "http://127.0.0.1:8888"
+const lorenziAccountUrlDev = "http://127.0.0.1:8888"
+const lorenziAccountUrl = "https://accounts.hlorenzi.com"
+const lorenziAuthUrl = lorenziAccountUrlDev
 
 
-export function create() : Auth.Interface
+export function create(dev: boolean) : Auth.Interface
 {
+    const accountUrl =
+        dev ?
+            lorenziAccountUrlDev :
+            lorenziAccountUrl
+
     return {
-        loginUrl: `${ lorenziAuthUrl }/login`,
-        accountUrl: lorenziAuthUrl,
+        loginUrl: `${ accountUrl }/login`,
+        logoutUrl: `${ accountUrl }/logout`,
+        accountUrl: accountUrl,
         
         authenticate: async (sessionBlob: string) => {
             try

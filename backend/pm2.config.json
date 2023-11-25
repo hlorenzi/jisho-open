@@ -1,0 +1,28 @@
+{
+	"apps":
+	[
+		{
+			"name": "jisho2",
+			"cwd": "./backend/",
+            "script": "npm",
+            "args" : "start",
+			"watch": false,
+			
+			"env":
+			{
+				"PORT": 8089,
+				"NODE_ENV": "production"
+			},
+			
+			"env_development":
+			{
+				"PORT": 8089,
+				"NODE_ENV": "development"
+			},
+			
+			"error": "err.log",
+			"out": "out.log",
+			"log_date_format": "YYYY-MM-DD HH:mm:ss.SSS"
+		}
+	]
+}

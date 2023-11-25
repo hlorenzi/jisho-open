@@ -128,7 +128,7 @@ function buildSvg(
         <text
             x="4" y="4"
             fill={ Framework.themeVar("text3rdColor") }
-            alignment-baseline="hanging"
+            dominant-baseline="hanging"
             style={{ "user-select": "none" }}
         >
             { panelIndex + 1 }

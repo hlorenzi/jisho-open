@@ -11,12 +11,14 @@
     "serve": "http-server -p 80",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "browserslist": "> 2%, not dead",
   "license": "",
   "dependencies": {
     "@babel/preset-typescript": "^7.23.2",
     "babel-loader": "^9.1.3",
     "babel-preset-solid": "^1.8.2",
     "common": "file://../common/",
+    "compression-webpack-plugin": "^10.0.0",
     "solid-js": "^1.8.3",
     "solid-styled-components": "^0.28.5",
     "ts-node": "^10.9.1",

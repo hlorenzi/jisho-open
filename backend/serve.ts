@@ -1,6 +1,9 @@
 import * as Express from "express"
 import "express-async-errors"
+// @ts-expect-error
+import * as Compression from "compression"
 import * as BodyParser from "body-parser"
+import * as Api from "common/api/index.ts"
 import * as Importing from "./src/importing/index.ts"
 import * as Auth from "./src/auth/index.ts"
 import * as AuthLorenzi from "./src/auth/lorenzi.ts"
@@ -21,21 +24,28 @@ const argDb =
     "mongo"
 
 const argAuth =
+    process.argv.some(arg => arg === "--auth-lorenzi-dev") ? "lorenzi-dev" :
     process.argv.some(arg => arg === "--auth-lorenzi") ? "lorenzi" :
     process.argv.some(arg => arg === "--auth-dummy") ? "dummy" :
     "dummy"
 
+console.log("starting db...")
 const db =
     argDb === "mongo" ? await DbMongo.connect() :
     Db.createDummy()
 
+console.log("starting auth...")
 const auth =
-    argAuth === "lorenzi" ? await AuthLorenzi.create() :
+    argAuth === "lorenzi-dev" ? await AuthLorenzi.create(true) :
+    argAuth === "lorenzi" ? await AuthLorenzi.create(false) :
     Auth.createDummy()
 
+console.log("starting server...")
 const app = Express.default()
 
 app.use("/api", BodyParser.default.json())
+app.use(Api.StudylistWordsGet.url, Compression.default())
+app.use(Api.KanjiWords.url, Compression.default())
 
 ServerAuth.init(app, db, auth)
 ServerAdmin.init(app, db, auth)
@@ -45,6 +55,8 @@ ServerKanjiByComponents.init(app, db)
 ServerStudylist.init(app, db, auth)
 Importing.setupScheduledDatabaseBuild(db)
 
+app.use("/.build/", serveGzippedJs)
+
 app.use("/", Express.static("../frontend/public"))
 app.use("/.build/", Express.static("../frontend/.build"))
 app.use("*", Express.static("../frontend/public/index.html"))
@@ -52,7 +64,7 @@ app.use("*", Express.static("../frontend/public/index.html"))
 app.use(async (err: any, req: Express.Request, res: Express.Response, next: any) => {
     if (!err.statusCode || !err.statusMessage)
     {
-        await db.log("internal error: " + err)
+        await db.log(`internal error: ${ err }`)
         console.error(err)
     }
 
@@ -73,3 +85,30 @@ app.listen(port, () => {
     db.log(`server started on port ${ port }!`)
     console.log(`server listening on port ${ port }...`)
 })
+
+
+
+function serveGzippedJs(
+    req: Express.Request,
+    res: Express.Response,
+    next: () => void)
+{
+	if (!req.url.endsWith(".js"))
+	{
+		next()
+		return
+	}
+
+	const acceptEncoding = req.headers["accept-encoding"]
+	if (acceptEncoding &&
+        acceptEncoding.indexOf("gzip") < 0)
+	{
+		next()
+		return
+	}
+
+	req.url = req.url + ".gz"
+	res.set("Content-Encoding", "gzip")
+	res.set("Content-Type", "text/javascript")
+	next()
+}

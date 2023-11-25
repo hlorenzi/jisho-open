@@ -47,10 +47,10 @@ export function init(
 
 
     app.get(Api.Logout.url, async (req, res) => {
-        let url = "/"
+        let url = auth.logoutUrl
         const redirect = req.query.redirect as (string | undefined)
         if (redirect)
-            url = decodeURIComponent(redirect)
+            url += "?redirect=" + encodeURIComponent(decodeURIComponent(redirect))
             
         res.clearCookie(Auth.loginCookieName)
         res.redirect(url)

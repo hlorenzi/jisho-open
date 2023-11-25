@@ -17,9 +17,6 @@ async function postCached(
     payload: any)
     : Promise<any>
 {
-    Framework.Analytics.event(
-        endpoint.substring(1).replace(/\//g, "_"))
-
     const cacheForEndpoint: EndpointCache = cache.get(endpoint) ?? new Map()
     const payloadKey = JSON.stringify(payload)
     const cachedResponsePromise = cacheForEndpoint.get(payloadKey)

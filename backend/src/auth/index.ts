@@ -4,6 +4,7 @@ import * as Api from "common/api/index.ts"
 export interface Interface
 {
     loginUrl: string
+    logoutUrl: string
     accountUrl: string
 
     authenticate: (
@@ -50,6 +51,7 @@ export function createDummy(): Interface
 {
     return {
         loginUrl: Api.Login.urlFrontendFake,
+        logoutUrl: "/",
         accountUrl: "/",
 
         authenticate: async (sessionBlob) => {
