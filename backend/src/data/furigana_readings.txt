@@ -23467,6 +23467,10 @@
 尖;uncl;と;とんが;とんがり
 咫;uncl;あた
 鋒;uncl;ほ;ほこ
+打;uncl;ち;ちょう
+竈;uncl;へ
+竃;uncl;へ
+喫;uncl;くう
 素;auto;しろ;しら;すん
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
@@ -23767,7 +23771,6 @@
 患;auto;うれ
 窶;auto;やつ
 大;auto;お
-打;auto;ち
 狭;auto;せ
 宿;auto;すく
 蹠;auto;しょ
@@ -23839,7 +23842,6 @@
 湯;auto;たん
 聴;auto;てん
 氈;auto;かも
-戸;auto;べ
 座;auto;ぐら
 柱;auto;じ
 坐;auto;いま
@@ -23955,6 +23957,9 @@
 吊;chinese;ディアオ;テイアオ;チャオ
 弔;chinese;ディアオ;テイアオ;チャオ
 北;chinese;ペ;ペー;ペイ
+翻;chinese;ファン
+一;chinese;イー
+二;chinese;リャン
 北;korean;プク
 大人;gikun;おとな
 大和;gikun;やまと
@@ -24223,7 +24228,7 @@
 始馭天下之;gikun;はつくにしらす
 姉妹;gikun;きょうだい
 棟蛇;gikun;かがし
-刀背;gikun;むね
+刀背;gikun;むね;みね
 朱鷺;gikun;とき
 虫白;gikun;いぼた
 水蝋;gikun;いぼた
@@ -24263,6 +24268,10 @@
 長刀;gikun;なぎなた
 太刀;gikun;たち
 忘八;gikun;くつわ
+盲目;gikun;めくら
+比目魚;gikun;ひらめ
+翻筋斗;gikun;もんどり;もどり
+黄泉;gikun;よもつ
 豊受;fused;とゆけ
 不足;conjug;たらず
 不知;conjug;しらず;しらぬ

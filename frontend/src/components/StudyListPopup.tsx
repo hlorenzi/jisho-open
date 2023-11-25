@@ -37,7 +37,7 @@ export function StudyListPopup(props: {
                 if (!studylist.folderName)
                     continue
 
-                if (studylist.marked)
+                if (studylist.marked !== undefined)
                     foldersWithWord.add(studylist.folderName)
             }
 

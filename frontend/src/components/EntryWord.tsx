@@ -27,6 +27,11 @@ export function EntryWord(props: {
             headings={ props.entry.headings }
             query={ props.query }
         />
+        <Solid.Show when={ App.usePrefs().debugMode }>
+            <DebugInfo>
+                [score: { props.entry.score }]
+            </DebugInfo>
+        </Solid.Show>
         <InflectionBreakdown
             breakdown={ props.entry.inflections }
         />
@@ -43,6 +48,12 @@ export function EntryWord(props: {
 
 const Entry = styled.article`
     margin-block-end: 0.75em;
+`
+
+
+const DebugInfo = styled.span`
+    color: ${ Framework.themeVar("text3rdColor") };
+    font-size: 0.8rem;
 `
 
 
@@ -224,7 +235,12 @@ function Heading(props: {
             queryMatch={ isQueryMatch }
             onClick={ ev => popup.open(ev.currentTarget) }
         >
-            <HeadingLabel heading={ props.heading }/>            
+            <HeadingLabel heading={ props.heading }/>
+            <Solid.Show when={ App.usePrefs().debugMode }>
+                <DebugInfo>
+                    [score: { props.heading.score ?? 0 }]
+                </DebugInfo>
+            </Solid.Show>
         </HeadingBlock>
 
         { popup.rendered }
@@ -242,6 +258,7 @@ const HeadingBlock = styled.button<{
 }>`
     margin: 0;
     margin-inline-end: ${ props => props.last ? `0.25em` : `1em` };
+    margin-bottom: 0.25em;
     padding: 0.1em 0.2em 0 0.2em;
     border: 0;
     display: inline-block;
@@ -482,7 +499,17 @@ function Senses(props: {
                 .map(pos => JmdictTags.nameForPartOfSpeechTag(pos))
                 .join(", ")
 
-            list.push(<PartOfSpeech>{ partsOfSpeech }</PartOfSpeech>)
+            list.push(
+                <PartOfSpeech>
+                    { partsOfSpeech }
+                    <Solid.Show when={ App.usePrefs().debugMode }>
+                        { " " }
+                        <DebugInfo>
+                            [{ sense.pos.join(", ") }]
+                        </DebugInfo>
+                    </Solid.Show>
+                </PartOfSpeech>
+            )
             currentPos = sense.pos
         }
 
@@ -531,7 +558,17 @@ function Senses(props: {
                 .map(tag => JmdictTags.nameForFieldDomainTag(tag))
                 .join(", ")
 
-            line.push(<SenseInfo> —&nbsp;{ text }</SenseInfo>)
+            line.push(
+                <SenseInfo>
+                    { " " }
+                    —&nbsp;{ text }
+                    <Solid.Show when={ App.usePrefs().debugMode }>
+                        { " " }
+                        <DebugInfo>
+                            [{ sense.field.join(", ") }]
+                        </DebugInfo>
+                    </Solid.Show>
+                </SenseInfo>)
         }
 
         // Build misc tag text
@@ -544,7 +581,18 @@ function Senses(props: {
                 .map(tag => JmdictTags.nameForMiscTag(tag))
                 .join(", ")
 
-            line.push(<SenseInfo> —&nbsp;{ text }</SenseInfo>)
+            line.push(
+                <SenseInfo>
+                    { " " }
+                    —&nbsp;{ text }
+                    <Solid.Show when={ App.usePrefs().debugMode }>
+                        { " " }
+                        <DebugInfo>
+                            [{ sense.misc?.join(", ") }]
+                        </DebugInfo>
+                    </Solid.Show>
+                </SenseInfo>
+            )
         }
 
         // Build dialect text
@@ -554,7 +602,18 @@ function Senses(props: {
                 .map(tag => JmdictTags.nameForDialectTag(tag))
                 .join(", ")
 
-            line.push(<SenseInfo> —&nbsp;{ text }</SenseInfo>)
+            line.push(
+                <SenseInfo>
+                    { " " }
+                    —&nbsp;{ text }
+                    <Solid.Show when={ App.usePrefs().debugMode }>
+                        { " " }
+                        <DebugInfo>
+                            [{ sense.dialect.join(", ") }]
+                        </DebugInfo>
+                    </Solid.Show>
+                </SenseInfo>
+            )
         }
 
         // Build information text
