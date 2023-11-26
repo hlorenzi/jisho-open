@@ -507,6 +507,10 @@ function VerbTable(props: {
     partOfSpeech: App.Api.Word.PartOfSpeechTag,
 })
 {
+    const showPotentialIrregualr =
+        props.partOfSpeech === "v1" ||
+        props.partOfSpeech === "vk"
+
     return <Table
         term={ props.term }
         partOfSpeech={ props.partOfSpeech }
@@ -573,6 +577,15 @@ function VerbTable(props: {
             plainInfl={ ["potential"] }
             politeInfl={ ["potential", "polite"] }
         />
+        <Solid.Show when={ showPotentialIrregualr }>
+            <Row
+                label="Potential (irregular)"
+                term={ props.term }
+                partOfSpeech={ props.partOfSpeech }
+                plainInfl={ ["potential-irregular"] }
+                politeInfl={ ["potential-irregular", "polite"] }
+            />
+        </Solid.Show>
         <Row
             label="Passive"
             term={ props.term }

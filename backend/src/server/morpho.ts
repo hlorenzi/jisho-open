@@ -53,7 +53,11 @@ export async function tokenize(
 
     const result: Api.Search.SentenceToken[] = []
 
-    const translateCategory = (pos: string, pos_detail_1: string): Api.Word.PartOfSpeechTag => {
+    const translateCategory = (term: string, pos: string, pos_detail_1: string): Api.Word.PartOfSpeechTag => {
+        if (term === "じゃない" &&
+            pos === "助詞")
+            return "unc"
+        
         switch (pos)
         {
             case "名詞":
@@ -79,11 +83,16 @@ export async function tokenize(
     let i = 0
     while (i < morpho.length)
     {
-        const basePos = morpho[i].pos
-        const baseDetail1 = morpho[i].pos_detail_1
+        const baseToken = morpho[i]
+        const basePos = baseToken.pos
+        const baseDetail1 = baseToken.pos_detail_1
         const isBaseNoun = basePos === "名詞" && baseDetail1 !== "代名詞"
         const isBaseVerb = basePos === "動詞"
         const isBaseAdjI = basePos === "形容詞"
+        const isBaseAdjNa = basePos === "名詞" && baseDetail1 === "形容動詞語幹"
+        const isBaseNounSuruVerb = basePos === "名詞" && baseDetail1 === "サ変接続"
+
+        let madeSuruVerb = false
 
         let newToken: Api.Search.SentenceToken | null = null
         let joinLen = 0
@@ -104,7 +113,18 @@ export async function tokenize(
             
             let stopJoin = false
 
-            if (isBaseVerb)
+            if (isBaseNounSuruVerb)
+            {
+                if (joinToken.pos === "動詞" &&
+                    joinToken.basic_form === "する")
+                {
+                    canJoin = true
+                    madeSuruVerb = true
+                }
+            }
+
+            if (isBaseVerb ||
+                madeSuruVerb)
             {
                 //console.log("fix verb", joined, joinToken.pos)
                 if (joinToken.pos == "助動詞")
@@ -187,6 +207,38 @@ export async function tokenize(
                 }
             }
 
+            if (isBaseAdjNa)
+            {
+                if (joinToken.surface_form === "な" &&
+                    joinToken.pos === "助動詞")
+                {
+                    canJoin = true
+                    stopJoin = true
+                }
+            }
+
+            if (baseToken.pos === "助詞" &&
+                baseToken.surface_form === "じゃ")
+            {
+                if (joinToken.basic_form === "ない" &&
+                    joinToken.pos === "助動詞")
+                {
+                    canJoin = true
+                }
+            }
+
+            if (baseToken.pos === "助動詞" &&
+                (baseToken.surface_form === "だろ" ||
+                    baseToken.surface_form === "でしょ"))
+            {
+                if (joinToken.surface_form === "う" &&
+                    joinToken.pos === "助動詞")
+                {
+                    canJoin = true
+                    stopJoin = true
+                }
+            }
+
             if (!canJoin && joinLen == 0)
             {
                 joinLen++
@@ -207,7 +259,7 @@ export async function tokenize(
                     newToken = {
                         surface_form: joined,
                         basic_form: joined,
-                        category: translateCategory(basePos, baseDetail1),
+                        category: translateCategory(joined, basePos, baseDetail1),
                         pronunciation: joinSlice.map(t => t.pronunciation).join(""),
                         furigana: "",
                     }
@@ -217,7 +269,7 @@ export async function tokenize(
                     newToken = {
                         surface_form: joined,
                         basic_form: joinLen == 0 ? morpho[i].basic_form : joined,
-                        category: translateCategory(basePos, baseDetail1),
+                        category: translateCategory(joined, basePos, baseDetail1),
                         furigana: head.furigana,
                     }
                 }
@@ -227,7 +279,7 @@ export async function tokenize(
                 newToken = {
                     surface_form: joined,
                     basic_form: joined,
-                    category: translateCategory(basePos, baseDetail1),
+                    category: translateCategory(joined, basePos, baseDetail1),
                     pronunciation: joinSlice.map(t => t.pronunciation).join(""),
                     furigana: "",
                 }
@@ -251,7 +303,7 @@ export async function tokenize(
             result.push({
                 surface_form: rawToken.surface_form,
                 basic_form: rawToken.basic_form,
-                category: translateCategory(rawToken.pos, rawToken.pos_detail_1),
+                category: translateCategory(rawToken.surface_form, rawToken.pos, rawToken.pos_detail_1),
                 pronunciation: rawToken.pronunciation,
                 furigana: "",
             })

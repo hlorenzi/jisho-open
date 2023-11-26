@@ -292,7 +292,7 @@ v5n;   *ぬ -> v1; *なせる
 v5b;   *ぶ -> v1; *ばせる
 v5m;   *む -> v1; *ませる
 vs-i;  *する -> v1; *させる
-vs-s;  *する -> v1; *すせる
+vs-s;  *する -> v1; *させる
 vk;    *くる -> v1; *こさせる
 
 @ id: causative-contracted
@@ -336,7 +336,7 @@ v5n;   *ぬ -> v1; *なれる
 v5b;   *ぶ -> v1; *ばれる
 v5m;   *む -> v1; *まれる
 vs-i;  *する -> v1; *される
-vs-s;  *する -> v1; *すれる
+vs-s;  *する -> v1; *される
 vk;    *くる -> v1; *こられる
 
 @ id: causative-passive-contracted

@@ -72,6 +72,7 @@ export interface Sense
     dial?: Api.Word.DialectTag[]
     stagr?: string[]
     gloss: EntryGloss[]
+    example?: Example[]
 }
 
 
@@ -95,5 +96,27 @@ export type LanguageSource = {
         "xml:lang": Api.Word.LanguageTag
         ls_wasei?: "y"
         ls_type?: "part"
+    }
+}
+
+
+/*<example>
+<ex_srce exsrc_type="tat">227130</ex_srce>
+<ex_text>取った</ex_text>
+<ex_sent xml:lang="jpn">お皿に取ったものは全部食べなさい。</ex_sent>
+<ex_sent xml:lang="eng">You'd better eat everything that's on your plate.</ex_sent>
+</example>*/
+
+export type Example = {
+    ex_srce: unknown[]
+    ex_text: string[]
+    ex_sent: ExampleSentence[]
+}
+
+
+export type ExampleSentence = {
+    [Xml.xml2jsTextKey]?: string
+    [Xml.xml2jsAttributeKey]: {
+        "xml:lang": "jpn" | "eng"
     }
 }

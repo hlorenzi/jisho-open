@@ -101,8 +101,8 @@ export const themeLight: Theme = {
     popupShadowColor: "#00000020",
 
     textColor: "#454545",
-    text2ndColor: "#666666",
-    text3rdColor: "#aaaaaa",
+    text2ndColor: "#959595",
+    text3rdColor: "#bbbbbb",
     text4thColor: "#cccccc",
     textDisabledColor: "#a0a0a0",
     textStrongBkgColor: "#eee",

@@ -175,6 +175,16 @@ function SettingsPanel(props: {
                 { label: "Show", value: "on" },
             ]}
         />
+        
+        <Framework.Select
+            label="Example Sentences"
+            value={ () => App.usePrefs().resultsShowExampleSentences ? "on" : "off" }
+            onChange={ (value) => App.mergePrefs({ resultsShowExampleSentences: value === "on" }) }
+            options={ [
+                { label: "Hide until expanded", value: "off" },
+                { label: "Show always", value: "on" },
+            ]}
+        />
 
         <Framework.HorizontalBar/>
         

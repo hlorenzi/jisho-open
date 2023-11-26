@@ -26,13 +26,18 @@ const InflectionBreakdownSection = styled.ol`
     padding-left: 1.75em;
 
     & li::marker {
-        color: ${ Framework.themeVar("text4thColor") };
+        color: ${ Framework.themeVar("text3rdColor") };
         content: " 🡆 ";
         padding-right: 0.25em;
     }
 
     & li {
         counter-increment: item;
+    }
+    
+	@media (max-width: ${ Framework.pageSmallWidthThreshold })
+	{
+        margin-left: -0.5em;
     }
 `
 

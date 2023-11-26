@@ -15,9 +15,9 @@ import * as FuriganaHelpers from "../data/furigana_helpers.ts"
 import * as AnimeDramaRanking from "../data/animedrama_ranking.ts"
 
 
-export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"
-export const gzipFilename = File.downloadFolder + "JMdict_e.gz"
-export const xmlFilename = File.downloadFolder + "JMdict_e.xml"
+export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e_examp.gz"
+export const gzipFilename = File.downloadFolder + "JMdict_e_examp.gz"
+export const xmlFilename = File.downloadFolder + "JMdict_e_examp.xml"
 
 
 export async function downloadAndImport(
@@ -538,6 +538,26 @@ function normalizeSenses(
 
         if (rawSense.stagr)
             sense.restrict = rawSense.stagr
+
+        if (rawSense.example)
+        {
+            sense.examples = []
+            for (const example of rawSense.example)
+            {
+                const term = example.ex_text[0]
+                const ja = example.ex_sent.find(ex => ex.attr["xml:lang"] === "jpn")
+                const en = example.ex_sent.find(ex => ex.attr["xml:lang"] === "eng")
+                
+                if (!term || !ja || !en || !ja.text || !en.text)
+                    throw "invalid example sentence"
+                
+                sense.examples.push({
+                    term,
+                    ja: ja.text,
+                    en: en.text,
+                })
+            }
+        }
 
         senses.push(sense)
     }

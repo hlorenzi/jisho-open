@@ -39,6 +39,7 @@ export function EntryWord(props: {
             breakdown={ props.entry.inflections }
         />
         <Senses
+            wordId={ props.entry.id }
             ignoreUkMiscTag={ ignoreUsageInPlainKanaMiscTag }
             senses={ props.entry.senses }
         />
@@ -118,6 +119,7 @@ function Headings(props: {
         </Solid.For>
 
         <Framework.Button
+            title="More options"
             label={ <Framework.IconEllipsis/> }
             onClick={ ev => popupEllipsis.open(ev.currentTarget) }
             iconPadding
@@ -125,6 +127,7 @@ function Headings(props: {
         />
 
         <Framework.Button
+            title="Add this word to a study list"
             label={ <Framework.IconBookmark color={ Framework.themeVar("iconGreenColor") }/> }
             onClick={ ev => popupBookmark.open(ev.currentTarget) }
             iconPadding
@@ -534,9 +537,15 @@ const EntryTagsSection = styled.section`
 
 function Senses(props: {
     ignoreUkMiscTag: boolean,
+    wordId: string,
     senses: App.Api.Word.Sense[],
 })
 {
+    const hasExamples = props.senses.some(s => !!s.examples)
+
+    const [showExamples, setShowExamples] =
+        Framework.createHistorySignal(props.wordId + ":examples", false)
+
     let currentPos: string[] = []
 
     const list: Solid.JSX.Element[] = []
@@ -739,13 +748,57 @@ function Senses(props: {
             line.push(<SenseInfo> 🡆&nbsp;{ text }{ link }</SenseInfo>)
         }
 
+        // Build example sentences
+        for (const example of sense.examples ?? [])
+        {
+            line.push(
+                <Solid.Show when={ showExamples() || App.usePrefs().resultsShowExampleSentences }>
+                    <ExampleSentence>
+                        <Framework.IconArrowDownRight
+                            color={ Framework.themeVar("text4thColor") }
+                        />
+                        <span lang="ja">
+                            <Framework.Link
+                                label={ example.ja }
+                                href={ App.Pages.Search.urlForQuery(example.ja) }
+                                noUnderline
+                            />
+                        </span>
+                        { " " }
+                        <ExampleSentenceEnglish>
+                            { example.en }
+                        </ExampleSentenceEnglish>
+                    </ExampleSentence>
+                </Solid.Show>
+            )
+        }
+
         list.push(<li>{ line }</li>)
     }
 
-    return <section>
+    return <SenseSection>
         <SenseList>{ list }</SenseList>
-    </section>
+        <Solid.Show when={ hasExamples && !App.usePrefs().resultsShowExampleSentences }>
+            <ShowExampleSentencesLink>
+                <Framework.Link
+                    label={ <>
+                        <Framework.IconVerticalEllipsis/>
+                        { showExamples() ? "Hide" : "View" } example sentences
+                    </> }
+                    onClick={ () => setShowExamples(!showExamples()) }
+                />
+            </ShowExampleSentencesLink>
+        </Solid.Show>
+    </SenseSection>
 }
+
+
+const SenseSection = styled.section`
+	@media (max-width: ${ Framework.pageSmallWidthThreshold })
+	{
+        margin-left: -0.5em;
+    }
+`
 
 
 const PartOfSpeech = styled.p`
@@ -762,7 +815,7 @@ const SenseList = styled.ol`
     counter-reset: item;
 
     & li::marker {
-        color: ${ Framework.themeVar("text4thColor") };
+        color: ${ Framework.themeVar("text3rdColor") };
         content: counter(item) " • ";
         font-size: 0.8em;
         padding-inline-end: 0.25em;
@@ -782,6 +835,35 @@ const SenseGlossExpl = styled.span`
 const SenseInfo = styled.span`
     color: ${ Framework.themeVar("text2ndColor") };
     font-size: 0.8em;
+`
+
+
+const ExampleSentence = styled.div`
+    color: ${ Framework.themeVar("text2ndColor") };
+    font-size: 1em;
+    margin-bottom: 0.25em;
+    text-indent: -1.35em;
+    margin-left: 1.35em;
+
+    &::first-line {
+        text-indent: 0;
+    }
+`
+
+
+const ExampleSentenceEnglish = styled.span`
+    color: ${ Framework.themeVar("text2ndColor") };
+    font-size: 0.8em;
+    font-style: italic;
+`
+
+
+const ShowExampleSentencesLink = styled.div`
+    color: ${ Framework.themeVar("text3rdColor") };
+    font-size: 0.8em;
+    margin-left: 2em;
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
 `
 
 

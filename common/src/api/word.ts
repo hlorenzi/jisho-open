@@ -94,6 +94,7 @@ export type Sense = {
     xref?: CrossReference[]
     dialect?: DialectTag[]
     restrict?: string[]
+    examples?: ExampleSentence[]
 }
 
 
@@ -115,6 +116,13 @@ export type CrossReference = {
     reading?: string
     senseIndex?: number
     type?: "antonym"
+}
+
+
+export type ExampleSentence = {
+    term: string
+    ja: string
+    en: string
 }
 
 
