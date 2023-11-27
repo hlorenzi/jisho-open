@@ -64,11 +64,20 @@ const backdropKeyframes = keyframes`
 
 
 const PopupDialog = styled.dialog`
-    padding: 0.25em;
     border: 0;
-    max-width: min(calc(100% - 0.5em), ${ Framework.pageWidth });
-    max-height: calc(100vh - 4em);
+    padding: 0;
+    padding-left: calc(100vw - 100%);
+    width: min(calc(100% - 0.5em), calc(${ Framework.pageWidth } - 1.5em));
+    max-height: calc(100vh - 8em);
     background-color: transparent;
+
+    &:modal {
+        max-height: calc(100vh - 8em);
+    }
+
+	@media (max-width: ${ Framework.pageSmallWidthThreshold }) {
+        padding-left: 0;
+    }
 
     &::backdrop {
         animation-name: ${ backdropKeyframes };

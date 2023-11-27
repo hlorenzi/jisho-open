@@ -84,6 +84,7 @@ const styleClass = css`
 
     &.toggled
     {
+        color: ${ Framework.themeVar("text4thColor") };
         background-color: ${ Framework.themeVar("buttonToggledBkgColor") };
         --local-borderColor: ${ Framework.themeVar("buttonAccentColor") };
     }

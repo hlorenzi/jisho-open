@@ -189,7 +189,7 @@ const LayoutResults = styled.div`
 
 const LayoutComponents = styled.div`
     width: 100%;
-    max-height: 55vh;
+    max-height: 50vh;
     overflow-x: hidden;
     overflow-y: auto;
 `

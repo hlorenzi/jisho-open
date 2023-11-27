@@ -7,7 +7,13 @@ export function RouterTransition(props: {
     firstLoad: boolean,
 })
 {
-    return <DivWrapper inert>
+    let dialogRef: HTMLDialogElement | undefined = undefined
+
+    Solid.createEffect(() => {
+        dialogRef?.showModal()
+    })
+
+    return <DivWrapper ref={ dialogRef } inert>
         <Framework.LoadingBar ignoreLayout/>
 
         <Solid.Show when={ props.firstLoad }>
@@ -17,14 +23,32 @@ export function RouterTransition(props: {
 }
 
 
-const DivWrapper = styled.div`
+const backdropKeyframes = keyframes`
+    0% {
+	    background-color: transparent;
+    }
+
+    100% {
+	    background-color: ${ Framework.themeVar("pageTransitionOverlayColor") };
+    }
+`
+
+
+const DivWrapper = styled.dialog`
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: ${ Framework.themeVar("pageTransitionOverlayColor") };
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
     z-index: 10000;
+
+    animation-name: ${ backdropKeyframes };
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
 `
 
 
@@ -34,7 +58,7 @@ export function RouterTransitionEnd()
 }
 
 
-const backdropKeyframes = keyframes`
+const backdropEndKeyframes = keyframes`
     0% {
 	    background-color: ${ Framework.themeVar("voidBkgColor") };
     }
@@ -58,7 +82,7 @@ const DivWrapperEnd = styled.div`
     background-color: transparent;
     z-index: 10000;
     
-    animation-name: ${ backdropKeyframes };
+    animation-name: ${ backdropEndKeyframes };
     animation-duration: 0.1s;
     animation-fill-mode: forwards;
 `

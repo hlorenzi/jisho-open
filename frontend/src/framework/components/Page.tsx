@@ -71,8 +71,7 @@ const DivContent = styled.div`
 
     --local-pagePadding: ${ Framework.themeVar("pagePaddingBig") };
     
-	@media (max-width: ${ pageSmallWidthThreshold })
-	{
+	@media (max-width: ${ pageSmallWidthThreshold }) {
         width: calc(100% - ${ Framework.themeVar("pagePaddingSmall") });
 
 		border-left: 0;
@@ -86,8 +85,7 @@ const DivContent = styled.div`
         --local-pagePadding: var(--local-pagePaddingSmall);
 	}
 
-    @media (pointer: coarse)
-    {
+    @media (pointer: coarse) {
         width: 100%;
     }
 `
