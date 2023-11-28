@@ -101,9 +101,31 @@ function SideMenu()
                         native
                     />
                     <Solid.Show when={ App.Api.userIsAdmin(authUser().latest!) }>
+                        <Framework.HorizontalBar/>
+
                         <Framework.ButtonPopupPageWide
                             label="Server Log"
                             href={ App.Pages.Log.url }
+                        />
+
+                        <Framework.ButtonPopupPageWide
+                            label="Admin: Git Update"
+                            onClick={ () => {
+                                if (!window.confirm("Perform a git update on the server?"))
+                                    return
+
+                                window.location.href = App.Api.AdminGitUpdate.url
+                            }}
+                        />
+
+                        <Framework.ButtonPopupPageWide
+                            label="Admin: DB Refresh"
+                            onClick={ () => {
+                                if (!window.confirm("Perform a DB refresh on the server?"))
+                                    return
+
+                                window.location.href = App.Api.AdminDbRefresh.url
+                            }}
                         />
                     </Solid.Show>
                 </Solid.Show>

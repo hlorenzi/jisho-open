@@ -114,6 +114,14 @@ export function StudyListPopup(props: {
         }}>
             Add this word to a study list
         </div>
+        <Framework.HorizontalBar/>
+
+        <div style={{ color: Framework.themeVar("iconRedColor") }}>
+            <Framework.IconWarning color={ Framework.themeVar("iconRedColor") }/>
+            { " " }
+            During the Jisho v2 beta, study lists may be deleted without notice!<br/>
+            Please manage your study lists using Jisho v1 for the time being.
+        </div>
 
         <Framework.HorizontalBar/>
 

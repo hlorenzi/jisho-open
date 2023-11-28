@@ -433,7 +433,7 @@ function scoreHeading(
             0
         
     if (heading.rankAnimeDrama !== undefined)
-        score += Math.max(0, 150 * (1 - (heading.rankAnimeDrama / 100_000)))
+        score += Math.max(1, 50 * (1 - (heading.rankAnimeDrama / 100_000)))
 
     if (heading.irregularKanji)
         score -= 20000

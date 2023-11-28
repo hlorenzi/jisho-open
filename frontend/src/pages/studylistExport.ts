@@ -13,7 +13,10 @@ export function writeStudylistTsv(
     const prefs = App.usePrefs()
 
     let result = ""
-
+    result += `#separator:Tab\n`
+    result += `#html:${ prefs.studylistExportHtmlCss ? "true" : "false" }\n`
+    result += `#columns:ID\tWord\tReading\tPitch\tMeaning\n`
+    
     for (const word of words)
     {
         let headingRare: App.Api.Word.Heading | undefined = undefined
@@ -124,6 +127,7 @@ export function writeStudylistTsv(
             columns.push(senseTexts.join(""))
         else
             columns.push(senseTexts.join(" ・ "))
+
 
         result += columns.join("\t") + "\n"
     }

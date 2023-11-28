@@ -69,7 +69,8 @@ export function dateToStr(date: DateOrString)
 
 export function dateToIsoStr(date: DateOrString)
 {
-	return dateNew(date).toISOString()
+	const timezoneOffset = (new Date()).getTimezoneOffset() * 60000
+	return (new Date(dateNew(date).getTime() - timezoneOffset)).toISOString().slice(0, -1)
 }
 
 

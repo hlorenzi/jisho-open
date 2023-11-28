@@ -1,8 +1,10 @@
 import * as Express from "express"
+import * as ChildProcess from "child_process"
 import * as Db from "../db/index.ts"
 import * as Auth from "../auth/index.ts"
 import * as ServerAuth from "./auth.ts"
 import * as Api from "common/api/index.ts"
+import * as Importing from "../importing/index.ts"
 
 
 export function init(
@@ -18,5 +20,35 @@ export function init(
         const entries = await db.logGet()
 
         res.send({ entries } as Api.Log.Response)
+    })
+
+    app.get(Api.AdminDbRefresh.url, async (req, res) => {
+        const authUser = await ServerAuth.authenticateRequest(auth, req)
+        if (!Api.userIsAdmin(authUser))
+            throw Api.Error.forbidden
+
+        await db.log("admin: db refresh")
+        
+        Importing.buildDatabase(db, false)
+        res.redirect("/")
+    })
+
+    app.get(Api.AdminGitUpdate.url, async (req, res) => {
+        const authUser = await ServerAuth.authenticateRequest(auth, req)
+        if (!Api.userIsAdmin(authUser))
+            throw Api.Error.forbidden
+
+        await db.log("admin: git update")
+
+        const child = ChildProcess.spawn(
+            "sh",
+            ["./update.sh"],
+            {
+                detached: true,
+                stdio: [ "ignore", "ignore", "ignore" ]
+            })
+
+        child.unref()
+        res.redirect("/")
     })
 }

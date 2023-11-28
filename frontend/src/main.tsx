@@ -5,9 +5,6 @@ import * as App from "./app.tsx"
 import * as Pages from "./pages.ts"
 
 
-Framework.pwaEnable()
-
-
 SolidWeb.render(
     Root,
     document.getElementById("app")!)
@@ -15,7 +12,8 @@ SolidWeb.render(
 
 function Root()
 {
-    Framework.Analytics.init("")
+    Framework.pwaEnable()
+    Framework.Analytics.init("G-PY955GS729")
 
     return <>
         <Framework.GlobalCss extraCss={ [App.usePrefsCss()] }/>

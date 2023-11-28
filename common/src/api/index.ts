@@ -184,6 +184,18 @@ export namespace Log
 }
 
 
+export namespace AdminGitUpdate
+{
+    export const url = "/api/v1/admin_git_update"
+}
+
+
+export namespace AdminDbRefresh
+{
+    export const url = "/api/v1/admin_db_refresh"
+}
+
+
 export namespace Search
 {
     export const url = "/api/v1/search"
