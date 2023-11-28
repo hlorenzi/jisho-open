@@ -12,9 +12,9 @@ export function PageLog(props: Framework.RouteProps)
     const [data] = Solid.createResource(
         props.routeMatch, // FIXME: Why is this needed?
         async () => {
-            const log = await App.Api.logGet()
+            const { entries } = await App.Api.logGet()
 
-            return log
+            return { entries: entries.reverse() }
         })
 
         
@@ -34,7 +34,7 @@ export function PageLog(props: Framework.RouteProps)
                 { (entry) =>
                     <div>
                         <LogDate>
-                            { Framework.dateToIsoStr(entry.date) }
+                            { Framework.dateToFullStr(entry.date) }
                         </LogDate>
                         { " " }
                         { entry.text }
@@ -52,6 +52,7 @@ export const LogList = styled.div`
     background-color: ${ Framework.themeVar("textStrongBkgColor") };
     border-radius: ${ Framework.themeVar("borderRadius") };
     font-family: monospace;
+    padding: 0.25em;
 `
 
 

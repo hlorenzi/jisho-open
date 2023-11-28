@@ -1,14 +1,21 @@
 import * as fs from "fs"
 import * as Api from "common/api/index.ts"
+import * as Kana from "common/kana.ts"
 
 
-let cache: Map<string, Api.JlptLevel> | null = null
+type CacheValue = {
+    tags: string[]
+    level: Api.JlptLevel
+}
+
+let cache: Map<string, CacheValue> | null = null
 let cacheUsed: Set<string> = new Set()
 
 
 export function get(
-    base: string,
-    reading?: string)
+    wordId: string,
+    headings: Api.Word.Heading[],
+    forHeadingIndex: number)
     : Api.JlptLevel | undefined
 {
     if (!cache)
@@ -29,22 +36,71 @@ export function get(
             const level = parseInt(entry[0]) as Api.JlptLevel
             const base = entry[1]
             const reading = entry[2]
+            const tags = entry.slice(3) ?? []
 
             const key = makeCacheKey(base, reading)
             
-            const prevLevel = cache.get(key)
-            if (prevLevel !== undefined &&
-                prevLevel > level)
+            const prevValue = cache.get(key)
+            if (prevValue !== undefined &&
+                prevValue.level > level)
                 continue
 
-            cache.set(key, level)
+            cache.set(key, {
+                level,
+                tags,
+            })
         }
     }
 
-    const key = makeCacheKey(base, reading)
-    cacheUsed.add(key)
+    const forHeading = headings[forHeadingIndex]
 
-    return cache.get(key)
+    if (forHeading.reading !== undefined)
+    {
+        const key = makeCacheKey(
+            forHeading.base,
+            forHeading.reading)
+        
+        cacheUsed.add(key)
+        const value = cache.get(key)
+        if (!value)
+            return undefined
+
+        if (value.tags.length >= 1 &&
+            value.tags[0] === "uk")
+            return undefined
+
+        if (value.tags.length >= 1 &&
+            value.tags[0].startsWith("w") &&
+            value.tags[0] !== wordId)
+            return undefined            
+        
+        return value.level
+    }
+
+    for (const heading of headings)
+    {
+        const key = makeCacheKey(heading.base, heading.reading)
+        cacheUsed.add(key)
+
+        const value = cache.get(key)
+        if (value)
+        {
+            if (value.tags.length >= 1 &&
+                value.tags[0] === "uk" &&
+                (forHeading.reading !== undefined ||
+                    forHeading.base !== heading.reading))
+                continue
+
+            if (value.tags.length >= 1 &&
+                value.tags[0].startsWith("w") &&
+                value.tags[0] !== wordId)
+                continue
+            
+            return value.level
+        }
+    }
+
+    return undefined
 }
 
 

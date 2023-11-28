@@ -131,11 +131,12 @@ function Table(props: {
     return <TableLayout>
         <TableTerm>
             { props.term }
-            <br/>
+            { " " }
             <TablePartOfSpeech>
                 { JmdictTags.nameForPartOfSpeechTag(props.partOfSpeech) }
             </TablePartOfSpeech>
         </TableTerm>
+        <div/>
         <TableColumnHeader>
             Plain
         </TableColumnHeader>
@@ -160,6 +161,7 @@ const TableLayout = styled.div`
 
 
 const TableTerm = styled.div`
+    grid-column: 1 / -1;
     justify-self: center;
     padding: 0.1em 0.5em;
     background-color: ${ Framework.themeVar("textStrongBkgColor") };

@@ -113,7 +113,7 @@ async function post(
 export async function authenticate()
     : Promise<Api.Authenticate.Response>
 {
-    return post(Api.Authenticate.url, undefined)
+    return postCached(Api.Authenticate.url, undefined)
 }
 
 
@@ -152,7 +152,7 @@ export async function getKanjiByComponents(
     req: Api.KanjiByComponents.Request)
     : Promise<Api.KanjiByComponents.Response>
 {
-    return post(Api.KanjiByComponents.url, req)
+    return postCached(Api.KanjiByComponents.url, req)
 }
 
 

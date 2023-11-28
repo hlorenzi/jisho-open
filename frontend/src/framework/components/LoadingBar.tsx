@@ -73,7 +73,7 @@ const DivClip = styled.div<{
 
 
 const DivLoadingBar = styled.div`
-    width: 200%;
+    width: 400%;
     height: ${ height };
     outline: none;
     background-color: transparent;

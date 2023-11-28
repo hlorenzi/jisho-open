@@ -65,6 +65,7 @@
 		* {
 			box-sizing: border-box;
 			font-size: 1em;
+			font-family: inherit;
         	text-size-adjust: none;
 		}
 
@@ -121,6 +122,20 @@
 		dialog:modal {
 			max-width: none;
 			max-height: none;
+		}
+
+		input[type=file] {
+			border: 1px solid var(--theme-borderColor);
+			border-radius: var(--theme-borderRadius);
+			padding: 0.25em;
+			cursor: pointer;
+		}
+
+		input[type=file]::file-selector-button {
+			border: 0;
+			border-radius: var(--theme-borderRadius);
+			cursor: pointer;
+			font-family: inherit;
 		}
 	</style>
 

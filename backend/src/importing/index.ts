@@ -33,9 +33,9 @@ export async function buildDatabase(
         building = true
         await logger.writeLn("building database...")
         await Jmdict.downloadAndImport(logger, db, useCachedFiles)
+        await StandardLists.buildStandardLists(logger, db)
         await Kanjidic.downloadAndImport(logger, db, useCachedFiles)
         await KanjiWords.crossReferenceKanjiWords(logger, db)
-        await StandardLists.buildStandardLists(logger, db)
         await logger.writeLn("finished building database")
     }
     catch (e)

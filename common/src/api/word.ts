@@ -55,8 +55,8 @@ export type Heading = {
     rankAnimeDrama?: number
 
     /// Commonness score for this heading, for sorting search results.
-    /// Higher is more common. If undefined, the value is 0.
-    score?: number
+    /// Higher is more common.
+    score: number
 }
 
 

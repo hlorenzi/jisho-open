@@ -15,6 +15,7 @@ export function themeVar<T extends keyof Theme>(
 export type Theme = {
     id: string
     name: string
+    scheme: "light" | "dark" | "light dark"
 
     pageBigMinWidth: string
     pagePaddingBig: string
@@ -83,6 +84,7 @@ export type Theme = {
 export const themeLight: Theme = {
     id: "light",
     name: "Light",
+    scheme: "light",
     
     pageBigMinWidth: "900px",
     pagePaddingBig: "3rem",
@@ -152,6 +154,7 @@ export const themeDarkGray: Theme = {
     ...themeLight,
     id: "dark",
     name: "Dark Gray",
+    scheme: "dark",
 
     themeColor: "#202122",
     voidBkgColor: "#202122",
@@ -194,6 +197,7 @@ const themeDarkBlue: Theme = {
     ...themeLight,
     id: "dark-blue",
     name: "Dark Blue",
+    scheme: "dark",
 
     themeColor: "#020029",
     voidBkgColor: "#0e0f15",
@@ -236,6 +240,7 @@ const themeDarkRed: Theme = {
     ...themeLight,
     id: "dark-red",
     name: "Dark Red",
+    scheme: "dark",
 
     themeColor: "#332222",
     voidBkgColor: "#2a1b1b",
@@ -278,6 +283,7 @@ const themeHighContrast: Theme = {
     ...themeLight,
     id: "high-contrast",
     name: "High Contrast",
+    scheme: "light dark",
 
     themeColor: "#000000",
     voidBkgColor: "#000",
@@ -321,6 +327,7 @@ const themeChromaKey: Theme = {
     ...themeLight,
     id: "chroma-key",
     name: "Chroma-Key",
+    scheme: "light dark",
 
     themeColor: "#000000",
     voidBkgColor: "#00f",
@@ -381,10 +388,14 @@ export function makeCssForTheme(
     : string
 {
     let result = ""
+
+    result += `color-scheme: ${ theme.scheme };\n`
+
     for (const [key, value] of Object.entries(theme))
     {
         if (key === "name" ||
-            key === "id")
+            key === "id" ||
+            key === "scheme")
             continue
         
         result += "--theme-" + key + ": " + value + ";\n"

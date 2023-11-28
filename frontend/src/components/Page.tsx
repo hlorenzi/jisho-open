@@ -80,7 +80,7 @@ function SideMenu()
             <Framework.HorizontalBar/>
 
             <Solid.Show when={ !authUser().loading } fallback={
-                <Framework.LoadingSpinner/>
+                <Framework.LoadingBar/>
             }>
                 <Solid.Show when={ !authUser().latest?.id }>
                     <Framework.ButtonPopupPageWide

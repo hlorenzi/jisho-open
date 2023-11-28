@@ -86,7 +86,7 @@ function normalizeEntry(
     }
 
     // Import headings.
-    entry.headings = normalizeHeadings(raw)
+    entry.headings = normalizeHeadings(entry.id, raw)
 
     // Import senses/definitions.
     entry.senses = normalizeSenses(raw)
@@ -106,6 +106,7 @@ function normalizeEntry(
 
 
 function normalizeHeadings(
+    wordId: string,
     raw: JmdictRaw.Entry)
     : Api.Word.Heading[]
 {
@@ -139,7 +140,7 @@ function normalizeHeadings(
                 continue
             
             seenReadings.add(reb)
-            headings.push(normalizeHeading(r_ele, k_ele))
+            headings.push(normalizeHeading(wordId, r_ele, k_ele))
         }
     }
 
@@ -160,11 +161,12 @@ function normalizeHeadings(
                 base: reb,
                 furigana: reb + Furigana.READING_SEPARATOR,
                 searchOnlyKana: true,
+                score: 0,
             })
             continue
         }
         
-        const heading = normalizeHeading(r_ele, undefined)
+        const heading = normalizeHeading(wordId, r_ele, undefined)
         headings.push(heading)
         
         seenReadings.add(reb)
@@ -234,10 +236,29 @@ function normalizeHeadings(
                 r_ele.re_inf.some(tag => tag === "sk"))
                 continue
             
-            const heading = normalizeHeading(r_ele, undefined)
+            const heading = normalizeHeading(wordId, r_ele, undefined)
             headings.unshift(heading)
             break
         }
+    }
+
+    for (let h = 0; h < headings.length; h++)
+    {
+        const heading = headings[h]
+
+        if (!heading.searchOnlyKanji &&
+            !heading.searchOnlyKana &&
+            !heading.outdatedKanji &&
+            !heading.outdatedKana)
+        {
+            const jlpt = JlptWords.get(wordId, headings, h)
+            if (jlpt !== undefined)
+                heading.jlpt = jlpt
+        }
+
+        const score = scoreHeading(heading)
+        if (score !== 0)
+            heading.score = score
     }
 
     return [...headings]
@@ -245,6 +266,7 @@ function normalizeHeadings(
 
 
 function normalizeHeading(
+    wordId: string,
     r_ele: JmdictRaw.EntryREle,
     k_ele?: JmdictRaw.EntryKEle)
     : Api.Word.Heading
@@ -255,6 +277,7 @@ function normalizeHeading(
     const heading: Api.Word.Heading = {
         base: keb ?? reb,
         furigana: "",
+        score: 0,
     }
 
     if (keb !== undefined)
@@ -320,7 +343,7 @@ function normalizeHeading(
         heading.searchOnlyKana = true
 
 
-    const rankAnimeDrama = AnimeDramaRanking.get(heading.base)
+    const rankAnimeDrama = AnimeDramaRanking.get(wordId, heading.base)
     if (rankAnimeDrama !== undefined)
         heading.rankAnimeDrama = rankAnimeDrama
 
@@ -383,14 +406,6 @@ function normalizeHeading(
             heading[rankField.field] = rRank
         }
     }
-
-    const jlpt = JlptWords.get(heading.base, heading.reading)
-    if (jlpt !== undefined)
-        heading.jlpt = jlpt
-
-    const score = scoreHeading(heading)
-    if (score !== 0)
-        heading.score = score
 
     return heading
 }

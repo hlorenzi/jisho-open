@@ -92,7 +92,10 @@ export function EntryKanji(props: {
                             <Framework.IconMagnifyingGlass/>
                             View diagram
                         </> }
-                        onClick={ ev => popupDiagram.open(ev.currentTarget) }
+                        onClick={ ev => {
+                            App.analyticsEvent("resultsKanjiViewDiagram")
+                            popupDiagram.open(ev.currentTarget)
+                        }}
                     />
                 </span>
             </div>

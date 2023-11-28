@@ -2,11 +2,17 @@ import * as fs from "fs"
 import * as Kana from "common/kana.ts"
 
 
-let cache: Map<string, number> | null = null
+type CacheValue = {
+    wordId?: string
+    ranking: number
+}
+
+let cache: Map<string, CacheValue> | null = null
 let cacheUsed: Set<string> = new Set()
 
 
 export function get(
+    wordId: string,
     base: string)
     : number | undefined
 {
@@ -26,14 +32,27 @@ export function get(
                 continue
 
             // FIXME: Kana-only words cause lots of ambiguity
-            const entry = line.trim()
-            cache.set(entry, ranking)
+            const entry = line.trim().split(";")
+            const term = entry[0]
+            const wordId = entry[1] ?? undefined
+            cache.set(term, {
+                wordId,
+                ranking,
+            })
             ranking++
         }
     }
 
     cacheUsed.add(base)
-    return cache.get(base)
+    const value = cache.get(base)
+    if (value === undefined)
+        return undefined
+
+    if (value.wordId !== undefined &&
+        value.wordId !== wordId)
+        return undefined
+
+    return value.ranking
 }
 
 

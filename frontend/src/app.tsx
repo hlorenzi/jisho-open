@@ -92,6 +92,7 @@ export type AnalyticsEvent =
     | "resultsViewInflections"
     | "resultsCopyHeadingBase"
     | "resultsCopyHeadingReading"
+    | "resultsKanjiViewDiagram"
     | "studylistPopupAdd"
     | "studylistPopupAddSpelling"
     | "studylistPopupRemove"

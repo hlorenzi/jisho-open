@@ -23,8 +23,11 @@ export function InputKanjiComponents(props: {
             if (data[0].size === 0)
                 return undefined
 
+            const components = [...data[0]]
+                .sort((a, b) => a.codePointAt(0)! - b.codePointAt(0)!)
+
             const res = await App.Api.getKanjiByComponents({
-                components: [...data[0]].join(""),
+                components: components.join(""),
                 onlyCommon: data[1],
             })
 

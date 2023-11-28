@@ -88,7 +88,7 @@ function isAllowed()
 {
 	return (
 		gTagId &&
-        //!Framework.isDev() &&
+        !Framework.isDev() &&
 		typeof gtag === "function"
 	)
 }

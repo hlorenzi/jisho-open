@@ -100,11 +100,11 @@ function buildSvg(
             stroke-linecap="round"
             stroke-linejoin="round"
             d="
-            M 0,0
-            L 109,0
-            L 109,109
-            L 0,109
-            Z
+                M 0,0
+                L 109,0
+                L 109,109
+                L 0,109
+                Z
         "/>
 
         <path
@@ -115,10 +115,10 @@ function buildSvg(
             stroke-linejoin="round"
             stroke-dasharray="5,5"
             d="
-            M 0,54.5
-            L 109,54.5
-            M 54.5,0
-            L 54.5,109
+                M 0,54.5
+                L 109,54.5
+                M 54.5,0
+                L 54.5,109
         "/>
 
         { data.renderNext }
