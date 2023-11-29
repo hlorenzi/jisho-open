@@ -133,14 +133,14 @@ async function search(
                 optionsNoTags)
 
     const byKanjiReading =
-        query.type !== "any" && query.type !== "kanji" ?
+        query.type !== "kanji" ?
             [] :
         db.searchKanjiByReading(
             query.strJapaneseSplit,
             optionsNoTags)
 
     const byKanjiMeaning =
-        query.type !== "any" && query.type !== "kanji" ?
+        query.type !== "kanji" ?
             [] :
         db.searchKanjiByMeaning(
             query.strInQuotes.length !== 0 ?
@@ -256,7 +256,9 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
     const regexPunctuationToCollapse = /\-|\'/g
     const regexRemove = /[\.\+\^\$\%\|\;\:\{\}\[\]\(\)\/\\]/g
 
-    const queryNormalized = Kana.normalizeWidthForms(queryRaw)
+    const queryRawLimited = queryRaw.substring(0, 250)
+
+    const queryNormalized = Kana.normalizeWidthForms(queryRawLimited)
         .trim()
         .replace(regexFancyQuotes, "\"")
         .replace(regexRemove, " ")
@@ -351,7 +353,7 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
 
     return {
         type,
-        strRaw: queryRaw,
+        strRaw: queryRawLimited,
         str: queryWithoutTags,
         strSplit: queryWithoutTagsSplit,
         strJapanese: queryJapanese,

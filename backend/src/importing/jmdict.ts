@@ -411,6 +411,19 @@ function normalizeHeading(
 }
 
 
+function scoreCurve(
+    n: number,
+    min: number,
+    max: number,
+    minScore: number,
+    maxScore: number)
+{
+    const t = (n - min) / (max - min)
+    const curve0to1 = t * t
+    return Math.max(0, Math.ceil(minScore + ((maxScore - minScore) * curve0to1)))
+}
+
+
 function scoreHeading(
     heading: Api.Word.Heading)
     : number
@@ -418,22 +431,16 @@ function scoreHeading(
     let score = 0
 
     if (heading.jlpt !== undefined)
-        score += Math.max(0, 100 + ((heading.jlpt - 1) * 100))
+        score += scoreCurve(heading.jlpt, 5, 1, 1000, 100)
 
     if (heading.rankNf !== undefined)
-        score += Math.max(0, 500 - ((heading.rankNf - 1) * 10))
+        score += scoreCurve(heading.rankNf, 1, 48, 500, 100)
 
     if (heading.rankIchi !== undefined)
         score +=
             heading.rankIchi === 2 ? 500 :
             heading.rankIchi === 1 ? 100 :
             0
-
-    /*if (heading.rankNews !== undefined)
-        score += 
-            heading.rankNews === 2 ? 500 :
-            heading.rankNews === 1 ? 100 :
-            0*/
 
     if (heading.rankSpec !== undefined)
         score +=
@@ -448,7 +455,7 @@ function scoreHeading(
             0
         
     if (heading.rankAnimeDrama !== undefined)
-        score += Math.max(1, 50 * (1 - (heading.rankAnimeDrama / 100_000)))
+        score += scoreCurve(heading.rankAnimeDrama, 1, 100_000, 100, 0)
 
     if (heading.irregularKanji)
         score -= 20000

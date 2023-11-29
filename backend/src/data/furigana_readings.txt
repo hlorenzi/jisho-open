@@ -23384,7 +23384,6 @@
 進;uncl;し
 精;uncl;そう
 媒;uncl;なこ
-香;uncl;ほん
 港;uncl;こん
 魔;uncl;まが
 刻;uncl;とき
@@ -23471,6 +23470,12 @@
 竈;uncl;へ
 竃;uncl;へ
 喫;uncl;くう
+物;uncl;もん;むん
+焼;uncl;たき;やち;しょ
+五;uncl;さ;い
+竹;uncl;ささ
+千;uncl;せ
+鳳;uncl;あげ;あげは
 素;auto;しろ;しら;すん
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
@@ -23523,7 +23528,7 @@
 尼;ateji;ない
 汗;ateji;がに
 斯;ateji;す;しゃ;しあ;じあ
-波;ateji;はる
+波;ateji;ハル;バー;ペル;ポー
 加;ateji;かる
 毛;ateji;も;もー;まう
 科;ateji;くわ;くうぇ
@@ -23548,6 +23553,7 @@
 其;ateji;こ
 律;ateji;り;りっ
 賓;ateji;ぴん
+香;ateji;クー
 合;auto;あわ;が
 其;auto;そ
 此;auto;こ
@@ -23573,7 +23579,6 @@
 似;auto;ね
 甲;auto;が;か;かっ
 頭;auto;じゅう;こうべ
-物;auto;もん
 所;auto;そ;ど;せ;こ
 分;auto;わか
 飯;auto;いい;まま
@@ -23753,7 +23758,6 @@
 妹;auto;いも
 景;auto;げ
 唾;auto;ず
-五;auto;さ;い
 夫;auto;ゆう
 雀;auto;がら
 双;auto;もろ
@@ -23817,7 +23821,6 @@
 修;auto;す
 初;auto;うぶ
 籍;auto;じゃく
-焼;auto;たき
 後;auto;しり
 祖;auto;おや
 薑;auto;が
@@ -23937,7 +23940,6 @@
 凛;chinese;り
 律;chinese;り
 蛺;chinese;たては
-鳳;chinese;あげは
 梃;chinese;て
 抛;chinese;なげ
 立;chinese;りー
@@ -23960,7 +23962,14 @@
 翻;chinese;ファン
 一;chinese;イー
 二;chinese;リャン
+焼;chinese;シュウ;シュー;シャオ
+売;chinese;マイ
+五;chinese;ウー
+香;chinese;ホン;シャン
 北;korean;プク
+焼;korean;ソ
+平;korean;ピョン
+昌;korean;チャン
 大人;gikun;おとな
 大和;gikun;やまと
 日本;gikun;やまと
@@ -24273,6 +24282,9 @@
 翻筋斗;gikun;もんどり;もどり
 黄泉;gikun;よもつ
 蚰蜒;gikun;げじ;げじげじ
+細小;gikun;いさら;いささ
+千里;gikun;ね
+天牛;gikun;かみきり
 豊受;fused;とゆけ
 不足;conjug;たらず
 不知;conjug;しらず;しらぬ
@@ -24284,7 +24296,6 @@
 不見;conjug;みず
 不老;conjug;おいず
 下関;patch;しものせき
-物の;patch;ものの
 都城;patch;みやこのじょう
 宇都宮;patch;うつのみや
 尼崎;patch;あまがさき

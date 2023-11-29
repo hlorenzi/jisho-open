@@ -7,6 +7,7 @@ import * as JmdictTags from "common/jmdict_tags.ts"
 import * as Furigana from "common/furigana.ts"
 import { KanjiStrokeDiagram } from "./KanjiStrokeDiagram.tsx"
 import * as Tags from "./Tags.tsx"
+import { FuriganaSideBySide } from "./Furigana.tsx"
 
 
 export function EntryKanji(props: {
@@ -273,8 +274,9 @@ function ExampleWords(props: {
                                 />
                             </Solid.Show>
                         </ExampleWordTagsWrapper>
-                        <ExampleWordReading
-                            kanji={ props.kanji }
+                        <FuriganaSideBySide
+                            skipBase
+                            highlightKanji={ props.kanji }
                             furigana={ furigana }
                         />
                     </ExampleWordHeading>
@@ -315,38 +317,4 @@ const ExampleWordTagsWrapper = styled.sup`
 
 const ExampleWordSense = styled.span`
     color: ${ Framework.themeVar("text2ndColor") };
-`
-
-
-export function ExampleWordReading(props: {
-    kanji: string,
-    furigana: Furigana.Furigana,
-    children?: Solid.JSX.Element,
-})
-{
-    return <>
-        【
-        <Solid.For each={ props.furigana }>{ (segment, index) =>
-            <>
-            { index() > 0 ? "・" : "" }
-            <ExampleWordReadingSegment
-                faded={ segment[0].indexOf(props.kanji) < 0 }
-            >
-                { segment[1] || segment[0] }
-            </ExampleWordReadingSegment>
-            </>
-        }
-        </Solid.For>
-        】
-    </>
-}
-
-
-const ExampleWordReadingSegment = styled.span<{
-    faded: boolean,
-}>`
-    ${ props => props.faded ?
-        `color: ${ Framework.themeVar("text3rdColor") }` :
-        ``
-    };
 `

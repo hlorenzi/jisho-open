@@ -5,26 +5,26 @@ import * as Kanjidic from "../../importing/kanjidic.ts"
 
 export async function importKanjiEntries(
     state: MongoDb.State,
-    apiKanjis: Api.Kanji.Entry[])
+    apiEntries: Api.Kanji.Entry[])
     : Promise<void>
 {
-    const dbKanjis = apiKanjis.map(translateApiKanjiToDbKanji)
+    const dbEntries = apiEntries.map(translateKanjiApiToDb)
 
-    if (dbKanjis.length === 0)
+    if (dbEntries.length === 0)
         return
 
 
     await state.collKanji.deleteMany(
-        { _id: { $in: dbKanjis.map(e => e._id) }})
+        { _id: { $in: dbEntries.map(e => e._id) }})
 
-    const resKanjis = await state.collKanji.insertMany(dbKanjis)
+    const res = await state.collKanji.insertMany(dbEntries)
 
-    if (resKanjis.insertedCount !== dbKanjis.length)
+    if (res.insertedCount !== dbEntries.length)
         throw `MongoDb.importKanji failed`
 }
 
 
-function translateApiKanjiToDbKanji(
+function translateKanjiApiToDb(
     apiKanji: Api.Kanji.Entry)
     : MongoDb.DbKanjiEntry
 {

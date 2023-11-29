@@ -199,6 +199,14 @@ export async function connect(): Promise<Interface>
         [fieldKanjiScore]: -1,
     })
 
+    await state.collStudylists.createIndex({
+        ["creatorId" satisfies keyof DbStudyListEntry]: 1,
+    })
+
+    await state.collStudylists.createIndex({
+        ["editorIds" satisfies keyof DbStudyListEntry]: 1,
+    })
+
     return {
         client,
         state,

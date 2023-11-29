@@ -100,8 +100,9 @@ function WordBuckets(props: {
                                             />
                                         </Solid.Show>
                                     </WordTagsWrapper>
-                                    <WordReading
-                                        kanji={ props.kanji }
+                                    <FuriganaSideBySide
+                                        skipBase
+                                        highlightKanji={ props.kanji }
                                         furigana={ furigana }
                                     />
                                 </WordHeading>
@@ -191,38 +192,4 @@ const WordTagsWrapper = styled.sup`
 
 const WordSense = styled.span`
     color: ${ Framework.themeVar("text2ndColor") };
-`
-
-
-export function WordReading(props: {
-    kanji: string,
-    furigana: Furigana.Furigana,
-    children?: Solid.JSX.Element,
-})
-{
-    return <>
-        【
-        <Solid.For each={ props.furigana }>{ (segment, index) =>
-            <>
-            { index() > 0 ? "・" : "" }
-            <WordReadingSegment
-                faded={ segment[0].indexOf(props.kanji) < 0 }
-            >
-                { segment[1] || segment[0] }
-            </WordReadingSegment>
-            </>
-        }
-        </Solid.For>
-        】
-    </>
-}
-
-
-const WordReadingSegment = styled.span<{
-    faded: boolean,
-}>`
-    ${ props => props.faded ?
-        `color: ${ Framework.themeVar("text3rdColor") }` :
-        ``
-    };
 `

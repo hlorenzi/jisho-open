@@ -9,7 +9,7 @@ export async function importWordEntries(
     apiWords: Api.Word.Entry[])
     : Promise<void>
 {
-    const dbWords = apiWords.map(translateApiWordToDbWord)
+    const dbWords = apiWords.map(translateWordApiToDb)
 
     if (dbWords.length === 0)
         return
@@ -48,7 +48,7 @@ export async function importWordEntriesFinish(
 }
 
 
-function translateApiWordToDbWord(
+function translateWordApiToDb(
     apiWord: Api.Word.Entry)
     : MongoDb.DbWordEntry
 {

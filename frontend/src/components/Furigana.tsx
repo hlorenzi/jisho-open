@@ -1,13 +1,16 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
+import * as Framework from "../framework/index.ts"
 import * as Furigana from "common/furigana.ts"
+import * as Kana from "common/kana.ts"
 
 
 export function FuriganaRuby(props: {
     encoded?: string,
+    furigana?: Furigana.Furigana,
 })
 {
-    const furigana = Furigana.decode(props.encoded ?? "")
+    const furigana = props.furigana ?? Furigana.decode(props.encoded ?? "")
 
     // Doesn't help with the bounding box.
     //if (Furigana.extractBase(furigana) === Furigana.extractReading(furigana))
@@ -22,15 +25,36 @@ export function FuriganaRuby(props: {
                 segment[0].length > 1
             
             return <>
-                { segment[0] || "\u00a0" }
+                <Solid.Show
+                    when={ !!segment[0] }
+                    fallback={ <EmptyBase> { "\u3000" }</EmptyBase> }
+                >
+                    { segment[0] }
+                </Solid.Show>
                 <Rt dotted={ dotted }>
-                    { segment[1] }
+                    <Solid.Show
+                        when={ !Kana.hasKanji(segment[0]) || segment[1] }
+                        fallback={ <EmptyReading>×</EmptyReading> }
+                    >
+                        { segment[1] }
+                    </Solid.Show>
                 </Rt>
             </>
         }}
         </Solid.For>
     </ruby>
 }
+
+
+const EmptyBase = styled.span`
+    margin-left: -1em;
+    margin-right: -1em;
+`
+
+
+const EmptyReading = styled.span`
+    color: ${ Framework.themeVar("iconRedColor") };
+`
 
 
 const Rt = styled.rt<{
@@ -50,20 +74,51 @@ const Rt = styled.rt<{
 
 export function FuriganaSideBySide(props: {
     encoded?: string,
+    furigana?: Furigana.Furigana,
     children?: Solid.JSX.Element,
+    highlightKanji?: string,
+    skipBase?: boolean,
 })
 {
-    const furigana = Furigana.decode(props.encoded ?? "")
+    const furigana = props.furigana ?? Furigana.decode(props.encoded ?? "")
     const base = Furigana.extractBase(furigana)
     const reading = Furigana.extractReading(furigana)
 
     return <>
-        { base }
+        <Solid.Show when={ !props.skipBase }>
+            { base }
+        </Solid.Show>
         { props.children }
         <Solid.Show when={ reading !== "" && reading !== base }>
             【
-            { furigana.map(f => f[1] || f[0]).join("・") }
+            <Solid.For each={ furigana }>
+            { (segment, index) =>
+                <>
+                { index() > 0 ? "・" : "" }
+                <Solid.Show
+                    when={ !Kana.hasKanji(segment[0]) || segment[1] }
+                    fallback={ <EmptyReading>×</EmptyReading> }
+                >
+                    <HighlightedReading
+                        faded={ !!props.highlightKanji && segment[0].indexOf(props.highlightKanji) < 0 }
+                    >
+                        { segment[1] || segment[0] }
+                    </HighlightedReading>
+                </Solid.Show>
+                </>
+            }
+            </Solid.For>
             】
         </Solid.Show>
     </>
 }
+
+
+const HighlightedReading = styled.span<{
+    faded: boolean,
+}>`
+    ${ props => props.faded ?
+        `color: ${ Framework.themeVar("text3rdColor") }` :
+        ``
+    };
+`

@@ -254,6 +254,13 @@ export async function studylistGetAllMarked(
 
     const dbRegex = `^${ wordId }`
 
+    const queryCreatorOrEditor: MongoDriver.Filter<DbMongo.DbStudyListEntry> = {
+        $or: [
+            { creatorId: authUser.id },
+            { editorIds: authUser.id },
+        ],
+    }
+
     const queryWithWordSpelling: MongoDriver.Filter<DbMongo.DbStudyListEntry> =
         wordId ?
             { "words.id": markWordId } :
@@ -271,38 +278,26 @@ export async function studylistGetAllMarked(
 
     const studylistsWithWordSpelling = await state.collStudylists
         .find({
-            $or: [
-                { creatorId: authUser.id },
-                { editorIds: authUser.id },
-            ],
+            ...queryCreatorOrEditor,
             ...queryWithWordSpelling,
         })
         .project<Projected>({ editorPassword: 0, words: 0 })
-        .sort({ modifyDate: -1 })
         .toArray()
 
     const studylistsWithWord = await state.collStudylists
         .find({
-            $or: [
-                { creatorId: authUser.id },
-                { editorIds: authUser.id },
-            ],
+            ...queryCreatorOrEditor,
             ...queryWithWord,
         })
         .project<Projected>({ editorPassword: 0, words: 0 })
-        .sort({ modifyDate: -1 })
         .toArray()
 
     const studylistsWithoutWord = await state.collStudylists
         .find({
-            $or: [
-                { creatorId: authUser.id },
-                { editorIds: authUser.id },
-            ],
+            ...queryCreatorOrEditor,
             ...queryWithoutWord,
         })
         .project<Projected>({ editorPassword: 0, words: 0 })
-        .sort({ modifyDate: -1 })
         .toArray()
 
     studylistsWithWord.forEach(list => { list.marked = "spelling" })

@@ -1,7 +1,6 @@
 import * as Db from "../db/index.ts"
 import * as Kanjidic from "./kanjidic.ts"
 import * as Jmdict from "./jmdict.ts"
-import * as KanjiWords from "./kanji_words.ts"
 import * as StandardLists from "./standard_lists.ts"
 import * as Logging from "./logging.ts"
 
@@ -35,7 +34,6 @@ export async function buildDatabase(
         await Jmdict.downloadAndImport(logger, db, useCachedFiles)
         await StandardLists.buildStandardLists(logger, db)
         await Kanjidic.downloadAndImport(logger, db, useCachedFiles)
-        await KanjiWords.crossReferenceKanjiWords(logger, db)
         await logger.writeLn("finished building database")
     }
     catch (e)

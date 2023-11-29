@@ -304,9 +304,13 @@ export function match(
     attempts = attempts.filter(
         att => att.baseI >= base.length && att.readingI >= reading.length)
 
-    const result = attempts.map(att => att.result)
-    if (result.length == 0)
+    const result = attempts
+        .map(att => att.result)
+        .filter(f => !f.some(p => p[0] === "物" && p[1] === "も"))
+    
+    if (result.length === 0)
         return [[[baseRaw, readingRaw]]]
+    
 
     // Reinsert ignored characters
     /*if (base !== baseRaw)
@@ -606,14 +610,14 @@ function getPossibleRevisions(
 
                     if (len == 1 && part[0].length <= 6 && noReadingMatch)
                     {
-                        if (readOrig.startsWith("の"))
-                            // || readOrig.startsWith("っ"))
+                        if (readOrig.startsWith("の") ||
+                            readOrig.startsWith("っ"))
                         {
                             newAttempts.push({
                                 main: attempt.main,
                                 read: attempt.read + 1,
                                 result: [...attempt.result, ["", readOrig.slice(0, 1)]],
-                                score: attempt.score + 0.25,
+                                score: attempt.score + 0.05,
                                 chars: attempt.chars,
                                 fullMatches: attempt.fullMatches,
                                 hasLowScore: !!attempt.hasLowScore,

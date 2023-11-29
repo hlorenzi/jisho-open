@@ -8,8 +8,11 @@ export async function importKanjiWordCrossRefEntry(
     apiEntries: Api.KanjiWordCrossRef.Entry[])
     : Promise<void>
 {
-    const dbEntries = apiEntries.map(
-        e => translateApiKanjiWordToDbKanjiWord(e))
+    const dbEntries = apiEntries.map(translateKanjiWordApiToDb)
+
+    if (dbEntries.length === 0)
+        return
+    
 
     await state.collKanjiWords.deleteMany(
         { _id: { $in: dbEntries.map(e => e._id) }})
@@ -21,7 +24,7 @@ export async function importKanjiWordCrossRefEntry(
 }
 
 
-function translateApiKanjiWordToDbKanjiWord(
+function translateKanjiWordApiToDb(
     apiEntry: Api.KanjiWordCrossRef.Entry)
     : MongoDb.DbKanjiWordEntry
 {
