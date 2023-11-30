@@ -60,7 +60,7 @@ export function init(tagId: string)
 /// From https://stackoverflow.com/a/75625761/1161194
 function overrideCookies()
 {
-	const overriddenCookies: any = {}
+	/*const overriddenCookies: any = {}
 
 	Object.defineProperty(document, "cookie", {
 		get: function() {
@@ -80,7 +80,7 @@ function overrideCookies()
 			overriddenCookies[cookieName] = cookieValue
 			return value
 		}
-	})
+	})*/
 }
 
 

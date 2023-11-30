@@ -18,7 +18,7 @@ export const dbCollectionDefinitions = "definitions"
 export const dbCollectionKanji = "kanji"
 export const dbCollectionKanjiWords = "kanji_words"
 export const dbCollectionStudyLists = "studylists"
-export const logEntriesMax = 10000
+export const logEntriesMax = 2000
 
 
 export type State = {
