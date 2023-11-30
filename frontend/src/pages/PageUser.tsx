@@ -188,12 +188,14 @@ export function PageUser(props: Framework.RouteProps)
                 { (listOrFolder) =>
                     !listOrFolder.children ?
                         <Studylist
+                            userId={ data()?.user.id }
                             studylist={ listOrFolder }
                             userIsSelf={ !!data()?.userIsSelf }
                             onDelete={ onDelete }
                         />
                         :
                         <Folder
+                            userId={ data()?.user.id }
                             folder={ listOrFolder }
                             expandedFolders={ expandedFolders() }
                             onToggleFolder={ onToggleFolder }
@@ -228,6 +230,7 @@ const FolderLevel = styled.div`
 
 
 function Folder(props: {
+    userId?: string,
     folder: StudyListOrFolder,
     expandedFolders: Set<string>,
     onToggleFolder: (folderName: string) => void,
@@ -266,6 +269,7 @@ function Folder(props: {
                 <Solid.For each={ props.folder.children }>
                     { (list) =>
                         <Studylist
+                            userId={ props.userId }
                             studylist={ list }
                             userIsSelf={ props.userIsSelf }
                             onDelete={ props.onDelete }
@@ -279,6 +283,7 @@ function Folder(props: {
 
 
 function Studylist(props: {
+    userId?: string,
     studylist: StudyListOrFolder,
     userIsSelf: boolean,
     onDelete: (studylist: StudyListOrFolder) => Promise<void>,
@@ -303,7 +308,17 @@ function Studylist(props: {
             { props.studylist.selfName }
             <Solid.Show when={ !props.studylist.public }>
                 { " " }
-                <Framework.IconLock color={ Framework.themeVar("iconBlueColor") }/>
+                <Framework.IconLock
+                    title="Private"
+                    color={ Framework.themeVar("iconBlueColor") }
+                />
+            </Solid.Show>
+            <Solid.Show when={ props.studylist.creatorId !== props.userId }>
+                { " " }
+                <Framework.IconUser
+                    title="You're an editor"
+                    color={ Framework.themeVar("iconYellowColor") }
+                />
             </Solid.Show>
 
             <SmallInfo>

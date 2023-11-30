@@ -180,6 +180,14 @@ export async function studylistCreate()
 }
 
 
+export async function studylistClone(
+    req: Api.StudylistClone.Request)
+    : Promise<Api.StudylistClone.Response>
+{
+    return post(Api.StudylistClone.url, req)
+}
+
+
 export async function studylistCreateAndAddWord(
     wordId: string)
     : Promise<Api.StudylistWordAdd.Response | undefined>
@@ -267,6 +275,30 @@ export async function studylistEditPublic(
     }
     
     return post(Api.StudylistEdit.url, req)
+}
+
+
+export async function studylistEdit(
+    req: Api.StudylistEdit.Request)
+    : Promise<Api.StudylistEdit.Response>
+{
+    return post(Api.StudylistEdit.url, req)
+}
+
+
+export async function studylistEditorJoin(
+    req: Api.StudylistEditorJoin.Request)
+    : Promise<Api.StudylistEditorJoin.Response>
+{
+    return post(Api.StudylistEditorJoin.url, req)
+}
+
+
+export async function studylistEditorLeave(
+    req: Api.StudylistEditorLeave.Request)
+    : Promise<Api.StudylistEditorLeave.Response>
+{
+    return post(Api.StudylistEditorLeave.url, req)
 }
 
 

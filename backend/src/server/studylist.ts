@@ -23,6 +23,19 @@ export function init(
         res.send({ studylistId } satisfies Api.StudylistCreate.Response)
     })
 
+    app.post(Api.StudylistClone.url, async (req, res) => {
+        const body = req.body as Api.StudylistClone.Request
+
+        if (typeof body.studylistId !== "string")
+            throw Api.Error.malformed
+
+        const newId = await db.studylistClone(
+            await ServerAuth.authenticateRequest(auth, req),
+            body.studylistId)
+        
+        res.send({ studylistId: newId } satisfies Api.StudylistClone.Response)
+    })
+
     app.post(Api.StudylistDelete.url, async (req, res) => {
         const body = req.body as Api.StudylistDelete.Request
 
@@ -63,6 +76,13 @@ export function init(
                     typeof body.edit.value !== "undefined")
                     throw Api.Error.malformed
                 break
+            case "editorIds":
+                if (!Array.isArray(body.edit.value))
+                    throw Api.Error.malformed
+            
+                if (!body.edit.value.every(id => typeof id === "string"))
+                    throw Api.Error.malformed
+                break
             default:
                 throw Api.Error.malformed
         }
@@ -73,6 +93,36 @@ export function init(
             body.edit)
         
         res.send({} satisfies Api.StudylistEdit.Response)
+    })
+
+    app.post(Api.StudylistEditorJoin.url, async (req, res) => {
+        const body = req.body as Api.StudylistEditorJoin.Request
+
+        if (typeof body.studylistId !== "string")
+            throw Api.Error.malformed
+
+        if (typeof body.password !== "string")
+            throw Api.Error.malformed
+
+        await db.studylistEditorJoin(
+            await ServerAuth.authenticateRequest(auth, req),
+            body.studylistId,
+            body.password)
+        
+        res.send({} satisfies Api.StudylistEditorJoin.Response)
+    })
+
+    app.post(Api.StudylistEditorLeave.url, async (req, res) => {
+        const body = req.body as Api.StudylistEditorLeave.Request
+
+        if (typeof body.studylistId !== "string")
+            throw Api.Error.malformed
+
+        await db.studylistEditorLeave(
+            await ServerAuth.authenticateRequest(auth, req),
+            body.studylistId)
+        
+        res.send({} satisfies Api.StudylistEditorLeave.Response)
     })
     
     app.post(Api.StudylistGet.url, async (req, res) => {

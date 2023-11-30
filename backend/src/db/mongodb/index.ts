@@ -259,10 +259,16 @@ export async function connect(): Promise<Interface>
             
         studylistCreate: (authUser, name) =>
             MongoDbStudyLists.studylistCreate(state, authUser, name),
+        studylistClone: (authUser, studylistId) =>
+            MongoDbStudyLists.studylistClone(state, authUser, studylistId),
         studylistDelete: (authUser, studylistId) =>
             MongoDbStudyLists.studylistDelete(state, authUser, studylistId),
         studylistEdit: (authUser, studylistId, edit) =>
             MongoDbStudyLists.studylistEdit(state, authUser, studylistId, edit),
+        studylistEditorJoin: (authUser, studylistId, password) =>
+            MongoDbStudyLists.studylistEditorJoin(state, authUser, studylistId, password),
+        studylistEditorLeave: (authUser, studylistId) =>
+            MongoDbStudyLists.studylistEditorLeave(state, authUser, studylistId),
         studylistGet: (authUser, studylistId) =>
             MongoDbStudyLists.studylistGet(state, authUser, studylistId),
         studylistGetAll: (authUser, userId) =>

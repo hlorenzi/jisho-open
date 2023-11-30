@@ -21,8 +21,8 @@ export function UserIdLink(props: {
     userId: string,
 })
 {
-    const [user] = Solid.createResource(
-        props.userId,
+    const user = Framework.createAsyncSignal(
+        () => props.userId,
         async (userId) => {
             const user = await App.Api.getUser({ userId })
             return user.user
@@ -30,10 +30,10 @@ export function UserIdLink(props: {
 
 
     return <Solid.Show
-        when={ user() }
-        fallback={ <Framework.LoadingSpinner/> }
+        when={ !user().loading }
+        fallback={ <>...</> }
     >
-        <UserLink user={ user() }/>
+        <UserLink user={ user().latest }/>
     </Solid.Show>
 }
 

@@ -53,9 +53,17 @@ export async function studylistCreate(
     name: string)
     : Promise<string>
 {
-    if (!authUser.id ||
-        !Auth.canUserWrite(authUser))
+    if (!authUser.id)
+        throw Api.Error.notLoggedIn
+
+    if (!Auth.canUserWrite(authUser))
         throw Api.Error.forbidden
+
+    const userStudylistCount = await state.collStudylists
+        .countDocuments({ creatorId: authUser.id })
+
+    if (userStudylistCount + 1 > Api.StudyList.maxListCountPerUser)
+        throw Api.Error.userStudylistCount
 
     const validatedName = validateName(name)
 
@@ -82,14 +90,75 @@ export async function studylistCreate(
 }
 
 
+export async function studylistClone(
+    state: DbMongo.State,
+    authUser: Api.MaybeUser,
+    studylistId: string)
+    : Promise<string>
+{
+    if (!authUser.id)
+        throw Api.Error.notLoggedIn
+
+    if (!Auth.canUserWrite(authUser))
+        throw Api.Error.forbidden
+
+    const studylist = await state.collStudylists
+        .findOne({ _id: studylistId })
+
+    if (!studylist)
+        throw Api.Error.notFound
+
+    const isAdmin = Api.userIsAdmin(authUser)
+    const isCreator = authUser.id === studylist.creatorId
+    const isEditor = studylist.editorIds.some(id => id === authUser.id)
+    if (!isAdmin &&
+        !isCreator &&
+        !isEditor &&
+        !studylist.public)
+        throw Api.Error.forbidden
+
+    const userStudylistCount = await state.collStudylists
+        .countDocuments({ creatorId: authUser.id })
+
+    if (userStudylistCount + 1 > Api.StudyList.maxListCountPerUser)
+        throw Api.Error.userStudylistCount
+
+    const now = new Date()
+
+    const cloneSuffix = " (clone)"
+
+    const studylistNew: DbMongo.DbStudyListEntry = {
+        _id: undefined!,
+        creatorId: authUser.id,
+        name: studylist.name +
+            (studylist.name.endsWith(cloneSuffix) ? "" : cloneSuffix),
+        public: false,
+        editorIds: [],
+        editorPassword: undefined,
+        wordCount: studylist.words.length,
+        words: [...studylist.words],
+        createDate: now,
+        modifyDate: now,
+    }
+
+    const id = await DbMongo.insertWithNewId(
+        state.collStudylists,
+        studylistNew)
+    
+    return id
+}
+
+
 export async function studylistDelete(
     state: DbMongo.State,
     authUser: Api.MaybeUser,
     studylistId: string)
     : Promise<void>
 {
-    if (!authUser.id ||
-        !Auth.canUserWrite(authUser))
+    if (!authUser.id)
+        throw Api.Error.notLoggedIn
+
+    if (!Auth.canUserWrite(authUser))
         throw Api.Error.forbidden
 
     const studylist = await state.collStudylists
@@ -158,9 +227,84 @@ export async function studylistEdit(
                 { $set: { editorPassword: edit.value }})
             break
         }
+        case "editorIds":
+        {
+            await state.collStudylists.updateOne(
+                { _id: studylistId },
+                { $set: { editorIds: edit.value }})
+            break
+        }
         default:
             throw Api.Error.malformed
     }
+}
+
+
+export async function studylistEditorJoin(
+    state: DbMongo.State,
+    authUser: Api.MaybeUser,
+    studylistId: string,
+    password: string)
+    : Promise<void>
+{
+    if (!authUser.id)
+        throw Api.Error.notLoggedIn
+    
+    if (!Auth.canUserWrite(authUser))
+        throw Api.Error.forbidden
+
+    const studylist = await state.collStudylists
+        .findOne({ _id: studylistId })
+
+    if (!studylist)
+        throw Api.Error.notFound
+
+    if (!studylist.editorPassword)
+        throw Api.Error.forbidden
+
+    if (password !== studylist.editorPassword)
+        throw Api.Error.forbidden
+
+    const isCreator = authUser.id === studylist.creatorId
+    if (isCreator)
+        return
+
+    if (studylist.editorIds.some(id => id === authUser.id))
+        return
+
+    if (studylist.editorIds.length + 1 > Api.StudyList.maxEditorCount)
+        throw Api.Error.studylistEditorCount
+
+    await state.collStudylists.updateOne(
+        { _id: studylistId },
+        { $push: { editorIds: { $each: [authUser.id] } } })
+}
+
+
+export async function studylistEditorLeave(
+    state: DbMongo.State,
+    authUser: Api.MaybeUser,
+    studylistId: string)
+    : Promise<void>
+{
+    if (!authUser.id)
+        throw Api.Error.notLoggedIn
+
+    if (!Auth.canUserWrite(authUser))
+        throw Api.Error.forbidden
+
+    const studylist = await state.collStudylists
+        .findOne({ _id: studylistId })
+
+    if (!studylist)
+        throw Api.Error.notFound
+
+    if (!studylist.editorIds.some(id => id === authUser.id))
+        return
+
+    await state.collStudylists.updateOne(
+        { _id: studylistId },
+        { $pull: { editorIds: authUser.id } })
 }
 
 
@@ -239,8 +383,10 @@ export async function studylistGetAllMarked(
     markWordId: string | undefined)
     : Promise<Api.StudyList.Entry[]>
 {
-    if (!authUser.id ||
-        !Auth.canUserRead(authUser))
+    if (!authUser.id)
+        throw Api.Error.notLoggedIn
+
+    if (!Auth.canUserRead(authUser))
         throw Api.Error.forbidden
 
     const [wordId, wordSpelling] =
@@ -323,6 +469,9 @@ export async function studylistWordAdd(
     wordId: string)
     : Promise<void>
 {
+    if (!authUser.id)
+        throw Api.Error.notLoggedIn
+
     const studylist = await state.collStudylists
         .findOne({ _id: studylistId })
     
@@ -372,6 +521,9 @@ export async function studylistWordRemoveMany(
     wordIds: string[])
     : Promise<void>
 {
+    if (!authUser.id)
+        throw Api.Error.notLoggedIn
+
     const studylist = await state.collStudylists
         .findOne({ _id: studylistId })
     

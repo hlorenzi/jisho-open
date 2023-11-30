@@ -1,3 +1,5 @@
+export const maxListCountPerUser = 1000
+export const maxEditorCount = 100
 export const maxWordCount = 10000
 
 

@@ -105,6 +105,11 @@ export interface Interface
         name: string)
         => Promise<string>
 
+    studylistClone: (
+        authUser: Api.MaybeUser,
+        studylistId: string)
+        => Promise<string>
+
     studylistDelete: (
         authUser: Api.MaybeUser,
         studylistId: string)
@@ -114,6 +119,17 @@ export interface Interface
         authUser: Api.MaybeUser,
         studylistId: string,
         edit: Api.StudylistEdit.Request["edit"])
+        => Promise<void>
+
+    studylistEditorJoin: (
+        authUser: Api.MaybeUser,
+        studylistId: string,
+        password: string)
+        => Promise<void>
+
+    studylistEditorLeave: (
+        authUser: Api.MaybeUser,
+        studylistId: string)
         => Promise<void>
 
     studylistGet: (
@@ -185,9 +201,12 @@ export function createDummy(): Interface
         searchKanjiByMeaning: async () => [],
         searchKanjiByComponents: async () => [],
 
-        studylistCreate: async () => "fake",
+        studylistCreate: async () => { throw Api.Error.forbidden },
+        studylistClone: async () => { throw Api.Error.forbidden },
         studylistDelete: async () => {},
         studylistEdit: async () => {},
+        studylistEditorJoin: async () => {},
+        studylistEditorLeave: async () => {},
         studylistGet: async () => { throw Api.Error.forbidden },
         studylistGetAll: async () => [],
         studylistGetAllMarked: async () => [],

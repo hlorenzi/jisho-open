@@ -38,6 +38,9 @@ function Root()
                 { patterns: [Pages.Studylist.urlPattern],
                     load: async () => (await import("./pages/PageStudylist.tsx")).PageStudylist },
     
+                { patterns: [Pages.StudylistEditorJoin.urlPattern],
+                    load: async () => (await import("./pages/PageStudylistJoin.tsx")).PageStudylistJoin },
+    
                 { patterns: [Pages.Community.url],
                     load: async () => (await import("./pages/PageCommunity.tsx")).PageCommunity },
     

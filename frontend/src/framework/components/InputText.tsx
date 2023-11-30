@@ -11,6 +11,7 @@ export function InputText(props: {
     onInput?: (value: string) => void,
     onEnter?: (ev: KeyboardEvent) => void,
     search?: boolean,
+    disabled?: boolean,
     placeholder?: string,
     autofocus?: boolean,
     style?: Solid.JSX.CSSProperties,
@@ -24,6 +25,7 @@ export function InputText(props: {
         onChange={ ev => props.onChange?.(ev.target.value) }
         onInput={ ev => props.onInput?.(ev.target.value) }
         onKeyDown={ ev => { if (ev.key === "Enter") props.onEnter?.(ev) }}
+        disabled={ props.disabled }
         autofocus={ props.autofocus }
         spellcheck={ false }
         autocorrect="off"

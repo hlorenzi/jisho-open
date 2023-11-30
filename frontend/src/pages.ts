@@ -75,6 +75,17 @@ export namespace Studylist
 }
 
 
+export namespace StudylistEditorJoin
+{
+    export const matchStudylistId = "studylistId"
+    export const matchPassword = "password"
+    export const urlPattern = `/join/:${ matchStudylistId }/:${ matchPassword }`
+
+    export const urlWith = (studylistId: string, password: string) =>
+        `/join/${ encodeURIComponent(studylistId) }/${ encodeURIComponent(password) }`
+}
+
+
 export namespace Community
 {
     export const url = `/community`

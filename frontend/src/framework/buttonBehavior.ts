@@ -10,7 +10,7 @@ export type OnClickEvent<T> = Event & {
 
 export type OnClickHandler = (
     ev: OnClickEvent<HTMLButtonElement | HTMLAnchorElement>)
-    => boolean | void | Promise<void>
+    => boolean | void | Promise<unknown>
 
 
 export interface ButtonBehaviorProps

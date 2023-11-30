@@ -19,6 +19,9 @@ export namespace Error
     export const internal: ErrorType =
         { statusCode: 500, statusMessage: "internal server error" }
 
+    export const notLoggedIn: ErrorType =
+        { statusCode: 403, statusMessage: "not logged in" }
+    
     export const forbidden: ErrorType =
         { statusCode: 403, statusMessage: "forbidden" }
     
@@ -26,13 +29,19 @@ export namespace Error
         { statusCode: 404, statusMessage: "not found" }
 
     export const malformed: ErrorType =
-        { statusCode: 400, statusMessage: "invalid request" }
+        { statusCode: 400, statusMessage: "malformed request" }
 
     export const studylistInvalidName: ErrorType =
         { statusCode: 400, statusMessage: "invalid name for study list" }
     
+    export const userStudylistCount: ErrorType =
+        { statusCode: 400, statusMessage: "user has reached their maximum number of study lists created" }
+    
+    export const studylistEditorCount: ErrorType =
+        { statusCode: 400, statusMessage: "study list has reached its maximum capacity for editors" }
+
     export const studylistCapacity: ErrorType =
-        { statusCode: 400, statusMessage: "study list has reached its maximum capacity" }
+        { statusCode: 400, statusMessage: "study list has reached its maximum capacity for words" }
 }
 
 
@@ -365,9 +374,48 @@ export namespace StudylistCreate
 }
 
 
+export namespace StudylistClone
+{
+    export const url = "/api/v1/studylistClone"
+
+    export type Request = {
+        studylistId: string
+    }
+    
+    export type Response = {
+        studylistId: string
+    }
+}
+
+
 export namespace StudylistDelete
 {
     export const url = "/api/v1/studylistDelete"
+
+    export type Request = {
+        studylistId: string
+    }
+    
+    export type Response = {}
+}
+
+
+export namespace StudylistEditorJoin
+{
+    export const url = "/api/v1/studylistEditorJoin"
+
+    export type Request = {
+        studylistId: string
+        password: string
+    }
+    
+    export type Response = {}
+}
+
+
+export namespace StudylistEditorLeave
+{
+    export const url = "/api/v1/studylistEditorLeave"
 
     export type Request = {
         studylistId: string
@@ -387,6 +435,7 @@ export namespace StudylistEdit
             | { type: "name", value: string }
             | { type: "public", value: boolean }
             | { type: "editorPassword", value?: string }
+            | { type: "editorIds", value: string[] }
     }
     
     export type Response = {}

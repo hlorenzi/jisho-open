@@ -6,7 +6,7 @@ import * as JmdictTags from "common/jmdict_tags.ts"
 import * as Furigana from "common/furigana.ts"
 import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
-import { UserLink } from "../components/User.tsx"
+import { UserIdLink, UserLink } from "../components/User.tsx"
 import { HeadingLabel } from "../components/EntryWord.tsx"
 import * as StudylistExport from "./studylistExport.ts"
 
@@ -35,6 +35,10 @@ export function PageStudylist(props: Framework.RouteProps)
             const userIsCreator =
                 authUser.id === user.id ||
                 authUser.tags?.some(tag => tag === "admin")
+
+            const userIsEditor =
+                !userIsCreator &&
+                studylist.editorIds.some(id => id === authUser.id)
 
             const wordEntriesById = new Map<string, App.Api.Word.Entry>()
             entries.forEach(e => wordEntriesById.set(e.id, e))
@@ -74,6 +78,7 @@ export function PageStudylist(props: Framework.RouteProps)
                 authUser,
                 user,
                 userIsCreator,
+                userIsEditor,
                 studylist,
                 words,
             }
@@ -130,6 +135,39 @@ export function PageStudylist(props: Framework.RouteProps)
         Framework.historyReload()
     })
 
+    const onClone = () => popupBusy.run(async () => {
+        const message = data()?.userIsCreator ?
+            `Clone this study list?` :
+            `Clone this study list for yourself?`
+
+        if (!window.confirm(message))
+            return
+
+        const res = await App.Api.studylistClone({
+            studylistId: data()!.studylist.id,
+        })
+
+        Framework.historyPush(App.Pages.Studylist.urlWith(res.studylistId))
+    })
+
+    const onResignAsEditor = () => popupBusy.run(async () => {
+        const message =
+            `Resign as editor of this list?\n\n` +
+            `You'll need an invite link to join again.`
+
+        if (!window.confirm(message))
+            return
+
+        await App.Api.studylistEditorLeave({
+            studylistId: data()!.studylist.id,
+        })
+
+        if (!data()!.studylist.public)
+            Framework.historyPush("/")
+        else
+            Framework.historyReload()
+    })
+
     const onSelectWord = async (wordId: string, wordSelected: boolean) => {
         const newSet = new Set<string>([...selected()])
 
@@ -174,6 +212,13 @@ export function PageStudylist(props: Framework.RouteProps)
 
     const importPopup = Framework.makePopupPageWide({
         childrenFn: () => <ImportPopup
+            studylist={ data()!.studylist }
+            popup={ importPopup }
+        />,
+    })
+
+    const editorsPopup = Framework.makePopupPageWide({
+        childrenFn: () => <EditorsPopup
             studylist={ data()!.studylist }
             popup={ importPopup }
         />,
@@ -229,6 +274,16 @@ export function PageStudylist(props: Framework.RouteProps)
                 { Framework.dateAndElapsedToStr(data()!.studylist.modifyDate ?? "") }
             </SmallInfo>
 
+            <Solid.Show when={ data()?.userIsEditor }>
+                <br/>
+                <Framework.Button
+                    icon={ <Framework.IconX/> }
+                    label="Resign as Editor"
+                    onClick={ onResignAsEditor }
+                />
+                <br/>
+            </Solid.Show>
+
             <br/>
 
             <Solid.Show when={ data()?.userIsCreator }>
@@ -254,6 +309,24 @@ export function PageStudylist(props: Framework.RouteProps)
 
             <Solid.Show when={ data()?.userIsCreator }>
                 <Framework.Button
+                    icon={ <Framework.IconUser/> }
+                    label="Editors..."
+                    onClick={ ev => editorsPopup.open(ev.currentTarget) }
+                />
+                <br/>
+                <br/>
+            </Solid.Show>
+
+            <Solid.Show when={ data()?.authUser.id }>
+                <Framework.Button
+                    icon={ <Framework.IconSparkles/> }
+                    label="Clone"
+                    onClick={ onClone }
+                />
+            </Solid.Show>
+
+            <Solid.Show when={ data()?.userIsCreator || data()?.userIsEditor }>
+                <Framework.Button
                     icon={ <Framework.IconUpload/> }
                     label="Import..."
                     onClick={ ev => importPopup.open(ev.currentTarget) }
@@ -268,6 +341,7 @@ export function PageStudylist(props: Framework.RouteProps)
 
             { exportPopup.rendered }
             { importPopup.rendered }
+            { editorsPopup.rendered }
 
             <br/>
             <br/>
@@ -797,4 +871,181 @@ const ImportWordReading = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 50%;
+`
+
+
+function EditorsPopup(props: {
+    studylist: App.Api.StudyList.Entry,
+    popup: Framework.PopupPageWideData,
+})
+{
+    const popupBusy = Framework.makePopupBusy()
+
+    const [password, setPassword] =
+        Solid.createSignal(props.studylist.editorPassword)
+
+    const [editorIds, setEditorIds] =
+        Solid.createSignal(props.studylist.editorIds)
+
+    const onGeneratePassword = () => popupBusy.run(async () => {
+        const password = Math.floor(Math.random() * 999_999_999_999)
+            .toString()
+            .padStart(3 * 4)
+
+        await App.Api.studylistEdit({
+            studylistId: props.studylist.id,
+            edit: {
+                type: "editorPassword",
+                value: password,
+            }
+        })
+
+        props.studylist.editorPassword = password
+        setPassword(password)
+    })
+
+    const onRemovePassword = () => popupBusy.run(async () => {
+        if (!window.confirm("Revoke this invite link?"))
+            return
+
+        await App.Api.studylistEdit({
+            studylistId: props.studylist.id,
+            edit: {
+                type: "editorPassword",
+                value: undefined,
+            }
+        })
+
+        props.studylist.editorPassword = undefined
+        setPassword(undefined)
+    })
+
+    const onRemoveAllEditors = () => popupBusy.run(async () => {
+        const message =
+            `Remove all ${ editorIds().length } editor(s)?\n\n` +
+            `They can each join again through an invite link.\n\n` +
+            `Type in that number to confirm.`
+
+        const answer = window.prompt(message, "")
+        
+        if (!answer ||
+            answer !== editorIds().length.toString())
+            return
+
+        const newEditorIds: string[] = []
+
+        await App.Api.studylistEdit({
+            studylistId: props.studylist.id,
+            edit: {
+                type: "editorIds",
+                value: newEditorIds,
+            }
+        })
+
+        props.studylist.editorIds = newEditorIds
+        setEditorIds(newEditorIds)
+    })
+
+    const onRemoveEditor = (editorId: string) => popupBusy.run(async () => {
+        if (!window.confirm("Remove this editor?\n\nThey can join again through an invite link."))
+            return
+
+        const newEditorIds = [...editorIds()]
+            .filter(id => id !== editorId)
+
+        await App.Api.studylistEdit({
+            studylistId: props.studylist.id,
+            edit: {
+                type: "editorIds",
+                value: newEditorIds,
+            }
+        })
+
+        props.studylist.editorIds = newEditorIds
+        setEditorIds(newEditorIds)
+    })
+
+    const makeInviteLink = () => {
+        return window.location.protocol + "//" +
+            window.location.host +
+            App.Pages.StudylistEditorJoin.urlWith(
+                props.studylist.id, password() ?? "")
+    }
+
+    return <EditorsPopupLayout>
+
+        Other people can use an invite link to join as editors!<br/>
+        Editors can add and remove words on your behalf.
+        <br/>
+
+        <Solid.Show when={ !password() }>
+            <Framework.Button
+                icon={ <Framework.IconSparkles/> }
+                label="Generate invite link"
+                onClick={ onGeneratePassword }
+            />
+        </Solid.Show>
+
+        <Solid.Show when={ password() }>
+            <Framework.InputText
+                initialValue={ makeInviteLink() }
+                disabled
+                style={{ width: "100%" }}
+            />
+
+            <br/>
+            
+            <Framework.Button
+                label="Copy invite link"
+                onClick={ () => Framework.copyToClipboard(makeInviteLink()) }
+            />
+            
+            <Framework.Button
+                icon={ <Framework.IconTrash/> }
+                label="Revoke"
+                onClick={ onRemovePassword }
+            />
+        </Solid.Show>
+
+        <Solid.Show when={ editorIds().length !== 0 }>
+            <br/>
+            <br/>
+
+            <h2>Current Editors — { editorIds().length }</h2>
+            <Framework.HorizontalBar/>
+
+            <Framework.Button
+                icon={ <Framework.IconX/> }
+                label="Remove all editors"
+                onClick={ onRemoveAllEditors }
+            />
+            <br/>
+
+            <Solid.For each={ editorIds() }>
+            { (editorId) =>
+                <>
+                <Framework.Button
+                    icon={ <Framework.IconX/> }
+                    title="Remove this editor"
+                    onClick={ () => onRemoveEditor(editorId) }
+                />
+                <Solid.Suspense>
+                    <UserIdLink
+                        userId={ editorId }
+                    />
+                </Solid.Suspense>
+                <br/>
+                </>
+            }
+            </Solid.For>
+        </Solid.Show>
+
+        { popupBusy.rendered }
+
+    </EditorsPopupLayout>
+}
+
+
+const EditorsPopupLayout = styled.div`
+    padding: 1em 0;
 `
