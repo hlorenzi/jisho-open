@@ -226,6 +226,7 @@ export function compile(raw: string): Table
 const inflectionalKanjiReadings: { [k: string]: string[] } = {
     "為": ["さ", "し", "す", "せ"],
     "来": ["き", "く", "こ"],
+    "來": ["き", "く", "こ"],
     "有": ["あ"],
     "在": ["あ"],
     "良": ["い", "よ"],
