@@ -59,11 +59,11 @@ export function makePopupSideMenu(props: {
 
 const backdropKeyframes = keyframes`
     0% {
-	    background-color: transparent;
+	    opacity: 0;
     }
 
     100% {
-	    background-color: ${ Framework.themeVar("popupOverlayColor") };
+	    opacity: 1;
     }
 `
 
@@ -81,6 +81,7 @@ const Dialog = styled.dialog`
     outline: 0;
 
     &::backdrop {
+        background-color: ${ Framework.themeVar("popupOverlayColor") };
         animation-name: ${ backdropKeyframes };
         animation-duration: 0.1s;
         animation-fill-mode: forwards;

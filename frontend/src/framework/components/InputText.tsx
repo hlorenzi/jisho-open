@@ -12,6 +12,7 @@ export function InputText(props: {
     onEnter?: (ev: KeyboardEvent) => void,
     search?: boolean,
     disabled?: boolean,
+    id?: string,
     placeholder?: string,
     autofocus?: boolean,
     style?: Solid.JSX.CSSProperties,
@@ -19,6 +20,7 @@ export function InputText(props: {
 {
     return <StyledInput
         ref={ props.ref }
+        id={ props.id }
         //type={ props.search ? "search" : "text" }
         value={ props.value?.() ?? props.initialValue ?? "" }
         placeholder={ props.placeholder }

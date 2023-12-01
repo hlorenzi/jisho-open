@@ -1,8 +1,14 @@
 import * as Db from "../db/index.ts"
 import * as Kanjidic from "./kanjidic.ts"
 import * as Jmdict from "./jmdict.ts"
+import * as Jmnedict from "./jmnedict.ts"
 import * as StandardLists from "./standard_lists.ts"
 import * as Logging from "./logging.ts"
+import * as JlptWords from "../data/jlpt_words.ts"
+import * as PitchAccent from "../data/pitch_accent.ts"
+import * as FuriganaHelpers from "../data/furigana_helpers.ts"
+import * as AnimeDramaRanking from "../data/animedrama_ranking.ts"
+import * as JmdictExtraTags from "../data/jmdict_extra_tags.ts"
 
 
 let building = false
@@ -31,9 +37,17 @@ export async function buildDatabase(
     {
         building = true
         await logger.writeLn("building database...")
-        await Jmdict.downloadAndImport(logger, db, useCachedFiles)
+        const startDate = new Date()
+        await Jmdict.downloadAndImport(logger, db, useCachedFiles, startDate)
+        JlptWords.clearCache()
+        PitchAccent.clearCache()
+        AnimeDramaRanking.clearCache()
+        JmdictExtraTags.clearCache()
         await StandardLists.buildStandardLists(logger, db)
         await Kanjidic.downloadAndImport(logger, db, useCachedFiles)
+        await Jmnedict.downloadAndImport(logger, db, useCachedFiles, startDate)
+        await db.importWordEntriesFinish(startDate)
+        FuriganaHelpers.clearCache()
         await logger.writeLn("finished building database")
     }
     catch (e)

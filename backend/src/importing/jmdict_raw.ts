@@ -71,6 +71,7 @@ export interface Sense
     s_inf?: string[]
     dial?: Api.Word.DialectTag[]
     stagr?: string[]
+    stagk?: string[]
     gloss: EntryGloss[]
     example?: Example[]
 }
@@ -99,13 +100,6 @@ export type LanguageSource = {
     }
 }
 
-
-/*<example>
-<ex_srce exsrc_type="tat">227130</ex_srce>
-<ex_text>取った</ex_text>
-<ex_sent xml:lang="jpn">お皿に取ったものは全部食べなさい。</ex_sent>
-<ex_sent xml:lang="eng">You'd better eat everything that's on your plate.</ex_sent>
-</example>*/
 
 export type Example = {
     ex_srce: unknown[]

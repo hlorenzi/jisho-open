@@ -351,27 +351,40 @@ export function PageStudylist(props: Framework.RouteProps)
             </h2>
             <Framework.HorizontalBar/>
 
-            <div>
-                <Framework.Select
-                    label="Order"
-                    value={ () => App.usePrefs().studylistWordOrdering }
-                    onChange={ (value) => App.mergePrefs({ studylistWordOrdering: value }) }
-                    options={ [
-                        { label: "By date added", value: "date-added" },
-                        { label: "By kana order", value: "kana" },
-                    ]}
-                />
-                <Solid.Show when={ data()!.userIsCreator }>
-                    <Framework.Button
-                        icon={ <Framework.IconTrash/> }
-                        label="Remove selected"
-                        onClick={ onRemoveSelected }
-                        disabled={ selected().size === 0 }
-                    />
-                </Solid.Show>
-            </div>
+            <Solid.Show when={
+                (data()!.userIsCreator || data()!.userIsEditor) &&
+                data()!.words.length === 0
+            }>
+                <HelpInfo>
+                    Use the <Framework.IconBookmark color={ Framework.themeVar("iconGreenColor") }/> button
+                    displayed alongside the results of a search to add words to this study list!
+                </HelpInfo>
+            </Solid.Show>
 
-            <br/>
+            <Solid.Show when={
+                data()!.words.length !== 0
+            }>
+                <div>
+                    <Framework.Select
+                        label="Order"
+                        value={ () => App.usePrefs().studylistWordOrdering }
+                        onChange={ (value) => App.mergePrefs({ studylistWordOrdering: value }) }
+                        options={ [
+                            { label: "By date added", value: "date-added" },
+                            { label: "By kana order", value: "kana" },
+                        ]}
+                    />
+                    <Solid.Show when={ data()!.userIsCreator }>
+                        <Framework.Button
+                            icon={ <Framework.IconTrash/> }
+                            label="Remove selected"
+                            onClick={ onRemoveSelected }
+                            disabled={ selected().size === 0 }
+                        />
+                    </Solid.Show>
+                </div>
+                <br/>
+            </Solid.Show>
 
             <WordTable>
                 <Solid.For each={ !expanded() ?
@@ -455,6 +468,12 @@ const SmallInfo = styled.div`
     color: ${ Framework.themeVar("text3rdColor") };
     margin-top: 0.25em;
     margin-left: 1em;
+`
+
+
+const HelpInfo = styled.div`
+    color: ${ Framework.themeVar("text3rdColor") };
+    font-style: italic;
 `
 
 
@@ -563,7 +582,7 @@ export function ExportPopup(props: {
         <br/>
 
         <Framework.Button
-            label="Export TSV"
+            label="Download TSV"
             icon={ <Framework.IconDownload/> }
             onClick={ onExport }
         />
@@ -988,6 +1007,7 @@ function EditorsPopup(props: {
 
         <Solid.Show when={ password() }>
             <Framework.InputText
+                id="inviteLink"
                 initialValue={ makeInviteLink() }
                 disabled
                 style={{ width: "100%" }}

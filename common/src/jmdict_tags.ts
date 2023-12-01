@@ -393,12 +393,6 @@ type ExpandedTagsDict = {
 const expandedTags: Partial<ExpandedTagsDict> = {
     "veryCommon": ["common"],
 
-    //"jlpt1": ["n1", "jlpt"],
-    //"jlpt2": ["n2", "jlpt"],
-    //"jlpt3": ["n3", "jlpt"],
-    //"jlpt4": ["n4", "jlpt"],
-    //"jlpt5": ["n5", "jlpt"],
-
     "v1": ["v"],
     "v1-s": ["v", "v1"],
 

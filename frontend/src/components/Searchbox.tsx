@@ -89,6 +89,7 @@ export function Searchbox(props: {
             </Solid.Show>
             <Framework.InputText
                 ref={ setInputRef }
+                id="searchbox"
                 autofocus={ !props.noInputButton }
                 search
                 placeholder={

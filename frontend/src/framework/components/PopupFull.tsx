@@ -54,11 +54,11 @@ export function makePopupFull(props: {
 
 const backdropKeyframes = keyframes`
     0% {
-	    background-color: transparent;
+	    opacity: 0;
     }
 
     100% {
-	    background-color: ${ Framework.themeVar("popupOverlayColor") };
+	    opacity: 1;
     }
 `
 
@@ -83,6 +83,7 @@ const PopupDialog = styled.dialog`
     }
 
     &::backdrop {
+        background-color: ${ Framework.themeVar("popupOverlayColor") };
         animation-name: ${ backdropKeyframes };
         animation-duration: 0.1s;
         animation-fill-mode: forwards;

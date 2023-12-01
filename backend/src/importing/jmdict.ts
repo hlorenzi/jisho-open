@@ -13,6 +13,7 @@ import * as JlptWords from "../data/jlpt_words.ts"
 import * as PitchAccent from "../data/pitch_accent.ts"
 import * as FuriganaHelpers from "../data/furigana_helpers.ts"
 import * as AnimeDramaRanking from "../data/animedrama_ranking.ts"
+import * as JmdictExtraTags from "../data/jmdict_extra_tags.ts"
 
 
 export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e_examp.gz"
@@ -23,7 +24,8 @@ export const xmlFilename = File.downloadFolder + "JMdict_e_examp.xml"
 export async function downloadAndImport(
     logger: Logging.Logger,
     db: Db.Interface,
-    useCachedFiles: boolean)
+    useCachedFiles: boolean,
+    startDate: Date)
 {
     await File.download(
         logger,
@@ -45,8 +47,6 @@ export async function downloadAndImport(
 
     await logger.writeLn("importing word entries...")
 
-    const startDate = new Date()
-
     const dispatcher = new BatchDispatcher.BatchDispatcher(
         25,
         (items: Api.Word.Entry[]) => db.importWordEntries(startDate, items))
@@ -64,17 +64,34 @@ export async function downloadAndImport(
         }
     }
 
-    await dispatcher.finish()
-    await db.importWordEntriesFinish(startDate)
+    await dispatcher.push(normalizeEntry({
+        ent_seq: ["90000000"],
+        r_ele: [{ reb: ["ロレンズィ"] }],
+        sense: [
+            {
+                pos: ["n"],
+                gloss: ["Lorenzi", "yours truly", "creator of https://jisho.hlorenzi.com"],
+            }
+        ]
+    }))
+    
+    await dispatcher.push(normalizeEntry({
+        ent_seq: ["90000001"],
+        k_ele: [{ keb: ["剣白"] }],
+        r_ele: [{ reb: ["けんしろ"] }],
+        sense: [
+            {
+                pos: ["n"],
+                gloss: ["Kenshiro", "green dragon character appearing in Lorenzi's logos"],
+            }
+        ]
+    }))
 
-    JlptWords.clearCache()
-    FuriganaHelpers.clearCache()
-    PitchAccent.clearCache()
-    AnimeDramaRanking.clearCache()
+    await dispatcher.finish()
 }
 
 
-function normalizeEntry(
+export function normalizeEntry(
     raw: JmdictRaw.Entry)
     : Api.Word.Entry
 {
@@ -86,10 +103,27 @@ function normalizeEntry(
     }
 
     // Import headings.
-    entry.headings = normalizeHeadings(entry.id, raw)
+    const usuallyOnlyKana =
+        raw.sense[0].misc !== undefined &&
+        raw.sense[0].misc.some(miscTag => miscTag == "uk")
+
+    entry.headings = normalizeHeadings(
+        entry.id,
+        raw.k_ele,
+        raw.r_ele,
+        usuallyOnlyKana,
+        false)
 
     // Import senses/definitions.
-    entry.senses = normalizeSenses(raw)
+    entry.senses = normalizeSenses(raw.sense)
+
+    // Append extra part-of-speech tags.
+    const extraTags = JmdictExtraTags.get(
+        entry.id,
+        entry.headings.map(h => h.base))
+    
+    if (extraTags.length !== 0)
+        entry.senses.forEach(s => s.pos.push(...extraTags))
 
     // Import pitch accent entries.
     const pitchEntries = gatherPitchAccentEntries(entry.headings)
@@ -105,15 +139,14 @@ function normalizeEntry(
 }
 
 
-function normalizeHeadings(
+export function normalizeHeadings(
     wordId: string,
-    raw: JmdictRaw.Entry)
+    rawKEle: JmdictRaw.EntryKEle[] | undefined,
+    rawREle: JmdictRaw.EntryREle[],
+    usuallyOnlyKana: boolean,
+    isName: boolean)
     : Api.Word.Heading[]
 {
-    const usuallyOnlyKana =
-        raw.sense[0].misc !== undefined &&
-        raw.sense[0].misc.some(miscTag => miscTag == "uk")
-
     const headings: Api.Word.Heading[] = []
 
     const seenReadings = new Set<string>()
@@ -121,9 +154,9 @@ function normalizeHeadings(
     // Extract all possible pairs of
     // (kanji elements * reading elements),
     // respecting the restrictive or search-only tags.
-    for (const k_ele of raw.k_ele ?? [])
+    for (const k_ele of rawKEle ?? [])
     {
-        for (const r_ele of raw.r_ele)
+        for (const r_ele of rawREle)
         {
             const keb = k_ele.keb[0]
             const reb = r_ele.reb[0]
@@ -140,13 +173,13 @@ function normalizeHeadings(
                 continue
             
             seenReadings.add(reb)
-            headings.push(normalizeHeading(wordId, r_ele, k_ele))
+            headings.push(normalizeHeading(wordId, r_ele, k_ele, isName))
         }
     }
 
     // Extract remaining reading elements that
     // have no associated kanji element.
-    for (const r_ele of raw.r_ele)
+    for (const r_ele of rawREle)
     {
         const reb = r_ele.reb[0]
 
@@ -161,12 +194,11 @@ function normalizeHeadings(
                 base: reb,
                 furigana: reb + Furigana.READING_SEPARATOR,
                 searchOnlyKana: true,
-                score: 0,
             })
             continue
         }
         
-        const heading = normalizeHeading(wordId, r_ele, undefined)
+        const heading = normalizeHeading(wordId, r_ele, undefined, isName)
         headings.push(heading)
         
         seenReadings.add(reb)
@@ -197,7 +229,7 @@ function normalizeHeadings(
     // same or greater commonness score.
     if (usuallyOnlyKana)
     {
-        for (const r_ele of raw.r_ele)
+        for (const r_ele of rawREle)
         {
             const reb = r_ele.reb[0]
 
@@ -217,7 +249,7 @@ function normalizeHeadings(
                     }
 
                     if (reb !== asKatakana &&
-                        raw.r_ele.some(isMatchingCommonKatakana))
+                        rawREle.some(isMatchingCommonKatakana))
                         continue
                 }
                 else
@@ -227,7 +259,7 @@ function normalizeHeadings(
                             r.re_nokanji
                     }
 
-                    if (raw.r_ele.some(isMatchingKatakana))
+                    if (rawREle.some(isMatchingKatakana))
                         continue
                 }
             }
@@ -236,7 +268,7 @@ function normalizeHeadings(
                 r_ele.re_inf.some(tag => tag === "sk"))
                 continue
             
-            const heading = normalizeHeading(wordId, r_ele, undefined)
+            const heading = normalizeHeading(wordId, r_ele, undefined, isName)
             headings.unshift(heading)
             break
         }
@@ -246,7 +278,8 @@ function normalizeHeadings(
     {
         const heading = headings[h]
 
-        if (!heading.searchOnlyKanji &&
+        if (!isName &&
+            !heading.searchOnlyKanji &&
             !heading.searchOnlyKana &&
             !heading.outdatedKanji &&
             !heading.outdatedKana)
@@ -268,7 +301,8 @@ function normalizeHeadings(
 function normalizeHeading(
     wordId: string,
     r_ele: JmdictRaw.EntryREle,
-    k_ele?: JmdictRaw.EntryKEle)
+    k_ele: JmdictRaw.EntryKEle | undefined,
+    isName: boolean)
     : Api.Word.Heading
 {
     const keb = k_ele?.keb[0]
@@ -277,7 +311,6 @@ function normalizeHeading(
     const heading: Api.Word.Heading = {
         base: keb ?? reb,
         furigana: "",
-        score: 0,
     }
 
     if (keb !== undefined)
@@ -343,9 +376,12 @@ function normalizeHeading(
         heading.searchOnlyKana = true
 
 
-    const rankAnimeDrama = AnimeDramaRanking.get(wordId, heading.base)
-    if (rankAnimeDrama !== undefined)
-        heading.rankAnimeDrama = rankAnimeDrama
+    if (!isName)
+    {
+        const rankAnimeDrama = AnimeDramaRanking.get(wordId, heading.base)
+        if (rankAnimeDrama !== undefined)
+            heading.rankAnimeDrama = rankAnimeDrama
+    }
 
 
     type RankField = {
@@ -476,15 +512,17 @@ function scoreHeading(
 }
 
 
-function normalizeSenses(
-    raw: JmdictRaw.Entry)
+export function normalizeSenses(
+    rawSenses: JmdictRaw.Sense[])
     : Api.Word.Sense[]
 {
     const senses: Api.Word.Sense[] = []
 
-    for (const rawSense of raw.sense)
+    for (const rawSense of rawSenses)
     {
         const pos = rawSense.pos
+        if (pos.some(p => !Api.Word.partOfSpeechTags.includes(p as any)))
+            throw "invalid pos"
         
         const gloss: Api.Word.Gloss[] = []
         for (const rawGloss of rawSense.gloss)
@@ -558,8 +596,11 @@ function normalizeSenses(
         if (rawSense.dial)
             sense.dialect = rawSense.dial
 
-        if (rawSense.stagr)
-            sense.restrict = rawSense.stagr
+        if (rawSense.stagr || rawSense.stagk)
+            sense.restrict = [
+                ...(rawSense.stagr ?? []),
+                ...(rawSense.stagk ?? []),
+            ]
 
         if (rawSense.example)
         {
@@ -588,7 +629,7 @@ function normalizeSenses(
 }
 
 
-function normalizeXref(
+export function normalizeXref(
     rawXref: string)
     : Api.Word.CrossReference
 {
@@ -700,6 +741,11 @@ export function gatherLookUpTags(
     const partsOfSpeech = apiWord.senses
         .flatMap(d => d.pos)
 
+    const nameTag: Api.Word.FilterTag[] =
+        partsOfSpeech.some(p => Api.Word.partOfSpeechNameTags.includes(p as any)) ?
+            ["name"] :
+            []
+
     const glossTypes = apiWord.senses
         .flatMap(d => d.gloss.map(g => typeof g !== "string" ? [g.type] : []))
         .flat()
@@ -719,7 +765,7 @@ export function gatherLookUpTags(
 
     const commonness = apiWord.headings
         .map(h => JmdictTags.getCommonness(h))
-        .filter(t => t !== null) as Api.CommonnessTag[]
+        .filter(t => t !== undefined) as Api.CommonnessTag[]
 
     let lowestJlptLevel: Api.JlptLevel | undefined = undefined
     for (const heading of apiWord.headings)
@@ -732,11 +778,15 @@ export function gatherLookUpTags(
             lowestJlptLevel = heading.jlpt
     }
 
-    const jlptTag: Api.JlptTag[] = ["jlpt"]
+    const jlptTag: Api.JlptTag[] = []
     if (lowestJlptLevel !== undefined)
+    {
+        jlptTag.push("jlpt")
         jlptTag.push(`n${ lowestJlptLevel }`)
+    }
 
     return JmdictTags.expandFilterTags([...new Set<Api.Word.FilterTag>([
+        ...nameTag,
         ...partsOfSpeech,
         ...glossTypes,
         ...fieldTags,

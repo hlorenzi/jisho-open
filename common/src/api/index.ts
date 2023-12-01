@@ -248,6 +248,7 @@ export namespace Search
         kanji: string[]
         tags: string[]
         inverseTags: string[]
+        explicitNotName: boolean
         limit?: number
     }
 

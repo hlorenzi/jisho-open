@@ -441,7 +441,10 @@ export async function listWordsWithChars(
     : Promise<Api.Word.Entry[]>
 {
     const dbWord = await state.collWords
-        .find({ [MongoDb.fieldWordLookUpChars]: { $all: chars } })
+        .find({
+            [MongoDb.fieldWordLookUpChars]: { $all: chars },
+            [MongoDb.fieldWordLookUpTags]: { $nin: ["name"] },
+        })
         .toArray()
 
     return dbWord

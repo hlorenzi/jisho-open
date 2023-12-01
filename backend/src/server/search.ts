@@ -155,6 +155,8 @@ async function search(
         query.type !== "sentence" &&
         query.type !== "wildcards" ?
             undefined :
+        options.tags?.has("name") ?
+            undefined :
         (await byHeading).length !== 0 ||
         (await byHeadingAll).length !== 0 ||
         (await byTags).length !== 0 ||
@@ -175,6 +177,13 @@ async function search(
     const translateToSearchSentenceEntry = (sentence: Api.Search.SentenceAnalysis): Api.Search.Entry =>
         ({ ...sentence, type: "sentence" })
 
+    const kanjiEntries: Api.Search.Entry[] = [
+        { type: "section", section: "kanji" },
+        ...(await byKanji).map(translateToSearchKanjiEntry),
+        ...(await byKanjiReading).map(translateToSearchKanjiEntry),
+        ...(await byKanjiMeaning).map(translateToSearchKanjiEntry),
+    ]
+
     let searchEntries: Api.Search.Entry[] = [
         { type: "section", section: "verbatim" },
         ...(await byHeading).map(translateToSearchWordEntry),
@@ -185,15 +194,41 @@ async function search(
         ...(await byInflections).map(translateToSearchWordEntry),
         { type: "section", section: "definition" },
         ...(await byDefinition).map(translateToSearchWordEntry),
-        { type: "section", section: "kanji" },
-        ...(await byKanji).map(translateToSearchKanjiEntry),
-        ...(await byKanjiReading).map(translateToSearchKanjiEntry),
-        ...(await byKanjiMeaning).map(translateToSearchKanjiEntry),
+        ...kanjiEntries,
         { type: "section", section: "prefix" },
         ...(await byHeadingPrefix).map(translateToSearchWordEntry),
         sectionEnd,
     ]
 
+    // Remove duplicate entries.
+    const seenEntryIds = new Set<string>()
+    searchEntries = searchEntries.filter(e => {
+        if (e.type !== "word")
+            return true
+
+        if (seenEntryIds.has(e.id))
+            return false
+
+        seenEntryIds.add(e.id)
+        return true
+    })
+
+    // Repeat query including names.
+    if (searchEntries.length <= 5 + kanjiEntries.length &&
+        !options.tags?.has("name") &&
+        !query.explicitNotName)
+    {
+        const searchWithNames = await search(
+            db,
+            {
+                ...req,
+                query: req.query + " #name"
+            })
+
+        searchEntries = searchWithNames.entries
+    }
+
+    // Insert sentence entry in the first spot, if available.
     if (bySentence !== undefined &&
         (await bySentence).tokens.length > 1)
     {
@@ -351,6 +386,13 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
     tags = tags.filter(tag => !tagsToRemove.has(tag))
     inverseTags = inverseTags.filter(tag => !tagsToRemove.has(tag))
 
+    const explicitNotName = inverseTags.some(t => t === "name")
+
+    if (!tags.some(t =>
+            t === "name" ||
+            Api.Word.partOfSpeechNameTags.includes(t as any)))
+        inverseTags.push("name")
+
     return {
         type,
         strRaw: queryRawLimited,
@@ -369,6 +411,7 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         canBeSentence: queryCanBeSentence,
         tags,
         inverseTags,
+        explicitNotName,
     }
 }
 

@@ -25,11 +25,11 @@ export function RouterTransition(props: {
 
 const backdropKeyframes = keyframes`
     0% {
-	    background-color: transparent;
+	    opacity: 0;
     }
 
     100% {
-	    background-color: ${ Framework.themeVar("pageTransitionOverlayColor") };
+	    opacity: 1
     }
 `
 
@@ -44,6 +44,7 @@ const DivWrapper = styled.dialog`
     padding: 0;
     border: 0;
     overflow: hidden;
+    background-color: ${ Framework.themeVar("pageTransitionOverlayColor") };
     z-index: 10000;
 
     animation-name: ${ backdropKeyframes };
@@ -60,15 +61,15 @@ export function RouterTransitionEnd()
 
 const backdropEndKeyframes = keyframes`
     0% {
-	    background-color: ${ Framework.themeVar("voidBkgColor") };
+	    opacity: 1;
     }
 
     50% {
-	    background-color: ${ Framework.themeVar("voidBkgColor") };
+	    opacity: 1;
     }
 
     100% {
-	    background-color: transparent;
+	    opacity: 0;
     }
 `
 
@@ -79,7 +80,7 @@ const DivWrapperEnd = styled.div`
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: transparent;
+    background-color: ${ Framework.themeVar("voidBkgColor") };
     z-index: 10000;
     
     animation-name: ${ backdropEndKeyframes };

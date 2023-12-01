@@ -147,6 +147,12 @@ export function StudyListPopup(props: {
                                 >
                                     <Framework.IconBook/>
                                     { ` ${ list.name }` }
+                                    <Solid.Show when={ !list.public }>
+                                        <Framework.IconLock
+                                            title="This list is private."
+                                            color={ Framework.themeVar("iconBlueColor") }
+                                        />
+                                    </Solid.Show>
                                     <Solid.Show when={ list.marked === "exact" }>
                                         <Framework.IconCheckmark
                                             title="Already present in this list."
@@ -182,6 +188,14 @@ export function StudyListPopup(props: {
                     </> }
                     disabled={ working() }
                     onClick={ onCreateAndAdd }
+                />
+
+                <Framework.ButtonPopupPageWide
+                    label={ <>
+                        View your lists
+                    </> }
+                    disabled={ working() }
+                    href={ App.Pages.User.urlForUserId(data().latest!.authUser.id!) }
                 />
             </Solid.Show>
         </Solid.Show>

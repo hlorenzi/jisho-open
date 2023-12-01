@@ -19,17 +19,16 @@ export function LogoHeader(props: {
                 style={{ display: "block", width: "fit-content" }}
             >
                 <LogoLayout>
-                    <IconWrapper>
-                        <Framework.Image
-                            src="https://accounts.hlorenzi.com/icon_round_75.png"
-                            srcset={
-                                `https://accounts.hlorenzi.com/icon_round_75.png, ` +
-                                `https://accounts.hlorenzi.com/icon_round_150.png 2x, ` +
-                                `https://accounts.hlorenzi.com/icon_round_256.png 4x`
-                            }
-                            style={{ height : "100%" }}
-                        />
-                    </IconWrapper>
+                    <Framework.Image
+                        src="https://accounts.hlorenzi.com/icon_round_75.png"
+                        srcset={
+                            `https://accounts.hlorenzi.com/icon_round_75.png, ` +
+                            `https://accounts.hlorenzi.com/icon_round_150.png 2x, ` +
+                            `https://accounts.hlorenzi.com/icon_round_256.png 4x`
+                        }
+                        alt=""
+                        style={{ width: "4em", height : "4em" }}
+                    />
                     <StyledH1>
                         Lorenzi's Jisho
                         <sup style={{ "font-size": "0.5em" }}>

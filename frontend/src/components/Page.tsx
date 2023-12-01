@@ -243,7 +243,7 @@ function Footer()
             <FooterLinks>
                 <Framework.Link href="https://hlorenzi.com">
                     <Framework.Image
-                        alt=""
+                        alt="Lorenzi's Homepage"
                         src="https://accounts.hlorenzi.com/icon_round_75.png"
                         size="3em"
                     />
@@ -251,7 +251,7 @@ function Footer()
                 { " " }
                 <Framework.Link href="https://accounts.hlorenzi.com/redirect/discord">
                     <Framework.Image
-                        alt=""
+                        alt="Lorenzi's Discord Server"
                         src="https://accounts.hlorenzi.com/discord.png"
                         size="3em"
                     />
@@ -259,7 +259,7 @@ function Footer()
                 { " " }
                 <Framework.Link href={ App.githubUrl }>
                     <Framework.Image
-                        alt=""
+                        alt="Jisho's GitHub repository"
                         src="https://accounts.hlorenzi.com/github.png"
                         size="3em"
                     />

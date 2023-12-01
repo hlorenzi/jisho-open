@@ -301,9 +301,6 @@ export async function crossReferenceWords(
 
     for (const word of words)
     {
-        //if (word.pos.includes("name"))
-        //    continue
-
         for (let h = 0; h < word.headings.length; h++)
         {
             const heading = word.headings[h]

@@ -55,8 +55,8 @@ export type Heading = {
     rankAnimeDrama?: number
 
     /// Commonness score for this heading, for sorting search results.
-    /// Higher is more common.
-    score: number
+    /// Higher is more common. An undefined value means 0.
+    score?: number
 }
 
 
@@ -126,122 +126,151 @@ export type ExampleSentence = {
 }
 
 
+export const partOfSpeechTags = [
+    "adj-f",
+    "adj-i",
+    "adj-ix",
+    "adj-kari",
+    "adj-ku",
+    "adj-na",
+    "adj-nari",
+    "adj-no",
+    "adj-pn",
+    "adj-shiku",
+    "adj-t",
+    "adv",
+    "adv-to",
+    "aux",
+    "aux-adj",
+    "aux-v",
+    "conj",
+    "cop",
+    "ctr",
+    "exp",
+    "int",
+    "n",
+    "n-adv",
+    "n-pr",
+    "n-pref",
+    "n-suf",
+    "n-t",
+    "num",
+    "pn",
+    "pref",
+    "prt",
+    "suf",
+    "unc",
+    "v-unspec",
+    "v1",
+    "v1-s",
+    "v2a-s",
+    "v2b-k",
+    "v2b-s",
+    "v2d-k",
+    "v2d-s",
+    "v2g-k",
+    "v2g-s",
+    "v2h-k",
+    "v2h-s",
+    "v2k-k",
+    "v2k-s",
+    "v2m-k",
+    "v2m-s",
+    "v2n-s",
+    "v2r-k",
+    "v2r-s",
+    "v2s-s",
+    "v2t-k",
+    "v2t-s",
+    "v2w-s",
+    "v2y-k",
+    "v2y-s",
+    "v2z-s",
+    "v4b",
+    "v4g",
+    "v4h",
+    "v4k",
+    "v4m",
+    "v4n",
+    "v4r",
+    "v4s",
+    "v4t",
+    "v5aru",
+    "v5b",
+    "v5g",
+    "v5k",
+    "v5k-s",
+    "v5m",
+    "v5n",
+    "v5r",
+    "v5r-i",
+    "v5s",
+    "v5t",
+    "v5u",
+    "v5u-s",
+    "v5uru",
+    "vi",
+    "vk",
+    "vn",
+    "vr",
+    "vs",
+    "vs-c",
+    "vs-i",
+    "vs-s",
+    "vt",
+    "vz",
+] as const
+
+
+export const partOfSpeechCustomTags = [
+    "adj",
+    "v",
+    "v2",
+    "v2-k",
+    "v2-s",
+    "v4",
+    "v5",
+    "vmasu",
+    "virr",
+    "v1contr",
+    "vte",
+] as const
+
+
+export const partOfSpeechNameTags = [
+    "char",
+    "company",
+    "creat",
+    "dei",
+    "doc",
+    "ev",
+    "fem",
+    "fict",
+    "given",
+    "group",
+    "leg",
+    "masc",
+    "myth",
+    "obj",
+    "organization",
+    "oth",
+    "person",
+    "place",
+    "product",
+    "relig",
+    "serv",
+    "ship",
+    "station",
+    "surname",
+    "unclass",
+    "work",
+] as const
+
+    
 export type PartOfSpeechTag =
-    | "adj-f"
-    | "adj-i"
-    | "adj-ix"
-    | "adj-kari"
-    | "adj-ku"
-    | "adj-na"
-    | "adj-nari"
-    | "adj-no"
-    | "adj-pn"
-    | "adj-shiku"
-    | "adj-t"
-    | "adv"
-    | "adv-to"
-    | "aux"
-    | "aux-adj"
-    | "aux-v"
-    | "conj"
-    | "cop"
-    | "ctr"
-    | "exp"
-    | "int"
-    | "n"
-    | "n-adv"
-    | "n-pr"
-    | "n-pref"
-    | "n-suf"
-    | "n-t"
-    | "num"
-    | "pn"
-    | "pref"
-    | "prt"
-    | "suf"
-    | "unc"
-    | "v-unspec"
-    | "v1"
-    | "v1-s"
-    | "v2a-s"
-    | "v2b-k"
-    | "v2b-s"
-    | "v2d-k"
-    | "v2d-s"
-    | "v2g-k"
-    | "v2g-s"
-    | "v2h-k"
-    | "v2h-s"
-    | "v2k-k"
-    | "v2k-s"
-    | "v2m-k"
-    | "v2m-s"
-    | "v2n-s"
-    | "v2r-k"
-    | "v2r-s"
-    | "v2s-s"
-    | "v2t-k"
-    | "v2t-s"
-    | "v2w-s"
-    | "v2y-k"
-    | "v2y-s"
-    | "v2z-s"
-    | "v4b"
-    | "v4g"
-    | "v4h"
-    | "v4k"
-    | "v4m"
-    | "v4n"
-    | "v4r"
-    | "v4s"
-    | "v4t"
-    | "v5aru"
-    | "v5b"
-    | "v5g"
-    | "v5k"
-    | "v5k-s"
-    | "v5m"
-    | "v5n"
-    | "v5r"
-    | "v5r-i"
-    | "v5s"
-    | "v5t"
-    | "v5u"
-    | "v5u-s"
-    | "v5uru"
-    | "vi"
-    | "vk"
-    | "vn"
-    | "vr"
-    | "vs"
-    | "vs-c"
-    | "vs-i"
-    | "vs-s"
-    | "vt"
-    | "vz"
-    | "adj" // custom
-    | "v" // custom
-    | "v2" // custom
-    | "v2-k" // custom
-    | "v2-s" // custom
-    | "v4" // custom
-    | "v5" // custom
-    | "vmasu" // custom
-    | "virr" // custom
-    | "v1contr" // custom
-    | "vte" // custom
-    | "surname"
-    | "place"
-    | "unclass"
-    | "company"
-    | "product"
-    | "work"
-    | "masc"
-    | "fem"
-    | "person"
-    | "given"
-    | "station"
-    | "organization"
+    typeof partOfSpeechTags[number] |
+    typeof partOfSpeechCustomTags[number] |
+    typeof partOfSpeechNameTags[number]
 
 
 export type LanguageTag =
@@ -490,7 +519,7 @@ export type GlossTypeTag =
 export type FilterTag =
     Api.CommonnessTag |
     Api.JlptTag |
-    PartOfSpeechTag |
+    PartOfSpeechTag | "name" |
     MiscTag |
     FieldDomainTag |
     LanguageTag | "wasei" |

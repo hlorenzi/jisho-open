@@ -29,6 +29,8 @@ export function EntryWord(props: {
         />
         <Solid.Show when={ App.usePrefs().debugMode }>
             <DebugInfo>
+                [id: { props.entry.id}]
+                { " " }
                 [score: { props.entry.score }]
             </DebugInfo>
         </Solid.Show>
