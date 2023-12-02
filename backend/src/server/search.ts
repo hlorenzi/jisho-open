@@ -326,7 +326,6 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         .replace(regexQuoted, " ")
         .replace(regexTags, " ")
         .replace(regexPunctuationToSplit, " ")
-        .replace(regexPunctuationToCollapse, "")
         .trim()
 
     const queryCanBeWildcards =
