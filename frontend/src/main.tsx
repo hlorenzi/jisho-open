@@ -19,7 +19,7 @@ function Root()
         <Framework.GlobalCss extraCss={ [App.usePrefsCss()] }/>
         <Framework.Router
             routes={[
-                { patterns: ["/"],
+                { patterns: ["/", "/pwa_redirect"],
                     load: async () => (await import("./pages/PageHome.tsx")).PageHome },
 
                 { patterns: [Pages.Search.urlPattern, Pages.Search.urlPatternToken],
