@@ -113,7 +113,12 @@ async function post(
 export async function authenticate()
     : Promise<Api.Authenticate.Response>
 {
-    return postCached(Api.Authenticate.url, undefined)
+    const authUser = await postCached(Api.Authenticate.url, undefined) as Api.Authenticate.Response
+    
+    if (Api.userIsAdmin(authUser))
+        Framework.Analytics.setUserAdmin(true)
+
+    return authUser
 }
 
 

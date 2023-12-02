@@ -12,6 +12,7 @@ SolidWeb.render(
 
 function Root()
 {
+    App.Api.authenticate()
     Framework.pwaEnable()
     Framework.Analytics.init("G-PY955GS729")
 

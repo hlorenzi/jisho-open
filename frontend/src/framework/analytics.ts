@@ -2,17 +2,15 @@ import * as Framework from "./index.ts"
 
 
 let gTagId: string | null = null
+let gIsAdmin = false
 
 
 declare function gtag(...args: any[]): void;
 
 
-export function setGtagId(id: string)
+export function setUserAdmin(isAdmin: boolean)
 {
-	gTagId = id
-
-	if (Framework.isDev())
-		console.log("Analytics.setGtagId", id)
+	gIsAdmin = isAdmin
 }
 
 
@@ -88,6 +86,7 @@ function isAllowed()
 {
 	return (
 		gTagId &&
+		!gIsAdmin &&
         !Framework.isDev() &&
 		typeof gtag === "function"
 	)
