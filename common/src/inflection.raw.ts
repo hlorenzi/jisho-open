@@ -418,9 +418,9 @@ vk;   *くる -> !
 %continuative; * -> unc; *し
 adj-i; *い -> unc; *し
 vs-i; *する -> !
-vs-i; *する -> vki; *せし
+vs-i; *する -> unc; *せし
 vs-s; *する -> !
-vs-s; *する -> vki; *せし
+vs-s; *する -> unc; *せし
 vk;   *くる -> !
 vk;   *くる -> unc; *こし
 

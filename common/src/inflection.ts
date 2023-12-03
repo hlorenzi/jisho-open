@@ -178,8 +178,8 @@ export function compile(raw: string): Table
                 ruleList.push({
                     id: currentGroupId,
                     sourceCategory: sourceRule.targetCategory,
-                    removeFromEnd: removeFromEnd,
-                    addToEnd: addToEnd,
+                    removeFromEnd: sourceRule.addToEnd + removeFromEnd,
+                    addToEnd: sourceRule.addToEnd + addToEnd,
                     targetCategory,
                 })
             }
