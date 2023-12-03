@@ -157,55 +157,64 @@ export async function connect(): Promise<Interface>
         collStudylists: db.collection<DbStudyListEntry>(dbCollectionStudyLists),
     }
 
-    await state.collWords.createIndex({
-        [fieldWordLookUpHeadingsText]: 1,
-        [fieldWordLookUpHeadingsScore]: -1,
-    })
+    await state.collWords.createIndex([
+        { [fieldWordLookUpHeadingsText]: 1 },
+        { [fieldWordLookUpHeadingsScore]: -1 },
+        { ["_id" satisfies keyof DbWordEntry]: 1 },
+    ])
 
-    await state.collWords.createIndex({
-        [fieldWordLookUpTags]: 1,
-        ["score" satisfies keyof DbWordEntry]: -1,
-    })
+    await state.collWords.createIndex([
+        { [fieldWordLookUpTags]: 1 },
+        { ["score" satisfies keyof DbWordEntry]: -1 },
+        { ["_id" satisfies keyof DbWordEntry]: 1 },
+    ])
 
-    await state.collWords.createIndex({
-        [fieldWordLookUpChars]: 1,
-        ["score" satisfies keyof DbWordEntry]: -1,
-    })
+    await state.collWords.createIndex([
+        { [fieldWordLookUpChars]: 1 },
+        { ["score" satisfies keyof DbWordEntry]: -1 },
+        { ["_id" satisfies keyof DbWordEntry]: 1 },
+    ])
 
-    await state.collDefinitions.createIndex({
-        ["wordId" satisfies keyof DbDefinitionEntry]: 1,
-        ["score" satisfies keyof DbDefinitionEntry]: -1,
-    })
+    await state.collDefinitions.createIndex([
+        { ["wordId" satisfies keyof DbDefinitionEntry]: 1 },
+        { ["score" satisfies keyof DbDefinitionEntry]: -1 },
+        { ["_id" satisfies keyof DbDefinitionEntry]: 1 },
+    ])
 
-    await state.collDefinitions.createIndex({
-        ["words" satisfies keyof DbDefinitionEntry]: 1,
-        ["score" satisfies keyof DbDefinitionEntry]: -1,
-    })
+    await state.collDefinitions.createIndex([
+        { ["words" satisfies keyof DbDefinitionEntry]: 1 },
+        { ["score" satisfies keyof DbDefinitionEntry]: -1 },
+        { ["wordId" satisfies keyof DbDefinitionEntry]: 1 },
+        { ["_id" satisfies keyof DbDefinitionEntry]: 1 },
+    ])
 
-    await state.collKanji.createIndex({
-        [fieldKanjiReadingsText]: 1,
-        [fieldKanjiReadingsScore]: -1,
-        [fieldKanjiScore]: -1,
-    })
+    await state.collKanji.createIndex([
+        { [fieldKanjiReadingsText]: 1 },
+        { [fieldKanjiReadingsScore]: -1 },
+        { [fieldKanjiScore]: -1 },
+        { ["_id" satisfies keyof DbKanjiEntry]: 1 },
+    ])
 
-    await state.collKanji.createIndex({
-        [fieldKanjiLookUpMeanings]: 1,
-        [fieldKanjiScore]: -1,
-    })
+    await state.collKanji.createIndex([
+        { [fieldKanjiLookUpMeanings]: 1 },
+        { [fieldKanjiScore]: -1 },
+        { ["_id" satisfies keyof DbKanjiEntry]: 1 },
+    ])
 
-    await state.collKanji.createIndex({
-        [fieldKanjiComponents]: 1,
-        [fieldKanjiStrokeCount]: 1,
-        [fieldKanjiScore]: -1,
-    })
+    await state.collKanji.createIndex([
+        { [fieldKanjiComponents]: 1 },
+        { [fieldKanjiStrokeCount]: 1 },
+        { [fieldKanjiScore]: -1 },
+        { ["_id" satisfies keyof DbKanjiEntry]: 1 },
+    ])
 
-    await state.collStudylists.createIndex({
-        ["creatorId" satisfies keyof DbStudyListEntry]: 1,
-    })
+    await state.collStudylists.createIndex([
+        { ["creatorId" satisfies keyof DbStudyListEntry]: 1 },
+    ])
 
-    await state.collStudylists.createIndex({
-        ["editorIds" satisfies keyof DbStudyListEntry]: 1,
-    })
+    await state.collStudylists.createIndex([
+        { ["editorIds" satisfies keyof DbStudyListEntry]: 1 },
+    ])
 
     return {
         client,

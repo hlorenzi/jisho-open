@@ -12,6 +12,7 @@
     "db-build": "ts-node ./db_build.ts",
     "migrate": "ts-node ./migrate.ts",
     "test-inflections": "ts-node ./test_inflections.ts",
+    "test-search": "ts-node ./src/server/search.test.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "",

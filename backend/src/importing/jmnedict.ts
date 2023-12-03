@@ -104,8 +104,8 @@ function normalizeSenses(
     for (const rawSense of rawSenses)
     {
         const pos = rawSense.name_type
-        if (pos.some(p => !Api.Word.partOfSpeechNameTags.includes(p as any)))
-            throw "invalid name_type"
+        //if (pos.some(p => !Api.Word.partOfSpeechNameTags.includes(p as any)))
+        //    throw "invalid name_type"
         
         const gloss: Api.Word.Gloss[] = []
         for (const rawTransDet of rawSense.trans_det)

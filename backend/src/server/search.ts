@@ -32,7 +32,7 @@ export function init(
 }
 
 
-async function search(
+export async function search(
     db: Db.Interface,
     req: Api.Search.Request)
     : Promise<Api.Search.Response>
@@ -136,7 +136,7 @@ async function search(
         query.type !== "kanji" ?
             [] :
         db.searchKanjiByReading(
-            query.strJapaneseSplit,
+            query.strJapaneseSplit.map(q => Kana.toHiragana(q)),
             optionsNoTags)
 
     const byKanjiMeaning =

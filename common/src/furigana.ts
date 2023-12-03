@@ -712,10 +712,10 @@ export function getPossibleRendaku(str: string): string[]
         const newFirst = Kana.withDakuten(str[0])
         rendaku.push(newFirst + str.slice(1))
 
-        if (newFirst == "ぢ")
+        if (newFirst === "ぢ")
             rendaku.push("じ" + str.slice(1))
 
-        if (newFirst == "づ")
+        if (newFirst === "づ")
             rendaku.push("ず" + str.slice(1))
     }
     
@@ -731,20 +731,22 @@ export function getPossibleRendaku(str: string): string[]
         rendaku.push(str.slice(0, str.length - 1) + "っ")
 
     if (str.length >= 2 &&
-        str.endsWith("る") &&
-        (Kana.vowelOf(str[str.length - 2]) == "e" ||
-        Kana.vowelOf(str[str.length - 2]) == "i"))
-        rendaku.push(str.slice(0, str.length - 1))
-    
-    if (Kana.vowelOf(str[str.length - 1]) == "u")
+        str.endsWith("る"))
+    {
+        if (Kana.vowelOf(str[str.length - 2]) === "e" ||
+            Kana.vowelOf(str[str.length - 2]) === "i")
+            rendaku.push(str.slice(0, str.length - 1))
+    }
+
+    if (Kana.vowelOf(str[str.length - 1]) === "u")
     {
         rendaku.push(
             str.slice(0, str.length - 1) +
-            Kana.withVowel(str[str.length - 1], "i"))
+                Kana.withVowel(str[str.length - 1], "i"))
             
         rendaku.push(
             str.slice(0, str.length - 1) +
-            Kana.withVowel(str[str.length - 1], "e"))
+                Kana.withVowel(str[str.length - 1], "e"))
     }
     
     return rendaku

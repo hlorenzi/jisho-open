@@ -49,6 +49,11 @@ export function EntryKanji(props: {
                     <Tags.TagJinmeiyou jinmeiyou={ props.entry.jinmeiyou }/>
                     <Tags.TagKanjiNews rankNews={ props.entry.rankNews }/>
                 </TagsWrapper>
+                <Solid.Show when={ App.usePrefs().debugMode }>
+                    <DebugInfo>
+                        [score: { props.entry.score ?? 0 }]
+                    </DebugInfo>
+                </Solid.Show>
             </div>
         </Header>
 
@@ -57,7 +62,10 @@ export function EntryKanji(props: {
                 <ReadingsLabel>kun'yomi:</ReadingsLabel>
                 <div>
                     <Solid.For each={ props.entry.kunyomi }>{ (kunyomi) =>
-                        <Reading reading={ kunyomi }/>
+                        <Reading
+                            entry={ props.entry }
+                            reading={ kunyomi }
+                        />
                     }
                     </Solid.For>
                 </div>
@@ -67,7 +75,10 @@ export function EntryKanji(props: {
                 <ReadingsLabel>on'yomi:</ReadingsLabel>
                 <div>
                     <Solid.For each={ props.entry.onyomi }>{ (onyomi) =>
-                        <Reading reading={ onyomi }/>
+                        <Reading
+                            entry={ props.entry }
+                            reading={ onyomi }
+                        />
                     }
                     </Solid.For>
                 </div>
@@ -165,6 +176,13 @@ const TagsWrapper = styled.div`
 `
 
 
+const DebugInfo = styled.span`
+    color: ${ Framework.themeVar("text3rdColor") };
+    font-size: 0.8rem;
+    font-weight: normal;
+`
+
+
 const ReadingsLayout = styled.div`
     display: grid;
     grid-template: auto auto / auto 1fr;
@@ -195,9 +213,31 @@ const KanjiDiagramWrapper = styled.article`
 
 
 export function Reading(props: {
+    entry: App.Api.Kanji.Entry,
     reading: App.Api.Kanji.Reading
 })
 {
+    const readingWithScore = Solid.createMemo(() => {
+        if (!App.usePrefs().debugMode)
+            return undefined
+
+        const readingsNormalized = props.entry.readings
+            .map(r => ({
+                reading: Kana.toHiragana(r.reading),
+                score: r.score,
+            }))
+            
+        let myReading = Kana.toHiragana(props.reading.text)
+        const periodIndex = myReading.indexOf(".")
+        if (periodIndex >= 0)
+            myReading = myReading.slice(0, periodIndex)
+
+        console.log(myReading, props.entry.readings, readingsNormalized)
+
+        return readingsNormalized
+            .find(r => r.reading === myReading)
+    })
+
     return <ReadingEntry
         faded={ props.reading.commonness === undefined }
     >
@@ -207,6 +247,11 @@ export function Reading(props: {
                 commonness={ props.reading.commonness }
             />
         </ReadingTagsWrapper>
+        <Solid.Show when={ App.usePrefs().debugMode }>
+            <DebugInfo>
+                [score: { readingWithScore()?.score ?? "--" }]
+            </DebugInfo>
+        </Solid.Show>
     </ReadingEntry>
 }
 

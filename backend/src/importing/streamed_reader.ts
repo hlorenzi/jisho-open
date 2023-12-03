@@ -19,7 +19,7 @@ export async function create(
     const fileStats = fs.statSync(filename)
     const fileSize = fileStats["size"]
 
-    const bufferSize = 10000
+    const bufferSize = 1_000_000
     const buffer = Buffer.alloc(bufferSize)
 
 
@@ -30,8 +30,7 @@ export async function create(
 
     const fsRead = util.promisify(fs.read)
 
-    const readNext = async () =>
-    {
+    const readNext = async () => {
         if (blockIndex >= blockSize)
         {
             blockSize = (await fsRead(file, buffer, 0, bufferSize, null)).bytesRead
@@ -49,13 +48,11 @@ export async function create(
     }
 
     const reader: StreamedReader = {
-        getProgressFraction: () =>
-        {
+        getProgressFraction: () => {
             return overallIndex / fileSize
         },
 
-        skipTo: async (str) =>
-        {
+        skipTo: async (str) => {
             let at = 0
             while (true)
             {
@@ -76,8 +73,7 @@ export async function create(
             }
         },
 
-        readTo: async (str) =>
-        {
+        readTo: async (str) => {
             let res: number[] = []
             let at = 0
             while (true)

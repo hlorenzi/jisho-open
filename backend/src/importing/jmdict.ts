@@ -454,8 +454,8 @@ function scoreCurve(
     minScore: number,
     maxScore: number)
 {
-    const t = (n - min) / (max - min)
-    const curve0to1 = t * t
+    const t = Math.max(0, Math.min(1, (n - min) / (max - min)))
+    const curve0to1 = t * t * t
     return Math.max(0, Math.ceil(minScore + ((maxScore - minScore) * curve0to1)))
 }
 
@@ -467,20 +467,20 @@ function scoreHeading(
     let score = 0
 
     if (heading.jlpt !== undefined)
-        score += scoreCurve(heading.jlpt, 5, 1, 1000, 100)
+        score += scoreCurve(heading.jlpt, 5, 1, 2500, 100)
 
     if (heading.rankNf !== undefined)
-        score += scoreCurve(heading.rankNf, 1, 48, 500, 100)
+        score += scoreCurve(heading.rankNf, 1, 48, 250, 10)
 
     if (heading.rankIchi !== undefined)
         score +=
-            heading.rankIchi === 2 ? 500 :
+            heading.rankIchi === 2 ? 250 :
             heading.rankIchi === 1 ? 100 :
             0
 
     if (heading.rankSpec !== undefined)
         score +=
-            heading.rankSpec === 2 ? 500 :
+            heading.rankSpec === 2 ? 250 :
             heading.rankSpec === 1 ? 100 :
             0
 
@@ -491,7 +491,7 @@ function scoreHeading(
             0
         
     if (heading.rankAnimeDrama !== undefined)
-        score += scoreCurve(heading.rankAnimeDrama, 1, 100_000, 100, 0)
+        score += scoreCurve(heading.rankAnimeDrama, 1, 100_000, 100, 1)
 
     if (heading.irregularKanji)
         score -= 20000
@@ -521,8 +521,8 @@ export function normalizeSenses(
     for (const rawSense of rawSenses)
     {
         const pos = rawSense.pos
-        if (pos.some(p => !Api.Word.partOfSpeechTags.includes(p as any)))
-            throw "invalid pos"
+        //if (pos.some(p => !Api.Word.partOfSpeechTags.includes(p as any)))
+        //    throw "invalid pos"
         
         const gloss: Api.Word.Gloss[] = []
         for (const rawGloss of rawSense.gloss)

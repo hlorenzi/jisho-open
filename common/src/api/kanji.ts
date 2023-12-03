@@ -8,6 +8,7 @@ export interface Entry
     jouyou?: Api.JouyouGrade
     jinmeiyou?: boolean
     jlpt?: Api.JlptLevel
+    /// Ranking of commonness in newspapers. (1 to 2501)
     rankNews?: number
 
     strokeCount: number
@@ -24,7 +25,7 @@ export interface Entry
     /// The overall commonness score for the kanji.
     score?: number
     /// All readings (even irregular) with commonness scores.
-    readings?: ReadingScore[]
+    readings: ReadingScore[]
 
     structuralCategory?: StructuralCategory
 

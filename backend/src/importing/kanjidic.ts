@@ -83,6 +83,7 @@ async function normalizeEntry(
         meanings: [],
         kunyomi: [],
         onyomi: [],
+        readings: [],
     }
 
 
@@ -210,6 +211,19 @@ async function normalizeEntry(
 }
 
 
+function scoreCurve(
+    n: number,
+    min: number,
+    max: number,
+    minScore: number,
+    maxScore: number)
+{
+    const t = Math.max(0, Math.min(1, (n - min) / (max - min)))
+    const curve0to1 = t * t * t
+    return Math.max(0, Math.ceil(minScore + ((maxScore - minScore) * curve0to1)))
+}
+
+
 function scoreEntry(
     entry: Api.Kanji.Entry)
     : number
@@ -217,13 +231,13 @@ function scoreEntry(
     let score = 0
 
     if (entry.jlpt !== undefined)
-        score += Math.max(0, 1000 + ((entry.jlpt - 1) * 100))
+        score += scoreCurve(entry.jlpt, 5, 1, 3500, 100)
 
     if (entry.jouyou !== undefined)
-        score += Math.max(0, 2000 - ((entry.jouyou - 1) * 100))
+        score += scoreCurve(entry.jouyou, 1, 7, 1000, 100)
 
     if (entry.rankNews !== undefined)
-        score += Math.max(0, 1000 / (1 + entry.rankNews))
+        score += scoreCurve(entry.rankNews, 1, 2501, 500, 10)
 
     return Math.round(score)
 }
@@ -516,7 +530,7 @@ export async function crossReferenceWords(
     for (const bucket of dbBuckets)
     {
         readings.push({
-            reading: bucket.reading,
+            reading: Kana.toHiragana(bucket.reading),
             score:
                 (apiKanji.score ?? 0) +
                 5 * Math.min(500, bucket.entries.length),
@@ -529,7 +543,7 @@ export async function crossReferenceWords(
             continue
         
         readings.push({
-            reading: r.text,
+            reading: Kana.toHiragana(r.text),
             score: (apiKanji.score ?? 0),
         })
     }

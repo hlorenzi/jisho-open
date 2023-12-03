@@ -103,15 +103,23 @@ export async function searchByInflections(
     const fieldLen = "len" satisfies keyof MongoDb.DbWordEntry["lookUp"]
 
     const dbFindQueries: any[] = []
+    const seenQueries = new Set<string>()
 
     for (const step of inflections.flat())
+    {
+        const key = `${ step.sourceTerm };${ step.sourceCategory }`
+        if (seenQueries.has(key))
+            continue
+
+        seenQueries.add(key)
         dbFindQueries.push({
             [MongoDb.fieldWordLookUpHeadingsText]: step.sourceTerm,
             [MongoDb.fieldWordLookUpTags]: step.sourceCategory,
         })
+    }
 
     const tagFilter = makeTagFilter(options)
-        
+
     const dbResults = await state.collWords
         .find({ $or: dbFindQueries, ...tagFilter })
         .sort({ [`${fieldLookUp}.${fieldLen}`]: -1, score: -1, _id: 1 })
