@@ -216,7 +216,7 @@ vk;    *くる -> v5aru; *こなさる
 
 @ id: negative-imperative
 @ display: negative imperative
-~verb-identity; * -> unc; *な
+%verb-identity; * -> unc; *な
 
 @ id: request
 vmasu; *ます -> unc; *ませ
