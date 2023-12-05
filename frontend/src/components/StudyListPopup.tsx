@@ -18,6 +18,7 @@ export function StudyListPopup(props: {
                     authUser,
                     studylists: [] as App.Api.StudyList.Entry[],
                     foldersWithWord: new Set<string>(),
+                    presentInCount: 0,
                 }
 
             const studylistsRes = await App.Api.studylistGetAllMarked({
@@ -41,10 +42,18 @@ export function StudyListPopup(props: {
                     foldersWithWord.add(studylist.folderName)
             }
 
+            let presentInCount = 0
+            for (const studylist of studylists)
+            {
+                if (studylist.marked !== undefined)
+                    presentInCount += 1
+            }
+
             return {
                 authUser,
                 studylists,
                 foldersWithWord,
+                presentInCount,
             }
         })
 
@@ -113,6 +122,15 @@ export function StudyListPopup(props: {
             margin: "0.25em 0",
         }}>
             Add this word to a study list
+            <Solid.Show when={ data().latest && data().latest!.presentInCount !== 0 }>
+                { " " }
+                <span style={{ color: Framework.themeVar("iconGreenColor") }}>
+                    (<Framework.IconCheckmark
+                        color={ Framework.themeVar("iconGreenColor") }
+                    />
+                    { data().latest!.presentInCount })
+                </span>
+            </Solid.Show>
         </div>
         <Framework.HorizontalBar/>
 
