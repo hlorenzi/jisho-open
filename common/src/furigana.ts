@@ -94,6 +94,24 @@ export function decodeFromParts(
 }
 
 
+export function decodeFromPartsPure(
+    encodedBase: string,
+    encodedReading: string)
+    : Furigana
+{
+    const bases = encodedBase.split(SEGMENT_SEPARATOR)
+    const readings = encodedReading.split(SEGMENT_SEPARATOR)
+
+    if (bases.length !== readings.length)
+        throw `encoded furigana segment number mismatch: ${encodedBase}${READING_SEPARATOR}${encodedReading}`
+
+    return bases.map((base, i) => {
+        const reading = readings[i]
+        return [base, reading]
+    })
+}
+
+
 /// Takes a base and reading pair, and returns a list of
 /// possible furigana segmentations, based solely on the text
 /// given, without resorting to kanji reading tables.

@@ -54,7 +54,9 @@ export function getPatch(
 {
     if (!cachePatches)
     {
-        const raw = fs.readFileSync("./src/data/furigana_patches.txt", { encoding: "utf-8" })
+        const raw = fs.readFileSync(
+            "./src/data/furigana_patches.txt",
+            { encoding: "utf-8" })
 
         cachePatches = new Map()
         cachePatchesUsed.clear()
@@ -70,10 +72,10 @@ export function getPatch(
 
             const furiBase = entry[0]
             const furiReading = entry[1]
-            const furi = Furigana.decodeFromParts(furiBase, furiReading)
+            const furi = Furigana.decodeFromPartsPure(furiBase, furiReading)
 
             const termBase = Furigana.extractBase(furi)
-            const termReading = Furigana.extractReading(furi)
+            const termReading = Furigana.extractReadingPure(furi)
 
             const key = makeCacheKey(termBase, termReading)
             cachePatches.set(key, furi)

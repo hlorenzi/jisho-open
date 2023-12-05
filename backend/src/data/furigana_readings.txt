@@ -24290,6 +24290,13 @@
 蕎麦;gikun;そば
 晦日;gikun;みそか
 眼鏡;gikun;めがね
+草臥;gikun;くたび;くたびれ
+莎草;gikun;くぐ
+蜻蛉;gikun;かげろう
+金瘡小;gikun;きらん
+蘿蔔;gikun;すずしろ
+含羞;gikun;おじぎ
+徒然;gikun;つれづれ
 豊受;fused;とゆけ
 不足;conjug;たらず
 不知;conjug;しらず;しらぬ
