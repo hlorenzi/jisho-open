@@ -65,7 +65,9 @@ export async function buildDatabase(
 export function setupScheduledDatabaseBuild(
     db: Db.Interface)
 {
+    const oneDay = 1000 * 60 * 60 * 24
+
     setInterval(
         () => buildDatabase(db, false),
-        1000 * 60 * 60 * 24)
+        oneDay * 3.25)
 }
