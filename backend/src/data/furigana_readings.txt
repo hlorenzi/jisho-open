@@ -23361,7 +23361,6 @@
 部;uncl;へ
 当;uncl;あた
 〆;uncl;しめ
-米;uncl;め
 弗;uncl;ふ
 痛;uncl;い
 行;uncl;かつ
@@ -23476,6 +23475,7 @@
 竹;uncl;ささ
 千;uncl;せ
 鳳;uncl;あげ;あげは
+糯;uncl;もち
 素;auto;しろ;しら;すん
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
@@ -23554,6 +23554,11 @@
 律;ateji;り;りっ
 賓;ateji;ぴん
 香;ateji;クー
+珈;ateji;コー
+琲;ateji;ヒー
+米;ateji;メ;メー;メートル;ペイ
+嗚;ateji;あ
+呼;ateji;あ
 合;auto;あわ;が
 其;auto;そ
 此;auto;こ
@@ -23561,7 +23566,6 @@
 上;auto;あが
 何;auto;ど;いず;かん
 引;auto;びき
-鏡;auto;がね
 時;auto;ど;と
 切;auto;きっ;ぎっ
 掛;auto;かか;がか
@@ -23863,8 +23867,6 @@
 昧;auto;ま
 呑;auto;のん
 楠;auto;な
-蕎;auto;そ
-麦;auto;ば
 椿;auto;つばい
 巡;auto;まわ
 最;auto;も
@@ -23966,6 +23968,7 @@
 売;chinese;マイ
 五;chinese;ウー
 香;chinese;ホン;シャン
+米;chinese;ミ;ミー
 北;korean;プク
 焼;korean;ソ
 平;korean;ピョン
@@ -24107,7 +24110,6 @@
 風邪;gikun;かぜ;かざ
 躑躅;gikun;つつじ
 弾機;gikun;ばね
-珈琲;gikun;こーひー
 機躡;gikun;まねき
 丁香花;gikun;はしどい
 迷迭香;gikun;まんねんろう
@@ -24285,6 +24287,9 @@
 細小;gikun;いさら;いささ
 千里;gikun;ね
 天牛;gikun;かみきり
+蕎麦;gikun;そば
+晦日;gikun;みそか
+眼鏡;gikun;めがね
 豊受;fused;とゆけ
 不足;conjug;たらず
 不知;conjug;しらず;しらぬ

@@ -222,55 +222,38 @@ export function normalizeHeadings(
 
     headings.sort((a, b) => score(b) - score(a))
 
-    // If the word is usually written in plain kana,
-    // extract the first hiragana reading element and put it
-    // at the front, unless we've already got it, and unless
-    // there's already a katakana heading for it of the
-    // same or greater commonness score.
+    // If the first sense is tagged "usually written in plain kana",
+    // make sure the first heading has no kanji, and
+    // that it corresponds to the most common reading.
     if (usuallyOnlyKana)
     {
-        for (const r_ele of rawREle)
-        {
-            const reb = r_ele.reb[0]
+        const mostCommonREle = rawREle.find(r_ele => 
+            r_ele.re_inf === undefined ||
+            !r_ele.re_inf.some(tag => tag === "sk"))
 
-            if (seenReadings.has(reb))
+        if (mostCommonREle)
+        {        
+            const mostCommonReading =
+                Kana.toHiragana(mostCommonREle.reb[0])
+
+            const mostCommonReadingNormalized = 
+                normalizeHeading(wordId, mostCommonREle, undefined, isName)
+
+            const mostCommonReadingScore =
+                scoreHeading(mostCommonReadingNormalized)
+
+            const firstHeadingIsCorrect =
+                headings[0].reading === undefined &&
+                Kana.toHiragana(headings[0].base) === mostCommonReading
+
+            const firstHeadingCommonness =
+                scoreHeading(headings[0])
+
+            if (!firstHeadingIsCorrect ||
+                firstHeadingCommonness < mostCommonReadingScore)
             {
-                if (Kana.hasHiragana(reb))
-                {
-                    if (r_ele.re_inf?.some(tag => tag === "ik" || tag === "ok" || tag === "sk"))
-                        continue
-
-                    const asKatakana = Kana.toKatakana(reb)
-
-                    const isMatchingCommonKatakana = (r: JmdictRaw.EntryREle) => {
-                        return r.reb[0] === asKatakana &&
-                            r.re_nokanji &&
-                            (r.re_pri?.length ?? 0) >= (r_ele.re_pri?.length ?? 0)
-                    }
-
-                    if (reb !== asKatakana &&
-                        rawREle.some(isMatchingCommonKatakana))
-                        continue
-                }
-                else
-                {
-                    const isMatchingKatakana = (r: JmdictRaw.EntryREle) => {
-                        return r.reb[0] === reb &&
-                            r.re_nokanji
-                    }
-
-                    if (rawREle.some(isMatchingKatakana))
-                        continue
-                }
+                headings.unshift(mostCommonReadingNormalized)
             }
-            
-            if (r_ele.re_inf !== undefined &&
-                r_ele.re_inf.some(tag => tag === "sk"))
-                continue
-            
-            const heading = normalizeHeading(wordId, r_ele, undefined, isName)
-            headings.unshift(heading)
-            break
         }
     }
 
@@ -363,7 +346,8 @@ function normalizeHeading(
         heading.searchOnlyKanji = true
 
 
-    if (r_ele.re_inf?.some(tag => tag === "gikun"))
+    if (k_ele !== undefined &&
+        r_ele.re_inf?.some(tag => tag === "gikun"))
         heading.gikun = true
 
     if (r_ele.re_inf?.some(tag => tag === "ik"))
@@ -474,20 +458,20 @@ function scoreHeading(
 
     if (heading.rankIchi !== undefined)
         score +=
-            heading.rankIchi === 2 ? 250 :
-            heading.rankIchi === 1 ? 100 :
+            heading.rankIchi === 1 ? 250 :
+            heading.rankIchi === 2 ? 100 :
             0
 
     if (heading.rankSpec !== undefined)
         score +=
-            heading.rankSpec === 2 ? 250 :
-            heading.rankSpec === 1 ? 100 :
+            heading.rankSpec === 1 ? 250 :
+            heading.rankSpec === 2 ? 100 :
             0
 
     if (heading.rankGai !== undefined)
         score +=
-            heading.rankGai === 2 ? 50 :
-            heading.rankGai === 1 ? 10 :
+            heading.rankGai === 1 ? 50 :
+            heading.rankGai === 2 ? 10 :
             0
         
     if (heading.rankAnimeDrama !== undefined)

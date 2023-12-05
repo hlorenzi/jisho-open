@@ -45,6 +45,39 @@ export async function test()
         throw `no entry results for "${ query }"`
     }
 
+    const expectWordFirstHeading = async (
+        query: string,
+        expectedHeadingBase: string,
+        expectedHeadingReading?: string) =>
+    {
+        console.log(`testing \`${ query }\`...`)
+
+        const results = await ServerSearch.search(db, { query, limit: 10 })
+
+        for (const entry of results.entries)
+        {
+            if (entry.type === "section")
+                continue
+
+            if (entry.type !== "word")
+                throw `wrong results for \`${ query }\`: got entry type \`${ entry.type }\``
+
+            if (entry.headings[0].base !== expectedHeadingBase ||
+                (entry.headings[0].reading !== expectedHeadingBase &&
+                    entry.headings[0].reading !== expectedHeadingReading))
+            {
+                throw `wrong results for \`${ query }\`: ` +
+                    entry.headings
+                        .map(h => "[" + h.base + ", " + h.reading + "]")
+                        .join("; ")
+            }
+            
+            return
+        }
+
+        throw `no entry results for "${ query }"`
+    }
+
     const expectKanji = async (
         query: string,
         expectedKanji: string) =>
@@ -101,6 +134,20 @@ export async function test()
         throw `no entry results for "${ query }"`
     }
 
+
+    await expectWordFirstHeading("烏賊", "イカ", undefined)
+    await expectWordFirstHeading("烏賊フライ", "イカフライ", undefined)
+    await expectWordFirstHeading("海豚", "イルカ", undefined)
+    await expectWordFirstHeading("玩具", "おもちゃ", undefined)
+    await expectWordFirstHeading("鞄", "かばん", undefined)
+    await expectWordFirstHeading("葡萄", "ぶどう", undefined)
+    await expectWordFirstHeading("不味い", "まずい", undefined)
+    await expectWordFirstHeading("掏摸", "すり", undefined)
+    await expectWordFirstHeading("綺麗", "綺麗", "きれい")
+    await expectWordFirstHeading("凄い", "すごい", undefined)
+    await expectWordFirstHeading("螺子", "ネジ", undefined)
+    await expectWordFirstHeading("薔薇", "ばら", undefined)
+
     await expectWord("cat", "猫", "ねこ")
     await expectWord("white cat", "白猫", "しろねこ")
     await expectWord("dog", "犬", "いぬ")
@@ -121,7 +168,7 @@ export async function test()
 
     await expectWord("email", "電子メール", "でんしメール")
     await expectWord("e-mail", "電子メール", "でんしメール")
-    await expectWord("e mail", "イーメイル", undefined)
+    await expectWord("e mail", "電子メール", "でんしメール")
 
     await expectWord("\"cat\"", "猫", "ねこ")
     await expectWord("\"white\" \"cat\"", "白猫", "しろねこ")
