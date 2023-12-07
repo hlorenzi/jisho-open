@@ -4,6 +4,7 @@ import * as Framework from "../framework/index.ts"
 import * as App from "../app.tsx"
 import * as Kana from "common/kana.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
+import * as Jouyou from "common/jouyou.ts"
 import { FuriganaRuby } from "./Furigana.tsx"
 import { InflectionBreakdown } from "./InflectionBreakdown.tsx"
 import { InflectionTable, hasTable } from "./InflectionTable.tsx"
@@ -197,8 +198,14 @@ function Heading(props: {
     const kanjiWithDuplicates = [...props.heading.base]
         .filter(c => Kana.isKanji(c))
     
-    const kanji =
-        [...new Set<string>(kanjiWithDuplicates)].join("")
+    const kanji = [...new Set<string>(kanjiWithDuplicates)]
+
+    const kanjiStr = kanji.join("")
+
+    const jouyouKanjiSet = Jouyou.getKanjiSet()
+
+    const onlyJouyouKanji = kanji
+        .every(k => jouyouKanjiSet.has(k))
 
     const baseNormalized = Kana.normalizeWidthForms(props.heading.base)
     const readingNormalized = Kana.normalizeWidthForms(props.heading.reading ?? "")
@@ -226,7 +233,7 @@ function Heading(props: {
             <HeadingPopup
                 popup={ popup }
                 wordId={ props.entry.id }
-                kanji={ kanji }
+                kanjiStr={ kanjiStr }
                 base={ props.heading.base }
                 reading={ props.heading.reading }
                 furigana={ props.heading.furigana }
@@ -243,7 +250,10 @@ function Heading(props: {
             queryMatch={ isQueryMatch }
             onClick={ ev => popup.open(ev.currentTarget) }
         >
-            <HeadingLabel heading={ props.heading }/>
+            <HeadingLabel
+                heading={ props.heading }
+                onlyJouyouKanji={ onlyJouyouKanji }
+            />
             <Solid.Show when={ App.usePrefs().debugMode }>
                 <DebugInfo>
                     [score: { props.heading.score ?? 0 }]
@@ -301,6 +311,7 @@ const HeadingBlock = styled.button<{
 
 export function HeadingLabel(props: {
     heading: App.Api.Word.Heading,
+    onlyJouyouKanji?: boolean,
 })
 {
     const commonness =
@@ -329,6 +340,13 @@ export function HeadingLabel(props: {
                         title="gikun reading"
                         label="G"
                         bkgColor={ Framework.themeVar("iconGikunColor") }
+                    />
+                </Solid.Show>
+                
+                <Solid.Show when={ props.onlyJouyouKanji === false }>
+                    <Framework.IconCircleSmall
+                        title="Contains kanji outside the jōyō list"
+                        color={ Framework.themeVar("iconBlueColor") }
                     />
                 </Solid.Show>
                 
@@ -414,7 +432,7 @@ function HeadingPopup(props: {
     popup: Framework.PopupPageWideData,
     partOfSpeechTags: App.Api.Word.PartOfSpeechTag[],
     wordId: string,
-    kanji: string,
+    kanjiStr: string,
     furigana: string,
     base: string,
     reading?: string,
@@ -433,13 +451,13 @@ function HeadingPopup(props: {
     })
 
     return <>
-        <Solid.Show when={ props.kanji.length !== 0 }>
+        <Solid.Show when={ props.kanjiStr.length !== 0 }>
             <Framework.ButtonPopupPageWide
                 label={ <>
                     <Framework.IconMagnifyingGlass/>
-                    { ` Inspect kanji: ${ props.kanji }` }
+                    { ` Inspect kanji: ${ props.kanjiStr }` }
                 </> }
-                href={ App.Pages.Search.urlForQuery(`${ props.kanji } #k`) }
+                href={ App.Pages.Search.urlForQuery(`${ props.kanjiStr } #k`) }
             />
         </Solid.Show>
 
