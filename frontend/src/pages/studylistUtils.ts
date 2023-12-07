@@ -3,7 +3,126 @@ import * as App from "../app.tsx"
 import * as Kana from "common/kana.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
 import * as Furigana from "common/furigana.ts"
-import { StudyListWordEntry } from "./PageStudylist.tsx"
+import * as Jouyou from "common/jouyou.ts"
+
+
+export type StudyListWordEntry = App.Api.StudyList.WordEntry & {
+    entry: App.Api.Word.Entry
+    headingIndex?: number
+}
+
+
+export type StudylistStats = {
+    kanjiCountJouyou: number
+    kanjiPercentJouyou: number
+    kanjiCountOther: number
+}
+
+
+export function getStudylistStats(
+    studylist: App.Api.StudyList.Entry,
+    words: StudyListWordEntry[])
+    : StudylistStats
+{
+    const jouyouKanjiSet = Jouyou.getKanjiSet()
+
+    const kanjiSetAll = new Set<string>()
+    const kanjiSetJouyou = new Set<string>()
+    const kanjiSetOther = new Set<string>()
+
+    for (const word of words)
+    {
+        const levels = analyzeHeadingKanjiLevel(word)
+
+        const chosen =
+            levels.fixed ??
+            levels.rare ??
+            levels.uncommon ??
+            levels.jouyou ??
+            word.entry.headings[0]
+
+        const kanji = [...chosen.base]
+            .filter(k => Kana.isKanji(k))
+
+        kanji.forEach(k => {
+            if (jouyouKanjiSet.has(k))
+                kanjiSetJouyou.add(k)
+            else
+                kanjiSetOther.add(k)
+        })
+    }
+
+    return {
+        kanjiCountJouyou: kanjiSetJouyou.size,
+        kanjiPercentJouyou: Math.floor(
+            Math.min(1, kanjiSetJouyou.size / Jouyou.officialCount) * 100),
+        
+        kanjiCountOther: kanjiSetOther.size,
+    }
+}
+
+
+type HeadingLevels = {
+    fixed?: App.Api.Word.Heading
+    jouyou?: App.Api.Word.Heading
+    uncommon?: App.Api.Word.Heading
+    rare?: App.Api.Word.Heading
+}
+
+
+function analyzeHeadingKanjiLevel(
+    word: StudyListWordEntry)
+    : HeadingLevels
+{
+    const jouyouKanjiSet = Jouyou.getKanjiSet()
+
+    const headingFixed =
+        word.headingIndex !== undefined ?
+            word.entry.headings[word.headingIndex] :
+            undefined
+
+    let headingJouyou: App.Api.Word.Heading | undefined = undefined
+    let headingUncommon: App.Api.Word.Heading | undefined = undefined
+    let headingRare: App.Api.Word.Heading | undefined = undefined
+
+    for (let i = word.entry.headings.length - 1; i >= 0; i--)
+    {
+        const heading = word.entry.headings[i]
+
+        if (heading.irregularKanji ||
+            heading.irregularKana ||
+            heading.irregularOkurigana ||
+            heading.outdatedKanji ||
+            heading.outdatedKana ||
+            heading.searchOnlyKanji ||
+            heading.searchOnlyKana)
+            continue
+
+        if (!Kana.hasKanji(heading.base))
+            continue
+            
+        if (heading.rareKanji)
+            headingRare = heading
+        
+        if (!heading.rareKanji)
+        {
+            headingUncommon = heading
+
+            const kanji = [...heading.base]
+                .filter(c => Kana.isKanji(c))
+
+            if (kanji.every(k => jouyouKanjiSet.has(k)))
+                headingJouyou = heading
+        }
+    }
+
+    return {
+        fixed: headingFixed,
+        jouyou: headingJouyou,
+        uncommon: headingUncommon,
+        rare: headingRare,
+    }
+}
 
 
 export function writeStudylistTsv(
@@ -19,44 +138,35 @@ export function writeStudylistTsv(
     
     for (const word of words)
     {
-        let headingRare: App.Api.Word.Heading | undefined = undefined
-        let headingUncommon: App.Api.Word.Heading | undefined = undefined
-        if (prefs.studylistExportKanjiLevel !== "common")
-        {
-            for (let i = word.entry.headings.length - 1; i >= 0; i--)
-            {
-                const heading = word.entry.headings[i]
-
-                if (heading.irregularKanji ||
-                    heading.irregularKana ||
-                    heading.irregularOkurigana ||
-                    heading.outdatedKanji ||
-                    heading.outdatedKana ||
-                    heading.searchOnlyKanji ||
-                    heading.searchOnlyKana)
-                    continue
-
-                if (!Kana.hasKanji(heading.base))
-                    continue
-                    
-                if (heading.rareKanji)
-                    headingRare = heading
-                
-                if (!heading.rareKanji)
-                    headingUncommon = heading
-            }
-        }
+        const levels = analyzeHeadingKanjiLevel(word)
 
         let chosenHeading = word.entry.headings[0]
-        if (prefs.studylistExportKanjiLevel === "rare")
-            chosenHeading = headingRare ?? headingUncommon ?? chosenHeading
-        // TODO: Jouyou kanji selection
-        else if (prefs.studylistExportKanjiLevel === "uncommon" ||
-            prefs.studylistExportKanjiLevel === "jouyou")
-            chosenHeading = headingUncommon ?? chosenHeading
+        switch (prefs.studylistExportKanjiLevel)
+        {
+            case "rare":
+                chosenHeading =
+                    levels.rare ??
+                    levels.uncommon ??
+                    levels.jouyou ??
+                    chosenHeading
+                break
+            
+            case "uncommon":
+                chosenHeading =
+                    levels.uncommon ??
+                    levels.jouyou ??
+                    chosenHeading
+                break
+            
+            case "jouyou":
+                chosenHeading =
+                    levels.jouyou ??
+                    chosenHeading
+                break
+        }
 
-        if (word.headingIndex !== undefined)
-            chosenHeading = word.entry.headings[word.headingIndex]
+        if (levels.fixed)
+            chosenHeading = levels.fixed
 
         if (prefs.studylistExportSkipKatakana &&
             Kana.isPureKatakana(chosenHeading.base))

@@ -8,16 +8,13 @@ import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
 import { UserIdLink, UserLink } from "../components/User.tsx"
 import { HeadingLabel } from "../components/EntryWord.tsx"
-import * as StudylistExport from "./studylistExport.ts"
+import * as StudylistUtils from "./studylistUtils.ts"
 
 
 const collapsedLength = 20
 
 
-export type StudyListWordEntry = App.Api.StudyList.WordEntry & {
-    entry: App.Api.Word.Entry
-    headingIndex?: number
-}
+
 
 
 export function PageStudylist(props: Framework.RouteProps)
@@ -43,7 +40,7 @@ export function PageStudylist(props: Framework.RouteProps)
             const wordEntriesById = new Map<string, App.Api.Word.Entry>()
             entries.forEach(e => wordEntriesById.set(e.id, e))
 
-            const words: StudyListWordEntry[] = studylist.words
+            const words: StudylistUtils.StudyListWordEntry[] = studylist.words
                 .map(w => {
                     const [wordId, wordSpelling] =
                         App.Api.StudyList.decodeWordEntry(w.id)
@@ -74,6 +71,10 @@ export function PageStudylist(props: Framework.RouteProps)
                 .filter(w => !!w.entry)
                 .reverse()
 
+            const stats = StudylistUtils.getStudylistStats(
+                studylist,
+                words)
+
             return {
                 authUser,
                 user,
@@ -81,6 +82,7 @@ export function PageStudylist(props: Framework.RouteProps)
                 userIsEditor,
                 studylist,
                 words,
+                stats,
             }
         })
 
@@ -272,6 +274,17 @@ export function PageStudylist(props: Framework.RouteProps)
                 Last activity on
                 { " " }
                 { Framework.dateAndElapsedToStr(data()!.studylist.modifyDate ?? "") }
+                <br/>
+                <br/>
+                Total kanji count:
+                { " " }
+                { data()!.stats.kanjiCountJouyou + data()!.stats.kanjiCountOther }
+                <br/>
+                Jōyō kanji count:
+                { " " }
+                { data()!.stats.kanjiCountJouyou }
+                { " " }
+                ({ data()!.stats.kanjiPercentJouyou }%)
             </SmallInfo>
 
             <Solid.Show when={ data()?.userIsEditor }>
@@ -518,13 +531,13 @@ const ExpandSection = styled.div`
 
 export function ExportPopup(props: {
     studylist: App.Api.StudyList.Entry,
-    words: StudyListWordEntry[],
+    words: StudylistUtils.StudyListWordEntry[],
 })
 {
     const onExport = () => {
         App.analyticsEvent("studylistExport")
 
-        const tsvText = StudylistExport.writeStudylistTsv(
+        const tsvText = StudylistUtils.writeStudylistTsv(
             props.studylist,
             props.words)
 
@@ -563,7 +576,7 @@ export function ExportPopup(props: {
             onChange={ (value) => App.mergePrefs({ studylistExportKanjiLevel: value }) }
             options={ [
                 { label: "Use common spelling, allow plain kana", value: "common" },
-                //{ label: "Force kanji, allow up to jōyō", value: "jouyou" },
+                { label: "Force kanji, allow up to jōyō", value: "jouyou" },
                 { label: "Force kanji, allow up to uncommon", value: "uncommon" },
                 { label: "Force kanji, allow up to rare", value: "rare" },
             ]}
