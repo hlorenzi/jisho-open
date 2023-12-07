@@ -181,6 +181,21 @@ export function PageStudylist(props: Framework.RouteProps)
         setSelected(newSet)
     }
 
+    const onToggleSelectAll = () => {
+        if (selected().size > 0)
+        {
+            setSelected(new Set<string>())
+        }
+        else
+        {
+            const newSet = new Set<string>()
+            for (const word of data()!.words)
+                newSet.add(word.id)
+
+            setSelected(newSet)
+        }
+    }
+
     const onRemoveSelected = () => popupBusy.run(async () => {
         const message =
             `Remove the ${ selected().size } selected ` +
@@ -388,6 +403,18 @@ export function PageStudylist(props: Framework.RouteProps)
                         ]}
                     />
                     <Solid.Show when={ data()!.userIsCreator }>
+                        <br/>
+                        <Framework.Button
+                            icon={ selected().size > 0 ?
+                                <Framework.IconX/> :
+                                <Framework.IconCheckmark/>
+                            }
+                            label={ selected().size > 0 ?
+                                "Select none" :
+                                "Select all"
+                            }
+                            onClick={ onToggleSelectAll }
+                        />
                         <Framework.Button
                             icon={ <Framework.IconTrash/> }
                             label="Remove selected"
