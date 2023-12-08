@@ -50,7 +50,12 @@ export async function downloadAndImport(
 
     const dispatcher = new BatchDispatcher.BatchDispatcher(
         25,
-        (items: Api.Word.Entry[]) => db.importWordEntries(startDate, items))
+        async (items: Api.Word.Entry[]) => {
+            await db.importWordEntries(startDate, items)
+
+            if (!useCachedFiles)
+                await new Promise((resolve) => setTimeout(resolve, 500))
+        })
     
     for await (const rawEntry of entryIterator)
     {

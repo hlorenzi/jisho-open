@@ -47,6 +47,9 @@ export async function downloadAndImport(
         async (items: [Api.Kanji.Entry, Api.KanjiWordCrossRef.Entry][]) => {
             await db.importKanjiEntries(items.map(i => i[0]))
             await db.importKanjiWordCrossRefEntries(items.map(i => i[1]))
+
+            if (!useCachedFiles)
+                await new Promise((resolve) => setTimeout(resolve, 500))
         })
     
     for await (const rawEntry of entryIterator)

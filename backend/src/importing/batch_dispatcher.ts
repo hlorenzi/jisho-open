@@ -2,12 +2,12 @@ export class BatchDispatcher<T, FnReturn>
 {
     items: T[]
     maxCount: number
-    flushFn: (items: T[]) => FnReturn | undefined
+    flushFn: (items: T[]) => FnReturn
 
 
     constructor(
         maxCount: number,
-        flushFn: (items: T[]) => FnReturn | undefined)
+        flushFn: (items: T[]) => FnReturn)
     {
         this.items = []
         this.maxCount = maxCount
@@ -25,10 +25,12 @@ export class BatchDispatcher<T, FnReturn>
             this.items = []
             return this.flushFn(flushItems)
         }
+
+        return undefined
     }
 
 
-    finish(): FnReturn | undefined
+    finish(): FnReturn
     {
         const flushItems = this.items
         this.items = []
