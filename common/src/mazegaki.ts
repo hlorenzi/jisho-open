@@ -9,7 +9,7 @@ export function *generateMazegaki(
     let kanjiCount = 0
     for (const segment of furi)
     {
-        if (Kana.hasKanji(segment[0]))
+        if (Kana.hasKanjiOrIterationMark(segment[0]))
             kanjiCount++
     }
 
@@ -51,7 +51,7 @@ export function *generateMazegaki(
                 {
                     removeArray[advance]++
                     if (removeArray[advance] < furi.length &&
-                        !Kana.hasKanji(furi[removeArray[advance]][0]))
+                        !Kana.hasKanjiOrIterationMark(furi[removeArray[advance]][0]))
                         continue
 
                     break

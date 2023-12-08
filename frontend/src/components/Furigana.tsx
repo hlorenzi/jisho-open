@@ -33,7 +33,7 @@ export function FuriganaRuby(props: {
                 </Solid.Show>
                 <Rt dotted={ dotted }>
                     <Solid.Show
-                        when={ !Kana.hasKanji(segment[0]) || segment[1] }
+                        when={ !Kana.hasKanjiOrIterationMark(segment[0]) || segment[1] }
                         fallback={ <EmptyReading>×</EmptyReading> }
                     >
                         { segment[1] }
@@ -96,7 +96,7 @@ export function FuriganaSideBySide(props: {
                 <>
                 { index() > 0 ? "・" : "" }
                 <Solid.Show
-                    when={ !Kana.hasKanji(segment[0]) || segment[1] }
+                    when={ !Kana.hasKanjiOrIterationMark(segment[0]) || segment[1] }
                     fallback={ <EmptyReading>×</EmptyReading> }
                 >
                     <HighlightedReading

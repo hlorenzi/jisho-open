@@ -26,7 +26,6 @@ export function getStudylistStats(
 {
     const jouyouKanjiSet = Jouyou.getKanjiSet()
 
-    const kanjiSetAll = new Set<string>()
     const kanjiSetJouyou = new Set<string>()
     const kanjiSetOther = new Set<string>()
 
@@ -98,22 +97,15 @@ function analyzeHeadingKanjiLevel(
             heading.searchOnlyKana)
             continue
 
-        if (!Kana.hasKanji(heading.base))
+        if (!Kana.hasKanjiOrIterationMark(heading.base))
             continue
             
         if (heading.rareKanji)
             headingRare = heading
-        
-        if (!heading.rareKanji)
-        {
+        else if (heading.nonJouyouKanji)
             headingUncommon = heading
-
-            const kanji = [...heading.base]
-                .filter(c => Kana.isKanji(c))
-
-            if (kanji.every(k => jouyouKanjiSet.has(k)))
-                headingJouyou = heading
-        }
+        else
+            headingJouyou = heading
     }
 
     return {

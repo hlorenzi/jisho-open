@@ -1,3 +1,6 @@
+import * as Kana from "./kana.ts"
+
+
 export const officialCount = 2136
 
 
@@ -15,4 +18,21 @@ export function getKanjiSet(): Set<string>
     }
 
     return kanjiSet
+}
+
+
+export function hasOnlyJouyouKanji(str: string): boolean
+{
+    const jouyouKanjiSet = getKanjiSet()
+
+    for (const c of str)
+    {
+        if (!Kana.isKanji(c))
+            continue
+
+        if (!jouyouKanjiSet.has(c))
+            return false
+    }
+
+    return true
 }

@@ -254,12 +254,22 @@ export function normalizeForSimilarity(str: string)
 }
 
 
-export function isKanji(c: string)
+export function isKanjiOrIterationMark(c: string)
 {
     const code = c.codePointAt(0) ?? 0
     
     return (
         code == 0x3005 || // Ideographic Iteration Mark
+        isKanji(c)
+    )
+}
+
+
+export function isKanji(c: string)
+{
+    const code = c.codePointAt(0) ?? 0
+    
+    return (
         (code >= 0x4e00 && code <= 0x9fff) || // CJK Main Block
         (code >= 0x3400 && code <= 0x4dbf) || // CJK Extensions A
         (code >= 0x20000 && code <= 0x2a6df) || // CJK Extensions B
@@ -314,6 +324,12 @@ export function isJapanese(c: string)
         isKanji(c) ||
         isJapanesePunctuation(c)
     )
+}
+
+
+export function hasKanjiOrIterationMark(str: string)
+{
+    return [...str].some(c => isKanjiOrIterationMark(c))
 }
 
 

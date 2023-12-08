@@ -6,6 +6,7 @@ import * as JmdictRaw from "./jmdict_raw.ts"
 import * as BatchDispatcher from "./batch_dispatcher.ts"
 import * as Api from "common/api/index.ts"
 import * as Kana from "common/kana.ts"
+import * as Jouyou from "common/jouyou.ts"
 import * as Furigana from "common/furigana.ts"
 import * as Mazegaki from "common/mazegaki.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
@@ -344,6 +345,13 @@ function normalizeHeading(
 
     if (k_ele?.ke_inf?.some(tag => tag === "sK"))
         heading.searchOnlyKanji = true
+
+    if (keb !== undefined)
+    {
+        const onlyJouyouKanji = Jouyou.hasOnlyJouyouKanji(keb)
+        if (!onlyJouyouKanji)
+            heading.nonJouyouKanji = true
+    }
 
 
     if (k_ele !== undefined &&

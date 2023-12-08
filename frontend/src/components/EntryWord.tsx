@@ -19,7 +19,7 @@ export function EntryWord(props: {
 })
 {
     const ignoreUsageInPlainKanaMiscTag =
-        !Kana.hasKanji(props.entry.headings[0].base)
+        !Kana.hasKanjiOrIterationMark(props.entry.headings[0].base)
 
     return <Entry>
         <Headings
@@ -199,13 +199,7 @@ function Heading(props: {
         .filter(c => Kana.isKanji(c))
     
     const kanji = [...new Set<string>(kanjiWithDuplicates)]
-
     const kanjiStr = kanji.join("")
-
-    const jouyouKanjiSet = Jouyou.getKanjiSet()
-
-    const onlyJouyouKanji = kanji
-        .every(k => jouyouKanjiSet.has(k))
 
     const baseNormalized = Kana.normalizeWidthForms(props.heading.base)
     const readingNormalized = Kana.normalizeWidthForms(props.heading.reading ?? "")
@@ -252,7 +246,6 @@ function Heading(props: {
         >
             <HeadingLabel
                 heading={ props.heading }
-                onlyJouyouKanji={ onlyJouyouKanji }
             />
             <Solid.Show when={ App.usePrefs().debugMode }>
                 <DebugInfo>
@@ -311,7 +304,6 @@ const HeadingBlock = styled.button<{
 
 export function HeadingLabel(props: {
     heading: App.Api.Word.Heading,
-    onlyJouyouKanji?: boolean,
 })
 {
     const commonness =
@@ -343,7 +335,7 @@ export function HeadingLabel(props: {
                     />
                 </Solid.Show>
                 
-                <Solid.Show when={ props.onlyJouyouKanji === false }>
+                <Solid.Show when={ props.heading.nonJouyouKanji }>
                     <Framework.IconCircleSmall
                         title="Contains kanji outside the jōyō list"
                         color={ Framework.themeVar("iconBlueColor") }

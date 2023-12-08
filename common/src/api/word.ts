@@ -29,6 +29,7 @@ export type Heading = {
 
     ateji?: boolean
     gikun?: boolean
+    nonJouyouKanji?: boolean
     irregularKanji?: boolean
     irregularKana?: boolean
     irregularOkurigana?: boolean
