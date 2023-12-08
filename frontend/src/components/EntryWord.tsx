@@ -166,13 +166,15 @@ function HeadingEllipsisPopup(props: {
             label={ <>View JMdict entry <Framework.IconExternal/></> }
             href={ App.Pages.Jmdict.urlForWordId(props.wordId) }
         />
-        <Framework.ButtonPopupPageWide
-            label="Log entry to console"
-            onClick={ () => {
-                console.log(props.entry)
-                props.popup.close()
-            }}
-        />
+        <Solid.Show when={ App.usePrefs().debugMode }>
+            <Framework.ButtonPopupPageWide
+                label="Log entry to console"
+                onClick={ () => {
+                    console.log(props.entry)
+                    props.popup.close()
+                }}
+            />
+        </Solid.Show>
     </>
 }
 
@@ -481,6 +483,16 @@ function HeadingPopup(props: {
                 onClick={ () => {
                     App.analyticsEvent("resultsCopyHeadingReading")
                     Framework.copyToClipboard(props.reading!)
+                    props.popup.close()
+                }}
+            />
+        </Solid.Show>
+
+        <Solid.Show when={ App.usePrefs().debugMode }>
+            <Framework.ButtonPopupPageWide
+                label={ `Copy the furigana encoding to the clipboard` }
+                onClick={ () => {
+                    Framework.copyToClipboard(props.furigana)
                     props.popup.close()
                 }}
             />
