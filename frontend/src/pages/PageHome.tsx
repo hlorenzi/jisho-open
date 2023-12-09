@@ -25,7 +25,7 @@ export function PageHome(props: Framework.RouteProps)
 
         <Searchbox position="inline"/>
         <br/>
-        
+
         <CardList>
             <CardSlot>
                 <HighlightAndBold>Lorenzi's Jisho</HighlightAndBold> is
@@ -37,7 +37,47 @@ export function PageHome(props: Framework.RouteProps)
                         addSpaces
                     />
                 </Highlight>
-                project, a Japanese-English dictionary database.
+                Japanese-English dictionary project!
+                It was written in
+                <Highlight>
+                    <Framework.Link
+                        href="https://www.typescriptlang.org/"
+                        label="TypeScript"
+                        addSpaces
+                    />
+                </Highlight>
+                and uses
+                <Highlight>
+                    <Framework.Link
+                        href="https://www.solidjs.com/"
+                        label="Solid"
+                        addSpaces
+                    />
+                </Highlight>
+                as the UI management framework.
+                Check the repository out on <Highlight>
+                    <Framework.Link
+                        href={ App.githubUrl }
+                        label="GitHub"
+                    />
+                </Highlight>!
+            </CardSlot>
+            <CardSlot>
+                <Framework.IconBookmark/>
+                { " " }
+                You can create and
+                <Highlight>
+                    <Framework.Link
+                        href={ App.Pages.Community.url }
+                        label="share"
+                        addSpaces
+                    />
+                </Highlight>
+                custom study lists with your searched words,
+                and you can export them in an <Highlight><Framework.Link
+                    href="https://apps.ankiweb.net/"
+                    label="Anki"
+                /></Highlight>-compatible format.
             </CardSlot>
             <CardSlot>
                 <Framework.IconMagnifyingGlass/>
@@ -65,46 +105,6 @@ export function PageHome(props: Framework.RouteProps)
                     }
                     </Solid.For>
                 </ul>
-            </CardSlot>
-            <CardSlot>
-                <Framework.IconBookmark/>
-                { " " }
-                Browse the
-                <Highlight>
-                    <Framework.Link
-                        href={ App.Pages.Community.url }
-                        label="study lists"
-                        addSpaces
-                    />
-                </Highlight>
-                created by the community!
-            </CardSlot>
-            <CardSlot>
-                <Framework.IconSparkles/>
-                { " " }
-                The frontend was written in
-                <Highlight>
-                    <Framework.Link
-                        href="https://www.typescriptlang.org/"
-                        label="TypeScript"
-                        addSpaces
-                    />
-                </Highlight>
-                and uses
-                <Highlight>
-                    <Framework.Link
-                        href="https://www.solidjs.com/"
-                        label="Solid"
-                        addSpaces
-                    />
-                </Highlight>
-                as the UI management framework!
-                Check the repository out on <Highlight>
-                    <Framework.Link
-                        href={ App.githubUrl }
-                        label="GitHub"
-                    />
-                </Highlight>!
             </CardSlot>
         </CardList>
     </Page>

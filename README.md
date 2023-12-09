@@ -1,8 +1,15 @@
 # Lorenzi's Jisho
 
 Lorenzi's Jisho is a web frontend for the [JMdict](https://www.edrdg.org/wiki/index.php/JMdict-EDICT_Dictionary_Project) Japanese-English dictionary project!
+It supports creating and sharing custom study lists with your searched words,
+and you can export them in an [Anki](https://apps.ankiweb.net/)-compatible format.
 
-It is live at https://jisho.hlorenzi.com/
+It is live at https://jisho.hlorenzi.com
+
+[![Discord][badge-discord-img]][badge-discord-url]
+
+[badge-discord-img]: https://img.shields.io/discord/394999035540275222?label=Join%20the%20Discord%20server!&logo=discord
+[badge-discord-url]: https://accounts.hlorenzi.com/redirect/discord
 
 ## License
 
