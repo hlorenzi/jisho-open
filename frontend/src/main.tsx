@@ -45,6 +45,12 @@ function Root()
                 { patterns: [Pages.Community.url],
                     load: async () => (await import("./pages/PageCommunity.tsx")).PageCommunity },
     
+                { patterns: [Pages.Help.url],
+                    load: async () => (await import("./pages/PageHelp.tsx")).PageHelp },
+    
+                { patterns: [Pages.HelpAnki.url],
+                    load: async () => (await import("./pages/PageHelpAnki.tsx")).PageHelpAnki },
+    
                 { patterns: [Pages.Log.url],
                     load: async () => (await import("./pages/PageLog.tsx")).PageLog },
     

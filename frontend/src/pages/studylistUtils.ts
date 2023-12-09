@@ -240,7 +240,7 @@ export function writeStudylistTsv(
 
 function renderFuriganaToHtmlString(encoded: string)
 {
-    let result = `<ruby class="furigana" lang="ja">`
+    let result = `<ruby>`
 
     const furigana = Furigana.decode(encoded)
     for (const part of furigana)
@@ -311,7 +311,7 @@ function renderPitchGuideToHtmlString(str: string)
         if (!letter)
             break
 
-        result += `<span class="pitch" style="`
+        result += `<span style="`
         result += curPitch ?
             "border-top: 2px solid currentColor;" : ""
         result += curPitch && !prevPitch && kanaIndex > 0 ?

@@ -399,7 +399,7 @@ export function PageStudylist(props: Framework.RouteProps)
                         onChange={ (value) => App.mergePrefs({ studylistWordOrdering: value }) }
                         options={ [
                             { label: "By date added", value: "date-added" },
-                            { label: "By kana order", value: "kana" },
+                            { label: "By kana", value: "kana" },
                         ]}
                     />
                     <Solid.Show when={ data()!.userIsCreator }>
@@ -609,6 +609,14 @@ export function ExportPopup(props: {
             ]}
         />
 
+        <br/>
+        <br/>
+
+        <Framework.Link
+            label="🎴 Anki Import and Card Styling"
+            href={ App.Pages.HelpAnki.url }
+        />
+        
         <br/>
         <br/>
 

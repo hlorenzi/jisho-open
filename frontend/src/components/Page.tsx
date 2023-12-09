@@ -72,10 +72,11 @@ function SideMenu()
                 onClick={ () => setSettingsOpen(true) }
             />
 
-            {/*<Framework.ButtonPopupPageWide
+            <Framework.ButtonPopupPageWide
                 icon={ <Framework.IconHelp/> }
                 label="Help"
-            />*/}
+                href={ App.Pages.Help.url }
+            />
 
             <Framework.HorizontalBar/>
 

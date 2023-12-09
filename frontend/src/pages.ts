@@ -90,3 +90,15 @@ export namespace Community
 {
     export const url = `/community`
 }
+
+
+export namespace Help
+{
+    export const url = `/help`
+}
+
+
+export namespace HelpAnki
+{
+    export const url = `/help/anki`
+}
