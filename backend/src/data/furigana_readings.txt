@@ -23351,6 +23351,7 @@
 響;kun;ひび;ひびく
 響;on;きょう
 頻;on;ひん
+ヶ;spec;が
 日;spec;に
 人;spec;うと;うど
 生;spec;いく;よい
@@ -23370,7 +23371,7 @@
 前;spec;さい
 鬼;spec;おん
 大;spec;おおい
-太;spec;で;おお;おおい;ふて
+太;spec;で;おお;おおい;おおき;ふて
 瀉;spec;だか
 忝;spec;かたじけ
 忌;spec;いま;いまい
@@ -23384,7 +23385,6 @@
 精;spec;そう
 媒;spec;なこ
 港;spec;こん
-魔;spec;まが
 刻;spec;とき
 皐;spec;さ
 工;spec;くん
@@ -23487,6 +23487,11 @@
 素;spec;しろ;しら;すん
 東;spec;と
 煮;spec;だ;だき
+臣;spec;まえつぎみ
+透;spec;すい;とお;ちょう
+脱;spec;とつ
+宰;spec;みこともち
+帥;spec;かみ;そつ;そち
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
 吉;ateji;ぎ
@@ -23687,7 +23692,6 @@
 郎;auto;ろ
 替;auto;かわ;がわ
 迷;auto;まい
-透;auto;とお
 袋;auto;び
 命;auto;みこと
 嶺;auto;ね
@@ -23898,7 +23902,7 @@
 九;chinese;ちゅー
 宝;chinese;ぱお
 栄;chinese;ろん
-和;chinese;ほー
+和;chinese;ほー;フ
 壮;chinese;ちわん
 加;chinese;じゃー;じゃ;がー
 油;chinese;ゆー;よう;やう
@@ -23971,6 +23975,7 @@
 一;chinese;イー;チー
 二;chinese;リャン
 八;chinese;ハー
+九;chinese;チュー
 焼;chinese;シュウ;シュー;シャオ
 五;chinese;ウー
 香;chinese;ホン;シャン
@@ -23989,6 +23994,12 @@
 燒;chinese;シュウ
 売;chinese;マイ
 賣;chinese;マイ
+宝;chinese;ポー;パオ
+塔;chinese;トー
+橙;chinese;トー
+燈;chinese;トー
+灯;chinese;トー
+平;chinese;ピン
 北;korean;プク
 焼;korean;ソ
 平;korean;ピョン
@@ -23996,6 +24007,8 @@
 参;korean;サム
 鶏;korean;ゲ
 湯;korean;タン
+総;korean;チョン
+角;korean;ガー
 字;vietnamese;チュ
 喃;vietnamese;ノム
 大人;gikun;おとな
@@ -24044,8 +24057,8 @@
 山羊;gikun;やぎ
 金糸雀;gikun;かなりあ
 流行;gikun;はや;はやり
-陰嚢;gikun;ふぐり;ぼっくり
-陰囊;gikun;ふぐり;ぼっくり
+陰嚢;gikun;ふぐり;ぼっくり;ぽっくり;ぼくり
+陰囊;gikun;ふぐり;ぼっくり;ぽっくり;ぼくり
 瓢虫;gikun;てんとう
 瓢;gikun;てんとう
 天道虫;gikun;てんとう
@@ -24327,6 +24340,16 @@
 以来;gikun;このかた
 蟷螂;gikun;かまきり
 無花果;gikun;いちじく;いちぢく;いちじゅく
+巫女;gikun;みこ
+灯明;gikun;あかし
+桫欏;gikun;へご
+杪欏;gikun;へご
+学寮;gikun;つかさ
+雅楽;gikun;うた
+兵衛;gikun;へ;へい;へえ
+酢漿草;gikun;かたばみ
+紫羅欄花;gikun;あらせいとう
+大蒜;gikun;にんにく
 豊受;fused;とゆけ
 此間;fused;こないだ
 不足;conjug;たらず
@@ -24448,7 +24471,6 @@ R;alpha;あーる
 Ｘ;alpha;えっくす
 Ｙ;alpha;わい
 Ｚ;alpha;ぜっと;ぜっど
-ヶ;alpha;が
 ＆;alpha;あんど
 ＋;alpha;ぷらす
 ｘ;alpha;えっくす
