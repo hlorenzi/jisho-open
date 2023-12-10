@@ -87,6 +87,7 @@ adj-ix;                       *いい -> unc; *よくて
 @ id: past
 %v-conjunctive-stem-unvoiced; * -> unc; *た
 %v-conjunctive-stem-voiced;   * -> unc; *だ
+vmasuneg;                     *ません -> unc; *ませんでした
 n;                            * -> unc; *だった
 adj-na;                       * -> unc; *だった
 adj-i;                        *い -> unc; *かった
@@ -128,16 +129,12 @@ vs-s; *する -> unc; *せ
 @ ref: https://www.edrdg.org/wwwjdic/wwwverbinf.html#suru_tag
 %negative-stem; * -> adj-i; *ない
 v1contr;        *る -> adj-i; *ない
-vmasu;          *ます -> unc; *ません
+vmasu;          *ます -> vmasuneg; *ません
 vs-s;           *する -> adj-i; *さない
 n;              * -> adj-i; *じゃない
 adj-na;         * -> adj-i; *じゃない
 adj-i;          *い -> adj-i; *くない
 adj-ix;         *いい -> adj-i; *よくない
-
-@ id: negative-past
-@ display: negative past
-vmasu; *ます -> unc; *ませんでした
 
 @ id: negative-contracted
 @ display: negative (contracted)
@@ -242,6 +239,11 @@ vs-i;  *する -> unc; *しよう
 vs-s;  *する -> unc; *しよう
 vk;    *くる -> unc; *こよう
 vmasu; *ます -> unc; *ましょう
+
+@ id: negative-volitional
+@ display: negative volitional (literary)
+%verb-identity; * -> unc; *まい
+vmasuneg; *ません -> unc; *ませんまい
 
 @ id: potential
 @ ref: https://www.edrdg.org/wwwjdic/wwwverbinf.html#suru_tag

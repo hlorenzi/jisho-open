@@ -232,6 +232,7 @@ export const partOfSpeechCustomTags = [
     "v4",
     "v5",
     "vmasu",
+    "vmasuneg",
     "virr",
     "v1contr",
     "vte",

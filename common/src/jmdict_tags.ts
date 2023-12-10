@@ -154,6 +154,7 @@ const partOfSpeechDict: Partial<PartOfSpeechDict> = {
     
     "v1contr": "contracted iru verb",
     "vmasu": "polite verb",
+    "vmasuneg": "negative polite verb",
     "vte": "verb in conjunctive form",
 
     "surname": "surname",

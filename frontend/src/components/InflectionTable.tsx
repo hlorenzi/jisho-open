@@ -555,7 +555,7 @@ function VerbTable(props: {
             term={ props.term }
             partOfSpeech={ props.partOfSpeech }
             plainInfl={ ["negative", "past"] }
-            politeInfl={ ["polite", "negative-past"] }
+            politeInfl={ ["polite", "negative", "past"] }
         />
         <TableRowSeparator/>
         <Row
