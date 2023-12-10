@@ -229,8 +229,10 @@ function Row(props: {
     partOfSpeech: App.Api.Word.PartOfSpeechTag,
     plain?: string,
     plainInfl?: string[],
+    plainInfl2?: string[],
     polite?: string,
     politeInfl?: string[],
+    politeInfl2?: string[],
     politeSuffix?: string,
 })
 {
@@ -241,6 +243,11 @@ function Row(props: {
         plainTerms = Inflection
             .inflect(props.term, props.partOfSpeech, props.plainInfl)
             .flatMap(i => i.term)
+            
+    if (props.plainInfl2)
+        plainTerms.push(...Inflection
+            .inflect(props.term, props.partOfSpeech, props.plainInfl2)
+            .flatMap(i => i.term))
 
     let politeTerms: string[] = []
     if (props.polite)
@@ -250,6 +257,11 @@ function Row(props: {
             .inflect(props.term, props.partOfSpeech, props.politeInfl)
             .flatMap(i => i.term + (props.politeSuffix ?? ""))
     
+    if (props.politeInfl2)
+        politeTerms.push(...Inflection
+            .inflect(props.term, props.partOfSpeech, props.politeInfl2)
+            .flatMap(i => i.term + (props.politeSuffix ?? "")))
+
     const basicSplit = plainTerms
         .map(t => splitAtInfl(props.term, t))
 
@@ -572,13 +584,26 @@ function VerbTable(props: {
             plainInfl={ ["imperative"] }
         />
         <TableRowSeparator/>
-        <Row
-            label="Potential"
-            term={ props.term }
-            partOfSpeech={ props.partOfSpeech }
-            plainInfl={ ["potential"] }
-            politeInfl={ ["potential", "polite"] }
-        />
+        <Solid.Show when={ props.partOfSpeech !== "vs-s" }>
+            <Row
+                label="Potential"
+                term={ props.term }
+                partOfSpeech={ props.partOfSpeech }
+                plainInfl={ ["potential"] }
+                politeInfl={ ["potential", "polite"] }
+            />
+        </Solid.Show>
+        <Solid.Show when={ props.partOfSpeech === "vs-s" }>
+            <Row
+                label="Potential"
+                term={ props.term }
+                partOfSpeech={ props.partOfSpeech }
+                plainInfl={ ["potential"] }
+                plainInfl2={ ["potential-eru"] }
+                politeInfl={ ["potential", "polite"] }
+                politeInfl2={ ["potential-eru", "polite"] }
+            />
+        </Solid.Show>
         <Solid.Show when={ showPotentialIrregualr }>
             <Row
                 label="Potential (irregular)"

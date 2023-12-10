@@ -229,6 +229,7 @@ const inflectionalKanjiReadings: { [k: string]: string[] } = {
     "來": ["き", "く", "こ"],
     "有": ["あ"],
     "在": ["あ"],
+    "得": ["え", "う"],
     "良": ["い", "よ"],
 }
 

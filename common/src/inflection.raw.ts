@@ -264,8 +264,6 @@ v5b;     *ぶ -> v1; *べる
 v5m;     *む -> v1; *める
 vs-i;    *する -> v1; *できる
 vs-s;    *する -> v1; *できる
-vs-s;    *する -> v1; *しえる
-vs-s;    *する -> v-unspec; *しうる
 vk;      *くる -> v1; *こられる
 
 @ id: potential-irregular
@@ -273,6 +271,11 @@ vk;      *くる -> v1; *こられる
 v1;   *る -> v1; *れる
 v1-s; *る -> v1; *れる
 vk;   *くる -> v1; *これる
+
+@ id: potential-eru
+@ display: potential (aux. 得る)
+%continuative; * -> v1; *える
+%continuative; * -> v-unspec; *うる
 
 @ id: causative
 v1;    *る -> v1; *させる
