@@ -232,8 +232,6 @@ export function Reading(props: {
         if (periodIndex >= 0)
             myReading = myReading.slice(0, periodIndex)
 
-        console.log(myReading, props.entry.readings, readingsNormalized)
-
         return readingsNormalized
             .find(r => r.reading === myReading)
     })
