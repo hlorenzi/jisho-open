@@ -35,9 +35,9 @@ export function getStudylistStats(
 
         const chosen =
             levels.fixed ??
-            levels.rare ??
-            levels.uncommon ??
             levels.jouyou ??
+            levels.uncommon ??
+            levels.rare ??
             word.entry.headings[0]
 
         const kanji = [...chosen.base]
@@ -73,8 +73,6 @@ function analyzeHeadingKanjiLevel(
     word: StudyListWordEntry)
     : HeadingLevels
 {
-    const jouyouKanjiSet = Jouyou.getKanjiSet()
-
     const headingFixed =
         word.headingIndex !== undefined ?
             word.entry.headings[word.headingIndex] :
@@ -84,9 +82,18 @@ function analyzeHeadingKanjiLevel(
     let headingUncommon: App.Api.Word.Heading | undefined = undefined
     let headingRare: App.Api.Word.Heading | undefined = undefined
 
-    for (let i = word.entry.headings.length - 1; i >= 0; i--)
+    let kanjiJouyou: string[] = []
+    let kanjiUncommon: string[] = []
+    let kanjiRare: string[] = []
+        
+    const mainReading = Kana.toHiragana(word.entry.headings[0].reading!)
+
+    for (let i = 0; i < word.entry.headings.length; i++)
     {
         const heading = word.entry.headings[i]
+        
+        if (Kana.toHiragana(heading.reading!) !== mainReading)
+            continue
 
         if (heading.irregularKanji ||
             heading.irregularKana ||
@@ -96,16 +103,51 @@ function analyzeHeadingKanjiLevel(
             heading.searchOnlyKanji ||
             heading.searchOnlyKana)
             continue
+    
+        const kanji = [...heading.base]
+            .filter(k => Kana.isKanji(k))
 
-        if (!Kana.hasKanjiOrIterationMark(heading.base))
-            continue
+        if (Kana.hasKanji(heading.base) &&
+            !heading.nonJouyouKanji &&
+            !heading.rareKanji)
+        {
+            const noChangeInKanji = kanjiJouyou
+                .every(k => kanji.some(kk => kk === k))
+
+            if (headingJouyou === undefined ||
+                noChangeInKanji)
+            {
+                headingJouyou = heading
+                kanjiJouyou = kanji
+            }
+        }
             
-        if (heading.rareKanji)
-            headingRare = heading
-        else if (heading.nonJouyouKanji)
-            headingUncommon = heading
-        else
-            headingJouyou = heading
+        else if (heading.nonJouyouKanji &&
+            !heading.rareKanji)
+        {
+            const noChangeInKanji = kanjiUncommon
+                .every(k => kanji.some(kk => kk === k))
+            
+            if (headingUncommon === undefined ||
+                noChangeInKanji)
+            {
+                headingUncommon = heading
+                kanjiUncommon = kanji
+            }
+        }
+            
+        else if (heading.rareKanji)
+        {
+            const noChangeInKanji = kanjiRare
+                .every(k => kanji.some(kk => kk === k))
+            
+            if (headingRare === undefined ||
+                noChangeInKanji)
+            {
+                headingRare = heading
+                kanjiRare = kanji
+            }
+        }
     }
 
     return {
@@ -137,16 +179,16 @@ export function writeStudylistTsv(
         {
             case "rare":
                 chosenHeading =
-                    levels.rare ??
-                    levels.uncommon ??
                     levels.jouyou ??
+                    levels.uncommon ??
+                    levels.rare ??
                     chosenHeading
                 break
             
             case "uncommon":
                 chosenHeading =
-                    levels.uncommon ??
                     levels.jouyou ??
+                    levels.uncommon ??
                     chosenHeading
                 break
             
