@@ -31,16 +31,9 @@ export function getStudylistStats(
 
     for (const word of words)
     {
-        const levels = analyzeHeadingKanjiLevel(word)
+        const heading = getHeadingForKanjiLevel(word, "rare")
 
-        const chosen =
-            levels.fixed ??
-            levels.jouyou ??
-            levels.uncommon ??
-            levels.rare ??
-            word.entry.headings[0]
-
-        const kanji = [...chosen.base]
+        const kanji = [...heading.base]
             .filter(k => Kana.isKanji(k))
 
         kanji.forEach(k => {
@@ -61,30 +54,19 @@ export function getStudylistStats(
 }
 
 
-type HeadingLevels = {
-    fixed?: App.Api.Word.Heading
-    jouyou?: App.Api.Word.Heading
-    uncommon?: App.Api.Word.Heading
-    rare?: App.Api.Word.Heading
-}
-
-
-function analyzeHeadingKanjiLevel(
-    word: StudyListWordEntry)
-    : HeadingLevels
+function getHeadingForKanjiLevel(
+    word: StudyListWordEntry,
+    level: App.Prefs["studylistExportKanjiLevel"])
+    : App.Api.Word.Heading
 {
-    const headingFixed =
-        word.headingIndex !== undefined ?
-            word.entry.headings[word.headingIndex] :
-            undefined
+    if (word.headingIndex !== undefined)
+        return word.entry.headings[word.headingIndex]
 
-    let headingJouyou: App.Api.Word.Heading | undefined = undefined
-    let headingUncommon: App.Api.Word.Heading | undefined = undefined
-    let headingRare: App.Api.Word.Heading | undefined = undefined
+    if (level === "common")
+        return word.entry.headings[0]
 
-    let kanjiJouyou: string[] = []
-    let kanjiUncommon: string[] = []
-    let kanjiRare: string[] = []
+    let headingChosen: App.Api.Word.Heading | undefined = undefined
+    let kanjiChosen: string[] = []
         
     const mainReading = Kana.toHiragana(word.entry.headings[0].reading!)
 
@@ -103,59 +85,40 @@ function analyzeHeadingKanjiLevel(
             heading.searchOnlyKanji ||
             heading.searchOnlyKana)
             continue
+        
     
         const kanji = [...heading.base]
             .filter(k => Kana.isKanji(k))
 
-        if (Kana.hasKanji(heading.base) &&
-            !heading.nonJouyouKanji &&
-            !heading.rareKanji)
-        {
-            const noChangeInKanji = kanjiJouyou
-                .every(k => kanji.some(kk => kk === k))
+        if (kanji.length === 0)
+            continue
 
-            if (headingJouyou === undefined ||
-                noChangeInKanji)
-            {
-                headingJouyou = heading
-                kanjiJouyou = kanji
-            }
-        }
-            
-        else if (heading.nonJouyouKanji &&
-            !heading.rareKanji)
+        
+        if (level === "jouyou")
         {
-            const noChangeInKanji = kanjiUncommon
-                .every(k => kanji.some(kk => kk === k))
-            
-            if (headingUncommon === undefined ||
-                noChangeInKanji)
-            {
-                headingUncommon = heading
-                kanjiUncommon = kanji
-            }
+            if (heading.nonJouyouKanji ||
+                heading.rareKanji)
+                continue
         }
-            
-        else if (heading.rareKanji)
+        else if (level === "uncommon")
         {
-            const noChangeInKanji = kanjiRare
-                .every(k => kanji.some(kk => kk === k))
-            
-            if (headingRare === undefined ||
-                noChangeInKanji)
-            {
-                headingRare = heading
-                kanjiRare = kanji
-            }
+            if (heading.rareKanji)
+                continue
+        }
+
+
+        const noChangeInKanji = kanjiChosen
+            .every(k => kanji.some(kk => kk === k))
+
+        if (headingChosen === undefined ||
+            noChangeInKanji)
+        {
+            headingChosen = heading
+            kanjiChosen = kanji
         }
     }
 
-    return {
-        fixed: headingFixed,
-        jouyou: headingJouyou,
-        uncommon: headingUncommon,
-        rare: headingRare,
-    }
+    return headingChosen ?? word.entry.headings[0]
 }
 
 
@@ -172,41 +135,15 @@ export function writeStudylistTsv(
     
     for (const word of words)
     {
-        const levels = analyzeHeadingKanjiLevel(word)
-
-        let chosenHeading = word.entry.headings[0]
-        switch (prefs.studylistExportKanjiLevel)
-        {
-            case "rare":
-                chosenHeading =
-                    levels.jouyou ??
-                    levels.uncommon ??
-                    levels.rare ??
-                    chosenHeading
-                break
-            
-            case "uncommon":
-                chosenHeading =
-                    levels.jouyou ??
-                    levels.uncommon ??
-                    chosenHeading
-                break
-            
-            case "jouyou":
-                chosenHeading =
-                    levels.jouyou ??
-                    chosenHeading
-                break
-        }
-
-        if (levels.fixed)
-            chosenHeading = levels.fixed
+        const heading = getHeadingForKanjiLevel(
+            word,
+            prefs.studylistExportKanjiLevel)
 
         if (prefs.studylistExportSkipKatakana &&
-            Kana.isPureKatakana(chosenHeading.base))
+            Kana.isPureKatakana(heading.base))
             continue
 
-        const reading = chosenHeading.reading ?? chosenHeading.base
+        const reading = heading.reading ?? heading.base
 
         const pitchEntries = (word.entry.pitch ?? [])
             .map(p => p.text)
@@ -219,9 +156,9 @@ export function writeStudylistTsv(
 
         if (prefs.studylistExportHtmlCss)
         {
-            columns.push(chosenHeading.base)
+            columns.push(heading.base)
     
-            columns.push(renderFuriganaToHtmlString(chosenHeading.furigana))
+            columns.push(renderFuriganaToHtmlString(heading.furigana))
 
             columns.push(pitchEntries
                 .map(p => renderPitchGuideToHtmlString(p))
@@ -229,7 +166,7 @@ export function writeStudylistTsv(
         }
         else
         {
-            columns.push(chosenHeading.base)
+            columns.push(heading.base)
 
             columns.push(reading)
             
