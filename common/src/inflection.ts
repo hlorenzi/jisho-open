@@ -175,11 +175,14 @@ export function compile(raw: string): Table
                 if (sourceRule.targetCategory === "unc")
                     continue
 
+                if (!sourceRule.addToEnd.endsWith(removeFromEnd))
+                    continue
+
                 ruleList.push({
                     id: currentGroupId,
                     sourceCategory: sourceRule.targetCategory,
-                    removeFromEnd: sourceRule.addToEnd + removeFromEnd,
-                    addToEnd: sourceRule.addToEnd + addToEnd,
+                    removeFromEnd: removeFromEnd,
+                    addToEnd: addToEnd,
                     targetCategory,
                 })
             }
@@ -349,6 +352,7 @@ export function breakdown(
 
     const steps: BreakdownStep[] = []
     const table = getTable()
+    const stepsSeen = new Set<string>()
 
     for (const rule of table.rules)
     {
@@ -367,6 +371,9 @@ export function breakdown(
             targetTerm.slice(0, targetTerm.length - rule.addToEnd.length) +
             rule.removeFromEnd
 
+        if (sourceTerm.length === 0)
+            continue
+
         const endings = table.endingsByCategory.get(rule.sourceCategory)
         if (endings)
         {
@@ -379,7 +386,7 @@ export function breakdown(
             {
                 const charBeforeLast = sourceTerm[sourceTerm.length - 2]
                 const vowel = Kana.vowelOf(charBeforeLast)
-                if (vowel !== "i" && vowel !== "e" && vowel !== null)
+                if (vowel !== "i" && vowel !== "e")
                     acceptable = false
             }
 
@@ -395,6 +402,11 @@ export function breakdown(
             targetCategory: rule.targetCategory,
         }
 
+        const key = `${ step.ruleId };${ step.sourceCategory };${ step.sourceTerm };${ step.targetCategory };${ step.targetTerm }`
+        if (stepsSeen.has(key))
+            continue
+
+        stepsSeen.add(key)
         steps.push(step)
     }
 
@@ -407,9 +419,7 @@ export function breakdown(
             step.sourceCategory)
 
         for (const prevPath of prevBreakdown)
-        {
             paths.push([...prevPath, step])
-        }
 
         if (prevBreakdown.length === 0)
             paths.push([step])

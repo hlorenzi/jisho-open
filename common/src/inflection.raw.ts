@@ -139,6 +139,7 @@ adj-ix;         *いい -> adj-i; *よくない
 @ id: negative-contracted
 @ display: negative (contracted)
 %negative-classical-stem; * -> unc; *ん
+v5r-i; *ある -> !
 # ある -> あらん (?)
 
 @ id: negative-dialectal

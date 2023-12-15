@@ -242,8 +242,8 @@ export async function connect(): Promise<Interface>
             MongoDbSearch.searchByHeadingAll(state, queries, options),
         searchByHeadingPrefix: (queries, options) =>
             MongoDbSearch.searchByHeadingPrefix(state, queries, options),
-        searchByInflections: (inflections, options) =>
-            MongoDbSearch.searchByInflections(state, inflections, options),
+        searchByInflections: (inflectionBreakdown, inflectionOf, options) =>
+            MongoDbSearch.searchByInflections(state, inflectionBreakdown, inflectionOf, options),
         searchByDefinition: (query, options) =>
             MongoDbSearch.searchByDefinition(state, query, options),
         searchByTags: (options) =>

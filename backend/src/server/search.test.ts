@@ -220,11 +220,19 @@ export async function test()
 
     await expectWord("家 うち", "うち", undefined)
     await expectWord("食べる　たべる", "食べる", "たべる")
-    
+
     await expectWord("食べない", "食べる", "たべる")
     await expectWord("食benai", "食べる", "たべる")
     await expectWord("sitemasen", "する", undefined)
     await expectWord("motteikimasu", "持っていく", "もっていく")
+    await expectWord("benkyousiezari", "勉強", "べんきょう")
+    await expectWord("食べて", "食べる", "たべる")
+    await expectWord("食べてしまう", "食べる", "たべる")
+    await expectWord("食べてしまった", "食べる", "たべる")
+    await expectWord("食べちゃう", "食べる", "たべる")
+    await expectWord("食べちゃった", "食べる", "たべる")
+    await expectWord("食べちまう", "食べる", "たべる")
+    await expectWord("食べちまった", "食べる", "たべる")
     
     await expectWord("siroi #!name", "白い", "しろい")
     await expectWord("siroi #adj-i", "白い", "しろい")

@@ -106,7 +106,8 @@ export async function search(
         query.type !== "any" && query.type !== "inflected" ?
             [] :
             db.searchByInflections(
-                Inflection.breakdown(query.strJapanese),
+                query.inflectionBreakdown,
+                query.inflectionOf,
                 options)
 
     const byDefinition =
@@ -361,6 +362,22 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         .map(w => w.trim().toLowerCase())
         .filter(w => w.length !== 0)
 
+    const inflectionBreakdown = Inflection.breakdown(queryJapanese)
+    const inflectionOf: Inflection.Inflected[] = []
+    const seenInflections = new Set<string>()
+    for (const step of inflectionBreakdown.flat())
+    {
+        const key = `${ step.sourceTerm };${ step.sourceCategory }`
+        if (seenInflections.has(key))
+            continue
+
+        seenInflections.add(key)
+        inflectionOf.push({
+            term: step.sourceTerm,
+            category: step.sourceCategory,
+        })
+    }
+
     const queryCanBeDefinition =
         !Kana.hasJapanese(queryWithoutTags) ||
         queryInQuotes.length !== 0
@@ -405,6 +422,8 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         strWildcards: queryWildcards,
         strWildcardsHiragana: queryWildcardsHiragana,
         kanji: queryKanji,
+        inflectionBreakdown,
+        inflectionOf,
         canBeDefinition: queryCanBeDefinition && type !== "kanji",
         canBeWildcards: queryCanBeWildcards,
         canBeSentence: queryCanBeSentence,

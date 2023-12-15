@@ -1,3 +1,5 @@
+import * as Inflection from "../inflection.ts"
+
 import * as Word from "./word.ts"
 import * as Kanji from "./kanji.ts"
 import * as KanjiWordCrossRef from "./kanji_word_crossref.ts"
@@ -246,6 +248,8 @@ export namespace Search
         canBeWildcards: boolean
         canBeSentence: boolean
         kanji: string[]
+        inflectionBreakdown: Inflection.Breakdown
+        inflectionOf: Inflection.Inflected[]
         tags: string[]
         inverseTags: string[]
         explicitNotName: boolean

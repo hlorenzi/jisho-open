@@ -92,29 +92,23 @@ export async function searchByHeadingPrefix(
 
 export async function searchByInflections(
     state: MongoDb.State,
-    inflections: Inflection.Breakdown,
+    inflectionBreakdown: Inflection.Breakdown,
+    inflectionOf: Inflection.Inflected[],
     options: Db.SearchOptions)
     : Promise<Api.Word.Entry[]>
 {
-    if (inflections.length === 0)
+    if (inflectionOf.length === 0)
         return []
 
     const fieldLookUp = "lookUp" satisfies keyof MongoDb.DbWordEntry
     const fieldLen = "len" satisfies keyof MongoDb.DbWordEntry["lookUp"]
 
     const dbFindQueries: any[] = []
-    const seenQueries = new Set<string>()
-
-    for (const step of inflections.flat())
+    for (const step of inflectionOf)
     {
-        const key = `${ step.sourceTerm };${ step.sourceCategory }`
-        if (seenQueries.has(key))
-            continue
-
-        seenQueries.add(key)
         dbFindQueries.push({
-            [MongoDb.fieldWordLookUpHeadingsText]: step.sourceTerm,
-            [MongoDb.fieldWordLookUpTags]: step.sourceCategory,
+            [MongoDb.fieldWordLookUpHeadingsText]: step.term,
+            [MongoDb.fieldWordLookUpTags]: step.category,
         })
     }
 
@@ -137,7 +131,7 @@ export async function searchByInflections(
 
         const resultInfls: Inflection.Breakdown = []
         const alreadySeen = new Set<string>()
-        for (const infl of inflections)
+        for (const infl of inflectionBreakdown)
         {
             for (let i = 0; i < infl.length; i++)
             {

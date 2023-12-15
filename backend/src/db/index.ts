@@ -1,5 +1,5 @@
 import * as Api from "common/api/index.ts"
-import * as Infletcion from "common/inflection.ts"
+import * as Inflection from "common/inflection.ts"
 
 
 export type SearchOptions = {
@@ -51,7 +51,8 @@ export interface Interface
         => Promise<Api.Word.Entry[]>
 
     searchByInflections: (
-        inflections: Infletcion.Breakdown,
+        inflectionBreakdown: Inflection.Breakdown,
+        inflectionOf: Inflection.Inflected[],
         options: SearchOptions)
         => Promise<Api.Word.Entry[]>
 
