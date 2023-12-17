@@ -94,7 +94,7 @@ function StudylistCard(props: {
                     </SmallInfo>
 
                     <SmallInfo>
-                        { Framework.dateElapsedToStr(props.studylist.modifyDate) }
+                        { Framework.dateElapsedToStr(props.studylist.modifyDate) } ago
                     </SmallInfo>
                 </div>
                 <UserInfo>

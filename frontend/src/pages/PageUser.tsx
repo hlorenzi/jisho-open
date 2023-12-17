@@ -259,7 +259,7 @@ function Folder(props: {
                 </SmallInfo>
 
                 <SmallInfo>
-                    { Framework.dateElapsedToStr(props.folder.modifyDate) }
+                    { Framework.dateElapsedToStr(props.folder.modifyDate) } ago
                 </SmallInfo>
             </Framework.Button>
         </div>
@@ -327,7 +327,7 @@ function Studylist(props: {
                 { Framework.formPlural(props.studylist.wordCount, "word", "s") }
             </SmallInfo>
             <SmallInfo>
-                { Framework.dateElapsedToStr(props.studylist.modifyDate) }
+                { Framework.dateElapsedToStr(props.studylist.modifyDate) } ago
             </SmallInfo>
         </Framework.Button>
     </div>
