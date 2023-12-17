@@ -23492,6 +23492,8 @@
 脱;spec;とつ
 宰;spec;みこともち
 帥;spec;かみ;そつ;そち
+卒;spec;とぞ
+處;spec;とこ
 利;ateji;りあ;りや;りー;りす
 英;ateji;い
 吉;ateji;ぎ
@@ -23574,6 +23576,10 @@
 米;ateji;メ;メー;メートル;ペイ
 嗚;ateji;あ
 呼;ateji;あ
+五;ateji;う
+月;ateji;る
+蝿;ateji;さ
+蠅;ateji;さ
 合;auto;あわ;が
 其;auto;そ
 此;auto;こ
@@ -24000,6 +24006,8 @@
 燈;chinese;トー
 灯;chinese;トー
 平;chinese;ピン
+自;chinese;ツ;ツー
+摸;chinese;モ;モー
 北;korean;プク
 焼;korean;ソ
 平;korean;ピョン
@@ -24164,8 +24172,6 @@
 常陸梅;gikun;ひたちうめ
 黄昏;gikun;たそがれ;たそが
 五月雨;gikun;さみだれ
-五月蝿;gikun;うるさ
-五月蠅;gikun;うるさ
 女郎花;gikun;おみなえし
 楽車;gikun;だんじり;だんぢり
 桜皮細;gikun;かばざい
@@ -24350,6 +24356,12 @@
 酢漿草;gikun;かたばみ
 紫羅欄花;gikun;あらせいとう
 大蒜;gikun;にんにく
+掏摸;gikun;すり
+掏児;gikun;すり
+如月;gikun;きさらぎ
+更衣;gikun;きさらぎ
+如何;gikun;どう
+泥濘;gikun;ぬかるみ
 豊受;fused;とゆけ
 此間;fused;こないだ
 不足;conjug;たらず
