@@ -66,7 +66,7 @@ function getHeadingForKanjiLevel(
         return word.entry.headings[0]
 
     let headingChosen: App.Api.Word.Heading | undefined = undefined
-    let kanjiChosen: string[] = []
+    let prevKanji: string[] = []
         
     const mainReading = Kana.toHiragana(word.entry.headings[0].reading!)
 
@@ -88,7 +88,7 @@ function getHeadingForKanjiLevel(
         
     
         const kanji = [...heading.base]
-            .filter(k => Kana.isKanji(k))
+            .filter(k => Kana.isKanjiOrIterationMark(k))
 
         if (kanji.length === 0)
             continue
@@ -107,14 +107,17 @@ function getHeadingForKanjiLevel(
         }
 
 
-        const noChangeInKanji = kanjiChosen
+        const prevKanjiStillPresent = prevKanji
             .every(k => kanji.some(kk => kk === k))
 
+        const hasNewKanji =
+            kanji.length > prevKanji.length
+
         if (headingChosen === undefined ||
-            noChangeInKanji)
+            (prevKanjiStillPresent && hasNewKanji))
         {
             headingChosen = heading
-            kanjiChosen = kanji
+            prevKanji = kanji
         }
     }
 
