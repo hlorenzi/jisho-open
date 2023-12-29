@@ -390,6 +390,10 @@ adj-na; * -> unc; *であれば
 adj-i;  *い -> unc; *ければ
 adj-ix; *いい -> unc; *よければ
 
+@ id: provisional-contracted
+@ display: provisional (contracted)
+adj-i; *い -> unc; *きゃ
+
 @ id: want-to-do
 %continuative; * -> adj-i; *たい
 
@@ -446,6 +450,10 @@ vk;   *くる -> unc; *こし
 @ id: aux-iru-contracted-n
 @ display: aux. いる (contracted)
 ~conjunctive; * -> unc; *ん
+
+@ id: tewa-contracted
+@ display: は particle (contracted)
+unc; *て -> unc; *ちゃ
 
 @ id: aux-aru
 @ display: aux. ある
