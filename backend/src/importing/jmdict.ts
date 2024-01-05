@@ -13,7 +13,7 @@ import * as JmdictTags from "common/jmdict_tags.ts"
 import * as JlptWords from "../data/jlpt_words.ts"
 import * as PitchAccent from "../data/pitch_accent.ts"
 import * as FuriganaHelpers from "../data/furigana_helpers.ts"
-import * as AnimeDramaRanking from "../data/animedrama_ranking.ts"
+import * as WordRankings from "../data/word_rankings.ts"
 import * as JmdictExtraTags from "../data/jmdict_extra_tags.ts"
 
 
@@ -375,9 +375,13 @@ function normalizeHeading(
 
     if (!isName)
     {
-        const rankAnimeDrama = AnimeDramaRanking.get(wordId, heading.base)
+        const rankAnimeDrama = WordRankings.getAnimeDrama(wordId, heading.base)
         if (rankAnimeDrama !== undefined)
             heading.rankAnimeDrama = rankAnimeDrama
+        
+        const rankWikipedia = WordRankings.getWikipedia(wordId, heading.base)
+        if (rankWikipedia !== undefined)
+            heading.rankWikipedia = rankWikipedia
     }
 
 

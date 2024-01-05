@@ -54,6 +54,8 @@ export type Heading = {
 
     /// Ranking of commonness in the anime/drama list. (1 to 100_000)
     rankAnimeDrama?: number
+    /// Ranking of commonness in the Wikipedia list. (1 to 20_000)
+    rankWikipedia?: number
 
     /// Commonness score for this heading, for sorting search results.
     /// Higher is more common. An undefined value means 0.

@@ -546,36 +546,75 @@ export function EntryTags(props: {
     entry: App.Api.Word.Entry,
 })
 {
-    let animeDramaRank: number | undefined = undefined
-
-    for (const h of props.entry.headings)
+    function getRanking(
+        field: "rankAnimeDrama" | "rankWikipedia" | "rankNf")
+        : number | undefined
     {
-        if (h.rankAnimeDrama === undefined)
-            continue
+        let rank: number | undefined = undefined
 
-        if (animeDramaRank === undefined ||
-            h.rankAnimeDrama < animeDramaRank)
-            animeDramaRank = h.rankAnimeDrama
+        for (const h of props.entry.headings)
+        {
+            const value = h[field]
+
+            if (value === undefined)
+                continue
+
+            if (rank === undefined ||
+                value < rank)
+                rank = value
+        }
+
+        if (rank === undefined)
+            return undefined
+
+        return rank
     }
 
-    let animeDramaTopStr = ""
-    if (animeDramaRank !== undefined)
+    function getRankingText(rank: number): string
     {
-        const n = Math.ceil(animeDramaRank! / 500) * 0.5
-        animeDramaTopStr =
-            n === 0.5 ? "500" :
-            `${ n.toString() }k`
+        if (rank < 900)
+            return (Math.ceil(rank / 100) * 100).toString()
+
+        const frac = Math.ceil(rank / 100) * 0.1
+        if (Math.floor(frac) !== frac)
+            return `${ frac.toFixed(1) }k`
+
+        return `${ frac.toFixed(0) }k`
     }
+
+
+    const animeDrama = getRanking("rankAnimeDrama")
+    const newspaper = getRanking("rankNf")
+    const wikipedia = getRanking("rankWikipedia")
 
     return <Solid.Show when={ App.usePrefs().resultsShowWordRankings }>
         <EntryTagsSection>
-            <Solid.Show when={ animeDramaRank !== undefined }>
-                <Framework.TextTag
-                    label={ `Anime/Drama Top ${ animeDramaTopStr }` }
-                    title={ `Ranks #${ animeDramaRank } on the list of most common words occurring in anime and drama.`}
-                    bkgColor={ Framework.themeVar("iconAnimeDramaColor") }
-                />
-            </Solid.Show>
+            <EntryTagsWrapper>
+                <Solid.Show when={ animeDrama !== undefined }>
+                    <Framework.TextTag
+                        label={ `Anime/Drama ${ getRankingText(animeDrama!) }` }
+                        title={ `Ranks #${ animeDrama! } on the list of most common words occurring in anime and drama.`}
+                        bkgColor={ Framework.themeVar("iconAnimeDramaColor") }
+                    />
+                </Solid.Show>
+                
+                <Solid.Show when={ newspaper !== undefined }>
+                    <Framework.TextTag
+                        label={ `News ${ getRankingText(newspaper! * 500) }` }
+                        title={ `Ranks in the top ${ newspaper! * 500 } words on the list of most common words occurring in newspapers.`}
+                        bkgColor={ Framework.themeVar("iconNewsColor") }
+                    />
+                </Solid.Show>
+                
+                <Solid.Show when={ wikipedia !== undefined }>
+                    <Framework.TextTag
+                        label={ `Wiki ${ getRankingText(wikipedia!) }` }
+                        title={ `Ranks #${ wikipedia! } on the list of most common words occurring in Wikipedia.`}
+                        bkgColor={ Framework.themeVar("iconWikipediaColor") }
+                        href="https://en.wiktionary.org/wiki/Wiktionary:Frequency_lists/Japanese"
+                    />
+                </Solid.Show>
+            </EntryTagsWrapper>
         </EntryTagsSection>
     </Solid.Show>
 }
@@ -583,7 +622,16 @@ export function EntryTags(props: {
 
 const EntryTagsSection = styled.section`
     margin: 0;
-    padding-left: 1.75em;
+    padding-left: 1.65em;
+
+	@media (max-width: ${ Framework.pageSmallWidthThreshold })
+	{
+        margin-left: -0.5em;
+    }
+`
+
+
+const EntryTagsWrapper = styled.span`
     font-size: 0.8em;
 `
 
@@ -938,4 +986,9 @@ function PitchAccentEntries(props: {
 const PitchAccentSection = styled.section`
     margin-top: 0.4em;
     padding-left: 1.75em;
+    
+	@media (max-width: ${ Framework.pageSmallWidthThreshold })
+	{
+        margin-left: -0.5em;
+    }
 `

@@ -7,7 +7,7 @@ import * as Logging from "./logging.ts"
 import * as JlptWords from "../data/jlpt_words.ts"
 import * as PitchAccent from "../data/pitch_accent.ts"
 import * as FuriganaHelpers from "../data/furigana_helpers.ts"
-import * as AnimeDramaRanking from "../data/animedrama_ranking.ts"
+import * as WordRankings from "../data/word_rankings.ts"
 import * as JmdictExtraTags from "../data/jmdict_extra_tags.ts"
 
 
@@ -41,7 +41,7 @@ export async function buildDatabase(
         await Jmdict.downloadAndImport(logger, db, useCachedFiles, startDate)
         JlptWords.clearCache()
         PitchAccent.clearCache()
-        AnimeDramaRanking.clearCache()
+        WordRankings.clearCache()
         JmdictExtraTags.clearCache()
         await StandardLists.buildStandardLists(logger, db)
         await Kanjidic.downloadAndImport(logger, db, useCachedFiles)

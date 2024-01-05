@@ -25,6 +25,7 @@ export function TextTag(props: {
     title?: string,
     textColor?: string,
     bkgColor?: string,
+    href?: string,
 })
 {
     return <Styled
