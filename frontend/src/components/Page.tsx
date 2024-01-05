@@ -190,6 +190,18 @@ function SettingsPanel(props: {
         />
         
         <Framework.Select
+            label="Word Heading Size"
+            value={ () => App.usePrefs().resultsWordHeadingSize }
+            onChange={ (value) => App.mergePrefs({ resultsWordHeadingSize: value }) }
+            options={ [
+                { label: "Regular", value: "regular" },
+                { label: "Large", value: "large" },
+                { label: "Larger", value: "larger" },
+                { label: "Largest", value: "largest" },
+            ]}
+        />
+        
+        <Framework.Select
             label="Word Spellings"
             value={ () => App.usePrefs().resultsShowWordSpellings ? "on" : "off" }
             onChange={ (value) => App.mergePrefs({ resultsShowWordSpellings: value === "on" }) }

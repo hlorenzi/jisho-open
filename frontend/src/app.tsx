@@ -1,6 +1,4 @@
 import * as Solid from "solid-js"
-import * as SolidWeb from "solid-js/web"
-import * as Styled from "solid-styled-components"
 import * as Framework from "./framework/index.ts"
 
 export * as Api from "./api.ts"
@@ -17,6 +15,7 @@ export type Prefs = {
     searchboxPosition: "inline" | "bottom"
 
     japaneseFontStyle: "regular" | "half-bold" | "bold"
+    resultsWordHeadingSize: "regular" | "large" | "larger" | "largest"
     resultsShowWordSpellings: boolean
     resultsShowSearchOnlyHeadings: boolean
     resultsShowWordRankings: boolean
@@ -38,6 +37,7 @@ export const prefsDefault: Prefs = {
     searchboxPosition: "inline",
 
     japaneseFontStyle: "bold",
+    resultsWordHeadingSize: "regular",
     resultsShowWordSpellings: true,
     resultsShowSearchOnlyHeadings: false,
     resultsShowWordRankings: true,
@@ -67,6 +67,9 @@ export function mergePrefs(merge: Partial<Prefs>)
 const cssJapaneseFontWeight = "--pref-japaneseFontWeight"
 export const cssVarJapaneseFontWeight = `var(${ cssJapaneseFontWeight })`
 
+const cssWordHeadingFontSize = "--pref-wordHeadingFontSize"
+export const cssVarWordHeadingFontSize = `var(${ cssWordHeadingFontSize })`
+
 
 export function usePrefsCss(): Solid.Accessor<string>
 {
@@ -78,6 +81,13 @@ export function usePrefsCss(): Solid.Accessor<string>
                 prefs.japaneseFontStyle === "regular" ? "regular" :
                 prefs.japaneseFontStyle === "half-bold" ? "500" :
                 "bold"
+            };
+            ${ cssWordHeadingFontSize }: ${
+                prefs.resultsWordHeadingSize === "regular" ? "1em" :
+                prefs.resultsWordHeadingSize === "large" ? "1.25em" :
+                prefs.resultsWordHeadingSize === "larger" ? "1.5em" :
+                prefs.resultsWordHeadingSize === "largest" ? "1.75em" :
+                "1em"
             };
         `
     })

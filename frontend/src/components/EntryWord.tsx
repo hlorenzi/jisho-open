@@ -437,10 +437,12 @@ export function HeadingLabel(props: {
 
 const HeadingText = styled.span`
     font-weight: ${ App.cssVarJapaneseFontWeight };
+    font-size: ${ App.cssVarWordHeadingFontSize };
 `
 
 
 const HeadingTagsWrapper = styled.sup`
+    font-size: ${ App.cssVarWordHeadingFontSize };
 `
 
 
