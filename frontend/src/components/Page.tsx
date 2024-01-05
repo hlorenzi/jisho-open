@@ -190,6 +190,16 @@ function SettingsPanel(props: {
         />
         
         <Framework.Select
+            label="Word Spellings"
+            value={ () => App.usePrefs().resultsShowWordSpellings ? "on" : "off" }
+            onChange={ (value) => App.mergePrefs({ resultsShowWordSpellings: value === "on" }) }
+            options={ [
+                { label: "Toggleable", value: "off" },
+                { label: "Show Always", value: "on" },
+            ]}
+        />
+        
+        <Framework.Select
             label="Word Ranking Tags"
             value={ () => App.usePrefs().resultsShowWordRankings ? "on" : "off" }
             onChange={ (value) => App.mergePrefs({ resultsShowWordRankings: value === "on" }) }

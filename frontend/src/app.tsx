@@ -17,6 +17,7 @@ export type Prefs = {
     searchboxPosition: "inline" | "bottom"
 
     japaneseFontStyle: "regular" | "half-bold" | "bold"
+    resultsShowWordSpellings: boolean
     resultsShowSearchOnlyHeadings: boolean
     resultsShowWordRankings: boolean
     resultsShowExampleSentences: boolean
@@ -37,6 +38,7 @@ export const prefsDefault: Prefs = {
     searchboxPosition: "inline",
 
     japaneseFontStyle: "bold",
+    resultsShowWordSpellings: true,
     resultsShowSearchOnlyHeadings: false,
     resultsShowWordRankings: true,
     resultsShowExampleSentences: false,

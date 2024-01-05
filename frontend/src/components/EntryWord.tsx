@@ -91,6 +91,9 @@ function Headings(props: {
         }
     })
 
+    const [showSpellings, setShowSpellings] =
+        Framework.createHistorySignal(props.wordId + ":spellings", false)
+
     const popupEllipsis = Framework.makePopupPageWide({
         childrenFn: () =>
             <HeadingEllipsisPopup
@@ -109,17 +112,41 @@ function Headings(props: {
             />,
     })
 
+    const headings = Solid.createMemo(() => {
+        return App.usePrefs().resultsShowWordSpellings || showSpellings() ?
+            data().headings :
+            data().headings.slice(0, 1)
+    })
+
     return <header>
-        <Solid.For each={ data().headings }>{ (heading, index) =>
+        <Solid.For each={ headings() }>
+        { (heading, index) =>
             <Heading
                 entry={ props.entry }
                 heading={ heading }
                 first={ index() === 0 }
-                last={ index() === data().headings.length - 1 }
+                last={ index() === headings().length - 1 }
                 query={ props.query }
             />
         }
         </Solid.For>
+
+        <Solid.Show when={
+            data().headings.length > 1 &&
+            !App.usePrefs().resultsShowWordSpellings
+        }>
+            <Framework.Button
+                title="Toggle alternative spellings"
+                label={
+                    showSpellings() ?
+                        <Framework.IconTriangleUp/> :
+                        <Framework.IconTriangleDown/>
+                }
+                onClick={ () => setShowSpellings(!showSpellings()) }
+                iconPadding
+                style={{ position: "relative", top: "-0.2em" }}
+            />
+        </Solid.Show>
 
         <Framework.Button
             title="More options"
