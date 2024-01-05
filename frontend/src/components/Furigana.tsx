@@ -22,7 +22,7 @@ export function FuriganaRuby(props: {
             const dotted =
                 segment[1] !== "" &&
                 segment[1] !== segment[0] &&
-                segment[0].length > 1
+                [...segment[0]].length > 1
             
             return <>
                 <Solid.Show
