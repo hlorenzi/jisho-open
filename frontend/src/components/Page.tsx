@@ -105,7 +105,7 @@ function SideMenu()
                         <Framework.HorizontalBar/>
 
                         <Framework.ButtonPopupPageWide
-                            label="Server Log"
+                            label="Admin: Server Log"
                             href={ App.Pages.Log.url }
                         />
 

@@ -9,7 +9,7 @@ import { UserIdLink } from "../components/User.tsx"
 
 export function PageLog(props: Framework.RouteProps)
 {
-    const [data] = Solid.createResource(
+    const [data, { refetch }] = Solid.createResource(
         props.routeMatch, // FIXME: Why is this needed?
         async () => {
             const { entries } = await App.Api.logGet()
@@ -17,8 +17,7 @@ export function PageLog(props: Framework.RouteProps)
             return { entries: entries.reverse() }
         })
 
-        
-    return <Page title="Community">
+    return <Page title="Server Log">
 
         <Searchbox position="inline"/>
         <br/>
@@ -27,6 +26,10 @@ export function PageLog(props: Framework.RouteProps)
             <h1>
                 Server Log
             </h1>
+            <Framework.Button
+                label="Refresh"
+                onClick={ () => { refetch() } }
+            />
             <Framework.HorizontalBar/>
 
             <LogList>
