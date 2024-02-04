@@ -3,13 +3,16 @@ import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
 import * as App from "../app.tsx"
 import { Page } from "../components/Page.tsx"
+import { Searchbox } from "../components/Searchbox.tsx"
 
 
 export function PageHelpAnki(props: Framework.RouteProps)
 {
     return <Page title="Help / Anki">
 
+        <Searchbox position="inline"/>
         <br/>
+
         <h1>
             Help &gt; 🎴 Anki
         </h1>

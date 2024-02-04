@@ -102,3 +102,15 @@ export namespace HelpAnki
 {
     export const url = `/help/anki`
 }
+
+
+export namespace HelpSymbols
+{
+    export const url = `/help/symbols`
+}
+
+
+export namespace HelpFilters
+{
+    export const url = `/help/filters`
+}

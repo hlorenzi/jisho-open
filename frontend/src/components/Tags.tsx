@@ -26,6 +26,166 @@ export function TagCommonness(props: {
 }
 
 
+export function TagAteji(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.TextTag
+            title="ateji reading"
+            label="A"
+            bkgColor={ Framework.themeVar("iconAtejiColor") }
+        />
+    </Solid.Show>
+}
+
+
+export function TagGikun(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.TextTag
+            title="gikun reading"
+            label="G"
+            bkgColor={ Framework.themeVar("iconGikunColor") }
+        />
+    </Solid.Show>
+}
+
+
+export function TagNonJouyou(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.IconCircleSmall
+            title="contains kanji from outside the jōyō list"
+            color={ Framework.themeVar("iconBlueColor") }
+        />
+    </Solid.Show>
+}
+
+
+export function TagRareKanji(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.IconArrowDownHollow
+            title="rare kanji"
+            color={ Framework.themeVar("iconBlueColor") }
+        />
+    </Solid.Show>
+}
+
+
+export function TagOutdatedKanji(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.IconArrowDown
+            title="outdated kanji"
+            color={ Framework.themeVar("iconBlueColor") }
+        />
+    </Solid.Show>
+}
+
+
+export function TagRareKana(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.IconArrowDownHollow
+            title="rare kana"
+            color={ Framework.themeVar("iconBlueColor") }
+        />
+    </Solid.Show>
+}
+
+
+export function TagOutdatedKana(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.IconArrowDown
+            title="outdated kana"
+            color={ Framework.themeVar("iconBlueColor") }
+        />
+    </Solid.Show>
+}
+
+
+export function TagIrregularKanji(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.IconIrregular
+            title="irregular kanji"
+            color={ Framework.themeVar("iconRedColor") }
+        />
+    </Solid.Show>
+}
+
+
+export function TagIrregularKana(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.IconIrregular
+            title="irregular kana"
+            color={ Framework.themeVar("iconRedColor") }
+        />
+    </Solid.Show>
+}
+
+
+export function TagIrregularOkurigana(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.IconIrregular
+            title="irregular okurigana"
+            color={ Framework.themeVar("iconRedColor") }
+        />
+    </Solid.Show>
+}
+
+
+export function TagSearchOnlyKanji(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.TextTag
+            title="search-only kanji"
+            label="Ø"
+            bkgColor={ Framework.themeVar("iconRedColor") }
+        />
+    </Solid.Show>
+}
+
+
+export function TagSearchOnlyKana(props: {
+    show?: boolean,
+})
+{
+    return <Solid.Show when={ props.show }>
+        <Framework.TextTag
+            title="search-only kana"
+            label="Ø"
+            bkgColor={ Framework.themeVar("iconRedColor") }
+        />
+    </Solid.Show>
+}
+
+
 export function TagJlpt(props: {
     jlpt?: Api.JlptLevel,
 })

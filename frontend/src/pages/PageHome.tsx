@@ -14,6 +14,7 @@ export function PageHome(props: Framework.RouteProps)
         ["Rōmaji search", "kantoku"],
         ["Partial search", "??直*"],
         ["Filter search", "#common #v5b #!vt"],
+        ["Name search", "eiji #name"],
         ["Kanji look-up", "国連安保理 #k"],
         ["Kanji search by reading", "na mei #k"],
         ["Kanji search by meaning", "\"power\" #k"],
@@ -91,7 +92,7 @@ export function PageHome(props: Framework.RouteProps)
                 <ul>
                     <Solid.For each={ examples }>
                     { (example) =>
-                        <li>
+                        <ExampleLink>
                             { example[0] }:
                             { " " }
                             <Highlight>
@@ -101,7 +102,7 @@ export function PageHome(props: Framework.RouteProps)
                                     { example[1] }
                                 </Framework.Link>
                             </Highlight>
-                        </li>
+                        </ExampleLink>
                     }
                     </Solid.For>
                 </ul>
@@ -138,4 +139,9 @@ const CardSlot = styled.div`
     background-color: ${ Framework.themeVar("textStrongBkgColor") };
     border-radius: ${ Framework.themeVar("borderRadius") };
     padding: 1em;
+`
+
+
+const ExampleLink = styled.li`
+    margin-bottom: 0.25em;
 `

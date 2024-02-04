@@ -51,6 +51,12 @@ function Root()
                 { patterns: [Pages.HelpAnki.url],
                     load: async () => (await import("./pages/PageHelpAnki.tsx")).PageHelpAnki },
     
+                { patterns: [Pages.HelpSymbols.url],
+                    load: async () => (await import("./pages/PageHelpSymbols.tsx")).PageHelpSymbols },
+
+                { patterns: [Pages.HelpFilters.url],
+                    load: async () => (await import("./pages/PageHelpFilters.tsx")).PageHelpFilters },
+        
                 { patterns: [Pages.Log.url],
                     load: async () => (await import("./pages/PageLog.tsx")).PageLog },
     

@@ -347,88 +347,18 @@ export function HeadingLabel(props: {
             <HeadingTags>
                 <Tags.TagCommonness commonness={ commonness }/>
                 <Tags.TagJlpt jlpt={ props.heading.jlpt }/>
-                
-                <Solid.Show when={ props.heading.ateji }>
-                    <Framework.TextTag
-                        title="ateji reading"
-                        label="A"
-                        bkgColor={ Framework.themeVar("iconAtejiColor") }
-                    />
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.gikun }>
-                    <Framework.TextTag
-                        title="gikun reading"
-                        label="G"
-                        bkgColor={ Framework.themeVar("iconGikunColor") }
-                    />
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.nonJouyouKanji }>
-                    <Framework.IconCircleSmall
-                        title="Contains kanji outside the jōyō list"
-                        color={ Framework.themeVar("iconBlueColor") }
-                    />
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.rareKanji }>
-                    <Framework.IconArrowDownHollow
-                        title="rare kanji"
-                        color={ Framework.themeVar("iconBlueColor") }
-                    />
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.outdatedKanji }>
-                    <Framework.IconArrowDown
-                        title="outdated kanji"
-                        color={ Framework.themeVar("iconBlueColor") }
-                    />
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.outdatedKana }>
-                    <Framework.IconArrowDown
-                        title="outdated kana"
-                        color={ Framework.themeVar("iconBlueColor") }
-                    />
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.irregularKanji }>
-                    <Framework.IconIrregular
-                        title="irregular kanji"
-                        color={ Framework.themeVar("iconRedColor") }
-                    />
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.irregularKana }>
-                    <Framework.IconIrregular
-                        title="irregular kana"
-                        color={ Framework.themeVar("iconRedColor") }
-                    />
-                </Solid.Show>
-
-                <Solid.Show when={ props.heading.irregularOkurigana }>
-                    <Framework.IconIrregular
-                        title="irregular okurigana"
-                        color={ Framework.themeVar("iconRedColor") }
-                    />
-                </Solid.Show>
-
-                <Solid.Show when={ props.heading.searchOnlyKanji }>
-                    <Framework.TextTag
-                        title="search-only kanji"
-                        label="Ø"
-                        bkgColor={ Framework.themeVar("iconRedColor") }
-                    />
-                </Solid.Show>
-                
-                <Solid.Show when={ props.heading.searchOnlyKana }>
-                    <Framework.TextTag
-                        title="search-only kana"
-                        label="Ø"
-                        bkgColor={ Framework.themeVar("iconRedColor") }
-                    />
-                </Solid.Show>
-
+                <Tags.TagAteji show={ props.heading.ateji }/>
+                <Tags.TagGikun show={ props.heading.gikun }/>
+                <Tags.TagNonJouyou show={ props.heading.nonJouyouKanji }/>
+                <Tags.TagRareKanji show={ props.heading.rareKanji }/>
+                <Tags.TagRareKana show={ false }/>
+                <Tags.TagOutdatedKanji show={ props.heading.outdatedKanji }/>
+                <Tags.TagOutdatedKana show={ props.heading.outdatedKana }/>
+                <Tags.TagIrregularKanji show={ props.heading.irregularKanji }/>
+                <Tags.TagIrregularKana show={ props.heading.irregularKana }/>
+                <Tags.TagIrregularOkurigana show={ props.heading.irregularOkurigana }/>
+                <Tags.TagSearchOnlyKanji show={ props.heading.searchOnlyKanji }/>
+                <Tags.TagSearchOnlyKana show={ props.heading.searchOnlyKana }/>
             </HeadingTags>
         </HeadingTagsWrapper>
     </>
