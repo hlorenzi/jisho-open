@@ -535,6 +535,9 @@ unc; *て -> unc; *ちゃ
 ~conjunctive; *て -> unc; *ちゃ
 ~conjunctive; *で -> unc; *じゃ
 
+@ id: aux-nagara
+@ display: aux. ながら
+%continuative; * -> unc; *ながら
 
 
 @ id: adverbial

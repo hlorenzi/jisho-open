@@ -234,6 +234,7 @@ const inflectionalKanjiReadings: { [k: string]: string[] } = {
     "在": ["あ"],
     "得": ["え", "う"],
     "良": ["い", "よ"],
+    //"乍": ["なが"], // won't work; dependent algorithms expect a single kana
 }
 
 
