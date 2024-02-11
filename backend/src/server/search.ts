@@ -133,6 +133,13 @@ export async function search(
                 [...new Set(query.kanji)].join(""),
                 optionsNoTags)
 
+    const byKanjiComponents =
+        query.type !== "components" ?
+            [] :
+        db.searchKanjiByComponents(
+            [...new Set(query.components)],
+            false)
+
     const byKanjiReading =
         query.type !== "kanji" ?
             [] :
@@ -181,6 +188,7 @@ export async function search(
     const kanjiEntries: Api.Search.Entry[] = [
         { type: "section", section: "kanji" },
         ...(await byKanji).map(translateToSearchKanjiEntry),
+        ...(await byKanjiComponents).map(translateToSearchKanjiEntry),
         ...(await byKanjiReading).map(translateToSearchKanjiEntry),
         ...(await byKanjiMeaning).map(translateToSearchKanjiEntry),
     ]
@@ -335,8 +343,12 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         
     const queryJapanese = Kana.toKana(queryNotInQuotes, { ignoreJapanese: true })
     const queryHiragana = Kana.toHiragana(queryNotInQuotes)
+
     const queryKanji = [...queryNotInQuotes]
         .filter(c => Kana.isKanji(c))
+
+    const queryComponents = [...queryNotInQuotes]
+        .filter(c => Kana.isKanji(c) || Kana.isJapanese(c))
 
     const queryWildcards = queryCanBeWildcards ?
         queryNotInQuotes :
@@ -397,6 +409,8 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         type = "sentence"
     if (tags.some(tag => tag === "k" || tag === "kanji"))
         type = "kanji"
+    if (tags.some(tag => tag === "c" || tag === "components"))
+        type = "components"
 
     const tagsToRemove = new Set(["k", "kanji", "sentence"])
     tags = tags.filter(tag => !tagsToRemove.has(tag))
@@ -422,6 +436,7 @@ function normalizeQuery(queryRaw: string): Api.Search.Query
         strWildcards: queryWildcards,
         strWildcardsHiragana: queryWildcardsHiragana,
         kanji: queryKanji,
+        components: queryComponents,
         inflectionBreakdown,
         inflectionOf,
         canBeDefinition: queryCanBeDefinition && type !== "kanji",

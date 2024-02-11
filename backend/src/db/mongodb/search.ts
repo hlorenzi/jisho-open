@@ -368,23 +368,14 @@ export async function searchKanjiByComponents(
     state: MongoDb.State,
     components: string[],
     onlyCommon: boolean)
-    : Promise<Api.KanjiByComponents.Kanji[]>
+    : Promise<Api.Kanji.Entry[]>
 {
     if (components.length === 0)
         return []
 
-    type Projected = Pick<
-        MongoDb.DbKanjiEntry,
-        "_id" | "strokeCount" | "components" | "score">
-
     let results = await state.collKanji
         .find({ [MongoDb.fieldKanjiComponents]: { $all: components } })
-        .project<Projected>({
-            ["_id" satisfies keyof Projected]: 1,
-            ["strokeCount" satisfies keyof Projected]: 1,
-            ["components" satisfies keyof Projected]: 1,
-            ["score" satisfies keyof Projected]: 1,
-        })
+        .sort({ [MongoDb.fieldKanjiScore]: -1 })
         .limit(10000)
         .toArray()
 
@@ -392,11 +383,8 @@ export async function searchKanjiByComponents(
         results = results.filter(
             r => r.score !== undefined && r.score > 0)
 
-    return results.map(r => ({
-        id: r._id,
-        strokeCount: r.strokeCount,
-        components: r.components ?? [],
-    }))
+    return results
+        .map(MongoDb.translateKanjiDbToApi)
 }
 
 

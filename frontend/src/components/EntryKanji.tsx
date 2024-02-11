@@ -525,6 +525,13 @@ const ExtraInfoKanjiList = styled.div`
 `
 
 
+const ExtraInfoLinksLayout = styled.div`
+    color: ${ Framework.themeVar("text3rdColor") };
+    font-size: 0.8em;
+    margin-top: 0.25em;
+`
+
+
 const structCatDisplayNames: Record<App.Api.Kanji.StructuralCategoryType, string> = {
     "shoukei": "pictographic (shōkei moji)",
     "shiji": "simple indicative (shiji moji)",
@@ -609,6 +616,12 @@ function ExtraInfoComponents(props: {
                 }
                 </Solid.For>
             </ExtraInfoKanjiList>
+            <ExtraInfoLinksLayout>
+                <Framework.Link
+                    label={ <><Framework.IconMagnifyingGlass/> Perform a component search</> }
+                    href={ App.Pages.Search.urlForComponentsQuery(props.components!.join("")) }
+                />
+            </ExtraInfoLinksLayout>
         </ExtraInfoContent>
     </ExtraInfoRow>
 }
@@ -742,7 +755,7 @@ function ExtraInfoCodepoint(props: {
             <ExtraInfoLabel>Unicode codepoint:</ExtraInfoLabel>
             <ExtraInfoContent>
                 U+{ hex }
-                <CodepointLinksLayout>
+                <ExtraInfoLinksLayout>
                     <Framework.Link
                         href={ `https://www.unicode.org/cgi-bin/GetUnihanData.pl?codepoint=${ hex }` }
                         label={ <><Framework.IconExternal/> Unihan</> }
@@ -757,15 +770,8 @@ function ExtraInfoCodepoint(props: {
                         href={ `https://en.wiktionary.org/wiki/${ uri }#Japanese` }
                         label={ <><Framework.IconExternal/> Wiktionary</> }
                     />
-                </CodepointLinksLayout>
+                </ExtraInfoLinksLayout>
             </ExtraInfoContent>
         </ExtraInfoRow>
     </>
 }
-
-
-const CodepointLinksLayout = styled.div`
-    color: ${ Framework.themeVar("text3rdColor") };
-    font-size: 0.8em;
-    margin-top: 0.25em;
-`

@@ -88,7 +88,7 @@ export interface Interface
     searchKanjiByComponents: (
         queries: string[],
         onlyCommon: boolean)
-        => Promise<Api.KanjiByComponents.Kanji[]>
+        => Promise<Api.Kanji.Entry[]>
 
     listKanjiWordCrossRefEntries(
         kanjiString: string)

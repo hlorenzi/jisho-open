@@ -231,6 +231,7 @@ export namespace Search
         | "sentence"
         | "wildcards"
         | "kanji"
+        | "components"
     
     export type Query = {
         type: QueryType
@@ -248,6 +249,7 @@ export namespace Search
         canBeWildcards: boolean
         canBeSentence: boolean
         kanji: string[]
+        components: string[]
         inflectionBreakdown: Inflection.Breakdown
         inflectionOf: Inflection.Inflected[]
         tags: string[]
@@ -312,13 +314,7 @@ export namespace KanjiByComponents
     }
     
     export type Response = {
-        kanji: Kanji[]
-    }
-
-    export type Kanji = {
-        id: string
-        strokeCount: number
-        components: string[]
+        kanji: Kanji.Entry[]
     }
 }
 

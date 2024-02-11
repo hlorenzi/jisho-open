@@ -40,5 +40,6 @@ async function getKanjiComponents(
 {
     const components = [...req.components]
     const kanji = await db.searchKanjiByComponents(components, req.onlyCommon)
+    kanji.sort((a, b) => a.strokeCount - b.strokeCount)
     return { kanji }
 }

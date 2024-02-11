@@ -14,6 +14,23 @@ export function InputKanjiComponents(props: {
     const [selected, setSelected] =
         Solid.createSignal(new Set<string>())
 
+    const initialText = props.textSignal[0]()
+    if (initialText.indexOf("#c") >= 0)
+    {
+        const kanjiComponentsSet = new Set<string>(
+            KanjiComponents.kanjiComponents.map(c => c[0]))
+
+        const newSet = new Set<string>([...selected()])
+        
+        for (const component of initialText)
+        {
+            if (kanjiComponentsSet.has(component))
+                newSet.add(component)
+        }
+
+        setSelected(newSet)
+    }
+
     const [onlyCommon, setOnlyCommon] =
         Solid.createSignal(true)
 
@@ -77,6 +94,21 @@ export function InputKanjiComponents(props: {
                 value={ onlyCommon }
                 onChange={ setOnlyCommon }
             />
+
+            <div style={{
+                "display": "inline-block",
+                "margin-left": "1em",
+                "font-size": "0.8em",
+                "color": Framework.themeVar("text3rdColor"),
+            }}>
+                <Framework.Link
+                    label={ <><Framework.IconMagnifyingGlass/> Perform a component search</> }
+                    href={ selected().size === 0 ?
+                        undefined :                        
+                        App.Pages.Search.urlForComponentsQuery([...selected()].join(""))
+                    }
+                />
+            </div>
         </div>
 
         <LayoutResults>
@@ -127,7 +159,7 @@ export function InputKanjiComponents(props: {
             >
                 <KanjiLabel>
                     <span style={{ "font-size": "0.8em" }}>
-                    <Framework.IconX/>
+                    <Framework.IconTrash/>
                     </span>
                 </KanjiLabel>
             </Framework.Button>

@@ -78,7 +78,7 @@ const PopupDialog = styled.dialog`
         padding-left: 0;
 
         &:modal {
-            max-height: calc(100vh - 8em);
+            max-height: calc(100vh - 6em);
         }
     }
 

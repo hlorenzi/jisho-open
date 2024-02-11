@@ -26,6 +26,9 @@ export namespace Search
     export const urlForKanjiQuery = (query: string) =>
         `/search/${ encodeURIComponent(`${ query } #k`) }`
     
+    export const urlForComponentsQuery = (query: string) =>
+        `/search/${ encodeURIComponent(`${ query } #c`) }`
+    
     export const urlForBaseReading = (base: string, reading?: string) => {
         if (!reading ||
             reading === base)
