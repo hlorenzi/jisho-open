@@ -8,8 +8,9 @@ import * as Api from "common/api/index.ts"
 import * as Kana from "common/kana.ts"
 import * as Furigana from "common/furigana.ts"
 import * as JmdictTags from "common/jmdict_tags.ts"
-import * as KanjiStructCat from "../data/kanji_structural_category.ts"
 import * as KanjiComponents from "../data/kanji_components.ts"
+import * as KanjiStructCat from "../data/kanji_structural_category.ts"
+import * as KanjiDescrSeq from "../data/kanji_description_sequences.ts"
 
 
 export const url = "http://www.edrdg.org/kanjidic/kanjidic2.xml.gz"
@@ -70,6 +71,8 @@ export async function downloadAndImport(
     await dispatcher.finish()
 
     KanjiComponents.clearCache()
+    KanjiStructCat.clearCache()
+    KanjiDescrSeq.clearCache()
 }
 
 
@@ -83,6 +86,7 @@ async function normalizeEntry(
 
         strokeCount: parseInt(raw.misc[0].stroke_count[0]),
 
+        components: [],
         meanings: [],
         kunyomi: [],
         onyomi: [],
@@ -93,12 +97,6 @@ async function normalizeEntry(
     // Import alternative stroke-counts
     if (raw.misc[0].stroke_count.length > 1)
         entry.strokeCounts = raw.misc[0].stroke_count.slice(1).map(s => parseInt(s))
-
-
-    // Import components
-    const components = KanjiComponents.get(entry.id)
-    if (components.length !== 0)
-        entry.components = components
     
 
     // Import jouyou level or jinmeiyou status
@@ -194,10 +192,41 @@ async function normalizeEntry(
     }
 
 
+    // Import components
+    const components = new Set<string>(KanjiComponents.get(entry.id))
+
+
     // Import structural category
     const structCat = KanjiStructCat.get(entry.id)
-    if (structCat !== null)
+    if (structCat !== undefined)
         entry.structuralCategory = structCat
+
+
+    // Import structural usage
+    const keiseiPhonetic = KanjiStructCat.getKeiseiPhoneticUsage(entry.id)
+    if (keiseiPhonetic !== undefined)
+        entry.keiseiPhonetic = keiseiPhonetic
+
+    const keiseiSemantic = KanjiStructCat.getKeiseiSemanticUsage(entry.id)
+    if (keiseiSemantic !== undefined)
+        entry.keiseiSemantic = keiseiSemantic
+
+
+    // Import description sequence
+    const descrSeq = KanjiDescrSeq.get(entry.id)
+    if (descrSeq !== undefined &&
+        typeof descrSeq !== "string")
+    {
+        entry.descrSeq = descrSeq[1]
+
+        for (const seq of descrSeq[1])
+            for (const part of KanjiDescrSeq.extractComponents(seq))
+                components.add(part)
+    }
+
+
+    // Finalize components
+    entry.components = [...components].sort()
 
     
     // Calculate overall commonness score.

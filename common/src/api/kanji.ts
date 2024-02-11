@@ -14,7 +14,8 @@ export interface Entry
     strokeCount: number
     strokeCounts?: number[]
 
-    components?: string[]
+    components: string[]
+    descrSeq?: DescriptionSequence[]
 
     meanings: string[]
 
@@ -28,6 +29,8 @@ export interface Entry
     readings: ReadingScore[]
 
     structuralCategory?: StructuralCategory
+    keiseiPhonetic?: string[]
+    keiseiSemantic?: string[]
 
     wordCount?: number
     exampleWords?: Api.KanjiWordCrossRef.Word[]
@@ -48,6 +51,11 @@ export interface ReadingScore
 }
 
 
+export type DescriptionSequence =
+    string |
+    [string, DescriptionSequence[]]
+
+
 export type StructuralCategory =
     | { type: "unknown" }
     | { type: "shoukei" }
@@ -58,3 +66,6 @@ export type StructuralCategory =
     | { type: "shinjitai" }
     | { type: "derivative" }
     | { type: "rebus" }
+
+
+export type StructuralCategoryType = StructuralCategory["type"]

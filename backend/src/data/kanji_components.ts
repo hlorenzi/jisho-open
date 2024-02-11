@@ -24,11 +24,11 @@ export function get(
                 continue
 
             const entry = line.trim().split(";")
-            if (entry.length < 2)
+            if (entry.length !== 2)
                 throw `invalid kanji_components entry: ${line}`
 
             const kanji = entry[0]
-            const components = entry.slice(1)
+            const components = [...entry[1]]
             cache.set(kanji, components)
         }
     }

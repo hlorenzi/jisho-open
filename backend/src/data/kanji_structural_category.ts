@@ -1,13 +1,72 @@
 import * as Api from "common/api/index.ts"
 
 
-export function get(kanji: string): Api.Kanji.StructuralCategory | null
+let cacheKeiseiPhonetic: Map<string, string[]> | null = null
+let cacheKeiseiSemantic: Map<string, string[]> | null = null
+
+
+export function get(
+    kanji: string)
+    : Api.Kanji.StructuralCategory | undefined
 {
     const kanjiData = data[kanji]
     if (!kanjiData)
-        return null
+        return undefined
 
     return kanjiData
+}
+
+
+export function getKeiseiPhoneticUsage(
+    kanji: string)
+    : string[] | undefined
+{
+    if (cacheKeiseiPhonetic === null)
+    {
+        cacheKeiseiPhonetic = new Map()
+
+        for (const [k, structCat] of Object.entries(data))
+        {
+            if (structCat.type !== "keisei")
+                continue
+
+            const usage = cacheKeiseiPhonetic.get(structCat.phonetic) ?? []
+            usage.push(k)
+            cacheKeiseiPhonetic.set(structCat.phonetic, usage)
+        }
+    }
+
+    return cacheKeiseiPhonetic.get(kanji)
+}
+
+
+export function getKeiseiSemanticUsage(
+    kanji: string)
+    : string[] | undefined
+{
+    if (cacheKeiseiSemantic === null)
+    {
+        cacheKeiseiSemantic = new Map()
+
+        for (const [k, structCat] of Object.entries(data))
+        {
+            if (structCat.type !== "keisei")
+                continue
+
+            const usage = cacheKeiseiSemantic.get(structCat.semantic) ?? []
+            usage.push(k)
+            cacheKeiseiSemantic.set(structCat.semantic, usage)
+        }
+    }
+
+    return cacheKeiseiSemantic.get(kanji)
+}
+
+
+export function clearCache()
+{
+    cacheKeiseiPhonetic = null
+    cacheKeiseiSemantic = null
 }
 
 

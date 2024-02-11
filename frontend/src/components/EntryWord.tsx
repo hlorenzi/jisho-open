@@ -185,7 +185,7 @@ function HeadingEllipsisPopup(props: {
                     <Framework.IconMagnifyingGlass/>
                     { ` Inspect all kanji: ${ props.allKanji }` }
                 </> }
-                href={ App.Pages.Search.urlForQuery(`${ props.allKanji } #k`) }
+                href={ App.Pages.Search.urlForKanjiQuery(props.allKanji) }
             />
         </Solid.Show>
         <Framework.HorizontalBar/>
@@ -410,7 +410,7 @@ function HeadingPopup(props: {
                     <Framework.IconMagnifyingGlass/>
                     { ` Inspect kanji: ${ props.kanjiStr }` }
                 </> }
-                href={ App.Pages.Search.urlForQuery(`${ props.kanjiStr } #k`) }
+                href={ App.Pages.Search.urlForKanjiQuery(props.kanjiStr) }
             />
         </Solid.Show>
 
