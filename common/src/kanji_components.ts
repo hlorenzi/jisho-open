@@ -36,7 +36,7 @@ export const kanjiComponents: [string, number][] = [
     ["九", 2],
     ["ユ", 2],
     ["乃", 2],
-    //["𠂉", 2], // no matching kanji?
+    ["𠂉", 2],
 
     ["⻌", 3],
     ["口", 3],
