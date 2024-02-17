@@ -813,8 +813,12 @@ function Senses(props: {
             <ShowExampleSentencesLink>
                 <Framework.Link
                     label={ <>
-                        <Framework.IconVerticalEllipsis/>
-                        { showExamples() ? "Hide" : "View" } example sentences
+                        { showExamples() ?
+                            <Framework.IconTriangleUp/> :
+                            <Framework.IconTriangleDown/>
+                        }
+                        { " " }
+                        Example sentences
                     </> }
                     onClick={ () => setShowExamples(!showExamples()) }
                 />
