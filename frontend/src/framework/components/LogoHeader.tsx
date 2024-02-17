@@ -31,9 +31,9 @@ export function LogoHeader(props: {
                     />
                     <StyledH1>
                         Lorenzi's Jisho
-                        <sup style={{ "font-size": "0.5em" }}>
+                        <sup style={{ "font-size": "0.55em", "letter-spacing": "0" }}>
                             <Framework.TextTag
-                                label="v2 Beta"
+                                label="v2.0"
                                 bkgColor={ Framework.themeVar("focusOutlineColor") }
                             />
                         </sup>
