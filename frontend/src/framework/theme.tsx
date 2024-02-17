@@ -74,6 +74,7 @@ export type Theme = {
     iconJouyou5Color: string
     iconJouyou6Color: string
     iconJouyou7Color: string
+    iconJouyouColor: string
     iconJinmeiyouColor: string
     iconNewsColor: string
     iconWikipediaColor: string
@@ -136,13 +137,14 @@ export const themeLight: Theme = {
     iconJlptN3Color: "#ff7f59",
     iconJlptN2Color: "#ff7d68",
     iconJlptN1Color: "#ff7575",
-    iconJouyou1Color: "#1da6ff",
-    iconJouyou2Color: "#2a9af3",
-    iconJouyou3Color: "#3277ea",
-    iconJouyou4Color: "#3b5ce8",
-    iconJouyou5Color: "#4851f1",
-    iconJouyou6Color: "#5e43da",
-    iconJouyou7Color: "#7742c3",
+    iconJouyou1Color: "#966dff",
+    iconJouyou2Color: "#956dff",
+    iconJouyou3Color: "#946dff",
+    iconJouyou4Color: "#936dff",
+    iconJouyou5Color: "#926dff",
+    iconJouyou6Color: "#9167ff",
+    iconJouyou7Color: "#885afc",
+    iconJouyouColor: "#885afc",
     iconJinmeiyouColor: "#7742c3",
     iconNewsColor: "#0096ee",
     iconWikipediaColor: "#53abab",

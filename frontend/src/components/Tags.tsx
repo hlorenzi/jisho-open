@@ -59,9 +59,9 @@ export function TagNonJouyou(props: {
 })
 {
     return <Solid.Show when={ props.show }>
-        <Framework.IconCircleSmall
+        <Framework.IconLozenge
             title="contains kanji from outside the jōyō list"
-            color={ Framework.themeVar("iconBlueColor") }
+            color={ Framework.themeVar("iconJouyouColor") }
         />
     </Solid.Show>
 }
