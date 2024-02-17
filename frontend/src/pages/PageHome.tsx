@@ -18,6 +18,7 @@ export function PageHome(props: Framework.RouteProps)
         ["Kanji look-up", "国連安保理 #k"],
         ["Kanji search by reading", "na mei #k"],
         ["Kanji search by meaning", "\"power\" #k"],
+        ["Kanji search by components", "冂虫 #c"],
         ["Inflection breakdown", "食べちゃった"],
         ["Sentence analysis", "毎日私は学校に鉛筆を持っていきますよ。"],
     ]
