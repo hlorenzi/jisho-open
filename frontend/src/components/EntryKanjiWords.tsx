@@ -81,6 +81,12 @@ function WordBuckets(props: {
                                         <Tags.TagJlpt
                                             jlpt={ word.jlpt }
                                         />
+                                        <Tags.TagAteji
+                                            show={ word.ateji }
+                                        />
+                                        <Tags.TagGikun
+                                            show={ word.gikun }
+                                        />
                                         <Solid.Show when={ word.rare }>
                                             <Framework.IconArrowDownHollow
                                                 title="rare"

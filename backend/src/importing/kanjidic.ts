@@ -305,6 +305,8 @@ export async function crossReferenceWords(
         heading: Api.Word.Heading
         score: number
         commonScore: number
+        ateji?: boolean
+        gikun?: boolean
         priority: number
         jlpt?: 5 | 4 | 3 | 2 | 1
         sense: string
@@ -413,6 +415,8 @@ export async function crossReferenceWords(
                             score: word.score,
                             jlpt: heading.jlpt,
                             commonScore,
+                            ateji: heading.ateji,
+                            gikun: heading.gikun,
                             priority: h,
                             sense: word.senses[0].gloss
                                 .map(g => typeof g === "string" ? g : g.text)
@@ -500,6 +504,12 @@ export async function crossReferenceWords(
 
             if (w.commonScore === -3)
                 entry.outdated = true
+
+            if (w.ateji)
+                entry.ateji = true
+
+            if (w.gikun)
+                entry.gikun = true
 
             if (w.jlpt !== undefined)
                 entry.jlpt = w.jlpt

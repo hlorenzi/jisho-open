@@ -17,6 +17,8 @@ export type Word = {
     furigana: string
     commonness?: Api.CommonnessIndex
     jlpt?: Api.JlptLevel
+    ateji?: boolean
+    gikun?: boolean
     irregular?: boolean
     rare?: boolean
     outdated?: boolean
