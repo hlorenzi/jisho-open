@@ -620,15 +620,6 @@ export function ExportPopup(props: {
         <br/>
         <br/>
 
-        <div style={{ color: Framework.themeVar("iconYellowColor") }}>
-            <Framework.IconWarning/>
-            { " " }
-            A new column "ID" has been added as the first column
-            in the TSV file. Check your Anki import settings carefully.
-        </div>
-
-        <br/>
-
         <Framework.Button
             label="Download TSV"
             icon={ <Framework.IconDownload/> }
