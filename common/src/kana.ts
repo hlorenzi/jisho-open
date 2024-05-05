@@ -279,7 +279,9 @@ export function isKanji(c: string)
         (code >= 0x2ceb0 && code <= 0x2ebe0) || // CJK Extensions F
         (code >= 0x30000 && code <= 0x3134f) || // CJK Extensions G
         (code >= 0x2f00 && code <= 0x2fdf) || // Kangxi Radicals
-        (code >= 0x2e80 && code <= 0x2eff) // CJK Radicals Supplement
+        (code >= 0x2e80 && code <= 0x2eff) || // CJK Radicals Supplement
+        (code >= 0xf900 && code <= 0xfaff) || // CJK Compatibility Ideographs
+        (code >= 0x2f800 && code <= 0x2fa1f) // CJK Compatibility Ideographs Supplement
     )
 }
 
