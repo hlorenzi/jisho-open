@@ -1,5 +1,6 @@
 import * as fs from "fs"
 import * as http from "http"
+import fetch from "node-fetch"
 // @ts-expect-error
 import gunzip from "gunzip-file"
 import * as Logging from "./logging.ts"
@@ -29,25 +30,42 @@ export async function download(
     }
 
     await logger.writeLn(`downloading ${toFilename}...`)
-    
-    await new Promise<void>((resolve, reject) => {
-        const writeStream = fs.createWriteStream(toFilename)
 
-        const request = http.get(
-            url,
-            (response) => {
-                response.pipe(writeStream)
-                writeStream.on("finish", () => {
-                    writeStream.close(() => resolve())
-                })
-            })
-        
-        request.on("error", async (err) => {
-            fs.unlinkSync(downloadFolder + toFilename)
+    if (url.startsWith("https"))
+    {
+        try
+        {
+            const res = await fetch(url)
+            const text = await res.text()
+            fs.writeFileSync(toFilename, text)
+        }
+        catch (e)
+        {
             await logger.writeLn(`error downloading ${toFilename}`)
-            reject(err.message)
+            throw e
+        }
+    }
+    else
+    {
+        await new Promise<void>((resolve, reject) => {
+            const writeStream = fs.createWriteStream(toFilename)
+
+            const request = http.get(
+                url,
+                (response) => {
+                    response.pipe(writeStream)
+                    writeStream.on("finish", () => {
+                        writeStream.close(() => resolve())
+                    })
+                })
+            
+            request.on("error", async (err) => {
+                fs.unlinkSync(downloadFolder + toFilename)
+                await logger.writeLn(`error downloading ${toFilename}`)
+                reject(err.message)
+            })
         })
-    })
+    }
 }
 
 

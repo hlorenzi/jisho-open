@@ -4,6 +4,17 @@ export type Logger = {
 }
 
 
+export const loggerConsole: Logger = {
+    write: async (str) => {
+        process.stdout.write(str)
+    },
+
+    writeLn: async (str) => {
+        console.log(str)
+    }
+}
+
+
 export function logProgressPercentage(
     logger: Logger,
     percent: number)

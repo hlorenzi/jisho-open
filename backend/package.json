@@ -13,12 +13,14 @@
     "migrate": "ts-node ./migrate.ts",
     "test-inflections": "ts-node ./test_inflections.ts",
     "test-search": "ts-node ./src/server/search.test.ts",
+    "scrape-kanji-glyph-origins": "ts-node ./src/data/scrape_kanji_glyph_origins.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "",
   "dependencies": {
     "@types/express": "^4.17.21",
     "body-parser": "^1.20.2",
+    "cheerio": "^1.0.0-rc.12",
     "common": "file://../common/",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
