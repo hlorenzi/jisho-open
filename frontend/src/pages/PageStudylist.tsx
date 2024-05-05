@@ -606,6 +606,7 @@ export function ExportPopup(props: {
                 { label: "Force kanji, allow up to jōyō", value: "jouyou" },
                 { label: "Force kanji, allow up to uncommon", value: "uncommon" },
                 { label: "Force kanji, allow up to rare", value: "rare" },
+                { label: "Include all spellings", value: "all" },
             ]}
         />
 

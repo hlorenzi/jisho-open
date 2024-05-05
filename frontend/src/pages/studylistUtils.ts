@@ -62,7 +62,8 @@ function getHeadingForKanjiLevel(
     if (word.headingIndex !== undefined)
         return word.entry.headings[word.headingIndex]
 
-    if (level === "common")
+    if (level === "common" ||
+        level === "all")
         return word.entry.headings[0]
 
     let headingChosen: App.Api.Word.Heading | undefined = undefined
@@ -157,23 +158,55 @@ export function writeStudylistTsv(
         const columns = []
         columns.push(word.id)
 
-        if (prefs.studylistExportHtmlCss)
+        if (prefs.studylistExportKanjiLevel === "all")
         {
-            columns.push(heading.base)
-    
-            columns.push(renderFuriganaToHtmlString(heading.furigana))
+            if (prefs.studylistExportHtmlCss)
+            {
+                columns.push(word.entry.headings
+                    .map(h => h.base)
+                    .join(", "))
 
-            columns.push(pitchEntries
-                .map(p => renderPitchGuideToHtmlString(p))
-                .join(""))
+                columns.push(word.entry.headings
+                    .map(h => renderFuriganaToHtmlString(h.furigana))
+                    .join(", "))
+                
+                columns.push(pitchEntries
+                    .map(p => renderPitchGuideToHtmlString(p))
+                    .join(""))
+            }
+            else
+            {
+                columns.push(word.entry.headings
+                    .map(h => h.base)
+                    .join(", "))
+
+                columns.push(word.entry.headings
+                    .map(h => h.reading ?? h.base)
+                    .join(", "))
+                
+                columns.push(pitchEntries.join(" / "))
+            }
         }
         else
         {
-            columns.push(heading.base)
+            if (prefs.studylistExportHtmlCss)
+            {
+                columns.push(heading.base)
+        
+                columns.push(renderFuriganaToHtmlString(heading.furigana))
 
-            columns.push(reading)
-            
-            columns.push(pitchEntries.join(" / "))
+                columns.push(pitchEntries
+                    .map(p => renderPitchGuideToHtmlString(p))
+                    .join(""))
+            }
+            else
+            {
+                columns.push(heading.base)
+
+                columns.push(reading)
+                
+                columns.push(pitchEntries.join(" / "))
+            }
         }
 
         const senseTexts: string[] = []

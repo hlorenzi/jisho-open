@@ -25,7 +25,7 @@ export type Prefs = {
     studylistWordOrdering: "date-added" | "kana"
 
     studylistExportHtmlCss: boolean
-    studylistExportKanjiLevel: "common" | "jouyou" | "uncommon" | "rare"
+    studylistExportKanjiLevel: "common" | "jouyou" | "uncommon" | "rare" | "all"
     studylistExportSkipKatakana: boolean
 }
 
