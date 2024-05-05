@@ -2,6 +2,7 @@ import * as Db from "../index.ts"
 import * as MongoDb from "./index.ts"
 import * as Api from "common/api/index.ts"
 import * as Inflection from "common/inflection.ts"
+import * as JmdictTags from "common/jmdict_tags.ts"
 
 
 export async function searchByHeading(
@@ -381,7 +382,7 @@ export async function searchKanjiByComponents(
 
     if (onlyCommon)
         results = results.filter(
-            r => r.score !== undefined && r.score > 0)
+            r => JmdictTags.getKanjiCommonness(r) !== undefined)
 
     return results
         .map(MongoDb.translateKanjiDbToApi)

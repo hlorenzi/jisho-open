@@ -228,15 +228,15 @@ async function normalizeEntry(
     // Finalize components
     entry.components = [...components].sort()
 
-    
-    // Calculate overall commonness score.
-    const score = scoreEntry(entry)
-    if (score !== 0)
-        entry.score = score
-
 
     // Cross-reference with word entries
-    const crossRefEntry = await crossReferenceWords(db, entry)
+    const [crossRefEntry, hasCommonWord] = await crossReferenceWords(db, entry)
+
+    
+    // Calculate overall commonness score.
+    const score = scoreEntry(entry, hasCommonWord)
+    if (score !== 0)
+        entry.score = score
 
 
     return [entry, crossRefEntry]
@@ -257,19 +257,31 @@ function scoreCurve(
 
 
 function scoreEntry(
-    entry: Api.Kanji.Entry)
+    entry: Api.Kanji.Entry,
+    hasCommonWord: boolean)
     : number
 {
     let score = 0
 
     if (entry.jlpt !== undefined)
-        score += scoreCurve(entry.jlpt, 5, 1, 3500, 100)
+        score += scoreCurve(entry.jlpt, 5, 1, 35000, 1000)
 
     if (entry.jouyou !== undefined)
-        score += scoreCurve(entry.jouyou, 1, 7, 1000, 100)
+        score += scoreCurve(entry.jouyou, 1, 7, 10000, 1000)
+
+    if (entry.jinmeiyou)
+        score += 250
 
     if (entry.rankNews !== undefined)
-        score += scoreCurve(entry.rankNews, 1, 2501, 500, 10)
+        score += scoreCurve(entry.rankNews, 1, 2501, 5000, 100)
+
+    if (hasCommonWord)
+        score += 500
+
+    if (entry.meanings.length > 0)
+        score += 1
+
+    score += (entry.wordCount ?? 0)
 
     return Math.round(score)
 }
@@ -299,7 +311,7 @@ export function gatherLookUpMeanings(
 export async function crossReferenceWords(
     db: Db.Interface,
     apiKanji: Api.Kanji.Entry)
-    : Promise<Api.KanjiWordCrossRef.Entry>
+    : Promise<[Api.KanjiWordCrossRef.Entry, hasCommonEntry: boolean]>
 {
     type WorkingData = {
         heading: Api.Word.Heading
@@ -599,18 +611,14 @@ export async function crossReferenceWords(
     apiKanji.exampleWords =
         extractExampleSet(dbBuckets, 5)
 
-    if (hasCommonWord)
-    {
-        if (apiKanji.score === undefined ||
-            apiKanji.score === 0)
-            apiKanji.score = 1
-    }
 
-
-    return {
-        id: kanji,
-        readings: dbBuckets,
-    }
+    return [
+        {
+            id: kanji,
+            readings: dbBuckets,
+        },
+        hasCommonWord,
+    ]
 }
 
 

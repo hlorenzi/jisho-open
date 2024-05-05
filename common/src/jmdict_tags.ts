@@ -27,7 +27,7 @@ export function getCommonness(
 
 
 export function getKanjiCommonness(
-    entry: Api.Kanji.Entry)
+    entry: Omit<Api.Kanji.Entry, "id">)
     : Api.CommonnessTag | undefined
 {
     if (entry.jouyou !== undefined &&
@@ -37,7 +37,7 @@ export function getKanjiCommonness(
     if (entry.jouyou !== undefined ||
         entry.rankNews !== undefined ||
         entry.jlpt !== undefined ||
-        (entry.score !== undefined && entry.score > 0))
+        (entry.score !== undefined && entry.score >= 500))
         return "common"
 
     return undefined
