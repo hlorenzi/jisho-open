@@ -212,6 +212,28 @@ vs-i;  *する -> v5aru; *しなさる
 vs-s;  *する -> v5aru; *しなさる
 vk;    *くる -> v5aru; *こなさる
 
+@ id: imperative-formal-contracted
+@ display: imperative (formal, contracted)
+v1;    *る -> unc; *な
+v1-s;  *る -> unc; *な
+vz;    *ずる -> unc; *じな
+v5aru; *る -> unc; *いな
+v5u;   *う -> unc; *いな
+v5u-s; *う -> unc; *いな
+v5r;   *る -> unc; *りな
+v5r-i; *ある -> unc; *ありな
+v5t;   *つ -> unc; *ちな
+v5k;   *く -> unc; *きな
+v5k-s; *く -> unc; *きな
+v5g;   *ぐ -> unc; *ぎな
+v5s;   *す -> unc; *しな
+v5n;   *ぬ -> unc; *にな
+v5b;   *ぶ -> unc; *びな
+v5m;   *む -> unc; *みな
+vs-i;  *する -> unc; *しな
+vs-s;  *する -> unc; *しな
+vk;    *くる -> unc; *こな
+
 @ id: negative-imperative
 @ display: negative imperative
 %verb-identity; * -> unc; *な
