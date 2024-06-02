@@ -126,7 +126,9 @@ export async function search(
             [] :
         query.type === "any" && !Kana.hasKanji(query.str) ?
             db.searchKanji(
-                extractKanjiFromFirstHeadings(await byHeading, 1).join(""),
+                extractKanjiFromFirstHeadings(
+                    [...await byHeading, ...await byInflections], 1)
+                    .join(""),
                 optionsNoTags)
         :
             db.searchKanji(
