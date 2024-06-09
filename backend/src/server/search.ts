@@ -205,11 +205,26 @@ export async function search(
         ...(await byInflections).map(translateToSearchWordEntry),
         { type: "section", section: "definition" },
         ...(await byDefinition).map(translateToSearchWordEntry),
-        ...kanjiEntries,
-        { type: "section", section: "prefix" },
-        ...(await byHeadingPrefix).map(translateToSearchWordEntry),
-        sectionEnd,
     ]
+
+    // Put prefix results before kanji if they're the only results
+    if (searchEntries.length === 3)
+    {
+        searchEntries.push(
+            { type: "section", section: "prefix" },
+            ...(await byHeadingPrefix).map(translateToSearchWordEntry),
+            ...kanjiEntries)
+    }
+    else
+    {
+        searchEntries.push(
+            ...kanjiEntries,
+            { type: "section", section: "prefix" },
+            ...(await byHeadingPrefix).map(translateToSearchWordEntry))
+    }
+
+    // Push the end section
+    searchEntries.push(sectionEnd)
 
     // Remove duplicate entries.
     const seenEntryIds = new Set<string>()
