@@ -27,7 +27,7 @@ export function FuriganaRuby(props: {
             return <>
                 <Solid.Show
                     when={ !!segment[0] }
-                    fallback={ <EmptyBase> { "\u3000" }</EmptyBase> }
+                    fallback={ <EmptyBase>{ "\u30fb" }</EmptyBase> }
                 >
                     { segment[0] }
                 </Solid.Show>
@@ -47,8 +47,9 @@ export function FuriganaRuby(props: {
 
 
 const EmptyBase = styled.span`
-    margin-left: -1em;
-    margin-right: -1em;
+    opacity: 0;
+    margin-left: -0.15em;
+    margin-right: -0.15em;
 `
 
 
