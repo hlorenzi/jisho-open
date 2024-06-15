@@ -3,6 +3,7 @@ import * as Kanjidic from "./kanjidic.ts"
 import * as Jmdict from "./jmdict.ts"
 import * as Jmnedict from "./jmnedict.ts"
 import * as StandardLists from "./standard_lists.ts"
+import * as FuriganaOutput from "./furigana_output.ts"
 import * as Logging from "./logging.ts"
 import * as JlptWords from "../data/jlpt_words.ts"
 import * as PitchAccent from "../data/pitch_accent.ts"
@@ -48,6 +49,7 @@ export async function buildDatabase(
         await Jmnedict.downloadAndImport(logger, db, useCachedFiles, startDate)
         await db.importWordEntriesFinish(startDate)
         FuriganaHelpers.clearCache()
+        await FuriganaOutput.outputFurigana(logger, db)
         await logger.writeLn("finished building database")
     }
     catch (e)

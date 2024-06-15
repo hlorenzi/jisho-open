@@ -443,6 +443,17 @@ export async function listWordsWithChars(
 }
 
 
+export async function* streamAllWords(
+    state: MongoDb.State)
+    : AsyncGenerator<Api.Word.Entry>
+{
+    for await (const dbWord of state.collWords.find({}).stream())
+    {
+        yield MongoDb.translateWordDbToApi(dbWord)
+    }
+}
+
+
 function makeTagFilter(
     options: Db.SearchOptions)
     : any

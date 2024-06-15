@@ -59,6 +59,7 @@ app.use("/.build/", serveGzippedJs)
 
 app.use("/", Express.static("../frontend/public"))
 app.use("/.build/", Express.static("../frontend/.build"))
+app.use("/furigana.txt", Express.static("./furigana.txt"))
 app.use("*", Express.static("../frontend/public/index.html"))
 
 app.use(async (err: any, req: Express.Request, res: Express.Response, next: any) => {

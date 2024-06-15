@@ -265,6 +265,9 @@ export async function connect(): Promise<Interface>
             MongoDbSearch.listWordsWithChars(state, chars),
         listKanjiWordCrossRefEntries: (kanjiString: string) =>
             MongoDbSearch.listKanjiWordCrossRefEntries(state, kanjiString),
+
+        streamAllWords: () =>
+            MongoDbSearch.streamAllWords(state),
             
         studylistCreate: (authUser, name) =>
             MongoDbStudyLists.studylistCreate(state, authUser, name),

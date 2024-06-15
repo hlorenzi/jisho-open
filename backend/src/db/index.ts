@@ -100,6 +100,9 @@ export interface Interface
     listWordsWithChars: (
         chars: string[])
         => Promise<Api.Word.Entry[]>
+    
+    streamAllWords: ()
+        => AsyncGenerator<Api.Word.Entry>
 
     studylistCreate: (
         authUser: Api.MaybeUser,
@@ -220,5 +223,7 @@ export function createDummy(): Interface
         listAllKanji: async () => [],
         listWordsWithChars: async () => [],
         listKanjiWordCrossRefEntries: async() => [], 
+
+        streamAllWords: () => { throw Api.Error.forbidden },
     }
 }
