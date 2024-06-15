@@ -45,6 +45,7 @@ A;alpha;エー
 Ｈ;alpha;エイチ;エッチ
 ｉ;alpha;アイ
 Ｉ;alpha;アイ
+ｉｎ;alpha;イン
 ＩＳＯ;alpha;イソ
 Ｊ;alpha;ジェー;ジェイ
 ＪＡＳ;alpha;ジャス
@@ -54,6 +55,7 @@ A;alpha;エー
 Ｋ;alpha;ケー;ケイ
 Ｌ;alpha;エル
 ＬＡＮ;alpha;ラン
+ＬＥＣ;alpha;レック
 ＬＯＯＫ;alpha;ルック
 Ｍ;alpha;エム
 Ｍａｃ;alpha;マック
@@ -118,8 +120,10 @@ R;alpha;アール
 α;alpha;アルファ
 β;alpha;ヴィタ;ベータ;ベーター;ベエタ
 丁;ateji;テン;デン
+三;ateji;シャン
 五;ateji;ウ
 亜;ateji;ヤ
+以;ateji;イ
 伯;ateji;ブ;ベル
 保;ateji;パウ
 克;ateji;ク
@@ -128,6 +132,7 @@ R;alpha;アール
 具;ateji;グアイ
 内;ateji;ネ
 冷;ateji;レム
+列;ateji;ラエル
 別;ateji;ベ
 利;ateji;リー;リア;リス;リヤ
 剌;ateji;ラ
@@ -141,7 +146,9 @@ R;alpha;アール
 和;ateji;ヴァ;バ
 哥;ateji;コ
 嗚;ateji;ア
+嘉;ateji;ガ
 地;ateji;ティ
+坡;ateji;ポール
 埃;ateji;エ;エト
 塞;ateji;セ
 墺;ateji;オース
@@ -156,6 +163,7 @@ R;alpha;アール
 尼;ateji;ナイ;ニー
 巴;ateji;バ;ハー;パー;ブ
 希;ateji;ヘ
+底;ateji;テリ
 律;ateji;リ;リッ
 徳;ateji;ド
 思;ateji;ス
@@ -169,6 +177,7 @@ R;alpha;アール
 斯;ateji;シア;ジア;シャ;ス
 新;ateji;ニュー
 日;ateji;ゲ
+星;ateji;シン
 暹;ateji;シャム
 月;ateji;ル
 林;ateji;ウッド
@@ -218,6 +227,7 @@ R;alpha;アール
 聖;ateji;サン;ハリ
 育;ateji;ヨーク
 臥;ateji;ウ;グ
+色;ateji;ス
 芒;ateji;マン
 英;ateji;イ
 莫臥;ateji;モー
@@ -232,14 +242,17 @@ R;alpha;アール
 貝;ateji;グアイ
 買;ateji;マイ
 賓;ateji;ピン
+迦;ateji;カ
 達;ateji;ダ;ダード;ダッド
 都;ateji;ト
 里;ateji;リード;リッド
+野;ateji;ア
 門;ateji;マ
 陀;ateji;ド
 雀;ateji;ア;ヤ
 露;ateji;ルー
 非;ateji;ヴィア;ビア
+鞭;ateji;パン;ペン
 首;ateji;シュー;ス;スー
 香;ateji;クー
 墨;ateji;メ;メキ
@@ -474,7 +487,6 @@ R;alpha;アール
 荏;auto;え
 荷;auto;り
 落;auto;おと;れ
-葛;auto;かずら
 葱;auto;ぎ
 蔓;auto;かずら
 薑;auto;が
@@ -525,6 +537,7 @@ R;alpha;アール
 二;chinese;リャン
 五;chinese;ウー
 付;chinese;フー
+佛;chinese;ファッ;フォー
 你;chinese;ニー
 併;chinese;ピン
 保;chinese;バオ
@@ -541,19 +554,22 @@ R;alpha;アール
 功;chinese;カン;クン;ゴン
 加;chinese;ガー;ジャ;ジャー
 勾;chinese;マガ
-包;chinese;ハオ;ポー
+包;chinese;パーウ;ハオ;ポー
 北;chinese;ペ;ペー;ペイ
 十;chinese;シー
+博;chinese;ボー
 友;chinese;ユー
 双;chinese;シャン
 古;chinese;クー
 合;chinese;ホー
 吊;chinese;チャオ;テイアオ;ディアオ
 同;chinese;トン
+呑;chinese;タン
 呼;chinese;フ
 和;chinese;フ;ホー
 哈;chinese;ハー
 唐;chinese;モロ
+問;chinese;マン
 喜;chinese;シー
 四;chinese;スー
 回;chinese;フイ;ホイ
@@ -611,6 +627,7 @@ R;alpha;アール
 支;chinese;ジー
 放;chinese;ホー
 斉;chinese;チ
+新;chinese;シン
 日;chinese;リー
 春;chinese;チュン
 曲;chinese;マガ
@@ -625,15 +642,18 @@ R;alpha;アール
 棒;chinese;バン
 椒;chinese;ジャオ
 橙;chinese;トー
+毛;chinese;マオ
 汗;chinese;ハン
 江;chinese;チァン;チャン
 没;chinese;メー;メイ
+沢;chinese;ツォ
 河;chinese;ホー;ホウ
 油;chinese;ヤウ;ユー;ヨウ
 法;chinese;ファ;ファー
 洋;chinese;ヤン
 流;chinese;リュー
 浩;chinese;ホ
+浪;chinese;ラン
 涮;chinese;シャン;シュワン
 涼;chinese;リャン
 淘;chinese;タオ
@@ -646,6 +666,7 @@ R;alpha;アール
 炸;chinese;ザー
 為;chinese;ウェイ
 烏;chinese;ウ;ウー;ヌバ
+無;chinese;モー;モウ
 焼;chinese;シャオ;シュー;シュウ
 煎;chinese;ジェン;チェン
 煕;chinese;ヒ
@@ -654,11 +675,13 @@ R;alpha;アール
 燈;chinese;トー
 燒;chinese;シュウ
 爬;chinese;ハア
+牆;chinese;チァン;チョン
 片;chinese;ピェン
 牌;chinese;ハイ
 牛;chinese;ニョウ
 特;chinese;ト
 玉;chinese;ギョー;ゴク;トウ
+球;chinese;カオ;チュー
 琴;chinese;チン
 瓊;chinese;ニ
 瓣;chinese;バン
@@ -666,7 +689,7 @@ R;alpha;アール
 用;chinese;ヨン
 発;chinese;ファ
 發;chinese;ファ
-白;chinese;パイ
+白;chinese;パー;バイ;パイ
 百;chinese;バイ
 皮;chinese;ピー
 砕;chinese;スイ
@@ -683,6 +706,7 @@ R;alpha;アール
 緑;chinese;リュー
 羊;chinese;ヤン
 翻;chinese;ファン
+考;chinese;ガオ
 聯;chinese;リェン
 肉;chinese;バ;パ;ロー;ロウ
 肥;chinese;フェイ
@@ -692,20 +716,24 @@ R;alpha;アール
 脳;chinese;ナオ
 自;chinese;ツ;ツー
 色;chinese;ソー
+芝;chinese;チー
 花;chinese;ホー;ホウ;ホワ
 苛;chinese;イラ
 苦;chinese;ク;クー
 茶;chinese;テー
 莱;chinese;ザ
-菜;chinese;チェ
+菜;chinese;チェ;ツァイ
+菠;chinese;ポー
 華;chinese;ハ;ハー;ファー
 葱;chinese;ツォン
 蘇;chinese;スー
+蘿;chinese;ロー
 蛺;chinese;タテハ
 蜀;chinese;モロ
 見;chinese;チェン;チエン
 豆;chinese;トー;トウ
 賣;chinese;マイ
+跳;chinese;チュー;ティャオ
 車;chinese;チョ
 輪;chinese;ルン
 辣;chinese;ラー
@@ -720,9 +748,11 @@ R;alpha;アール
 開;chinese;カイ
 雅;chinese;ヤ
 雑;chinese;チャプ
+雲;chinese;ワン
 青;chinese;チン
 音;chinese;イン
 頭;chinese;トー
+題;chinese;タイ
 風;chinese;フォン;ホン
 餃;chinese;ギョー
 餅;chinese;ピン
@@ -730,6 +760,7 @@ R;alpha;アール
 饅;chinese;マン
 香;chinese;シャン;ホン
 骨;chinese;ク
+高;chinese;ガオ
 魚;chinese;ユイ
 魯;chinese;ル
 鳥;chinese;ウー
@@ -752,6 +783,7 @@ R;alpha;アール
 為人;conjug;ひととなり
 吾妹;fused;わぎも
 商人;fused;あきんど
+山姥;fused;やまんば
 常磐;fused;ときわ
 我妹;fused;わぎも
 我家;fused;わがえ;わぎえ
@@ -809,6 +841,7 @@ R;alpha;アール
 内儀;gikun;かみ
 内障;gikun;そこひ
 冬眠鼠;gikun;やまね
+冬薯蕷;gikun;ところ
 凌霄;gikun;のうぜん
 刀背;gikun;みね;むね
 刺亀虫;gikun;さしがめ
@@ -832,6 +865,7 @@ R;alpha;アール
 吉丁;gikun;たま
 向日葵;gikun;ひまわり
 含羞;gikun;おじぎ
+哨吶;gikun;チャルメル
 唐土;gikun;もろこし
 啄木;gikun;けら
 啄木鳥;gikun;きつつき;けら
@@ -843,6 +877,7 @@ R;alpha;アール
 土竜;gikun;もぐら
 土龍;gikun;もぐら
 垂加;gikun;しでます
+埋葬;gikun;しで
 基督;gikun;きりすと
 堅魚;gikun;かつお
 塵芥;gikun;ごみ
@@ -907,6 +942,7 @@ R;alpha;アール
 惟神;gikun;かむながら;かんながら
 慈姑;gikun;くわい
 拳螺;gikun;さざえ
+挙尾;gikun;しりあげ
 掏児;gikun;すり
 掏摸;gikun;すり
 揚羽蝶;gikun;あげは
@@ -1004,6 +1040,7 @@ R;alpha;アール
 海豹;gikun;あざらし
 海鼠;gikun;なまこ
 清爽;gikun;かわらか
+満天星;gikun;どうだん
 漆姑;gikun;つめ
 瀝青;gikun;ちゃん
 火傷;gikun;やけど
@@ -1029,6 +1066,7 @@ R;alpha;アール
 甲蠃;gikun;がぜ
 発意;gikun;ぼち;ぼっち
 発条;gikun;ぜんまい;ばね
+白揚;gikun;はこやなぎ
 白粉;gikun;おしろい
 百合;gikun;ゆり
 百日;gikun;さるす
@@ -1070,6 +1108,8 @@ R;alpha;アール
 紫羅欄花;gikun;あらせいとう
 紫陽花;gikun;あじさい
 細小;gikun;いささ;いさら
+綜麻;gikun;へそ
+繁縷;gikun;はこべ
 羊歯;gikun;しだ
 羚羊;gikun;かもしか
 翡翠;gikun;しょうびん;せみ
@@ -1077,6 +1117,7 @@ R;alpha;アール
 翻車魚;gikun;まんぼう
 胡坐;gikun;あぐら
 胡桃;gikun;くるみ
+胡椒;gikun;ぐす
 胡頽子;gikun;ぐみ
 胼胝;gikun;たこ
 自棄;gikun;やけ
@@ -1096,6 +1137,7 @@ R;alpha;アール
 落葉;gikun;から
 葡萄;gikun;えび
 蒲公英;gikun;たんぽぽ
+蕁麻;gikun;いらくさ
 蕎麦;gikun;そば
 薯蕷;gikun;とろろ
 蘿蔔;gikun;すずしろ
@@ -1113,7 +1155,7 @@ R;alpha;アール
 蜘蛛;gikun;くも
 蜚蠊;gikun;ごきぶり
 蜥蜴;gikun;とかげ
-蜻蛉;gikun;かげろう;とんぼ;とんぼう
+蜻蛉;gikun;あきず;あきつ;あきづ;かげろう;とんぼ;とんぼう
 蜻蜒;gikun;やんま
 蜻蜓;gikun;とんぼ;とんぼう;やんま
 蜾蠃;gikun;すがる
@@ -1150,6 +1192,7 @@ R;alpha;アール
 酢漿草;gikun;かたばみ
 酸漿;gikun;かがち;ほおずき;ほおづき
 醤蝦;gikun;あみ
+野老;gikun;ところ
 金亀子;gikun;こがね;こがねむし
 金楚;gikun;ちんす
 金瘡小;gikun;きらん
@@ -1222,6 +1265,7 @@ R;alpha;アール
 大;korean;テ;テー
 尚;korean;サン
 平;korean;ピョン
+店;korean;ジョム
 忠;korean;チュン
 慶;korean;キョン
 拳;korean;コン
@@ -1229,6 +1273,7 @@ R;alpha;アール
 文;korean;ムン;モン
 昌;korean;チャン
 朝;korean;チョ
+板;korean;パン
 武;korean;ム
 民;korean;ミン
 江;korean;カン
@@ -1254,6 +1299,7 @@ R;alpha;アール
 跆;korean;テ
 道;korean;ト;ド;ドー
 邱;korean;グ
+門;korean;ムン
 闘;korean;トゥ
 青;korean;チョン
 韓;korean;ハン
@@ -7028,7 +7074,7 @@ R;alpha;アール
 節;kun;のっと;ふし;ぶし
 節;kun;ふし
 箄;kun;かご
-箆;kun;くし;の;へら
+箆;kun;くし;の;へら;ぺら
 箋;kun;ふだ
 箍;kun;たが
 箏;kun;こと
@@ -7437,7 +7483,7 @@ R;alpha;アール
 繭;kun;きぬ;まゆ
 繮;kun;たづな
 繯;kun;から;からむ
-繰;kun;く;くる
+繰;kun;く;くり;くる
 繳;kun;かえ;かえす
 繸;kun;ひも
 繹;kun;たずね;たずねる;ぬ;ぬく
@@ -9089,7 +9135,7 @@ R;alpha;アール
 赬;kun;あか
 赭;kun;あかつち
 赮;kun;あか
-走;kun;はし;はしる
+走;kun;はし;はしり;はしる
 赱;kun;はし;はしる
 赴;kun;おもむ;おもむく
 起;kun;お;おきる;おこ;おこす;おこる;た;たつ
@@ -14118,7 +14164,7 @@ R;alpha;アール
 坅;on;キン;コン;サン
 坆;on;バイ;フン
 均;on;キン
-坊;on;ボウ;ボッ
+坊;on;ボウ;ポウ;ボッ
 坌;on;フン;ホン
 坍;on;タン;トン
 坎;on;カン
@@ -24747,6 +24793,7 @@ R;alpha;アール
 器;spec;きっ
 囈;spec;うわ
 堂;spec;と;とう
+堆;spec;うず
 塔;spec;と
 填;spec;まい
 夕;spec;しゃく;そく
@@ -24872,6 +24919,7 @@ R;alpha;アール
 花;spec;はな
 芸;spec;ぎ
 葉;spec;ちば
+葛;spec;かずら;ずら
 蓍;spec;めど
 蕩;spec;た;と
 薬;spec;くす
@@ -24902,6 +24950,7 @@ R;alpha;アール
 都;spec;つう
 酒;spec;き;ささ;ちゅう
 釈;spec;しゃ
+野;spec;ぬっ;のっ
 鈍;spec;のろ
 鉄;spec;かな;かね;でっ
 鉢;spec;わち
@@ -24935,6 +24984,7 @@ R;alpha;アール
 馬;spec;むま;め
 髏;spec;こうべ
 髑;spec;され;しゃり;しゃれ
+高;spec;こお
 髪;spec;が;こう
 鬼;spec;おん
 魚;spec;こ;こう;な;よ
@@ -24947,8 +24997,9 @@ R;alpha;アール
 鸛;spec;こう
 鹹;spec;しお
 鹿;spec;しし
-麗;spec;らい
+麗;spec;らい;れえ
 麻;spec;お
+黄;spec;つな
 鼠;spec;す
 内;vietnamese;ノイ
 喃;vietnamese;ノム
