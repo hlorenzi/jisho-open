@@ -1,8 +1,8 @@
-import * as Importing from "./src/importing/index.ts"
-import * as Db from "./src/db/index.ts"
-import * as MongoDb from "./src/db/mongodb/index.ts"
+import * as Importing from "../importing/index.ts"
+import * as Db from "../db/index.ts"
+import * as MongoDb from "../db/mongodb/index.ts"
 
-console.log("migrating start")
+console.log("migration start")
 
 const db = await MongoDb.connect()
 
@@ -42,5 +42,5 @@ for await (const entry of collStudylistsOld.find({}).stream())
     await db.state.collStudylists.insertOne(newEntry)
 }
 
-console.log("migrating done")
+console.log("migration done")
 process.exit(0)

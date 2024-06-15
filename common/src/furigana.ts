@@ -66,6 +66,17 @@ export function encode(furi: Furigana): string
 }
 
 
+export function encodeFull(furi: Furigana): string
+{
+    return furi.map(part => part[0]).join(SEGMENT_SEPARATOR) +
+        READING_SEPARATOR +
+        furi.map(part => {
+            const reading = part[1] || part[0]
+            return reading
+        }).join(SEGMENT_SEPARATOR)
+}
+
+
 export function decode(encoded: string): Furigana
 {
     const split = encoded.split(READING_SEPARATOR)

@@ -1,3 +1,4 @@
 node_modules/
 /backend/.download/
+/backend/furigana_analysis.txt
 /frontend/.build/
