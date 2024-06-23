@@ -169,6 +169,7 @@ v1contr;       *る -> vmasu; *ます
 @ id: imperative
 v1;    *る -> unc; *ろ
 v1-s;  *る -> unc; *
+v1contr;    *る -> unc; *ろ
 vz;    *ずる -> unc; *じろ
 vz;    *ずる -> unc; *ぜよ
 v5aru; *る -> unc; *い
