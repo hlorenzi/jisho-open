@@ -27,9 +27,14 @@ export async function outputFurigana(
         }
     }
 
+    furiganaList.push("露.恋.対;ロ.レン.ズィ")
     furiganaList.sort((a, b) => a.localeCompare(b))
 
-    const result = furiganaList.join("\n")
+    const result =
+        "# Lorenzi's Jisho - Furigana Segmentation Data\n" +
+        "# Generated: " + (new Date().toISOString()) + "\n" +
+        furiganaList.join("\n")
+    
     const filename = "furigana.txt"
     fs.writeFileSync(filename, result)
     logger.writeLn(`wrote ${filename}`)

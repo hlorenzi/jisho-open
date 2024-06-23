@@ -920,6 +920,7 @@ R;alpha;アール
 巫女;gikun;みこ
 帷子;gikun;かたびら
 平城;gikun;なら
+廈門;gikun;アモイ
 強請;gikun;ねだ
 弾機;gikun;ばね
 徒士;gikun;かち
@@ -1042,6 +1043,7 @@ R;alpha;アール
 清爽;gikun;かわらか
 満天星;gikun;どうだん
 漆姑;gikun;つめ
+澳門;gikun;マカオ
 瀝青;gikun;ちゃん
 火傷;gikun;やけど
 灯明;gikun;あかし
@@ -1110,6 +1112,7 @@ R;alpha;アール
 細小;gikun;いささ;いさら
 綜麻;gikun;へそ
 繁縷;gikun;はこべ
+罌粟;gikun;けし
 羊歯;gikun;しだ
 羚羊;gikun;かもしか
 翡翠;gikun;しょうびん;せみ
@@ -24977,6 +24980,7 @@ R;alpha;アール
 頬;spec;ほ
 頭;spec;かぶと;こうべ;じゅう;ちゅう
 額;spec;こう;ぬか
+顎;spec;あぎ
 風;spec;ふり
 食;spec;し;めし
 飯;spec;い;いい;ふぁん;まま

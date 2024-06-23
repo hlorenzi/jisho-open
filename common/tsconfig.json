@@ -7,5 +7,9 @@
         "noEmit": true,
         "strictNullChecks": true,
         "noImplicitAny": true,
+    },
+    "ts-node": {
+        "esm": true,
+        "experimentalSpecifierResolution": "node",
     }
 }

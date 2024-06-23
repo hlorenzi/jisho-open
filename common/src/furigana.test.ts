@@ -127,6 +127,7 @@ export function test()
     kanjiReadings.set("大和", ["やまと"])
     kanjiReadings.set("小灰蝶", ["しじみ"])
     kanjiReadings.set("蜆蝶", ["しじみ"])
+    kanjiReadings.set("佳", ["よし"])
 
     const furiganaPatches = new Map()
     furiganaPatches.set("蜆蝶;しじみ", [["蜆", "しじみ"], ["蝶", ""]])
@@ -222,4 +223,13 @@ export function test()
     assert.deepStrictEqual(
         Furigana.patch(Furigana.revise(Furigana.match("大和小灰蝶", "やまとしじみ"), getKanjiReading), getFuriganaPatch),
         [["大和", "やまと"], ["小灰", "しじみ"], ["蝶", ""]])
+
+    assert.deepStrictEqual(
+        Furigana.patch(Furigana.revise(Furigana.match("与佳", "のぶよし"), getKanjiReading), getFuriganaPatch),
+        [["与", "のぶ"], ["佳", "よし"]])
+
+    console.log("success")
 }
+
+
+test()

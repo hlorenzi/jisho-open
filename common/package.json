@@ -5,6 +5,7 @@
   "author": "hlorenzi",
   "type": "module",
   "scripts": {
+    "test-furi": "ts-node ./src/furigana.test.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "exports": {
