@@ -495,6 +495,7 @@ export namespace StudylistWordImport
 
     export type Request = {
         studylistId: string
+        attemptDeinflection: boolean
         words: ImportWord[]
     }
     

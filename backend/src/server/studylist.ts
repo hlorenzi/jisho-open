@@ -206,6 +206,9 @@ export function init(
         if (typeof body.studylistId !== "string")
             throw Api.Error.malformed
 
+        if (typeof body.attemptDeinflection !== "boolean")
+            throw Api.Error.malformed
+
         if (!Array.isArray(body.words) ||
             !body.words.every(w =>
                 typeof w.base === "string" &&
@@ -215,6 +218,7 @@ export function init(
         const failedWordIndices = await db.studylistWordImport(
             await ServerAuth.authenticateRequest(auth, req),
             body.studylistId,
+            body.attemptDeinflection,
             body.words)
 
         res.send({ failedWordIndices } satisfies Api.StudylistWordImport.Response)

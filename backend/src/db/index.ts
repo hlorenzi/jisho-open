@@ -166,6 +166,7 @@ export interface Interface
     studylistWordImport: (
         authUser: Api.MaybeUser,
         studylistId: string,
+        attemptDeinflection: boolean,
         words: Api.StudylistWordImport.ImportWord[])
         => Promise<number[]>
 

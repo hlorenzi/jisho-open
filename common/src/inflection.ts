@@ -430,6 +430,29 @@ export function breakdown(
 }
 
 
+export function flattenBreakdown(
+    inflectionBreakdown: Breakdown)
+    : Inflected[]
+{
+    const inflectionOf: Inflected[] = []
+    const seenInflections = new Set<string>()
+    for (const step of inflectionBreakdown.flat())
+    {
+        const key = `${ step.sourceTerm };${ step.sourceCategory }`
+        if (seenInflections.has(key))
+            continue
+
+        seenInflections.add(key)
+        inflectionOf.push({
+            term: step.sourceTerm,
+            category: step.sourceCategory,
+        })
+    }
+
+    return inflectionOf
+}
+
+
 export function getRuleGroup(
     id: string)
     : Group | undefined

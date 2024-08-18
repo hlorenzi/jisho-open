@@ -24,6 +24,8 @@ export type Prefs = {
     studylistOrdering: "activity" | "name"
     studylistWordOrdering: "date-added" | "kana"
 
+    studylistImportAttemptDeinflection: boolean
+
     studylistExportHtmlCss: boolean
     studylistExportKanjiLevel: "common" | "jouyou" | "uncommon" | "rare" | "all"
     studylistExportSkipKatakana: boolean
@@ -46,6 +48,8 @@ export const prefsDefault: Prefs = {
 
     studylistOrdering: "activity",
     studylistWordOrdering: "date-added",
+
+    studylistImportAttemptDeinflection: false,
 
     studylistExportHtmlCss: true,
     studylistExportKanjiLevel: "common",

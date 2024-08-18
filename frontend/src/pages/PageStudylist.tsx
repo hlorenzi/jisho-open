@@ -385,7 +385,8 @@ export function PageStudylist(props: Framework.RouteProps)
             }>
                 <HelpInfo>
                     Use the <Framework.IconBookmark color={ Framework.themeVar("iconGreenColor") }/> button
-                    displayed alongside the results of a search to add words to this study list!
+                    displayed alongside the results of a search to add words to this study list!<br/>
+                    Alternatively, use the Import button above to add words listed in a file.
                 </HelpInfo>
             </Solid.Show>
 
@@ -795,6 +796,7 @@ function ImportPopup(props: {
                 {
                     const res = await App.Api.studylistWordImport({
                         studylistId: props.studylist.id,
+                        attemptDeinflection: App.usePrefs().studylistImportAttemptDeinflection,
                         words: words.slice(i, i + packLen),
                     })
 
@@ -820,6 +822,7 @@ function ImportPopup(props: {
                             "\n"
                     }
 
+                    console.error(text)
                     alert(text)
                 }
                 else
@@ -894,6 +897,16 @@ function ImportPopup(props: {
             </ImportWordGrid>
 
             <br/>
+
+            <Framework.Checkbox
+                label="Attempt de-inflection"
+                value={ () => App.usePrefs().studylistImportAttemptDeinflection }
+                onChange={ (value) => App.mergePrefs({ studylistImportAttemptDeinflection: value }) }
+            />
+
+            <br/>
+            <br/>
+
             <Framework.Button
                 icon={ <Framework.IconUpload/> }
                 label="Import"

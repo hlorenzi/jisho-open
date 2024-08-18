@@ -1,4 +1,5 @@
 import * as MongoDriver from "mongodb"
+import * as MongoDb from "./index.ts"
 import * as Db from "../index.ts"
 import * as Auth from "../../auth/index.ts"
 import * as DbMongo from "./index.ts"
@@ -566,6 +567,7 @@ export async function studylistWordImport(
     state: DbMongo.State,
     authUser: Api.MaybeUser,
     studylistId: string,
+    attemptDeinflection: boolean,
     words: Api.StudylistWordImport.ImportWord[])
     : Promise<number[]>
 {
@@ -595,11 +597,19 @@ export async function studylistWordImport(
     const failedWordIndices: number[] = []
     for (let w = 0; w < words.length; w++)
     {
+        if (studylist.words.length + importedWords.length + 1 > Api.StudyList.maxWordCount)
+        {
+            failedWordIndices.push(w)
+            continue
+        }
+
         const word = words[w]
 
         const dbFind = word.reading ?
             { $all: [word.base, word.reading] } :
             word.base
+
+        let wordId: string | undefined = undefined
 
         const dbWords = await state.collWords
             .find({
@@ -610,14 +620,43 @@ export async function studylistWordImport(
             .limit(1)
             .toArray()
 
-        if (dbWords.length < 1 ||
-            studylist.words.length + importedWords.length + 1 > Api.StudyList.maxWordCount)
+        if (dbWords.length >= 1)
+            wordId = dbWords[0]._id
+
+        if (wordId === undefined &&
+            attemptDeinflection)
+        {
+            // Attempt to de-inflect word
+            const inflectionBreakdown = Inflection.breakdown(word.base)
+            const inflectionOf = Inflection.flattenBreakdown(inflectionBreakdown)
+
+            const dbFindQueries: any[] = []
+            for (const step of inflectionOf)
+            {
+                dbFindQueries.push({
+                    [MongoDb.fieldWordLookUpHeadingsText]: step.term,
+                    [MongoDb.fieldWordLookUpTags]: step.category,
+                })
+            }
+
+            const fieldLookUp = "lookUp" satisfies keyof MongoDb.DbWordEntry
+            const fieldLen = "len" satisfies keyof MongoDb.DbWordEntry["lookUp"]
+        
+            const dbDeinflectedWord = await state.collWords
+                .find({ $or: dbFindQueries })
+                .sort({ [`${fieldLookUp}.${fieldLen}`]: -1, score: -1, _id: 1 })
+                .limit(1)
+                .toArray()
+
+            if (dbDeinflectedWord.length >= 1)
+                wordId = dbDeinflectedWord[0]._id
+        }
+
+        if (wordId === undefined)
         {
             failedWordIndices.push(w)
             continue
         }
-
-        const wordId = dbWords[0]._id
 
         if (studylist.words.find(w => w.id === wordId))
             continue
