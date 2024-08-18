@@ -786,6 +786,9 @@ export function gatherLookUpTags(
         jlptTag.push(`n${ lowestJlptLevel }`)
     }
 
+    const pitchAccentTags: Api.Word.PitchAccentTag[] = (apiWord.pitch ?? [])
+        .map(pitch => JmdictTags.categorizePitch(pitch.text))
+
     return JmdictTags.expandFilterTags([...new Set<Api.Word.FilterTag>([
         ...nameTag,
         ...partsOfSpeech,
@@ -796,5 +799,6 @@ export function gatherLookUpTags(
         ...dialectTags,
         ...commonness,
         ...jlptTag,
+        ...pitchAccentTags,
     ])])
 }

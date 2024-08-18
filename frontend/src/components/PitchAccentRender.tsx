@@ -1,6 +1,8 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
+import * as App from "../app.tsx"
+import * as JmdictUtils from "common/jmdict_tags.ts"
 
 
 export function PitchAccentRender(props: {
@@ -81,9 +83,20 @@ export function PitchAccentRender(props: {
 		kanaIndex++
 	}
 
-	return <Wrapper>
-        { rendered }
-    </Wrapper>
+	return <>
+        <Wrapper>
+            { rendered }
+            <Solid.Show when={ App.usePrefs().debugMode }>
+                <span style={{ "font-size": "0.85em", color: Framework.themeVar("text3rdColor") }}>
+                    { " [" }
+                    { JmdictUtils.moraPitchToString(JmdictUtils.extractMoraPitch(props.pitch)) }
+                    { ": " }
+                    { JmdictUtils.categorizePitch(props.pitch) }
+                    { "]" }
+                </span>
+            </Solid.Show>
+        </Wrapper>
+    </>
 }
 
 

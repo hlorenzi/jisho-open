@@ -87,6 +87,9 @@ export type PitchAccent = {
 }
 
 
+export type MoraPitch = "L" | "H"
+
+
 export type Sense = {
     pos: PartOfSpeechTag[]
     gloss: Gloss[]
@@ -520,6 +523,13 @@ export type GlossTypeTag =
     | "tm"
 
 
+export type PitchAccentTag =
+    | "atamadaka"
+    | "nakadaka"
+    | "odaka"
+    | "heiban"
+
+
 export type FilterTag =
     Api.CommonnessTag |
     Api.JlptTag |
@@ -528,4 +538,5 @@ export type FilterTag =
     FieldDomainTag |
     LanguageTag | "wasei" |
     DialectTag |
-    GlossTypeTag
+    GlossTypeTag |
+    PitchAccentTag

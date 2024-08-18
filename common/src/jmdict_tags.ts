@@ -52,6 +52,92 @@ export function extractPitchReading(
 }
 
 
+export function extractMoraPitch(
+    pitch: string)
+    : Api.Word.MoraPitch[]
+{
+    const moraPitch: Api.Word.MoraPitch[] = []
+    
+    let currentPitch: Api.Word.MoraPitch = "L"
+
+    for (const c of [...pitch])
+    {
+        if (c === "ꜛ")
+        {
+            currentPitch = "H"
+            continue
+        }
+        
+        if (c === "ꜜ")
+        {
+            currentPitch = "L"
+            continue
+        }
+        
+        if (c === "*" || c === "~")
+        {
+            continue
+        }
+
+        if (c === "ぁ" || c == "ァ" ||
+            c === "ぃ" || c == "ィ" ||
+            c === "ぅ" || c == "ゥ" ||
+            c === "ぇ" || c == "ェ" ||
+            c === "ぉ" || c == "ォ" ||
+            c === "ゃ" || c == "ャ" ||
+            c === "ゅ" || c == "ュ" ||
+            c === "ょ" || c == "ョ" ||
+            c === "ゎ" || c == "ヮ")
+        {
+            continue
+        }
+
+        moraPitch.push(currentPitch)
+    }
+
+    moraPitch.push(currentPitch)
+    return moraPitch
+}
+
+
+export function moraPitchToString(
+    moraPitch: Api.Word.MoraPitch[])
+    : string
+{
+    return moraPitch.slice(0, moraPitch.length - 1).join("") +
+        "-" +
+        moraPitch[moraPitch.length - 1]
+}
+
+
+export function categorizePitch(
+    pitch: string)
+    : Api.Word.PitchAccentTag
+{
+    const moraPitch = extractMoraPitch(pitch)
+
+    if (moraPitch.length === 2 &&
+        moraPitch[0] === "L" &&
+        moraPitch[1] === "L")
+        return "heiban"
+
+    if (moraPitch[0] === "L" &&
+        moraPitch.slice(1).every(p => p === "H"))
+        return "heiban"
+
+    if (moraPitch[0] === "H" &&
+        moraPitch.slice(1).every(p => p === "L"))
+        return "atamadaka"
+
+    if (moraPitch[0] === "L" &&
+        moraPitch.slice(1, moraPitch.length - 1).every(p => p === "H") &&
+        moraPitch[moraPitch.length - 1] === "L")
+        return "odaka"
+
+    return "nakadaka"
+}
+
+
 /// From: https://www.edrdg.org/jmwsgi/edhelp.py?svc=jmdict&sid=#kw_pos
 type PartOfSpeechDict = {
     [tag in Api.Word.PartOfSpeechTag]: string

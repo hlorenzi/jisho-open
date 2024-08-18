@@ -130,6 +130,12 @@ export function PageHelpFilters(props: Framework.RouteProps)
             <TagRow tag="#ger" descr="words from German"/>
             <TagRow tag="#wasei" descr="wasei words"/>
 
+            <TagRowSkip/>
+            <TagRow tag="#heiban" descr="words with heiban pitch accent"/>
+            <TagRow tag="#atamadaka" descr="words with atamadaka pitch accent"/>
+            <TagRow tag="#nakadaka" descr="words with nakadaka pitch accent"/>
+            <TagRow tag="#odaka" descr="words with odaka pitch accent"/>
+
         </TagGrid>
 
     </Page>
