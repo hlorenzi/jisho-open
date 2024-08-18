@@ -79,6 +79,7 @@ N;alpha;エヌ
 ｐ;alpha;ピー
 Ｐ;alpha;ピ;ピー
 ＰＡＣ;alpha;パック
+ＰＥＧ;alpha;ペッグ
 ＰＯＰ;alpha;ポップ
 ＰＯＳ;alpha;ポス
 Ｑ;alpha;キュー
@@ -142,18 +143,20 @@ R;alpha;アール
 厄;ateji;エ
 及;ateji;ジェリア;ジブト;ジプト
 吉;ateji;ギ
+名;ateji;ナ;ニア
 呼;ateji;ア
 和;ateji;ヴァ;バ
 哥;ateji;コ
 嗚;ateji;ア
 嘉;ateji;ガ
-地;ateji;ティ
+地;ateji;イ;ティ
 坡;ateji;ポール
 埃;ateji;エ;エト
 塞;ateji;セ
 墺;ateji;オース
 士;ateji;ス
 多;ateji;タ;ドル
+天;ateji;ア
 太;ateji;タル;ト
 姆;ateji;ム
 委;ateji;ヴェ;ベ
@@ -247,6 +250,8 @@ R;alpha;アール
 都;ateji;ト
 里;ateji;リード;リッド
 野;ateji;ア
+銀;ateji;ギ
+鎮;ateji;チ
 門;ateji;マ
 陀;ateji;ド
 雀;ateji;ア;ヤ
@@ -533,6 +538,7 @@ R;alpha;アール
 中;chinese;チュン
 么;chinese;ヤオ
 九;chinese;チュー;チュウ
+乳;chinese;ルー;ルウ
 了;chinese;ラ
 二;chinese;リャン
 五;chinese;ウー
@@ -614,10 +620,12 @@ R;alpha;アール
 彀;chinese;コ
 律;chinese;リ
 微;chinese;ウェイ
+快;chinese;クアイ
 恒;chinese;ハン
 愈;chinese;イヨ
 愛;chinese;オー
 截;chinese;ジー
+手;chinese;ショウ
 抛;chinese;ナゲ
 拳;chinese;クン
 拼;chinese;ピン
@@ -663,6 +671,7 @@ R;alpha;アール
 漿;chinese;ジャン
 火;chinese;フゥオ;ホー
 灯;chinese;トー
+炒;chinese;チャオ
 炸;chinese;ザー
 為;chinese;ウェイ
 烏;chinese;ウ;ウー;ヌバ
@@ -714,6 +723,7 @@ R;alpha;アール
 胭;chinese;イェン
 脂;chinese;ツー
 脳;chinese;ナオ
+腐;chinese;フー;フウ
 自;chinese;ツ;ツー
 色;chinese;ソー
 芝;chinese;チー
@@ -731,6 +741,7 @@ R;alpha;アール
 蛺;chinese;タテハ
 蜀;chinese;モロ
 見;chinese;チェン;チエン
+謝;chinese;シェ;シエ
 豆;chinese;トー;トウ
 賣;chinese;マイ
 跳;chinese;チュー;ティャオ
@@ -767,7 +778,7 @@ R;alpha;アール
 鶏;chinese;ジー;チー
 鹹;chinese;シェン
 麗;chinese;リー
-麺;chinese;ミェン;メン
+麺;chinese;ミェン;ミエン;メン
 麻;chinese;マー
 黍;chinese;コシ
 龍;chinese;リイ;ロン
@@ -1066,9 +1077,12 @@ R;alpha;アール
 瓢虫;gikun;てんとう
 田舎;gikun;いなか
 甲蠃;gikun;がぜ
+痘痕;gikun;あばた
 発意;gikun;ぼち;ぼっち
 発条;gikun;ぜんまい;ばね
 白揚;gikun;はこやなぎ
+白痴;gikun;たわけ
+白癡;gikun;たわけ
 白粉;gikun;おしろい
 百合;gikun;ゆり
 百日;gikun;さるす
@@ -1095,6 +1109,7 @@ R;alpha;アール
 祖母;gikun;ばあ
 祖父;gikun;じい
 神楽;gikun;かぐら
+禿瘡;gikun;くぼ;くも
 科白;gikun;せりふ
 秦皮;gikun;とねりこ
 秧鶏;gikun;くいな
@@ -1112,6 +1127,7 @@ R;alpha;アール
 細小;gikun;いささ;いさら
 綜麻;gikun;へそ
 繁縷;gikun;はこべ
+織女;gikun;たなばた
 罌粟;gikun;けし
 羊歯;gikun;しだ
 羚羊;gikun;かもしか
@@ -1142,6 +1158,7 @@ R;alpha;アール
 蒲公英;gikun;たんぽぽ
 蕁麻;gikun;いらくさ
 蕎麦;gikun;そば
+薔薇;gikun;ばら
 薯蕷;gikun;とろろ
 蘿蔔;gikun;すずしろ
 虎落;gikun;もがり
@@ -1184,6 +1201,9 @@ R;alpha;アール
 角鴟;gikun;みみずく;みみづく
 角鷹;gikun;くま
 豇豆;gikun;ささげ
+貴女;gikun;あなた
+貴方;gikun;あなた
+貴男;gikun;あなた
 跣足;gikun;はだし
 躑躅;gikun;つつじ
 身体;gikun;からだ
@@ -1221,6 +1241,7 @@ R;alpha;アール
 零余子;gikun;ぬかご;むかご
 露菌;gikun;べと
 面皰;gikun;にきび
+鞴韜;gikun;たたら
 章魚;gikun;たこ
 風邪;gikun;かざ;かぜ
 飛沫;gikun;しぶき
@@ -24767,6 +24788,7 @@ R;alpha;アール
 候;spec;そろ;そろう
 傘;spec;からかさ
 六;spec;みな;むゆ;むよ
+其;spec;そっ
 冉;spec;なみ
 凡;spec;よそ
 出;spec;いだ
@@ -24784,6 +24806,7 @@ R;alpha;アール
 受;spec;うけ;ず
 古;spec;ぐ
 右;spec;こう
+各;spec;おの
 合;spec;あわ;あわい;が
 同;spec;ど
 吾;spec;わ
@@ -24795,6 +24818,7 @@ R;alpha;アール
 噛;spec;かぶ;かぶり;かぶろう
 器;spec;きっ
 囈;spec;うわ
+圧;spec;べし
 堂;spec;と;とう
 堆;spec;うず
 塔;spec;と
@@ -24835,12 +24859,14 @@ R;alpha;アール
 弾;spec;はず
 当;spec;あた
 彩;spec;き
+彼;spec;あっ
 徒;spec;あだ;かち;ただ;だだ;むだ
 従;spec;おお
 御;spec;ごう
 心;spec;うら
 忌;spec;いま;いまい
 忝;spec;かたじけ
+怖;spec;おぞ
 惚;spec;とぼ;のろ;ほう;ほれ
 意;spec;こころ
 戸;spec;ぐ;ぐー;ぐう
@@ -24860,16 +24886,19 @@ R;alpha;アール
 末;spec;も
 杏;spec;しん
 東;spec;と
+梨;spec;な
 梯;spec;はし
 槇;spec;まい
 構;spec;かん
 槙;spec;まい
 橙;spec;たん
+此;spec;こっ
 母;spec;あも
 氈;spec;かも
 永;spec;とこし
 江;spec;あめ
 沖;spec;うち
+沙;spec;ご
 海;spec;うん
 港;spec;こん
 溝;spec;みず
@@ -24893,6 +24922,8 @@ R;alpha;アール
 皇;spec;き;のう;みこと
 皐;spec;さ
 皮;spec;はだ;わだ
+石;spec;いさご
+砂;spec;ご
 砥;spec;と
 破;spec;やぶれて
 祖;spec;お;おお;じ;ば
@@ -24928,6 +24959,7 @@ R;alpha;アール
 薬;spec;くす
 藐;spec;みゃく
 處;spec;とこ
+蚕;spec;かい;むし
 蜍;spec;かえる
 蝦;spec;かま;がま
 螟;spec;ずい
@@ -24963,6 +24995,7 @@ R;alpha;アール
 陪;spec;ほい
 陰;spec;おん
 陽;spec;みょう
+随;spec;ず
 障;spec;そう
 隠;spec;ち;ちん
 雀;spec;から
@@ -24973,7 +25006,7 @@ R;alpha;アール
 霊;spec;すだま
 露;spec;る
 青;spec;あお;さお
-面;spec;かお;じ;も;もて
+面;spec;かお;じ;み;も;もて
 頁;spec;ぺーじ
 預;spec;あずか
 領;spec;ろう
