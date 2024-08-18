@@ -13,17 +13,20 @@ import * as MongoDbStudyLists from "./studylist.ts"
 export const dbUrl = "mongodb://localhost:27017"
 export const dbDatabase = "jisho2"
 export const dbCollectionLog = "log"
+export const dbCollectionAnalytics = "analytics"
 export const dbCollectionWords = "words"
 export const dbCollectionDefinitions = "definitions"
 export const dbCollectionKanji = "kanji"
 export const dbCollectionKanjiWords = "kanji_words"
 export const dbCollectionStudyLists = "studylists"
 export const logEntriesMax = 2000
+export const analyticsEntriesMax = 20000
 
 
 export type State = {
     db: MongoDb.Db
     collLog: MongoDb.Collection<DbLogFile>
+    collAnalytics: MongoDb.Collection<DbAnalyticsEntry>
     collWords: MongoDb.Collection<DbWordEntry>
     collDefinitions: MongoDb.Collection<DbDefinitionEntry>
     collKanji: MongoDb.Collection<DbKanjiEntry>
@@ -35,6 +38,17 @@ export type State = {
 export type DbLogFile = {
     _id: string
     entries: Api.Log.Entry[]
+}
+
+
+export type DbAnalyticsEntry = {
+    _id: Api.Analytics.Id
+    byDate: {
+        [date: string]: {
+            value: number
+            elements: string[]
+        }
+    }
 }
 
 
@@ -79,6 +93,11 @@ export type DbKanjiWordEntry = Omit<Api.KanjiWordCrossRef.Entry, "id"> & {
 export type DbStudyListEntry = Omit<Api.StudyList.Entry, "id"> & {
     _id: string
 }
+
+
+export const fieldAnalyticsByDate = "byDate" satisfies keyof DbAnalyticsEntry
+export const fieldAnalyticsByDateValue = "value" satisfies keyof DbAnalyticsEntry["byDate"]
+export const fieldAnalyticsByDateElements = "elements" satisfies keyof DbAnalyticsEntry["byDate"]
 
 
 export const fieldWordLookUp = "lookUp" satisfies keyof DbWordEntry
@@ -150,6 +169,7 @@ export async function connect(): Promise<Interface>
     const state: State = {
         db,
         collLog: db.collection<DbLogFile>(dbCollectionLog),
+        collAnalytics: db.collection<DbAnalyticsEntry>(dbCollectionAnalytics),
         collWords: db.collection<DbWordEntry>(dbCollectionWords),
         collDefinitions: db.collection<DbDefinitionEntry>(dbCollectionDefinitions),
         collKanji: db.collection<DbKanjiEntry>(dbCollectionKanji),
@@ -224,6 +244,13 @@ export async function connect(): Promise<Interface>
             log(state, text),
         logGet: () =>
             logGet(state),
+
+        analyticsAdd: (id, amount) =>
+            analyticsAdd(state, id, amount),
+        analyticsAddSet: (id, element) =>
+            analyticsAddSet(state, id, element),
+        analyticsDailyGet: () =>
+            analyticsDailyGet(state),
 
         importWordEntries: (date, entries) =>
             MongoDbImportWords.importWordEntries(state, date, entries),
@@ -326,6 +353,98 @@ export async function logGet(
         return []
 
     return file.entries
+}
+
+
+export async function analyticsAdd(
+    state: State,
+    id: Api.Analytics.Id,
+    amount: number)
+{
+    const date = new Date()
+    date.setMinutes(0, 0, 0)
+
+    const dateStr = date.toISOString().replace(/\./g, ":")
+
+    await state.collAnalytics.updateOne(
+        { _id: id },
+        { $inc: { [`${ fieldAnalyticsByDate }.${ dateStr }.${ fieldAnalyticsByDateValue }`]: amount } },
+        { upsert: true })
+}
+
+
+export async function analyticsAddSet(
+    state: State,
+    id: Api.Analytics.Id,
+    element: string)
+{
+    const date = new Date()
+    date.setMinutes(0, 0, 0)
+
+    const dateStr = date.toISOString().replace(/\./g, ":")
+
+    await state.collAnalytics.updateOne(
+        { _id: id },
+        { $addToSet: { [`${ fieldAnalyticsByDate }.${ dateStr }.${ fieldAnalyticsByDateElements }`]: element } },
+        { upsert: true })
+}
+
+
+export async function analyticsDailyGet(
+    state: State)
+    : Promise<Api.Analytics.Response>
+{
+    const now = Date.now()
+    const oneDayAgo = now - 24 * 60 * 60 * 1000
+
+    const results: Api.Analytics.Response = {}
+
+    const strToDate = (str: string): Date => {
+        const lastColon = str.lastIndexOf(":")
+        const newStr = str.slice(0, lastColon) + "." + str.slice(lastColon + 1)
+        return new Date(newStr)
+    }
+
+    const dbEntries = await state.collAnalytics.find({}).toArray()
+    for (const dbEntry of dbEntries)
+    {
+        if (!dbEntry.byDate)
+            continue
+
+        try
+        {
+            const dateEntries = Object.entries(dbEntry.byDate)
+                .filter(e => strToDate(e[0]).getTime() >= oneDayAgo)
+                .map(e => e[1])
+
+            const result: Api.Analytics.Entry = {
+                fromDate: new Date(oneDayAgo),
+                toDate: new Date(now),
+                value: 0,
+            }
+
+            const elements = new Set<string>()
+
+            for (const entry of dateEntries)
+            {
+                if (typeof entry.value === "number")
+                    result.value += entry.value
+
+                if (Array.isArray(entry.elements))
+                {
+                    for (const elem of entry.elements)
+                        elements.add(elem)
+                }
+            }
+
+            result.value += elements.size
+
+            results[dbEntry._id] = result
+        }
+        finally {}
+    }
+
+    return results
 }
 
 

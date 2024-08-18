@@ -379,6 +379,13 @@ export async function studylistCommunityGetRecent(
 }
 
 
+export async function analyticsDailyGet()
+    : Promise<Api.Analytics.Response>
+{
+    return post(Api.Analytics.url, {})
+}
+
+
 let cachedVersion: string | undefined = undefined
 export async function versionGet()
     : Promise<string>

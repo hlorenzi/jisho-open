@@ -4,6 +4,7 @@ import * as Framework from "../framework/index.ts"
 import * as App from "../app.tsx"
 import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
+import { AnalyticsBox } from "../components/AnalyticsBox.tsx"
 
 
 export function PageHome(props: Framework.RouteProps)
@@ -64,6 +65,9 @@ export function PageHome(props: Framework.RouteProps)
                     />
                 </Highlight>!
             </CardSlot>
+            
+            <AnalyticsBox/>
+            
             <CardSlot>
                 <Framework.IconBookmark/>
                 { " " }

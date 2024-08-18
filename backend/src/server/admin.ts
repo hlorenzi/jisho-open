@@ -27,6 +27,12 @@ export function init(
         res.send({ entries } as Api.Log.Response)
     })
 
+    app.post(Api.Analytics.url, async (req, res) => {
+        const results = await db.analyticsDailyGet()
+
+        res.send(results as Api.Analytics.Response)
+    })
+
     app.get(Api.AdminDbRefresh.url, async (req, res) => {
         const authUser = await ServerAuth.authenticateRequest(auth, req)
         if (!Api.userIsAdmin(authUser))

@@ -180,6 +180,8 @@ export function init(
             body.wordId)
 
         res.send({} satisfies Api.StudylistWordAdd.Response)
+        db.analyticsAddSet("studylistId", body.studylistId)
+        db.analyticsAdd("studylistWordAdd", 1)
     })
     
     app.post(Api.StudylistWordRemoveMany.url, async (req, res) => {

@@ -208,6 +208,28 @@ export namespace Log
 }
 
 
+export namespace Analytics
+{
+    export const url = "/api/v1/analytics"
+
+    export type Id =
+        "search" |
+        "studylistId" |
+        "studylistWordAdd"
+
+    export type Entry = {
+        fromDate: Date
+        toDate: Date
+        value: number
+    }
+
+    export type Request = {
+    }
+
+    export type Response = Partial<Record<Id, Entry>>
+}
+
+
 export namespace AdminGitUpdate
 {
     export const url = "/api/v1/admin_git_update"

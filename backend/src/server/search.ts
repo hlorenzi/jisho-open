@@ -28,6 +28,7 @@ export function init(
         }
         
         res.send(await search(db, body))
+        db.analyticsAdd("search", 1)
     })
 }
 

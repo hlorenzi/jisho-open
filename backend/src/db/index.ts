@@ -14,6 +14,10 @@ export interface Interface
     log: (text: string) => Promise<void>
 
     logGet: () => Promise<Api.Log.Entry[]>
+
+    analyticsAdd: (id: Api.Analytics.Id, amount: number) => Promise<void>
+    analyticsAddSet: (id: Api.Analytics.Id, element: string) => Promise<void>
+    analyticsDailyGet: () => Promise<Api.Analytics.Response>
         
     importWordEntries: (
         importStartDate: Date,
@@ -187,6 +191,10 @@ export function createDummy(): Interface
     return {
         log: async () => {},
         logGet: async () => [],
+
+        analyticsAdd: async () => {},
+        analyticsAddSet: async () => {},
+        analyticsDailyGet: async () => ({}),
 
         importWordEntries: async () => {},
         importWordEntriesFinish: async () => {},

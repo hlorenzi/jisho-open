@@ -5,6 +5,7 @@ import * as App from "../app.tsx"
 import { Page } from "../components/Page.tsx"
 import { Searchbox } from "../components/Searchbox.tsx"
 import { UserIdLink } from "../components/User.tsx"
+import { AnalyticsBox } from "../components/AnalyticsBox.tsx"
 
 
 export function PageCommunity(props: Framework.RouteProps)
@@ -27,6 +28,9 @@ export function PageCommunity(props: Framework.RouteProps)
     return <Page title="Community">
 
         <Searchbox position="inline"/>
+        <br/>
+
+        <AnalyticsBox/>
         <br/>
 
         <Solid.Show when={ data() }>
