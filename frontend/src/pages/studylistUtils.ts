@@ -135,7 +135,7 @@ export function writeStudylistTsv(
     let result = ""
     result += `#separator:Tab\n`
     result += `#html:${ prefs.studylistExportHtmlCss ? "true" : "false" }\n`
-    result += `#columns:ID\tWord\tReading\tPitch\tMeaning\n`
+    result += `#columns:ID\tWord\tReading\tPitch\tMeaning${ prefs.studylistExportJsonColumn ? "\tJSON" : "" }\n`
     
     for (const word of words)
     {
@@ -245,6 +245,10 @@ export function writeStudylistTsv(
         else
             columns.push(senseTexts.join(" ・ "))
 
+
+        if (prefs.studylistExportJsonColumn)
+            columns.push(JSON.stringify(word.entry))
+        
 
         result += columns.join("\t") + "\n"
     }

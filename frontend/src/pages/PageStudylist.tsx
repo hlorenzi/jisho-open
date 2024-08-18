@@ -613,6 +613,15 @@ export function ExportPopup(props: {
         <br/>
         <br/>
 
+        <Framework.Checkbox
+            label="Include raw JSON data as a new column"
+            value={ () => App.usePrefs().studylistExportJsonColumn }
+            onChange={ (value) => App.mergePrefs({ studylistExportJsonColumn: value }) }
+        />
+
+        <br/>
+        <br/>
+
         <Framework.Link
             label="🎴 Anki Import and Card Styling"
             href={ App.Pages.HelpAnki.url }
@@ -622,7 +631,7 @@ export function ExportPopup(props: {
         <br/>
 
         <Framework.Button
-            label="Download TSV"
+            label="Download .tsv"
             icon={ <Framework.IconDownload/> }
             onClick={ onExport }
         />
