@@ -377,3 +377,16 @@ export async function studylistCommunityGetRecent(
 {
     return post(Api.StudylistCommunityGetRecent.url, req)
 }
+
+
+let cachedVersion: string | undefined = undefined
+export async function versionGet()
+    : Promise<string>
+{
+    if (cachedVersion === undefined)
+    {
+        cachedVersion = (await post(Api.VersionGet.url, {})).version
+    }
+
+    return cachedVersion ?? "v?.??-??????"
+}

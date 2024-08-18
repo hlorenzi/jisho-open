@@ -177,6 +177,19 @@ export namespace GetUser
 }
 
 
+export namespace VersionGet
+{
+    export const url = "/api/v1/version"
+
+    export type Request = {
+    }
+
+    export type Response = {
+        version: string
+    }
+}
+
+
 export namespace Log
 {
     export const url = "/api/v1/log"

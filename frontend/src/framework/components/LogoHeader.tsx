@@ -1,6 +1,7 @@
 import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../index.ts"
+import * as Api from "../../api.ts"
 
 
 export function LogoHeader(props: {
@@ -9,6 +10,12 @@ export function LogoHeader(props: {
 {
     const popup = Framework.makePopupSideMenu({
         childrenFn: props.sideMenuFn,
+    })
+
+    const [version] = Solid.createResource(async () => {
+        const full = await Api.versionGet()
+        const split = full.split("-")
+        return { full, number: split[0], commit: split[1] }
     })
 
     return <>
@@ -31,12 +38,15 @@ export function LogoHeader(props: {
                     />
                     <StyledH1>
                         Lorenzi's Jisho
-                        <sup style={{ "font-size": "0.55em", "letter-spacing": "0" }}>
-                            <Framework.TextTag
-                                label="v2.0"
-                                bkgColor={ Framework.themeVar("focusOutlineColor") }
-                            />
-                        </sup>
+                        <Solid.Show when={ version() }>
+                            <sup style={{ "font-size": "0.55em", "letter-spacing": "0" }}>
+                                <Framework.TextTag
+                                    label={ version()?.number ?? "" }
+                                    bkgColor={ Framework.themeVar("focusOutlineColor") }
+                                    title={ version()?.full ?? "" }
+                                />
+                            </sup>
+                        </Solid.Show>
                     </StyledH1>
                 </LogoLayout>
             </Framework.Link>

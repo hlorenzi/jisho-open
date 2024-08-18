@@ -10,8 +10,13 @@ import * as Importing from "../importing/index.ts"
 export function init(
     app: Express.Application,
     db: Db.Interface,
-    auth: Auth.Interface)
+    auth: Auth.Interface,
+    version: string)
 {
+    app.post(Api.VersionGet.url, async (req, res) => {
+        res.send({ version } as Api.VersionGet.Response)
+    })
+
     app.post(Api.Log.url, async (req, res) => {
         const authUser = await ServerAuth.authenticateRequest(auth, req)
         if (!Api.userIsAdmin(authUser))

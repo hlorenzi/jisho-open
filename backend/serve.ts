@@ -1,5 +1,6 @@
 import * as Express from "express"
 import "express-async-errors"
+import child_process from "child_process"
 // @ts-expect-error
 import * as Compression from "compression"
 import * as BodyParser from "body-parser"
@@ -40,7 +41,18 @@ const auth =
     argAuth === "lorenzi" ? await AuthLorenzi.create(false) :
     Auth.createDummy()
 
-console.log("starting server...")
+
+let version = "v?.?-??????"
+try
+{
+    version = child_process.execSync("git describe --tags --match v*")
+        .toString()
+        .trim()
+        .replace("-", ".")
+}
+finally {}
+
+console.log(`starting server ${version}...`)
 const app = Express.default()
 
 app.use("/api", BodyParser.default.json())
@@ -48,7 +60,7 @@ app.use(Api.StudylistWordsGet.url, Compression.default())
 app.use(Api.KanjiWords.url, Compression.default())
 
 ServerAuth.init(app, db, auth)
-ServerAdmin.init(app, db, auth)
+ServerAdmin.init(app, db, auth, version)
 ServerSearch.init(app, db)
 ServerKanjiWords.init(app, db)
 ServerKanjiByComponents.init(app, db)
