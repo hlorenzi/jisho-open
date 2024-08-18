@@ -604,13 +604,18 @@ adj-i;  *い -> adj-f; *き
 adj-ix; *いい -> adj-f; *よき
 
 
-
 @ id: attributive
 @ display: attributive form
 adj-na; * -> unc; *な
+adj-t; * -> v5r; *たる
 
 
 @ id: aux-naru
 @ display: to become
 adv; * -> v5r; *なる
+
+
+@ id: adverb-to
+@ display: と particle
+adv-to; * -> unc; *と
 `
