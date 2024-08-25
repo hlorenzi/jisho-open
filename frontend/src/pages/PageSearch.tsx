@@ -83,7 +83,8 @@ function SearchResults(props: {
         if (!token)
             return ""
 
-        if (token.category === "prt")
+        if (token.category === "prt" &&
+            token.surface_form.length === 1)
             return token.surface_form + " #" + token.category + " #!sentence"
 
         return token.surface_form + " #!sentence"
