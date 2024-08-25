@@ -10,7 +10,7 @@ export async function outputFurigana(
 {
     logger.writeLn("outputting furigana...")
 
-    const furiganaList: string[] = []
+    const furiganaSet = new Set<string>()
     for await (const entry of db.streamAllWords())
     {
         for (const heading of entry.headings)
@@ -23,12 +23,16 @@ export async function outputFurigana(
             if (furigana.length <= 1)
                 continue
 
-            furiganaList.push(Furigana.encodeFull(furigana))
+            furiganaSet.add(
+                entry.id.substring(1) + ";" +
+                Furigana.encodeFull(furigana))
         }
     }
 
-    furiganaList.push("露.恋.対;ロ.レン.ズィ")
-    furiganaList.sort((a, b) => a.localeCompare(b))
+    furiganaSet.add("9990000;露.恋.対;ロ.レン.ズィ")
+
+    const furiganaList = [...furiganaSet]
+        .sort((a, b) => a.localeCompare(b))
 
     const result =
         "# Lorenzi's Jisho - Furigana Segmentation Data\n" +

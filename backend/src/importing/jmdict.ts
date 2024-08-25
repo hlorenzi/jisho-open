@@ -71,7 +71,7 @@ export async function downloadAndImport(
     }
 
     await dispatcher.push(normalizeEntry({
-        ent_seq: ["90000000"],
+        ent_seq: ["9990000"],
         r_ele: [{ reb: ["ロレンズィ"] }],
         sense: [
             {
@@ -82,7 +82,7 @@ export async function downloadAndImport(
     }))
     
     await dispatcher.push(normalizeEntry({
-        ent_seq: ["90000001"],
+        ent_seq: ["9990001"],
         k_ele: [{ keb: ["剣白"] }],
         r_ele: [{ reb: ["けんしろ"] }],
         sense: [
