@@ -3,3 +3,4 @@ node_modules/
 /backend/furigana_analysis.txt
 /backend/furigana.txt
 /frontend/.build/
+webpack.stats.json
