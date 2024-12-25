@@ -163,10 +163,12 @@ export function writeStudylistTsv(
             if (prefs.studylistExportHtmlCss)
             {
                 columns.push(word.entry.headings
+                    .filter(h => !h.searchOnlyKana && !h.searchOnlyKanji)
                     .map(h => h.base)
                     .join(", "))
 
                 columns.push(word.entry.headings
+                    .filter(h => !h.searchOnlyKana && !h.searchOnlyKanji)
                     .map(h => renderFuriganaToHtmlString(h.furigana))
                     .join(", "))
                 
@@ -177,10 +179,12 @@ export function writeStudylistTsv(
             else
             {
                 columns.push(word.entry.headings
+                    .filter(h => !h.searchOnlyKana && !h.searchOnlyKanji)
                     .map(h => h.base)
                     .join(", "))
 
                 columns.push(word.entry.headings
+                    .filter(h => !h.searchOnlyKana && !h.searchOnlyKanji)
                     .map(h => h.reading ?? h.base)
                     .join(", "))
                 
