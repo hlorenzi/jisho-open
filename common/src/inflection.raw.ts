@@ -264,6 +264,29 @@ vs-s;  *する -> unc; *しよう
 vk;    *くる -> unc; *こよう
 vmasu; *ます -> unc; *ましょう
 
+@ id: volitional-contracted
+@ display: volitional (contracted)
+v1;    *る -> unc; *よ
+v1-s;  *る -> unc; *よ
+vz;    *ずる -> unc; *じよ
+v5aru; *る -> unc; *ろ
+v5u;   *う -> unc; *お
+v5u-s; *う -> unc; *お
+v5r;   *る -> unc; *ろ
+v5r-i; *ある -> unc; *あろ
+v5t;   *つ -> unc; *と
+v5k;   *く -> unc; *こ
+v5k-s; *く -> unc; *こ
+v5g;   *ぐ -> unc; *ご
+v5s;   *す -> unc; *そ
+v5n;   *ぬ -> unc; *の
+v5b;   *ぶ -> unc; *ぼ
+v5m;   *む -> unc; *も
+vs-i;  *する -> unc; *しよ
+vs-s;  *する -> unc; *しよ
+vk;    *くる -> unc; *こよ
+vmasu; *ます -> unc; *ましょ
+
 @ id: negative-volitional
 @ display: negative volitional (literary)
 %verb-identity; * -> unc; *まい
@@ -562,6 +585,10 @@ unc; *て -> unc; *ちゃ
 @ display: aux. ながら
 %continuative; * -> unc; *ながら
 
+@ id: aux-tsutsu
+@ display: aux. つつ
+%continuative; * -> unc; *つつ
+
 
 @ id: adverbial
 @ display: adverbial form
@@ -597,6 +624,13 @@ adj-na; * -> v1; *すぎる
 adj-i;  *い -> v5r; *がる
 adj-ix; *いい -> v5r; *よがる
 adj-na; * -> v5r; *がる
+
+@ id: aux-tarashii
+@ display: aux. たらしい
+adj-i;  *い -> adj-i; *たらしい
+adj-i;  *い -> adj-i; *ったらしい
+adj-na; *   -> adj-i; *たらしい
+adj-na; *   -> adj-i; *ったらしい
 
 @ id: attributive-archaic
 @ display: attributive form (archaic)
