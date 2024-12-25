@@ -178,7 +178,10 @@ export function normalizeHeadings(
                 r_ele.re_inf.some(tag => tag === "sk"))
                 continue
             
-            seenReadings.add(reb)
+            if (k_ele.ke_inf === undefined ||
+                !k_ele.ke_inf.some(tag => tag === "sK"))
+                seenReadings.add(reb)
+            
             headings.push(normalizeHeading(wordId, r_ele, k_ele, isName))
         }
     }
