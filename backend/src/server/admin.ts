@@ -53,8 +53,9 @@ export function init(
 
         const child = ChildProcess.spawn(
             "sh",
-            ["./update.sh"],
+            ["git_update.sh"],
             {
+                cwd: "..",
                 detached: true,
                 stdio: [ "ignore", "ignore", "ignore" ]
             })
