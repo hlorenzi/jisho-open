@@ -112,6 +112,23 @@ export function PageHome(props: Framework.RouteProps)
                     </Solid.For>
                 </ul>
             </CardSlot>
+            <CardSlot>
+                <Framework.IconPin/>
+                { " " }
+                We generate the following data files that may be of help to other developers:
+                <ul>
+                    <ExampleLink>
+                        <Highlight>
+                            <Framework.Link
+                                href="/furigana.txt"
+                                native
+                            >
+                                Furigana Segmentation Data
+                            </Framework.Link>
+                        </Highlight>
+                    </ExampleLink>
+                </ul>
+            </CardSlot>
         </CardList>
     </Page>
 }
