@@ -11,7 +11,7 @@ export type Entry = {
 
 
 export type Trans = {
-    name_type: Api.Word.PartOfSpeechTag[]
+    name_type?: Api.Word.PartOfSpeechTag[]
     trans_det: string[]
     xref?: string[]
 }

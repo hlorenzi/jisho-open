@@ -108,7 +108,7 @@ function normalizeSenses(
 
     for (const rawSense of rawSenses)
     {
-        const pos = rawSense.name_type
+        const pos = rawSense.name_type ?? ["unc"]
         //if (pos.some(p => !Api.Word.partOfSpeechNameTags.includes(p as any)))
         //    throw "invalid name_type"
         

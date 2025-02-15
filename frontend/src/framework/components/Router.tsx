@@ -135,6 +135,7 @@ export function Router(props: {
                     `${ err }`
 
             Framework.Analytics.exception(message)
+            console.error(err)
             
             return <Framework.Error message={ message }/>
         }}>
