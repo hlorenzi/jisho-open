@@ -27,7 +27,6 @@ export function PageHome(props: Framework.RouteProps)
     return <Page>
 
         <Searchbox position="inline"/>
-        <br/>
 
         <CardList>
             <CardSlot>

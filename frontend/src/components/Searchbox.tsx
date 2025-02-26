@@ -2,6 +2,7 @@ import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
 import * as App from "../app.tsx"
+import { DrawingPad } from "./DrawingPad.tsx"
 import { InputKanjiComponents } from "./InputKanjiComponents.tsx"
 
 
@@ -19,6 +20,8 @@ export function Searchbox(props: {
 
     let [inputRef, setInputRef] =
         Solid.createSignal<HTMLInputElement | undefined>(undefined)
+
+    const [handwritingOpen, setHandwritingOpen] = Solid.createSignal(false)
     
     const onClear = () => {
         App.analyticsEvent("searchClear")
@@ -34,6 +37,7 @@ export function Searchbox(props: {
         
         ev.preventDefault()
         ev.stopPropagation()
+        setHandwritingOpen(false)
 
         if (Framework.isMobile())
             inputRef()?.blur()
@@ -55,6 +59,10 @@ export function Searchbox(props: {
         })
     })
 
+    const insertText = (text: string) => {
+        setSearchbox(t => t + text)
+    }
+
     const inputPopup =
         props.noInputButton ?
             undefined :
@@ -70,11 +78,19 @@ export function Searchbox(props: {
         props.position === undefined ||
         App.usePrefs().searchboxPosition === props.position
     }>
-        <Layout>
-            <Solid.Show
-                when={ props.position === "bottom" && !props.noInputButton }
-                fallback={ <div/> }
-            >
+        <Solid.Show
+            when={ props.position === "bottom" && !props.noInputButton }
+            fallback={ <div/> }
+        >
+            <LayoutExtras>
+                <Framework.Button
+                    title="Handwriting input"
+                    label={ <Framework.IconPencilDrawing/> }
+                    onClick={ () => setHandwritingOpen(open => !open) }
+                    accent={ handwritingOpen() }
+                    noPadding
+                    style={{ width: "3em" }}
+                />
                 <Framework.Button
                     title="Input kanji by components"
                     label={
@@ -86,7 +102,10 @@ export function Searchbox(props: {
                     noPadding
                     style={{ width: "3em" }}
                 />
-            </Solid.Show>
+            </LayoutExtras>
+        </Solid.Show>
+        
+        <Layout>
             <Framework.InputText
                 ref={ setInputRef }
                 id="searchbox"
@@ -104,22 +123,6 @@ export function Searchbox(props: {
                     onSearch(ev)
                 }}
             />
-            <Solid.Show
-                when={ props.position !== "bottom" && !props.noInputButton }
-                fallback={ <div/> }
-            >
-                <Framework.Button
-                    title="Input kanji by components"
-                    label={
-                        <span style={{ "font-size": "1.25em", "font-weight": "bold" }}>
-                            部
-                        </span>
-                    }
-                    onClick={ inputPopup!.open }
-                    noPadding
-                    style={{ width: "3em" }}
-                />
-            </Solid.Show>
             <Framework.Button
                 title="Clear"
                 label={ <Framework.IconX/> }
@@ -128,7 +131,7 @@ export function Searchbox(props: {
                 style={{ width: "3em" }}
             />
             <Solid.Show
-                when={ props.position !== "bottom" }
+                when={ props.position !== "bottom" || handwritingOpen() }
                 fallback={ <div/> }
             >
                 <Framework.Button
@@ -142,8 +145,42 @@ export function Searchbox(props: {
                     style={{ width: "3em" }}
                 />
             </Solid.Show>
+
             { inputPopup?.rendered }
         </Layout>
+
+        <Solid.Show
+            when={ props.position !== "bottom" && !props.noInputButton }
+            fallback={ <div/> }
+        >
+            <LayoutExtras>
+                <Framework.Button
+                    title="Handwriting input"
+                    label={ <Framework.IconPencilDrawing/> }
+                    onClick={ () => setHandwritingOpen(open => !open) }
+                    accent={ handwritingOpen() }
+                    noPadding
+                    style={{ width: "3em" }}
+                />
+                <Framework.Button
+                    title="Input kanji by components"
+                    label={
+                        <span style={{ "font-size": "1.25em", "font-weight": "bold" }}>
+                            部
+                        </span>
+                    }
+                    noPadding
+                    onClick={ inputPopup!.open }
+                    style={{ width: "3em" }}
+                />
+            </LayoutExtras>
+        </Solid.Show>
+
+        <Solid.Show when={ handwritingOpen() }>
+            <DrawingPad
+                insert={ insertText }
+            />
+        </Solid.Show>
     </Solid.Show>
 }
 
@@ -193,7 +230,15 @@ function windowOnKeyDown(
 
 const Layout = styled.div`
     display: grid;
-    grid-template: auto / auto 1fr auto auto auto;
+    grid-template: auto / 1fr auto auto;
+`
+
+
+const LayoutExtras = styled.div`
+    display: grid;
+    grid-template: auto / auto auto;
+    justify-self: start;
+    align-items: stretch;
 `
 
 
