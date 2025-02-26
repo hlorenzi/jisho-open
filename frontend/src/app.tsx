@@ -105,6 +105,7 @@ export type AnalyticsEvent =
     | "searchByEnter"
     | "searchClear"
     | "searchInsertKanji"
+    | "searchInsertHandwriting"
     | "searchFocusByEsc"
     | "searchFocusByTyping"
     | "resultsViewInflections"

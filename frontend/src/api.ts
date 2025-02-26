@@ -161,6 +161,14 @@ export async function getKanjiByComponents(
 }
 
 
+export async function handwritingGet(
+    req: Api.HandwritingGet.Request)
+    : Promise<Api.HandwritingGet.Response>
+{
+    return post(Api.HandwritingGet.url, req)
+}
+
+
 const folderInstruction =
     "If you use a slash, it will be interpreted as a folder: " +
     "\"Games/Pokémon\""

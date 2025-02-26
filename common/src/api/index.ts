@@ -354,6 +354,27 @@ export namespace KanjiByComponents
 }
 
 
+export namespace HandwritingGet
+{
+    export const url = "/api/v1/handwritingGet"
+
+    export type Request = {
+        strokes: [x: number[], y: number[], time: number[]][]
+    }
+    
+    export type Response = {
+        results: string[]
+    }
+
+    export type StrokePoint = {
+        x: number
+        y: number
+        time: number
+    }
+}
+
+
+
 export namespace StudylistGet
 {
     export const url = "/api/v1/studylistGet"

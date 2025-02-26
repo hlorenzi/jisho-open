@@ -333,7 +333,7 @@ function Footer()
 const StyledFooter = styled.footer`
     display: block;
     margin-top: 50vh;
-    margin-bottom: 6em;
+    margin-bottom: 8em;
 `
 
 const FooterLinks = styled.div`

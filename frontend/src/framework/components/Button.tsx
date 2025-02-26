@@ -143,7 +143,7 @@ const styleClass = css`
         }
     }
 
-    &:hover
+    &:hover:not([disabled])
     {
         box-shadow: inset 0px 0px 0px 1.5px var(--local-borderColor);
         background-color: ${ Framework.themeVar("buttonHoverBkgColor") };
@@ -154,7 +154,7 @@ const styleClass = css`
         }
     }
 
-    &:active
+    &:active:not([disabled])
     {
         box-shadow: inset 0px 0px 0px 1.5px var(--local-borderColor);
         background-color: ${ Framework.themeVar("buttonPressBkgColor") };

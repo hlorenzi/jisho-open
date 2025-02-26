@@ -2,6 +2,7 @@ import * as Solid from "solid-js"
 import { styled } from "solid-styled-components"
 import * as Framework from "../framework/index.ts"
 import * as App from "../app.tsx"
+import { DrawingPad } from "./DrawingPad.tsx"
 import { InputKanjiComponents } from "./InputKanjiComponents.tsx"
 
 
@@ -19,6 +20,8 @@ export function Searchbox(props: {
 
     let [inputRef, setInputRef] =
         Solid.createSignal<HTMLInputElement | undefined>(undefined)
+
+    const [handwritingOpen, setHandwritingOpen] = Solid.createSignal(false)
     
     const onClear = () => {
         App.analyticsEvent("searchClear")
@@ -34,6 +37,7 @@ export function Searchbox(props: {
         
         ev.preventDefault()
         ev.stopPropagation()
+        setHandwritingOpen(false)
 
         if (Framework.isMobile())
             inputRef()?.blur()
@@ -55,6 +59,10 @@ export function Searchbox(props: {
         })
     })
 
+    const insertText = (text: string) => {
+        setSearchbox(t => t + text)
+    }
+
     const inputPopup =
         props.noInputButton ?
             undefined :
@@ -72,21 +80,34 @@ export function Searchbox(props: {
     }>
         <Layout>
             <Solid.Show
-                when={ props.position === "bottom" && !props.noInputButton }
-                fallback={ <div/> }
+                when={ !props.noInputButton }
+                fallback={ <><div/><div/></> }
             >
+                <Framework.Button
+                    title="Handwriting input"
+                    label={ <Framework.IconPencilDrawing/> }
+                    onClick={ () => setHandwritingOpen(open => !open) }
+                    accent={ handwritingOpen() }
+                    noPadding
+                    style={{ width: "2.5em" }}
+                />
                 <Framework.Button
                     title="Input kanji by components"
                     label={
-                        <span style={{ "font-size": "1.25em", "font-weight": "bold" }}>
+                        <span style={{
+                            "font-size": "1em",
+                            "font-weight": "bold",
+                            "contain": "size",
+                        }}>
                             部
                         </span>
                     }
-                    onClick={ inputPopup!.open }
                     noPadding
-                    style={{ width: "3em" }}
+                    onClick={ inputPopup!.open }
+                    style={{ width: "2.5em" }}
                 />
             </Solid.Show>
+            
             <Framework.InputText
                 ref={ setInputRef }
                 id="searchbox"
@@ -104,31 +125,16 @@ export function Searchbox(props: {
                     onSearch(ev)
                 }}
             />
-            <Solid.Show
-                when={ props.position !== "bottom" && !props.noInputButton }
-                fallback={ <div/> }
-            >
-                <Framework.Button
-                    title="Input kanji by components"
-                    label={
-                        <span style={{ "font-size": "1.25em", "font-weight": "bold" }}>
-                            部
-                        </span>
-                    }
-                    onClick={ inputPopup!.open }
-                    noPadding
-                    style={{ width: "3em" }}
-                />
-            </Solid.Show>
+
             <Framework.Button
                 title="Clear"
-                label={ <Framework.IconX/> }
+                label={ <Framework.IconBackspace/> }
                 onClick={ onClear }
                 noPadding
-                style={{ width: "3em" }}
+                style={{ width: "2.5em" }}
             />
             <Solid.Show
-                when={ props.position !== "bottom" }
+                when={ props.position !== "bottom" || handwritingOpen() }
                 fallback={ <div/> }
             >
                 <Framework.Button
@@ -139,11 +145,24 @@ export function Searchbox(props: {
                         onSearch(ev)
                     }}
                     noPadding
-                    style={{ width: "3em" }}
+                    style={{ width: "2.5em" }}
                 />
             </Solid.Show>
+
             { inputPopup?.rendered }
         </Layout>
+
+        <Solid.Show when={ handwritingOpen() }>
+            <DrawingPad
+                insert={ insertText }
+            />
+        </Solid.Show>
+
+        <Solid.Show
+            when={ props.position !== "bottom" && !props.noInputButton }
+        >
+            <div style={{ "height": "0.5em" }}/>
+        </Solid.Show>
     </Solid.Show>
 }
 
@@ -193,7 +212,8 @@ function windowOnKeyDown(
 
 const Layout = styled.div`
     display: grid;
-    grid-template: auto / auto 1fr auto auto auto;
+    grid-template: auto / auto auto 1fr auto auto;
+    align-items: stretch;
 `
 
 
@@ -229,4 +249,9 @@ const LayoutBottomOverlay = styled.div`
     padding-right: var(--local-pagePadding);
 
     box-shadow: 0 -0.15em 0.15em ${ Framework.themeVar("popupShadowColor") };
+    
+    @media (max-width: ${ Framework.pageSmallWidthThreshold }) {
+        border-left: 0;
+        border-right: 0;
+    }
 `

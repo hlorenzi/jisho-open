@@ -15,6 +15,7 @@ import * as ServerAdmin from "./src/server/admin.ts"
 import * as ServerSearch from "./src/server/search.ts"
 import * as ServerKanjiWords from "./src/server/kanji_words.ts"
 import * as ServerKanjiByComponents from "./src/server/kanji_by_components.ts"
+import * as ServerHandwriting from "./src/server/handwriting.ts"
 import * as ServerStudylist from "./src/server/studylist.ts"
 
 const port = process.env.PORT || 80
@@ -64,6 +65,7 @@ ServerAdmin.init(app, db, auth, version)
 ServerSearch.init(app, db)
 ServerKanjiWords.init(app, db)
 ServerKanjiByComponents.init(app, db)
+ServerHandwriting.init(app, db)
 ServerStudylist.init(app, db, auth)
 Importing.setupScheduledDatabaseBuild(db)
 
