@@ -31,7 +31,7 @@ const StyledButton = styled.button`
     cursor: pointer;
     opacity: 1;
     box-shadow: 0 0.2rem 0.4rem 0.1rem ${ Framework.themeVar("popupShadowColor") };
-    transition: background-color 0.05s, opacity 0.05s;
+    transition: background-color 0.05s, border-color 0.05s, opacity 0.05s;
     pointer-events: auto;
 
     width: 3rem;
@@ -40,21 +40,16 @@ const StyledButton = styled.button`
     margin: 0.5rem;
     margin-bottom: 1rem;
     padding: 0;
-    border: 0;
+    border: 0.2em solid transparent;
     border-radius: 50%;
 
     font-family: inherit;
     font-size: 1em;
     color: ${ Framework.themeVar("textColor") };
 
-    @media (pointer: coarse)
-    {
-        padding: 1em;
-    }
-
     &:hover
     {
-        background-color: ${ Framework.themeVar("buttonHoverBkgColor") };
+        border: 0.2em solid ${ Framework.themeVar("textColor") };
     }
 
     &:active
