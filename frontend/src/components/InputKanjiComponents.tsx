@@ -149,6 +149,7 @@ export function InputKanjiComponents(props: {
             <Framework.Button
                 onClick={ onClearSelection }
                 noBorder
+                autofocus
                 style={{
                     margin: 0,
                     padding: 0,
@@ -212,6 +213,10 @@ const Layout = styled.div`
 
 
 const LayoutResults = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    align-content: start;
     width: 100%;
     height: 7.25em;
     max-height: 20vh;
@@ -223,6 +228,10 @@ const LayoutResults = styled.div`
 
 
 const LayoutComponents = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    align-content: start;
     width: 100%;
     max-height: 50vh;
     overflow-x: hidden;
@@ -239,7 +248,7 @@ const KanjiLabel = styled.span`
 const StrokeCountSlot = styled.div`
     display: inline-block;
     width: 2em;
-    height: 1.5em; /* FIXME: Can't get the height to play nice with the rest of the layout. */
+    height: 2em;
     line-height: 1em;
     color: ${ Framework.themeVar("pageBkgColor") };
     background-color: ${ Framework.themeVar("text2ndColor") };
@@ -258,6 +267,7 @@ const StrokeCountLabel = styled.div`
     height: 100%;
     font-size: 1.15em;
     font-weight: bold;
+    contain: layout;
 `
 
 

@@ -9,6 +9,7 @@ export function Button(props: Framework.ButtonBehaviorProps & {
     icon?: Solid.JSX.Element,
     style?: Solid.JSX.CSSProperties,
     disabled?: boolean,
+    autofocus?: boolean,
     noBorder?: boolean,
     noPadding?: boolean,
     iconPadding?: boolean,
@@ -57,6 +58,7 @@ export function Button(props: Framework.ButtonBehaviorProps & {
             ref={ props.ref }
             title={ props.title }
             disabled={ !!props.disabled }
+            autofocus={ !!props.autofocus }
             onClick={ ev => Framework.onButtonClick(ev, props) }
             style={ props.style }>
                 { props.icon }
