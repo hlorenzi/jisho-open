@@ -35,7 +35,7 @@ export type Prefs = {
 
 export const prefsDefault: Prefs = {
     debugMode: false,
-    theme: "auto",
+    theme: Framework.systemThemeId,
 
     searchboxPosition: "inline",
 
