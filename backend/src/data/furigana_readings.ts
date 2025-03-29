@@ -32,7 +32,8 @@ export function normalizeDataFile()
         "fused",
         "conjug",
         "patch",
-        "mistaken",
+        "reversed",
+        "mistaken", // for JMdict suspected mistakes
     ]
 
     const entries = new Map<string, Data>()
