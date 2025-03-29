@@ -124,6 +124,7 @@ function Headings(props: {
             <Heading
                 entry={ props.entry }
                 heading={ heading }
+                headingIndex={ index() }
                 first={ index() === 0 }
                 last={ index() === headings().length - 1 }
                 query={ props.query }
@@ -211,6 +212,7 @@ function Heading(props: {
     last: boolean,
     entry: App.Api.Word.Entry,
     heading: App.Api.Word.Heading,
+    headingIndex: number,
     query: App.Api.Search.Query,
 })
 {
@@ -267,6 +269,7 @@ function Heading(props: {
     
     return <>
         <HeadingBlock
+            id={ `entry_${ props.entry.id }_heading_${ props.headingIndex }` }
             first={ props.first }
             last={ props.last }
             faded={ !!faded }

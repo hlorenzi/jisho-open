@@ -54,6 +54,8 @@ function SearchResults(props: {
     tokenIndex?: Solid.Accessor<number | undefined>,
 })
 {
+    let idToFocusAfterLoad: string | undefined = undefined
+    
     const [limit, setLimit] = Framework.createHistorySignal("limit", limitStart)
 
     const [searchResults] = Solid.createResource(
@@ -63,6 +65,21 @@ function SearchResults(props: {
                 query: data[0],
                 limit: data[1],
             })
+
+            // Hack to prevent the page from scrolling down
+            // with added content after "Load more results",
+            // and also to keep the focus near the loading seam
+            const scrollY = window.scrollY
+            window.requestAnimationFrame(() => {
+                window.scrollTo({ top: scrollY, behavior: "instant" })
+
+                if (idToFocusAfterLoad)
+                {
+                    document.getElementById(idToFocusAfterLoad)?.focus()
+                    idToFocusAfterLoad = undefined
+                }
+            })
+
             return res
         })
 
@@ -91,7 +108,20 @@ function SearchResults(props: {
     })
 
     const onIncreaseLimit = () => {
-        (document.activeElement as any)?.blur()
+        if (document.activeElement)
+        {
+            // Assuming focus is on the "Load more results" button,
+            // get the last shown entry's first heading's id
+            idToFocusAfterLoad =
+                (document.
+                    activeElement.
+                    parentElement?.
+                    previousElementSibling?.
+                    previousElementSibling?.
+                    childNodes[0]?.
+                    childNodes[0] as HTMLElement)?.id
+        }
+
         setLimit(limit() + limitIncrease)
     }
     
