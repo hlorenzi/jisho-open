@@ -11,6 +11,7 @@ export function DrawingPad(props: {
 {
     let canvasRef: HTMLCanvasElement = undefined!
 
+    const [working, setWorking] = Solid.createSignal(false)
     const [results, setResults] = Solid.createSignal<string[]>([])
 
     const state: DrawingState = {
@@ -28,8 +29,13 @@ export function DrawingPad(props: {
         setResults([])
     }
 
+    let queryResponseToken = 0
     const query = async () => {
         clearTimeout(queryTimeout)
+
+        queryResponseToken += 1
+        const myToken = queryResponseToken
+
         queryTimeout = window.setTimeout(async () => {
             if (state.strokes.length === 0)
             {
@@ -52,8 +58,19 @@ export function DrawingPad(props: {
                 queryStrokes.push([xArray, yArray, timeArray])
             }
 
-            const queryResult = await App.Api.handwritingGet({ strokes: queryStrokes })
-            setResults(queryResult.results)
+            setWorking(true)
+            try
+            {
+                const queryResult = await App.Api.handwritingGet({ strokes: queryStrokes })
+
+                if (myToken === queryResponseToken)
+                    setResults(queryResult.results)
+            }
+            finally
+            {
+                setWorking(false)
+            }
+        
         }, 600)
     }
 
@@ -96,7 +113,7 @@ export function DrawingPad(props: {
             ev.preventDefault()
             ev.stopPropagation()
             const pos = transformMouse(ev.clientX, ev.clientY)
-            canvasPenDown(state, pos.x, pos.y)
+            canvasPenMove(state, pos.x, pos.y)
             canvasPenUp(state)
             canvasDraw(state, ctx)
             query()
@@ -154,9 +171,16 @@ export function DrawingPad(props: {
     })
 
     return <Layout>
-        <Canvas
-            ref={ canvasRef }
-        />
+        <LayoutCanvas>
+            <Solid.Show when={working()}>
+                <Framework.LoadingBar ignoreLayout/>
+            </Solid.Show>
+
+            <Canvas
+                ref={ canvasRef }
+            />
+        </LayoutCanvas>
+
         <LayoutButtons>
             <Framework.Button
                 icon={ <Framework.IconTrash/> }
@@ -280,7 +304,8 @@ function canvasDraw(
 
     if (state.strokes.length === 0)
     {
-        ctx.font = "2em Lexend Deca"
+        const size = (window.devicePixelRatio ?? 1) * 24
+        ctx.font = `${size}px Lexend Deca`
         ctx.textAlign = "center"
         ctx.textBaseline = "middle"
         ctx.fillStyle = style.getPropertyValue("--theme-text4thColor")
@@ -318,7 +343,8 @@ function canvasPenMove(
     y: number)
 {
     if (!state.penDown ||
-        state.startTime === undefined)
+        state.startTime === undefined ||
+        state.strokes.length < 1)
         return
 
     const time = currentTime() - state.startTime
@@ -359,14 +385,23 @@ const LayoutButtons = styled.div`
     align-items: stretch;
 `
 
-const Canvas = styled.canvas`
+const LayoutCanvas = styled.div`
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
+    overflow-x: hidden;
+    overflow-y: hidden;
     contain: size;
     box-sizing: border-box;
     border: 1px solid ${ Framework.themeVar("borderColor") };
     border-radius: ${ Framework.themeVar("borderRadius") };
+    touch-action: none;
+`
+
+const Canvas = styled.canvas`
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
     touch-action: none;
     cursor: crosshair;
 `

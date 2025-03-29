@@ -21,11 +21,17 @@ export function IconPencilDrawing(props: Framework.IconBaseProps)
                 L 85,35
                 Z
             "/>
-            <path fill="none" stroke="currentColor" stroke-width="6" d="
+            <path
+                fill="none"
+                stroke="currentColor"
+                stroke-width="10"
+                stroke-linecap="butt"
+                stroke-linejoin="miter"
+                d="
                 M 40,90
                 L 80,90
-                L 70,80
-                L 95,80
+                L 70,75
+                L 95,75
             "/>
         </Framework.IconBase>
 	)
