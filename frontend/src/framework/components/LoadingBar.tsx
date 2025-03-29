@@ -46,6 +46,7 @@ const Wrapper = styled.div<{
     overflow-x: hidden;
     
     ${ props => props.ignoreLayout ? `
+        width: 100%;
         height: 0;
         overflow-x: visible;
         overflow-y: visible;
