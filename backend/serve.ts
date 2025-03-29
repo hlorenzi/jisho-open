@@ -97,7 +97,7 @@ app.use(async (err: any, req: Express.Request, res: Express.Response, next: any)
 })
 
 app.listen(port, () => {
-    db.log(`server started on port ${ port }!`)
+    db.log(`server ${version} started on port ${ port }!`)
     console.log(`server listening on port ${ port }...`)
 })
 
