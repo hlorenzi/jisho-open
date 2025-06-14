@@ -387,7 +387,7 @@ export function breakdown(
             {
                 const charBeforeLast = sourceTerm[sourceTerm.length - 2]
                 const vowel = Kana.vowelOf(charBeforeLast)
-                if (vowel !== "i" && vowel !== "e")
+                if (vowel !== "i" && vowel !== "e" && vowel !== null)
                     acceptable = false
             }
 
