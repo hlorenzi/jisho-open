@@ -1,5 +1,4 @@
 import * as Express from "express"
-import "express-async-errors"
 import child_process from "child_process"
 // @ts-expect-error
 import * as Compression from "compression"
@@ -74,7 +73,7 @@ app.use("/.build/", serveGzippedJs)
 app.use("/", Express.static("../frontend/public"))
 app.use("/.build/", Express.static("../frontend/.build"))
 app.use("/furigana.txt", Express.static("./furigana.txt"))
-app.use("*", Express.static("../frontend/public/index.html"))
+app.use("/*any", Express.static("../frontend/public/index.html"))
 
 app.use(async (err: any, req: Express.Request, res: Express.Response, next: any) => {
     if (!err.statusCode || !err.statusMessage)
