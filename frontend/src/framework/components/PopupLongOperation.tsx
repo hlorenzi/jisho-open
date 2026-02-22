@@ -16,7 +16,7 @@ export function makePopupLongOperation(props: {
     title: string,
 }) : PopupLongOperationData
 {
-    let dialog: HTMLDialogElement | undefined = undefined
+    let dialog: HTMLDialogElement | undefined
 
     const [isOpen, setIsOpen] = Solid.createSignal(false)
     const [progress, setProgress] = Solid.createSignal(0)
@@ -82,8 +82,6 @@ const PopupDialog = styled.dialog`
     padding: 0.25em;
     border: 0;
     width: 25em;
-    max-width: min(calc(100% - 0.5em), ${ Framework.pageWidth });
-    max-height: calc(100vh - 4em);
     background-color: transparent;
     
     &::backdrop {
@@ -96,8 +94,6 @@ const PopupDialog = styled.dialog`
 
 
 const PopupWrapper = styled.div`
-    max-width: 100%;
-    max-height: 100%;
     padding: 0.5em;
     color: ${ Framework.themeVar("textColor") };
     border: 1px solid ${ Framework.themeVar("borderColor") };

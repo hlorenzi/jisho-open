@@ -14,7 +14,7 @@ export function makePopupFull(props: {
     childrenFn?: () => Solid.JSX.Element,
 }) : PopupFullData
 {
-    let dialog: HTMLDialogElement | undefined = undefined
+    let dialog: HTMLDialogElement | undefined
 
     const [isOpen, setIsOpen] = Solid.createSignal(false)
 
@@ -69,17 +69,8 @@ const PopupDialog = styled.dialog`
     padding-left: calc(100vw - 100%);
     background-color: transparent;
 
-    &:modal {
-        max-width: min(calc(100% - 0.5em), calc(${ Framework.pageWidth } - 1.5em));
-        max-height: calc(100vh - 4em);
-    }
-
 	@media (max-width: ${ Framework.pageSmallWidthThreshold }) {
         padding-left: 0;
-
-        &:modal {
-            max-height: calc(100vh - 6em);
-        }
     }
 
     &::backdrop {
@@ -92,8 +83,6 @@ const PopupDialog = styled.dialog`
 
 
 const PopupWrapper = styled.div`
-    max-width: 100%;
-    max-height: calc(100% - 0.5em);
     padding: 0.5em;
     border: 1px solid ${ Framework.themeVar("borderColor") };
     background-color: ${ Framework.themeVar("pageBkgColor") };

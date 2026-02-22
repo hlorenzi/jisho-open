@@ -14,7 +14,7 @@ export function makePopupPageWide(props: {
     childrenFn?: () => Solid.JSX.Element,
 }) : PopupPageWideData
 {
-    let dialog: HTMLDialogElement | undefined = undefined
+    let dialog: HTMLDialogElement | undefined
 
     const [isOpen, setIsOpen] = Solid.createSignal(false)
     const [anchor, setAnchor] = Solid.createSignal({ x: 0, y: 0 })

@@ -7,7 +7,7 @@ export function RouterTransition(props: {
     firstLoad: boolean,
 })
 {
-    let dialogRef: HTMLDialogElement | undefined = undefined
+    let dialogRef: HTMLDialogElement | undefined
 
     Solid.createEffect(() => {
         dialogRef?.showModal()
@@ -40,6 +40,8 @@ const DivWrapper = styled.dialog`
     left: 0;
     width: 100vw;
     height: 100vh;
+    min-width: 100vw;
+    min-height: 100vh;
     margin: 0;
     padding: 0;
     border: 0;

@@ -14,7 +14,7 @@ export function makePopupSideMenu(props: {
     childrenFn?: () => Solid.JSX.Element,
 }) : PopupSideMenuData
 {
-    let dialog: HTMLDialogElement | undefined = undefined
+    let dialog: HTMLDialogElement | undefined
 
     const [isOpen, setIsOpen] = Solid.createSignal(false)
 
@@ -149,6 +149,7 @@ const DivPageContent2 = styled.div`
     box-shadow: -0.15em 0 0.15em ${ Framework.themeVar("popupShadowColor") };
     
     padding-top: 4em;
+    padding-bottom: 4em;
 	padding-left: var(--local-pagePadding);
 	padding-right: var(--local-pagePadding);
     

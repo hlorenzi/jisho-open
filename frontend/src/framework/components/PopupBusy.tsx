@@ -11,7 +11,7 @@ export type PopupBusyData = {
 
 export function makePopupBusy() : PopupBusyData
 {
-    let dialog: HTMLDialogElement | undefined = undefined
+    let dialog: HTMLDialogElement | undefined
 
     const [isOpen, setIsOpen] = Solid.createSignal(false)
 
@@ -57,8 +57,6 @@ export function makePopupBusy() : PopupBusyData
 const PopupDialog = styled.dialog`
     padding: 0.25em;
     border: 0;
-    max-width: min(calc(100% - 0.5em), ${ Framework.pageWidth });
-    max-height: calc(100vh - 4em);
     background-color: transparent;
 `
 
