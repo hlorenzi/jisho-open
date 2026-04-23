@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "baseUrl": "./src/",
         "jsx": "preserve",
         "jsxImportSource": "solid-js",
         "module": "esnext",

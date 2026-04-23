@@ -18,9 +18,10 @@ I haven't chosen how to license this repository's code yet. Please only use it f
 ## Local Development
 
 To start:
-* Use `node` version 16 (or greater).
+* Use `node` version 25 (or greater).
 * In all of `common/`, `backend/`, and `frontend/`, execute `npm install`.
 * If you have MongoDB installed, in `backend/`, execute `npm run db-build` to download JMdict and build the database.
+  * The total compressed size on disk of the built MongoDB database is around 1.2 GB, including indexes.
 
 To work on the codebase, execute in parallel:
 * In `backend/`, execute `npm run dev` to start the server in watch mode. You can pass arguments to select between a few options for internal services. Remember to pass as `npm run dev -- --option`.

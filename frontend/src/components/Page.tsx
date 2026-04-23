@@ -287,6 +287,22 @@ function Footer()
                         size="3em"
                     />
                 </Framework.Link>
+                { " " }
+                <Framework.Link href="https://twitter.com/hlorenzi_">
+                    <Framework.Image
+                        alt="Twitter"
+                        src="https://accounts.hlorenzi.com/twitter.png"
+                        size="3em"
+                    />
+                </Framework.Link>
+                { " " }
+                <Framework.Link href="https://bsky.app/profile/hlorenzi.com">
+                    <Framework.Image
+                        alt="Bluesky"
+                        src="https://accounts.hlorenzi.com/bluesky.png"
+                        size="3em"
+                    />
+                </Framework.Link>
                 <br/>
                 <br/>
                 <Framework.Link href="https://accounts.hlorenzi.com">Manage your Account</Framework.Link>
@@ -296,7 +312,7 @@ function Footer()
             </FooterLinks>
 
             <LegalInfo>
-                © 2023 hlorenzi
+                © 2023-2026 hlorenzi
                 <br/>
                 <br/>
                 Using dictionary files from <Framework.Link href="http://www.edrdg.org/jmdict/j_jmdict.html">JMdict</Framework.Link>,
@@ -306,11 +322,11 @@ function Footer()
                 all used according to the group's <Framework.Link href="http://www.edrdg.org/edrdg/licence.html">license</Framework.Link>.
                 <br/>
                 <br/>
-                Using JLPT data from <Framework.Link href="http://www.tanos.co.uk/jlpt/">Jonathan Waller's JLPT Resources</Framework.Link>.
+                Using JLPT data from <Framework.Link href="http://www.tanos.co.uk/jlpt/">Jonathan Waller's JLPT Resources</Framework.Link>, with heavy modifications.
                 <br/>
                 <br/>
                 Using stroke order diagrams from <Framework.Link href="http://kanjivg.tagaini.net/">KanjiVG</Framework.Link>,
-                according to the <Framework.Link href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 license</Framework.Link>.
+                according to the <Framework.Link href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 license</Framework.Link>.
                 <br/>
                 <br/>
                 Using ideographic description sequences from <Framework.Link href="https://github.com/cjkvi/cjkvi-ids">this repository</Framework.Link> and
@@ -324,6 +340,10 @@ function Footer()
                 <br/>
                 Using <Framework.Link href="https://github.com/atilika/kuromoji">Kuromoji</Framework.Link>,
                 according to the <Framework.Link href="https://github.com/atilika/kuromoji/blob/master/LICENSE.md">Apache License 2.0</Framework.Link>.
+                <br/>
+                <br/>
+                Using Wikipedia frequency data from <Framework.Link href="https://en.wiktionary.org/wiki/Wiktionary:Frequency_lists/Japanese/Wikipedia2013">this page</Framework.Link>,
+                according to the <Framework.Link href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International license</Framework.Link>.
             </LegalInfo>
         </StyledFooter>
     </>
