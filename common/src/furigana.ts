@@ -55,24 +55,32 @@ export const READING_SEPARATOR = ";"
 export const SEGMENT_SEPARATOR = "."
 
 
+export function escape(segment: string): string
+{
+    return segment
+        .replaceAll(READING_SEPARATOR, "；")
+        .replaceAll(SEGMENT_SEPARATOR, "．")
+}
+
+
 export function encode(furi: Furigana): string
 {
-    return furi.map(part => part[0]).join(SEGMENT_SEPARATOR) +
+    return furi.map(part => escape(part[0])).join(SEGMENT_SEPARATOR) +
         READING_SEPARATOR +
         furi.map(part => {
             const reading = part[1] || part[0]
-            return reading === part[0] ? "" : reading
+            return escape(reading === part[0] ? "" : reading)
         }).join(SEGMENT_SEPARATOR)
 }
 
 
 export function encodeFull(furi: Furigana): string
 {
-    return furi.map(part => part[0]).join(SEGMENT_SEPARATOR) +
+    return furi.map(part => escape(part[0])).join(SEGMENT_SEPARATOR) +
         READING_SEPARATOR +
         furi.map(part => {
             const reading = part[1] || part[0]
-            return reading
+            return escape(reading)
         }).join(SEGMENT_SEPARATOR)
 }
 
