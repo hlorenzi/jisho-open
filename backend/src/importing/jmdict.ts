@@ -66,7 +66,7 @@ export async function downloadAndImport(
         }
         catch (e: any)
         {
-            throw `error normalizing word entry ${ rawEntry.ent_seq[0] }: ${ e }`
+            await logger.writeLn(`error normalizing word entry ${ rawEntry.ent_seq[0] }: ${ e }`)
         }
     }
 
