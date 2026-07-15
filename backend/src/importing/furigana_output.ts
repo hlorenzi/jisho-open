@@ -15,8 +15,7 @@ export async function outputFurigana(
     {
         for (const heading of entry.headings)
         {
-            if (heading.searchOnlyKana ||
-                heading.searchOnlyKanji)
+            if (heading.searchOnlyKana)
                 continue
             
             const furigana = Furigana.decode(heading.furigana)
