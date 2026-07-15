@@ -15,8 +15,9 @@ export async function outputFurigana(
     {
         for (const heading of entry.headings)
         {
-            if (heading.searchOnlyKana ||
-                heading.searchOnlyKanji)
+            // `searchOnlyKana` headings have no associated kanji spelling.
+            // `searchOnlyKanji` headings are valid variants that can appear in text.
+            if (heading.searchOnlyKana)
                 continue
             
             const furigana = Furigana.decode(heading.furigana)
