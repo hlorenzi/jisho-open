@@ -169,7 +169,9 @@ export function writeStudylistTsv(
 
                 columns.push(word.entry.headings
                     .filter(h => !h.searchOnlyKana && !h.searchOnlyKanji)
-                    .map(h => renderFuriganaToHtmlString(h.furigana))
+                    .map(h => prefs.studylistExportAnkiStyleFurigana ?
+                        renderFuriganaToAnkiStyleString(h.furigana) :
+                        renderFuriganaToHtmlString(h.furigana))
                     .join(", "))
                 
                 columns.push(pitchEntries
@@ -185,7 +187,9 @@ export function writeStudylistTsv(
 
                 columns.push(word.entry.headings
                     .filter(h => !h.searchOnlyKana && !h.searchOnlyKanji)
-                    .map(h => h.reading ?? h.base)
+                    .map(h => prefs.studylistExportAnkiStyleFurigana ?
+                        renderFuriganaToAnkiStyleString(h.furigana) :
+                        h.reading ?? h.base)
                     .join(", "))
                 
                 columns.push(pitchEntries.join(" / "))
@@ -197,7 +201,9 @@ export function writeStudylistTsv(
             {
                 columns.push(heading.base)
         
-                columns.push(renderFuriganaToHtmlString(heading.furigana))
+                columns.push(prefs.studylistExportAnkiStyleFurigana ?
+                    renderFuriganaToAnkiStyleString(heading.furigana) :
+                    renderFuriganaToHtmlString(heading.furigana))
 
                 columns.push(pitchEntries
                     .map(p => renderPitchGuideToHtmlString(p))
@@ -207,7 +213,9 @@ export function writeStudylistTsv(
             {
                 columns.push(heading.base)
 
-                columns.push(reading)
+                columns.push(prefs.studylistExportAnkiStyleFurigana ?
+                    renderFuriganaToAnkiStyleString(heading.furigana) :
+                    reading)
                 
                 columns.push(pitchEntries.join(" / "))
             }
@@ -269,10 +277,43 @@ function renderFuriganaToHtmlString(encoded: string)
     for (const part of furigana)
     {
         result += `<rb>${ part[0] ?? "&nbsp;" }</rb>`
-        result += `<rt>${ part[1] ?? "" }</rt>`
+        result += `<rt aria-hidden="true">${ part[1] ?? "" }</rt>`
     }
     
     result += `</ruby>`
+    return result
+}
+
+
+function renderFuriganaToAnkiStyleString(encoded: string)
+{
+    let result = ""
+
+    let needsSpace = false
+
+    const furigana = Furigana.decode(encoded)
+    for (const part of furigana)
+    {
+        const hasFurigana = !!part[1]
+
+        if (hasFurigana && needsSpace)
+        {
+            result += ` `
+            needsSpace = false
+        }
+
+        result += `${ part[0] ?? "&nbsp;" }`
+
+        if (hasFurigana)
+        {
+            result += `[${ part[1] }]`
+        }
+        else
+        {
+            needsSpace = true
+        }
+    }
+    
     return result
 }
 

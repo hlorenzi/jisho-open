@@ -591,6 +591,15 @@ export function ExportPopup(props: {
         <br/>
 
         <Framework.Checkbox
+            label="Use Anki-style furigana"
+            value={ () => App.usePrefs().studylistExportAnkiStyleFurigana }
+            onChange={ (value) => App.mergePrefs({ studylistExportAnkiStyleFurigana: value }) }
+        />
+
+        <br/>
+        <br/>
+
+        <Framework.Checkbox
             label="Skip katakana-only words"
             value={ () => App.usePrefs().studylistExportSkipKatakana }
             onChange={ (value) => App.mergePrefs({ studylistExportSkipKatakana: value }) }

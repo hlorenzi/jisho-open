@@ -27,6 +27,7 @@ export type Prefs = {
     studylistImportAttemptDeinflection: boolean
 
     studylistExportHtmlCss: boolean
+    studylistExportAnkiStyleFurigana: boolean
     studylistExportKanjiLevel: "common" | "jouyou" | "uncommon" | "rare" | "all"
     studylistExportSkipKatakana: boolean
     studylistExportJsonColumn: boolean
@@ -52,6 +53,7 @@ export const prefsDefault: Prefs = {
     studylistImportAttemptDeinflection: false,
 
     studylistExportHtmlCss: true,
+    studylistExportAnkiStyleFurigana: false,
     studylistExportKanjiLevel: "common",
     studylistExportSkipKatakana: false,
     studylistExportJsonColumn: false,
