@@ -35,3 +35,11 @@ To work on the codebase, execute in parallel:
 * In `frontend/`, execute `npm run dev` to build and pack the frontend JavaScript files in watch mode.
 
 * Finally, you can access the page through `http://127.0.0.1`.
+
+## Docker Deployment
+
+You can run the app using Docker with:
+
+```
+docker compose up --build
+```
