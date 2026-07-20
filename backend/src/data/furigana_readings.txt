@@ -6,7 +6,8 @@
 ×;alpha;バイ;バツ
 ○;alpha;マル
 〇;alpha;マル
-A;alpha;エー
+ａ;alpha;エー;エイ
+A;alpha;エー;エイ
 Ａ;alpha;エー;エイ
 ＡＩＤ;alpha;ヒハイグウシャカン
 ＡＩＨ;alpha;ハイグウシャカン
@@ -102,6 +103,7 @@ R;alpha;アール
 ＴＯＬ;alpha;トール
 ＴＵＥＥＥ;alpha;ツエエエ
 Ｔｗｉｔｔｅｒ;alpha;ツイッター
+ｕ;alpha;ユー
 Ｕ;alpha;ユー
 Ｕｎｉｘ;alpha;ユニックス
 ｕｐ;alpha;アップ;ウプ
@@ -831,6 +833,7 @@ R;alpha;アール
 丁香花;gikun;はしどい
 七五三;gikun;しめ
 七夕;gikun;たなばた
+万年青;gikun;おもと
 上天;gikun;すめら
 上手;gikun;うま
 下手;gikun;へた
@@ -24962,7 +24965,7 @@ R;alpha;アール
 砂;spec;ご
 砥;spec;と
 破;spec;やぶれて
-祖;spec;お;おお;じ;ば
+祖;spec;う;お;おお;じ;ば
 神;spec;じゃみ;ひぼ;ひも
 秋;spec;ちゅう
 稿;spec;ぞうし

@@ -93,6 +93,10 @@ adj-na;                       * -> unc; *だった
 adj-i;                        *い -> unc; *かった
 adj-ix;                       *いい -> unc; *よかった
 
+@ id: negative-past-contracted
+@ display: negative past (contracted)
+v1; *る -> unc; *んかった
+
 @ id: negative-stem
 @ hidden
 v1;    *る -> unc; *
@@ -140,7 +144,7 @@ adj-ix;         *いい -> adj-i; *よくない
 @ display: negative (contracted)
 %negative-classical-stem; * -> unc; *ん
 v5r-i; *ある -> !
-# ある -> あらん (?)
+v5r-i; *ある -> unc; *あらん
 
 @ id: negative-dialectal
 %negative-stem; * -> unc; *へん
@@ -238,6 +242,12 @@ vk;    *くる -> unc; *こな
 @ id: negative-imperative
 @ display: negative imperative
 %verb-identity; * -> unc; *な
+
+@ id: negative-imperative-contracted
+@ display: negative imperative (contracted)
+v1;    *る -> unc; *んな
+v1-s;  *る -> unc; *んな
+v5r;   *る -> unc; *んな
 
 @ id: request
 vmasu; *ます -> unc; *ませ
