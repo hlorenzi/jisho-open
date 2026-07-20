@@ -225,7 +225,11 @@ export function normalizeHeadings(
             (h.irregularKana ? -1 : 0) +
             (h.irregularKanji ? -1 : 0) +
             (h.irregularOkurigana ? -1 : 0) +
-            (usuallyOnlyKana && !Kana.hasKanji(h.base) ? 1000 : 0)
+            (usuallyOnlyKana &&
+                !h.irregularKana &&
+                !h.irregularOkurigana &&
+                !h.searchOnlyKana &&
+                !Kana.hasKanji(h.base) ? 1000 : 0)
         )
     }
 
@@ -238,7 +242,7 @@ export function normalizeHeadings(
     {
         const mostCommonREle = rawREle.find(r_ele => 
             r_ele.re_inf === undefined ||
-            !r_ele.re_inf.some(tag => tag === "sk"))
+            !r_ele.re_inf.some(tag => tag === "sk" || tag === "ik" || tag === "ok"))
 
         if (mostCommonREle)
         {        
