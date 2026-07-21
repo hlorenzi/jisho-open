@@ -437,6 +437,22 @@ export function patch(
 
 function normalize(furi: Furigana): Furigana
 {
+    furi = furi.map(part => [...part])
+    for (let i = 0; i + 1 < furi.length; i++)
+    {
+        const [base, reading] = furi[i]
+        const [nextBase, nextReading] = furi[i + 1]
+        if (base.length > 0 &&
+            [...base].every(c => Kana.isHiragana(c) || Kana.isKatakana(c)) &&
+            Kana.toHiragana(reading) == Kana.toHiragana(base) + "っ" &&
+            Kana.hasKanjiOrIterationMark(nextBase) &&
+            nextReading.length > 0)
+        {
+            furi[i] = [base, ""]
+            furi[i + 1] = [nextBase, reading.slice(-1) + nextReading]
+        }
+    }
+
     const collapsedFuri: Furigana = []
     let collapsePrev = false
     for (const part of furi)
