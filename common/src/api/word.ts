@@ -6,6 +6,8 @@ import * as Inflection from "../inflection.ts"
 export type Entry = {
     id: string
     headings: Heading[]
+    info?: Info[]
+    lang?: LanguageSource[]
     senses: Sense[]
     inflections?: Inflection.Breakdown
     pitch?: PitchAccent[]
@@ -90,13 +92,18 @@ export type PitchAccent = {
 export type MoraPitch = "L" | "H"
 
 
+export type Info = {
+    text: string
+    type: "note"
+}
+
+
 export type Sense = {
     pos: PartOfSpeechTag[]
     gloss: Gloss[]
     misc?: MiscTag[]
     field?: FieldDomainTag[]
     info?: string[]
-    lang?: LanguageSource[]
     xref?: CrossReference[]
     dialect?: DialectTag[]
     restrict?: string[]
@@ -121,7 +128,7 @@ export type CrossReference = {
     base: string
     reading?: string
     senseIndex?: number
-    type?: "antonym"
+    type: "see" | "ant" | "syn"
 }
 
 
@@ -386,7 +393,7 @@ export type MiscTag =
     | "obj"
     | "obs"
     | "on-mim"
-    | "organization"
+    | "org"
     | "oth"
     | "person"
     | "place"
@@ -424,11 +431,14 @@ export type FieldDomainTag =
     | "biochem"
     | "biol"
     | "bot"
+    | "boxing"
     | "Buddh"
     | "bus"
     | "cards"
     | "chem"
+    | "chmyth"
     | "Christn"
+    | "civeng"
     | "cloth"
     | "comp"
     | "cryst"
@@ -440,6 +450,7 @@ export type FieldDomainTag =
     | "embryo"
     | "engr"
     | "ent"
+    | "figskt"
     | "film"
     | "finc"
     | "fish"
@@ -455,6 +466,8 @@ export type FieldDomainTag =
     | "grmyth"
     | "hanaf"
     | "horse"
+    | "internet"
+    | "jpmyth"
     | "kabuki"
     | "law"
     | "ling"
@@ -467,7 +480,9 @@ export type FieldDomainTag =
     | "med"
     | "met"
     | "mil"
+    | "min"
     | "mining"
+    | "motor"
     | "music"
     | "noh"
     | "ornith"
@@ -480,6 +495,7 @@ export type FieldDomainTag =
     | "physiol"
     | "politics"
     | "print"
+    | "prowres"
     | "psy"
     | "psyanal"
     | "psych"
@@ -492,9 +508,11 @@ export type FieldDomainTag =
     | "stat"
     | "stockm"
     | "sumo"
+    | "surg"
     | "telec"
     | "tradem"
     | "tv"
+    | "vet"
     | "vidg"
     | "zool"
 

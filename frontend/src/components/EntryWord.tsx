@@ -41,6 +41,12 @@ export function EntryWord(props: {
         <InflectionBreakdown
             breakdown={ props.entry.inflections }
         />
+        <EntryInfos
+            infos={ props.entry.info }
+        />
+        <EntryLanguageSources
+            lang={ props.entry.lang }
+        />
         <Senses
             wordId={ props.entry.id }
             ignoreUkMiscTag={ ignoreUsageInPlainKanaMiscTag }
@@ -654,7 +660,7 @@ function Senses(props: {
                 .join(", ")
 
             line.push(
-                <SenseInfo>
+                <Info>
                     { " " }
                     —&nbsp;{ text }
                     <Solid.Show when={ App.usePrefs().debugMode }>
@@ -663,7 +669,7 @@ function Senses(props: {
                             [{ sense.field.join(", ") }]
                         </DebugInfo>
                     </Solid.Show>
-                </SenseInfo>)
+                </Info>)
         }
 
         // Build misc tag text
@@ -677,7 +683,7 @@ function Senses(props: {
                 .join(", ")
 
             line.push(
-                <SenseInfo>
+                <Info>
                     { " " }
                     —&nbsp;{ text }
                     <Solid.Show when={ App.usePrefs().debugMode }>
@@ -686,7 +692,7 @@ function Senses(props: {
                             [{ sense.misc?.join(", ") }]
                         </DebugInfo>
                     </Solid.Show>
-                </SenseInfo>
+                </Info>
             )
         }
 
@@ -698,7 +704,7 @@ function Senses(props: {
                 .join(", ")
 
             line.push(
-                <SenseInfo>
+                <Info>
                     { " " }
                     —&nbsp;{ text }
                     <Solid.Show when={ App.usePrefs().debugMode }>
@@ -707,7 +713,7 @@ function Senses(props: {
                             [{ sense.dialect.join(", ") }]
                         </DebugInfo>
                     </Solid.Show>
-                </SenseInfo>
+                </Info>
             )
         }
 
@@ -715,53 +721,22 @@ function Senses(props: {
         if (sense.info)
         {
             const text = sense.info.join(" — ")
-            line.push(<SenseInfo> —&nbsp;{ text }</SenseInfo>)
+            line.push(<Info> —&nbsp;{ text }</Info>)
         }
 
         // Build restriction text
         if (sense.restrict)
         {
             const text = sense.restrict.join(", ")
-            line.push(<SenseInfo> —&nbsp;only applies to { text }</SenseInfo>)
-        }
-
-        // Build source-language text
-        if (sense.lang)
-        {
-            const langs: string[] = []
-
-            const isWasei = sense.lang.some(l => l.wasei)
-            const isPartial = sense.lang.some(l => l.partial)
-
-            if (isWasei)
-                langs.push(`wasei`)
-
-            for (let i = 0; i < sense.lang.length; i++)
-            {
-                const lang = sense.lang[i]
-                const isFirst = i === 0
-
-                if (lang.language)
-                    langs.push(
-                        `${ isPartial && isFirst ? `partially ` : `` }` +
-                        `${ isFirst ? `from ` : `` }` +
-                        `${ JmdictTags.nameForLanguageTag(lang.language) }` +
-                        `${ lang.source ? ` "${ lang.source }"` : `` }`)
-                else if (lang.source)
-                    langs.push(
-                        `${ isPartial && isFirst ? `partially ` : `` }` +
-                        `${ isFirst ? `from ` : `` }` +
-                        `"${ lang.source }"`)
-            }
-
-            line.push(<SenseInfo> —&nbsp;{ langs.join(", ") }</SenseInfo>)
+            line.push(<Info> —&nbsp;only applies to { text }</Info>)
         }
 
         // Build cross-reference text and links
         for (const xref of sense.xref ?? [])
         {
             const text =
-                xref.type === "antonym" ? "antonym: " :
+                xref.type === "ant" ? "antonym: " :
+                xref.type === "syn" ? "synonym: " :
                 "see "
 
             const query = 
@@ -779,7 +754,7 @@ function Senses(props: {
                         ` (sense ${ xref.senseIndex })` : `` }
                 </Framework.Link>
             
-            line.push(<SenseInfo> 🡆&nbsp;{ text }{ link }</SenseInfo>)
+            line.push(<Info> 🡆&nbsp;{ text }{ link }</Info>)
         }
 
         // Build example sentences
@@ -870,7 +845,7 @@ const SenseGlossExpl = styled.span`
 `
 
 
-const SenseInfo = styled.span`
+const Info = styled.span`
     color: ${ Framework.themeVar("text2ndColor") };
     font-size: 0.8em;
 `
@@ -902,6 +877,82 @@ const ShowExampleSentencesLink = styled.div`
     margin-left: 2em;
     margin-top: 0.25em;
     margin-bottom: 0.25em;
+`
+
+
+function EntryInfos(props: {
+    infos?: App.Api.Word.Info[],
+})
+{
+    return <Solid.Show when={ props.infos }>
+        <EntryInfoSection>
+            <Solid.For each={ props.infos }>{ (info) =>
+                <Info>{ info.text }</Info>
+            }
+            </Solid.For>
+        </EntryInfoSection>
+    </Solid.Show>
+}
+
+
+const EntryInfoSection = styled.section`
+    padding-left: 1.75em;
+    font-style: italic;
+    
+	@media (max-width: ${ Framework.pageSmallWidthThreshold })
+	{
+        margin-left: -0.5em;
+    }
+`
+
+
+function EntryLanguageSources(props: {
+    lang?: App.Api.Word.LanguageSource[],
+})
+{
+    const langs = props.lang ?? []
+    const rendered: string[] = []
+
+    const isWasei = langs.some(l => l.wasei)
+    const isPartial = langs.some(l => l.partial)
+
+    if (isWasei)
+        rendered.push(`wasei`)
+
+    for (let i = 0; i < langs.length; i++)
+    {
+        const lang = langs[i]
+        const isFirst = i === 0
+
+        if (lang.language)
+            rendered.push(
+                `${ isPartial && isFirst ? `partially ` : `` }` +
+                `${ isFirst ? `from ` : `` }` +
+                `${ JmdictTags.nameForLanguageTag(lang.language) }` +
+                `${ lang.source ? ` "${ lang.source }"` : `` }`)
+        else if (lang.source)
+            rendered.push(
+                `${ isPartial && isFirst ? `partially ` : `` }` +
+                `${ isFirst ? `from ` : `` }` +
+                `"${ lang.source }"`)
+    }
+
+    return <Solid.Show when={ langs.length !== 0 }>
+        <EntryLanguageSourcesSection>
+            <Info>{ rendered.join(", ") }</Info>
+        </EntryLanguageSourcesSection>
+    </Solid.Show>
+}
+
+
+const EntryLanguageSourcesSection = styled.section`
+    padding-left: 1.75em;
+    font-style: italic;
+    
+	@media (max-width: ${ Framework.pageSmallWidthThreshold })
+	{
+        margin-left: -0.5em;
+    }
 `
 
 

@@ -20,7 +20,7 @@ export async function* iterateEntriesStreamed<T extends object>(
     : AsyncGenerator<T>
 {
     const reader = await StreamedReader.create(filename)
-    await reader.skipTo(`<${mainTagId}>`)
+    await reader.skipTo(`<${mainTagId}`)
 
     const entryTagStart = `<${entryTagId}>`
     const entryTagEnd = `</${entryTagId}>`

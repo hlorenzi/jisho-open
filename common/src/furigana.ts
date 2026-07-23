@@ -442,8 +442,8 @@ function normalize(furi: Furigana): Furigana
     for (const part of furi)
     {
         if (!part[1] ||
-            part[0] == part[1] ||
-            Kana.toHiragana(part[0]) == Kana.toHiragana(part[1]))
+            part[0] === part[1] ||
+            Kana.toHiragana(part[0]) === Kana.toHiragana(part[1]))
         {
             if (collapsePrev)
             {
@@ -465,6 +465,31 @@ function normalize(furi: Furigana): Furigana
     }
 
     return collapsedFuri
+}
+
+
+export function normalizeKana(furi: Furigana): Furigana
+{
+    const newFuri: Furigana = []
+    for (const part of furi)
+    {
+        if (part[0] !== part[1] &&
+            part[0] === Kana.toHiragana(part[1]))
+        {
+            newFuri.push([part[0], Kana.toHiragana(part[1])])
+        }
+        else if (part[0] !== part[1] &&
+            part[0] === Kana.toKatakana(part[1]))
+        {
+            newFuri.push([part[0], Kana.toKatakana(part[1])])
+        }
+        else
+        {
+            newFuri.push([...part])
+        }
+    }
+
+    return newFuri
 }
 
 

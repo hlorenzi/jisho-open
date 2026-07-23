@@ -17,9 +17,9 @@ import * as WordRankings from "../data/word_rankings.ts"
 import * as JmdictExtraTags from "../data/jmdict_extra_tags.ts"
 
 
-export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e_examp.gz"
-export const gzipFilename = File.downloadFolder + "JMdict_e_examp.gz"
-export const xmlFilename = File.downloadFolder + "JMdict_e_examp.xml"
+export const url = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e_NG_examp.gz"
+export const gzipFilename = File.downloadFolder + "JMdict_e_NG_examp.gz"
+export const xmlFilename = File.downloadFolder + "JMdict_e_NG_examp.xml"
 
 
 export async function downloadAndImport(
@@ -119,6 +119,14 @@ export function normalizeEntry(
         raw.r_ele,
         usuallyOnlyKana,
         false)
+
+    // Import entry-level info.
+    if (raw.info !== undefined)
+        entry.info = raw.info.map(normalizeInfo)
+
+    // Import entry-level language sources.
+    if (raw.lsource !== undefined)
+        entry.lang = raw.lsource.map(normalizeLsource)
 
     // Import senses/definitions.
     entry.senses = normalizeSenses(raw.sense)
@@ -319,7 +327,7 @@ function normalizeHeading(
         heading.reading ?? "")
 
     if (perfectPatch !== undefined)
-        heading.furigana = Furigana.encode(perfectPatch)
+        heading.furigana = Furigana.encode(Furigana.normalizeKana(perfectPatch))
     else
     {
         // Attempt automatic furigana segmentation.
@@ -520,6 +528,42 @@ function scoreHeading(
 }
 
 
+export function normalizeInfo(
+    rawInfo: JmdictRaw.Info)
+    : Api.Word.Info
+{
+    const text = rawInfo.text
+    const type = rawInfo.attr.inf_type
+
+    return {
+        text,
+        type,
+    }
+}
+
+
+export function normalizeLsource(
+    rawLsource: JmdictRaw.LanguageSource)
+    : Api.Word.LanguageSource
+{
+    const langSrc: Api.Word.LanguageSource = {}
+
+    if (rawLsource.attr["xml:lang"] !== undefined)
+        langSrc.language = rawLsource.attr["xml:lang"]
+
+    if (rawLsource.attr.ls_type !== undefined)
+        langSrc.partial = !!rawLsource.attr.ls_type
+    
+    if (rawLsource.attr.ls_wasei !== undefined)
+        langSrc.wasei = !!rawLsource.attr.ls_wasei
+    
+    if (rawLsource.text !== undefined)
+        langSrc.source = rawLsource.text
+
+    return langSrc
+}
+
+
 export function normalizeSenses(
     rawSenses: JmdictRaw.Sense[])
     : Api.Word.Sense[]
@@ -565,42 +609,6 @@ export function normalizeSenses(
                 sense.xref.push(normalizeXref(rawXref))
         }
 
-        if (rawSense.ant)
-        {
-            if (sense.xref === undefined)
-                sense.xref = []
-
-            for (const rawAnt of rawSense.ant)
-                sense.xref.push({
-                    ...normalizeXref(rawAnt),
-                    type: "antonym",
-                })
-        }
-
-        if (rawSense.lsource)
-        {
-            sense.lang = []
-
-            for (const lsource of rawSense.lsource)
-            {
-                const langSrc: Api.Word.LanguageSource = {}
-
-                if (lsource.attr["xml:lang"] !== undefined)
-                    langSrc.language = lsource.attr["xml:lang"]
-
-                if (lsource.attr.ls_type !== undefined)
-                    langSrc.partial = !!lsource.attr.ls_type
-                
-                if (lsource.attr.ls_wasei !== undefined)
-                    langSrc.wasei = !!lsource.attr.ls_wasei
-                
-                if (lsource.text !== undefined)
-                    langSrc.source = lsource.text
-
-                sense.lang.push(langSrc)
-            }
-        }
-
         if (rawSense.dial)
             sense.dialect = rawSense.dial
 
@@ -638,30 +646,19 @@ export function normalizeSenses(
 
 
 export function normalizeXref(
-    rawXref: string)
+    rawXref: JmdictRaw.Xref)
     : Api.Word.CrossReference
 {
-    const split = rawXref.split("・")
+    const base = rawXref.attr.xk ?? rawXref.attr.xr ?? ""
+    const reading = rawXref.attr.xr === base ? undefined : rawXref.attr.xr
+    const senseIndex = rawXref.attr.sno === undefined ? undefined : parseInt(rawXref.attr.sno)
 
-    if (split.length === 1)
-        return { base: rawXref }
-
-    if (split.length === 2)
-    {
-        if (Kana.hasJapanese(split[1]))
-            return { base: split[0], reading: split[1] }
-        else
-            return { base: split[0], senseIndex: parseInt(split[1]) }
+    return {
+        base,
+        reading,
+        senseIndex,
+        type: rawXref.attr.type,
     }
-
-    if (split.length === 3)
-        return {
-            base: split[0],
-            reading: split[1],
-            senseIndex: parseInt(split[2]),
-        }
-
-    throw `invalid xref`
 }
 
 
@@ -764,8 +761,7 @@ export function gatherLookUpTags(
     const miscTags = apiWord.senses
         .flatMap(d => d.misc ?? [])
 
-    const langTags = apiWord.senses
-        .flatMap(d => d.lang ?? [])
+    const langTags = (apiWord.lang ?? [])
         .map(l => l.language ?? "wasei")
     
     const dialectTags = apiWord.senses

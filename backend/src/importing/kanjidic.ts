@@ -638,6 +638,7 @@ function extractExampleSet(
         [2, 0],
         [1, 0],
         [0, 0],
+        [-1, 0],
     ]
 
     for (const attempt of minAttempts)
@@ -651,11 +652,15 @@ function extractExampleSet(
                 if (index < bucket.entries.length)
                 {
                     const entry = bucket.entries[index]
-                    
-                    if (attempt[0] === 0 ||
+
+                    const canSelect =
+                        attempt[0] === -1 ||
+                        (attempt[0] === 0 && !entry.irregular && !entry.outdated && !entry.rare) ||
                         (entry.commonness === attempt[0] &&
                             (attempt[1] === 0 ||
-                                entry.jlpt !== undefined)))
+                            entry.jlpt !== undefined))
+                    
+                    if (canSelect)
                     {
                         gotWord = true
                         exampleSet.push(bucket.entries[index])
@@ -670,5 +675,7 @@ function extractExampleSet(
         }
     }
 
-    return exampleSet.slice(0, maxWords)
+    return exampleSet
+        .slice(0, maxWords)
+        .sort((a, b) => (b.jlpt ?? 0) - (a.jlpt ?? 0))
 }

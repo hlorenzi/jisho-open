@@ -7,6 +7,8 @@ export interface Entry
     ent_seq: [string]
     k_ele?: EntryKEle[]
     r_ele: EntryREle[]
+    info?: Info[]
+    lsource?: LanguageSource[]
     sense: Sense[]
 }
 
@@ -63,11 +65,10 @@ export interface EntryREle
 export interface Sense
 {
     pos: Api.Word.PartOfSpeechTag[]
-    xref?: string[]
+    xref?: Xref[]
     ant?: string[]
     misc?: Api.Word.MiscTag[]
     field?: Api.Word.FieldDomainTag[]
-    lsource?: LanguageSource[]
     s_inf?: string[]
     dial?: Api.Word.DialectTag[]
     stagr?: string[]
@@ -87,6 +88,27 @@ export interface EntryGlossExtended
     [Xml.xml2jsTextKey]: string
     [Xml.xml2jsAttributeKey]: {
         g_type: Api.Word.GlossTypeTag
+    }
+}
+
+
+export type Info = {
+    [Xml.xml2jsTextKey]: string
+    [Xml.xml2jsAttributeKey]: {
+        inf_type: "note"
+    }
+}
+
+
+export type Xref = {
+    [Xml.xml2jsTextKey]: string
+    [Xml.xml2jsAttributeKey]: {
+        type: "see" | "ant" | "syn"
+        seq: string
+        dict?: string
+        sno?: string
+        xk?: string
+        xr?: string
     }
 }
 
