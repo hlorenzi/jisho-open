@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jisho-app
+    restart: unless-stopped
+    environment:
+      - PORT=80
+      - MONGODB_URL=mongodb://localhost:27017/jisho
+    ports:
+      - "80:80"
+    volumes:
+      - ./data/db:/data/db
